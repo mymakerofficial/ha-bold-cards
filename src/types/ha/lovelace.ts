@@ -1,5 +1,11 @@
-import { HomeAssistant } from "custom-card-helpers/src/types";
-import { ActionConfig } from "custom-card-helpers";
+import {
+  ActionConfig,
+  HomeAssistant as HomeAssistantBase,
+} from "custom-card-helpers";
+
+export interface HomeAssistant extends HomeAssistantBase {
+  hassUrl(path?): string;
+}
 
 export interface LovelaceCardConfig {
   index?: number;

@@ -9,7 +9,7 @@ import {
   string,
   union,
 } from "superstruct";
-import { baseLovelaceCardConfig } from "../../helpers/base-card-struct";
+import { baseLovelaceCardConfig } from "../../helpers/ha/base-card-struct";
 
 export const cardConfigStruct = assign(
   baseLovelaceCardConfig,

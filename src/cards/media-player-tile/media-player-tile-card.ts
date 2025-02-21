@@ -5,14 +5,19 @@ import {
   fireEvent,
   handleAction,
   hasAction,
-  HomeAssistant,
-  LovelaceCard,
   LovelaceCardEditor,
 } from "custom-card-helpers";
 import { MediaPlayerTileConfig } from "../../types/tile";
-import { LovelaceGridOptions } from "../../types/ha/lovelace";
-import { mdiDotsVertical, mdiPlay } from "@mdi/js";
-import { actionHandler } from "../../helpers/action-handler-directive";
+import {
+  HomeAssistant,
+  LovelaceCard,
+  LovelaceGridOptions,
+} from "../../types/ha/lovelace";
+import { actionHandler } from "../../helpers/ha/action-handler-directive";
+import { MediaPlayerEntity } from "../../types/ha/entity";
+import { PropertyValues } from "lit-element";
+import { extractColors } from "../../helpers/extract-color";
+import { styleMap } from "lit-html/directives/style-map";
 
 // This puts your card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
@@ -39,6 +44,10 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
 
   @state() private _config?: MediaPlayerTileConfig;
 
+  @state() private _foregroundColor?: string;
+
+  @state() private _backgroundColor?: string;
+
   public setConfig(config: MediaPlayerTileConfig): void {
     // TODO: actually validate the config
     if (!config) {
@@ -57,10 +66,23 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
   public getGridOptions(): LovelaceGridOptions {
     return {
       columns: 6,
-      rows: 2,
+      rows: 3,
       min_columns: 6,
-      min_rows: 2,
+      min_rows: 3,
     };
+  }
+
+  private get _stateObj(): MediaPlayerEntity | undefined {
+    const entityId = this._config!.entity;
+    return this.hass!.states[entityId] as MediaPlayerEntity;
+  }
+
+  private get _imageUrl() {
+    const stateObj = this._stateObj;
+    return (
+      stateObj?.attributes.entity_picture_local ??
+      stateObj?.attributes.entity_picture
+    );
   }
 
   protected render() {
@@ -68,8 +90,7 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
       return nothing;
     }
 
-    const entityId = this._config.entity;
-    const stateObj = entityId ? this.hass.states[entityId] : undefined;
+    const stateObj = this._stateObj;
 
     if (!stateObj) {
       // TODO show error or something
@@ -78,10 +99,21 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
 
     const mediaTitle = stateObj.attributes.media_title;
     const mediaDescription = stateObj.attributes.media_artist;
-    const imageUrl = stateObj.attributes.entity_picture;
+    const imageUrl = this._imageUrl;
+
+    const features = [
+      {
+        type: "media-player-volume-slider",
+      },
+    ];
 
     return html`
-      <ha-card>
+      <ha-card
+        style=${styleMap({
+          "--tile-color": this._foregroundColor || "",
+          "--state-icon-color": this._foregroundColor || "",
+        })}
+      >
         <div
           class="background"
           @action=${this._handleAction}
@@ -103,18 +135,39 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
               .secondary=${mediaDescription}
             ></ha-tile-info>
           </div>
+          <hui-card-features
+            .hass=${this.hass}
+            .stateObj=${stateObj}
+            .features=${features}
+          ></hui-card-features>
         </div>
       </ha-card>
     `;
   }
 
-  private _handleAction(ev: ActionHandlerEvent): void {
+  public willUpdate(changedProps: PropertyValues) {
+    super.willUpdate(changedProps);
+
+    this._updateColors().then();
+  }
+
+  private async _updateColors() {
+    if (!this._imageUrl) {
+      return;
+    }
+
+    const swatches = await extractColors(this.hass!.hassUrl(this._imageUrl));
+    this._foregroundColor = swatches.LightVibrant?.hex;
+    this._backgroundColor = swatches.DarkMuted?.hex;
+  }
+
+  private _handleAction(ev: ActionHandlerEvent) {
     if (this.hass && this._config && ev.detail.action) {
       handleAction(this, this.hass, this._config, ev.detail.action);
     }
   }
 
-  private _handleMoreInfo(): void {
+  private _handleMoreInfo() {
     fireEvent(this, "hass-more-info", {
       entityId: this._config!.entity,
     });
@@ -187,12 +240,11 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         display: flex;
         flex-direction: row;
         align-items: center;
-        padding: 16px;
-        flex: 1;
+        padding: 12px;
         min-width: 0;
         box-sizing: border-box;
         pointer-events: none;
-        gap: 16px;
+        gap: 12px;
       }
 
       .vertical {
