@@ -4,10 +4,11 @@ import {
   fireEvent,
   LovelaceCardEditor,
 } from "custom-card-helpers";
-import { MediaPlayerTileConfig } from "./types/tile";
+import { MediaPlayerTileConfig } from "../../types/tile";
 import { customElement, property, state } from "lit/decorators";
 import { assert } from "superstruct";
 import { cardConfigStruct } from "./struct";
+import { mdiPalette } from "@mdi/js";
 
 @customElement("media-player-tile-editor")
 export class MediaPlayerTileEditor
@@ -28,13 +29,26 @@ export class MediaPlayerTileEditor
       return html``;
     }
 
-    const schema = [{ name: "entity", selector: { entity: {} } }];
+    const schema = [
+      {
+        name: "entity",
+        selector: { entity: { domain: "media_player" } },
+      },
+      {
+        name: "appearance",
+        flatten: true,
+        type: "expandable",
+        iconPath: mdiPalette,
+        schema: [],
+      },
+    ];
 
     return html`
       <ha-form
         .hass=${this.hass}
         .data=${this._config}
         .schema=${schema}
+        .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
     `;
@@ -69,6 +83,14 @@ export class MediaPlayerTileEditor
 
     fireEvent(this, "config-changed", { config });
   }
+
+  private _computeLabelCallback = (schema: { name: string }) => {
+    // TODO Add translations
+    return {
+      entity: "Entity",
+      appearance: "Appearance",
+    }[schema.name];
+  };
 
   static styles: CSSResultGroup = css``;
 }
