@@ -18,6 +18,7 @@ import { MediaPlayerEntity } from "../../types/ha/entity";
 import { PropertyValues } from "lit-element";
 import { extractColors } from "../../helpers/extract-color";
 import { styleMap } from "lit-html/directives/style-map";
+import { mdiPause, mdiSkipNext } from "@mdi/js";
 
 // This puts your card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
@@ -111,6 +112,7 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
       <ha-card
         style=${styleMap({
           "--tile-color": this._foregroundColor || "",
+          "--state-color": this._foregroundColor || "",
           "--state-icon-color": this._foregroundColor || "",
         })}
       >
@@ -134,6 +136,10 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
               .primary=${mediaTitle}
               .secondary=${mediaDescription}
             ></ha-tile-info>
+            <div class="controls">
+              <mpt-large-button .iconPath=${mdiPause}></mpt-large-button>
+              <mpt-large-button .iconPath=${mdiSkipNext}></mpt-large-button>
+            </div>
           </div>
           <hui-card-features
             .hass=${this.hass}
@@ -243,14 +249,21 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         padding: 12px;
         min-width: 0;
         box-sizing: border-box;
-        pointer-events: none;
         gap: 12px;
+      }
+
+      .controls {
+        display: flex;
       }
 
       .vertical {
         flex-direction: column;
         text-align: center;
         justify-content: center;
+      }
+
+      ha-tile-info {
+        flex: 1;
       }
 
       .vertical ha-tile-info {
