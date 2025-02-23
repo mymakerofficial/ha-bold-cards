@@ -112,30 +112,30 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
       <ha-card
         style=${styleMap({
           "--tile-color": this._foregroundColor || "",
-          "--state-color": this._foregroundColor || "",
-          "--state-icon-color": this._foregroundColor || "",
         })}
       >
-        <div
-          class="background"
-          @action=${this._handleAction}
-          .actionHandler=${actionHandler({
-            hasHold: hasAction(this._config!.hold_action),
-            hasDoubleClick: hasAction(this._config!.double_tap_action),
-          })}
-          role="button"
-          aria-labelledby="info"
-        >
-          <ha-ripple></ha-ripple>
-        </div>
         <div class="container">
           <div class="content">
-            <mpt-cover-image .imageUrl=${imageUrl}></mpt-cover-image>
-            <ha-tile-info
-              id="info"
-              .primary=${mediaTitle}
-              .secondary=${mediaDescription}
-            ></ha-tile-info>
+            <div class="hero-container">
+              <mpt-control-surface
+                class="hero-background"
+                @action=${this._handleAction}
+                .actionHandler=${actionHandler({
+                  hasHold: hasAction(this._config!.hold_action),
+                  hasDoubleClick: hasAction(this._config!.double_tap_action),
+                })}
+                role="button"
+                aria-labelledby="info"
+              ></mpt-control-surface>
+              <div class="hero-content">
+                <mpt-cover-image .imageUrl=${imageUrl}></mpt-cover-image>
+                <ha-tile-info
+                  id="info"
+                  .primary=${mediaTitle}
+                  .secondary=${mediaDescription}
+                ></ha-tile-info>
+              </div>
+            </div>
             <div class="controls">
               <mpt-large-button .iconPath=${mdiPause}></mpt-large-button>
               <mpt-large-button .iconPath=${mdiSkipNext}></mpt-large-button>
@@ -182,18 +182,13 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
   static get styles(): CSSResultGroup {
     return css`
       :host {
-        --tile-color: var(--primary-color);
         -webkit-tap-highlight-color: transparent;
       }
 
-      ha-card:has(.background:focus-visible) {
-        --shadow-default: var(--ha-card-box-shadow, 0 0 0 0 transparent);
-        --shadow-focus: 0 0 0 1px var(--tile-color);
-        border-color: var(--tile-color);
-        box-shadow: var(--shadow-default), var(--shadow-focus);
-      }
-
       ha-card {
+        --tile-color: var(--primary-color);
+        --state-color: var(--tile-color);
+        --state-icon-color: var(--tile-color);
         --ha-ripple-color: var(--tile-color);
         --ha-ripple-hover-opacity: 0.04;
         --ha-ripple-pressed-opacity: 0.12;
@@ -206,28 +201,32 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         justify-content: space-between;
       }
 
-      ha-card.active {
-        --tile-color: var(--state-icon-color);
+      .hero-container {
+        position: relative;
+        flex: 1;
       }
 
-      [role="button"] {
-        cursor: pointer;
-        pointer-events: auto;
-      }
-
-      [role="button"]:focus {
-        outline: none;
-      }
-
-      .background {
+      .hero-background {
         position: absolute;
         top: 0;
         left: 0;
-        bottom: 0;
-        right: 0;
-        border-radius: var(--ha-card-border-radius, 12px);
-        margin: calc(-1 * var(--ha-card-border-width, 1px));
-        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        --control-surface-border-radius: calc(
+          var(--ha-card-border-radius, 12px) / 2
+        );
+      }
+
+      .hero-content {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        min-width: 0;
+        box-sizing: border-box;
+        pointer-events: none;
+        padding-right: 12px;
       }
 
       .container {
@@ -235,10 +234,6 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         display: flex;
         flex-direction: column;
         flex: 1;
-      }
-
-      .container.horizontal {
-        flex-direction: row;
       }
 
       .content {
@@ -249,26 +244,14 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         padding: 12px;
         min-width: 0;
         box-sizing: border-box;
-        gap: 12px;
       }
 
       .controls {
         display: flex;
       }
 
-      .vertical {
-        flex-direction: column;
-        text-align: center;
-        justify-content: center;
-      }
-
       ha-tile-info {
         flex: 1;
-      }
-
-      .vertical ha-tile-info {
-        width: 100%;
-        flex: none;
       }
 
       ha-tile-icon {
