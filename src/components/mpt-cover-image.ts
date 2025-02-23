@@ -25,13 +25,17 @@ export class CoverImage extends LitElement {
   }
 
   static styles = css`
+    :host {
+      --image-size: 64px;
+    }
+
     .container {
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 64px;
-      height: 64px;
+      min-width: var(--image-size);
+      height: var(--image-size);
       overflow: hidden;
       border-radius: calc(var(--ha-card-border-radius, 12px) / 2);
     }

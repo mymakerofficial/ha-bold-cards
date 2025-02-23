@@ -1,4 +1,4 @@
-import { MediaPlayerEntity } from "../types/ha/entity";
+import { MediaContentType, MediaPlayerEntity } from "../types/ha/entity";
 import { isStateActive, isStateUnavailable } from "./states";
 import { supportsFeature } from "./supports-feature";
 import {
@@ -33,6 +33,20 @@ export const MediaPlayerEntityFeature = {
 } as const;
 export type MediaPlayerEntityFeature =
   (typeof MediaPlayerEntityFeature)[keyof typeof MediaPlayerEntityFeature];
+
+export function getMediaDescription(stateObj: MediaPlayerEntity) {
+  switch (stateObj.attributes.media_content_type) {
+    case MediaContentType.MUSIC:
+    case MediaContentType.IMAGE:
+    case MediaContentType.VIDEO:
+      return (
+        stateObj.attributes.media_artist ?? stateObj.attributes.app_name ?? ""
+      );
+    // TODO handle other cases
+    default:
+      return stateObj.attributes.app_name ?? "";
+  }
+}
 
 export interface MediaControlButton {
   iconPath: string;

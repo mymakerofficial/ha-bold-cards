@@ -22,9 +22,21 @@ export const MediaPlayerState = {
 export type MediaPlayerState =
   (typeof MediaPlayerState)[keyof typeof MediaPlayerState];
 
+export const MediaContentType = {
+  MUSIC: "music",
+  VIDEO: "video",
+  IMAGE: "image",
+  PLAYLIST: "playlist",
+  TVSHOW: "tvshow",
+  EPISODE: "episode",
+  CHANNEL: "channel",
+};
+export type MediaContentType =
+  (typeof MediaContentType)[keyof typeof MediaContentType];
+
 interface MediaPlayerEntityAttributes extends HassEntityAttributeBase {
   media_content_id?: string;
-  media_content_type?: string;
+  media_content_type?: MediaContentType;
   media_artist?: string;
   media_playlist?: string;
   media_series_title?: string;

@@ -7,7 +7,11 @@ import {
   hasAction,
   LovelaceCardEditor,
 } from "custom-card-helpers";
-import { MediaPlayerTileConfig } from "../../types/tile";
+import {
+  MediaPlayerTileColorMode,
+  MediaPlayerTileConfig,
+  MediaPlayerTileContentLayout,
+} from "../../types/tile";
 import {
   HomeAssistant,
   LovelaceCard,
@@ -19,6 +23,8 @@ import { PropertyValues } from "lit-element";
 import { extractColors } from "../../helpers/extract-color";
 import { styleMap } from "lit-html/directives/style-map";
 import { mdiPlay, mdiPower } from "@mdi/js";
+import { getMediaDescription } from "../../helpers/media-player";
+import { classMap } from "lit-html/directives/class-map";
 
 // This puts your card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
@@ -67,9 +73,9 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
   public getGridOptions(): LovelaceGridOptions {
     return {
       columns: 6,
-      rows: 4,
+      rows: 8,
       min_columns: 6,
-      min_rows: 4,
+      min_rows: 8,
     };
   }
 
@@ -86,6 +92,12 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
     );
   }
 
+  private get _tileColor() {
+    return this._config!.color_mode === MediaPlayerTileColorMode.AMBIENT
+      ? this._foregroundColor || ""
+      : `var(--${this._config!.color}-color)`;
+  }
+
   protected render() {
     if (!this._config || !this.hass) {
       return nothing;
@@ -99,7 +111,7 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
     }
 
     const mediaTitle = stateObj.attributes.media_title;
-    const mediaDescription = stateObj.attributes.media_artist;
+    const mediaDescription = getMediaDescription(stateObj);
     const imageUrl = this._imageUrl;
 
     // const controls = getMediaControls(stateObj);
@@ -126,7 +138,12 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
     return html`
       <ha-card
         style=${styleMap({
-          "--tile-color": this._foregroundColor || "",
+          "--tile-color": this._tileColor,
+        })}
+        class=${classMap({
+          vertical:
+            this._config.content_layout ===
+            MediaPlayerTileContentLayout.VERTICAL,
         })}
       >
         <div class="container">
@@ -151,12 +168,8 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
                   ></ha-state-icon>
                 </mpt-cover-image>
                 <div class="media-info" id="info">
-                  <hui-marquee
-                    .text=${mediaTitle || mediaDescription}
-                    .active=${true}
-                    .animating=${true}
-                  ></hui-marquee>
-                  <span>${mediaDescription}</span>
+                  <span class="primary">${mediaTitle || mediaDescription}</span>
+                  <span class="secondary">${mediaDescription}</span>
                 </div>
               </div>
             </div>
@@ -183,7 +196,9 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
   public willUpdate(changedProps: PropertyValues) {
     super.willUpdate(changedProps);
 
-    this._updateColors().then();
+    if (this._config!.color_mode === MediaPlayerTileColorMode.AMBIENT) {
+      this._updateColors().then();
+    }
   }
 
   private async _updateColors() {
@@ -231,9 +246,35 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         justify-content: space-between;
       }
 
+      .container {
+        margin: calc(-1 * var(--ha-card-border-width, 1px));
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+
+      .content {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 12px;
+        min-width: 0;
+        box-sizing: border-box;
+      }
+
+      ha-card.vertical .content {
+        flex-direction: column;
+      }
+
       .hero-container {
         position: relative;
         flex: 1;
+      }
+
+      ha-card.vertical .hero-container {
+        width: 100%;
+        padding: 12px 0;
       }
 
       .hero-background {
@@ -259,21 +300,16 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         padding-right: 12px;
       }
 
-      .container {
-        margin: calc(-1 * var(--ha-card-border-width, 1px));
-        display: flex;
+      ha-card.vertical .hero-content {
         flex-direction: column;
-        flex: 1;
+        justify-content: center;
+        width: 100%;
+        padding-right: 0px;
+        gap: 24px;
       }
 
-      .content {
-        position: relative;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        padding: 12px;
-        min-width: 0;
-        box-sizing: border-box;
+      ha-card.vertical mpt-cover-image {
+        --image-size: 148px;
       }
 
       .controls {
@@ -282,9 +318,32 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
 
       .media-info {
         flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+      }
+
+      .media-info .primary {
+        font-weight: 500;
+      }
+
+      .media-info .secondary {
+        font-size: 12px;
+        font-weight: 400;
+      }
+
+      ha-card.vertical .media-info {
+        width: 100%;
+        align-items: center;
+        gap: 8px;
+      }
+
+      ha-card.vertical .media-info .primary {
+        font-size: 18px;
+        font-weight: 400;
       }
     `;
   }

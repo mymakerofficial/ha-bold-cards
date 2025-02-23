@@ -4,7 +4,11 @@ import {
   fireEvent,
   LovelaceCardEditor,
 } from "custom-card-helpers";
-import { MediaPlayerTileConfig } from "../../types/tile";
+import {
+  MediaPlayerTileColorMode,
+  MediaPlayerTileConfig,
+  MediaPlayerTileContentLayout,
+} from "../../types/tile";
 import { customElement, property, state } from "lit/decorators";
 import { assert } from "superstruct";
 import { cardConfigStruct } from "./struct";
@@ -39,7 +43,55 @@ export class MediaPlayerTileEditor
         flatten: true,
         type: "expandable",
         iconPath: mdiPalette,
-        schema: [],
+        schema: [
+          {
+            name: "color_mode",
+            required: true,
+            selector: {
+              select: {
+                mode: "dropdown",
+                options: [
+                  {
+                    label: "Ambient",
+                    value: MediaPlayerTileColorMode.AMBIENT,
+                  },
+                  {
+                    label: "Manual",
+                    value: MediaPlayerTileColorMode.MANUAL,
+                  },
+                ],
+              },
+            },
+          },
+          {
+            name: "color",
+            selector: {
+              ui_color: {
+                default_color: "state",
+                // include_state: true,
+              },
+            },
+          },
+          {
+            name: "content_layout",
+            required: true,
+            selector: {
+              select: {
+                mode: "dropdown",
+                options: [
+                  {
+                    label: "Horizontal",
+                    value: MediaPlayerTileContentLayout.HORIZONTAL,
+                  },
+                  {
+                    label: "Vertical",
+                    value: MediaPlayerTileContentLayout.VERTICAL,
+                  },
+                ],
+              },
+            },
+          },
+        ],
       },
     ];
 
@@ -49,6 +101,7 @@ export class MediaPlayerTileEditor
         .data=${this._config}
         .schema=${schema}
         .computeLabel=${this._computeLabelCallback}
+        .computeHelper=${this._computeHelperCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
     `;
@@ -67,29 +120,29 @@ export class MediaPlayerTileEditor
       ...newConfig,
     };
 
-    if (config.hide_state) {
-      delete config.state_content;
-    }
-
-    if (!config.state_content) {
-      delete config.state_content;
-    }
-
-    // Convert content_layout to vertical
-    if (config.content_layout) {
-      config.vertical = config.content_layout === "vertical";
-      delete config.content_layout;
-    }
-
     fireEvent(this, "config-changed", { config });
   }
 
   private _computeLabelCallback = (schema: { name: string }) => {
     // TODO Add translations
-    return {
-      entity: "Entity",
-      appearance: "Appearance",
-    }[schema.name];
+    return (
+      {
+        entity: "Entity",
+        appearance: "Appearance",
+        color_mode: "Color Mode",
+        color: "Color",
+        content_layout: "Layout",
+      }[schema.name] ?? ""
+    );
+  };
+
+  private _computeHelperCallback = (schema: { name: string }) => {
+    // TODO Add translations
+    return (
+      {
+        color: 'Only applicable when "Color Mode" is set to "Manual"',
+      }[schema.name] ?? ""
+    );
   };
 
   static styles: CSSResultGroup = css``;
