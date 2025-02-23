@@ -18,7 +18,7 @@ import { MediaPlayerEntity } from "../../types/ha/entity";
 import { PropertyValues } from "lit-element";
 import { extractColors } from "../../helpers/extract-color";
 import { styleMap } from "lit-html/directives/style-map";
-import { getMediaControls } from "../../helpers/media-player";
+import { mdiPlay, mdiPower } from "@mdi/js";
 
 // This puts your card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
@@ -67,9 +67,9 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
   public getGridOptions(): LovelaceGridOptions {
     return {
       columns: 6,
-      rows: 3,
+      rows: 4,
       min_columns: 6,
-      min_rows: 3,
+      min_rows: 4,
     };
   }
 
@@ -102,9 +102,22 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
     const mediaDescription = stateObj.attributes.media_artist;
     const imageUrl = this._imageUrl;
 
-    const controls = getMediaControls(stateObj);
+    // const controls = getMediaControls(stateObj);
+    const controls = [
+      {
+        iconPath: mdiPower,
+        action: "turn_off",
+      },
+      {
+        iconPath: mdiPlay,
+        action: "media_play",
+      },
+    ];
 
     const features = [
+      {
+        type: "custom:media-player-progress",
+      },
       {
         type: "media-player-volume-slider",
       },

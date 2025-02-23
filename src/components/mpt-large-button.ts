@@ -14,21 +14,25 @@ export class LargeButton extends LitElement {
   }
 
   static styles = css`
+    :host {
+      --button-size: 64px;
+      --icon-size: 40%;
+    }
+
     mpt-control-surface {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: auto;
-      height: 64px;
-      aspect-ratio: 1 / 1;
+      width: var(--button-size);
+      height: var(--button-size);
       --control-button-border-radius: calc(
         var(--ha-card-border-radius, 12px) / 2
       );
     }
 
     ha-svg-icon {
-      width: 40%;
-      height: auto;
+      width: var(--icon-size);
+      height: var(--icon-size);
       max-height: 80%;
       --mdc-icon-size: 100%;
       transition: transform 180ms ease-in-out;

@@ -2,6 +2,7 @@ import {
   ActionConfig,
   HomeAssistant as HomeAssistantBase,
 } from "custom-card-helpers";
+import { LovelaceCardFeatureConfig } from "./feature";
 
 export interface HomeAssistant extends HomeAssistantBase {
   hassUrl(path?): string;
@@ -20,13 +21,6 @@ export interface LovelaceCardConfig {
     condition: string;
   }[];
 }
-
-export interface MediaPlayerVolumeSliderCardFeatureConfig {
-  type: "media-player-volume-slider";
-}
-
-export type LovelaceCardFeatureConfig =
-  MediaPlayerVolumeSliderCardFeatureConfig;
 
 export interface TileCardConfig extends LovelaceCardConfig {
   entity: string;
