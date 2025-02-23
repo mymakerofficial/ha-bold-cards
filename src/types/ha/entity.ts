@@ -3,6 +3,25 @@ import {
   HassEntityBase,
 } from "home-assistant-js-websocket";
 
+export const BaseState = {
+  UNAVAILABLE: "unavailable",
+  UNKNOWN: "unknown",
+  ON: "on",
+  OFF: "off",
+} as const;
+export type BaseState = (typeof BaseState)[keyof typeof BaseState];
+
+export const MediaPlayerState = {
+  ...BaseState,
+  PLAYING: "playing",
+  PAUSED: "paused",
+  IDLE: "idle",
+  STANDBY: "standby",
+  BUFFERING: "buffering",
+} as const;
+export type MediaPlayerState =
+  (typeof MediaPlayerState)[keyof typeof MediaPlayerState];
+
 interface MediaPlayerEntityAttributes extends HassEntityAttributeBase {
   media_content_id?: string;
   media_content_type?: string;
@@ -31,14 +50,5 @@ interface MediaPlayerEntityAttributes extends HassEntityAttributeBase {
 
 export interface MediaPlayerEntity extends HassEntityBase {
   attributes: MediaPlayerEntityAttributes;
-  state:
-    | "playing"
-    | "paused"
-    | "idle"
-    | "off"
-    | "on"
-    | "unavailable"
-    | "unknown"
-    | "standby"
-    | "buffering";
+  state: MediaPlayerState;
 }

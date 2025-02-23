@@ -18,7 +18,7 @@ import { MediaPlayerEntity } from "../../types/ha/entity";
 import { PropertyValues } from "lit-element";
 import { extractColors } from "../../helpers/extract-color";
 import { styleMap } from "lit-html/directives/style-map";
-import { mdiPause, mdiSkipNext } from "@mdi/js";
+import { getMediaControls } from "../../helpers/media-player";
 
 // This puts your card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
@@ -102,6 +102,8 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
     const mediaDescription = stateObj.attributes.media_artist;
     const imageUrl = this._imageUrl;
 
+    const controls = getMediaControls(stateObj);
+
     const features = [
       {
         type: "media-player-volume-slider",
@@ -146,8 +148,13 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
               </div>
             </div>
             <div class="controls">
-              <mpt-large-button .iconPath=${mdiPause}></mpt-large-button>
-              <mpt-large-button .iconPath=${mdiSkipNext}></mpt-large-button>
+              ${controls?.map(
+                (control) => html`
+                  <mpt-large-button
+                    .iconPath=${control.iconPath}
+                  ></mpt-large-button>
+                `,
+              )}
             </div>
           </div>
           <hui-card-features
