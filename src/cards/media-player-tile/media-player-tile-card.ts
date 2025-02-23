@@ -128,12 +128,21 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
                 aria-labelledby="info"
               ></mpt-control-surface>
               <div class="hero-content">
-                <mpt-cover-image .imageUrl=${imageUrl}></mpt-cover-image>
-                <ha-tile-info
-                  id="info"
-                  .primary=${mediaTitle}
-                  .secondary=${mediaDescription}
-                ></ha-tile-info>
+                <mpt-cover-image .imageUrl=${imageUrl}>
+                  <ha-state-icon
+                    slot="icon"
+                    .stateObj=${stateObj}
+                    .hass=${this.hass}
+                  ></ha-state-icon>
+                </mpt-cover-image>
+                <div class="media-info" id="info">
+                  <hui-marquee
+                    .text=${mediaTitle || mediaDescription}
+                    .active=${true}
+                    .animating=${true}
+                  ></hui-marquee>
+                  <span>${mediaDescription}</span>
+                </div>
               </div>
             </div>
             <div class="controls">
@@ -187,6 +196,7 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
 
       ha-card {
         --tile-color: var(--primary-color);
+        --tile-icon-color: var(--tile-color);
         --state-color: var(--tile-color);
         --state-icon-color: var(--tile-color);
         --ha-ripple-color: var(--tile-color);
@@ -210,8 +220,8 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         position: absolute;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
+        bottom: 0;
+        right: 0;
         --control-surface-border-radius: calc(
           var(--ha-card-border-radius, 12px) / 2
         );
@@ -250,30 +260,11 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         display: flex;
       }
 
-      ha-tile-info {
+      .media-info {
         flex: 1;
-      }
-
-      ha-tile-icon {
-        --tile-icon-color: var(--tile-color);
-        position: relative;
-        padding: 6px;
-        margin: -6px;
-      }
-
-      ha-tile-badge {
-        position: absolute;
-        top: 3px;
-        right: 3px;
-        inset-inline-end: 3px;
-        inset-inline-start: initial;
-      }
-
-      ha-tile-info {
-        position: relative;
-        min-width: 0;
-        transition: background-color 180ms ease-in-out;
-        box-sizing: border-box;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
       }
     `;
   }
