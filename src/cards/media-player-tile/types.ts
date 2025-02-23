@@ -1,5 +1,6 @@
-import { LovelaceCardConfig } from "./ha/lovelace";
-import { LovelaceCardFeatureConfig } from "./ha/feature";
+import { LovelaceCardConfig } from "../../types/ha/lovelace";
+import { LovelaceCardFeatureConfig } from "../../types/ha/feature";
+import { MediaControlAction } from "../../helpers/media-player";
 
 export const MediaPlayerTileContentLayout = {
   HORIZONTAL: "horizontal",
@@ -20,5 +21,6 @@ export interface MediaPlayerTileConfig extends LovelaceCardConfig {
   color_mode: MediaPlayerTileColorMode;
   color: string;
   content_layout: MediaPlayerTileContentLayout;
+  controls: MediaControlAction[];
   features?: LovelaceCardFeatureConfig[];
 }

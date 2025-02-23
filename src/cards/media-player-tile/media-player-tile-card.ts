@@ -11,7 +11,7 @@ import {
   MediaPlayerTileColorMode,
   MediaPlayerTileConfig,
   MediaPlayerTileContentLayout,
-} from "../../types/tile";
+} from "./types";
 import {
   HomeAssistant,
   LovelaceCard,
@@ -22,8 +22,11 @@ import { MediaPlayerEntity } from "../../types/ha/entity";
 import { PropertyValues } from "lit-element";
 import { extractColors } from "../../helpers/extract-color";
 import { styleMap } from "lit-html/directives/style-map";
-import { mdiPlay, mdiPower } from "@mdi/js";
-import { getMediaDescription } from "../../helpers/media-player";
+import {
+  getMediaControls,
+  getMediaDescription,
+  MediaControlAction,
+} from "../../helpers/media-player";
 import { classMap } from "lit-html/directives/class-map";
 
 // This puts your card into the UI card picker dialog
@@ -44,7 +47,9 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
   }
 
   public static getStubConfig(): Record<string, unknown> {
-    return {};
+    return {
+      controls: Object.values(MediaControlAction),
+    };
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
@@ -114,26 +119,9 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
     const mediaDescription = getMediaDescription(stateObj);
     const imageUrl = this._imageUrl;
 
-    // const controls = getMediaControls(stateObj);
-    const controls = [
-      {
-        iconPath: mdiPower,
-        action: "turn_off",
-      },
-      {
-        iconPath: mdiPlay,
-        action: "media_play",
-      },
-    ];
-
-    const features = [
-      {
-        type: "custom:media-player-progress",
-      },
-      {
-        type: "media-player-volume-slider",
-      },
-    ];
+    const controls = getMediaControls(stateObj).filter(({ action }) =>
+      this._config?.controls?.includes(action),
+    );
 
     return html`
       <ha-card
@@ -173,20 +161,14 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
                 </div>
               </div>
             </div>
-            <div class="controls">
-              ${controls?.map(
-                (control) => html`
-                  <mpt-large-button
-                    .iconPath=${control.iconPath}
-                  ></mpt-large-button>
-                `,
-              )}
-            </div>
+            <mpt-media-control-button-row
+              .controls=${controls}
+            ></mpt-media-control-button-row>
           </div>
           <hui-card-features
             .hass=${this.hass}
             .stateObj=${stateObj}
-            .features=${features}
+            .features=${this._config.features}
           ></hui-card-features>
         </div>
       </ha-card>
@@ -310,10 +292,6 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
 
       ha-card.vertical mpt-cover-image {
         --image-size: 148px;
-      }
-
-      .controls {
-        display: flex;
       }
 
       .media-info {

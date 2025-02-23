@@ -11,7 +11,8 @@ import { baseLovelaceCardConfig } from "../../helpers/ha/base-card-struct";
 import {
   MediaPlayerTileColorMode,
   MediaPlayerTileContentLayout,
-} from "../../types/tile";
+} from "./types";
+import { MediaControlAction } from "../../helpers/media-player";
 
 export const cardConfigStruct = assign(
   baseLovelaceCardConfig,
@@ -22,6 +23,7 @@ export const cardConfigStruct = assign(
     content_layout: optional(
       enums(Object.values(MediaPlayerTileContentLayout)),
     ),
+    controls: optional(array(enums(Object.values(MediaControlAction)))),
     features: optional(array(any())),
     features_position: optional(enums(["bottom", "inline"])),
   }),

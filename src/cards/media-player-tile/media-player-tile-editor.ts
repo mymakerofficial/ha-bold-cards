@@ -8,7 +8,7 @@ import {
   MediaPlayerTileColorMode,
   MediaPlayerTileConfig,
   MediaPlayerTileContentLayout,
-} from "../../types/tile";
+} from "./types";
 import { customElement, property, state } from "lit/decorators";
 import { assert } from "superstruct";
 import { cardConfigStruct } from "./struct";

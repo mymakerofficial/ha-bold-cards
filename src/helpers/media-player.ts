@@ -1,10 +1,16 @@
-import { MediaContentType, MediaPlayerEntity } from "../types/ha/entity";
-import { isStateActive, isStateUnavailable } from "./states";
+import {
+  MediaContentType,
+  MediaPlayerEntity,
+  MediaPlayerState,
+} from "../types/ha/entity";
+import { isStateOff, isStateUnavailable } from "./states";
 import { supportsFeature } from "./supports-feature";
 import {
   mdiPause,
   mdiPlay,
   mdiPower,
+  mdiRepeat,
+  mdiShuffle,
   mdiSkipNext,
   mdiSkipPrevious,
 } from "@mdi/js";
@@ -48,54 +54,98 @@ export function getMediaDescription(stateObj: MediaPlayerEntity) {
   }
 }
 
+export const MediaControlAction = {
+  TURN_ON: "turn_on",
+  TURN_OFF: "turn_off",
+  SHUFFLE_SET: "shuffle_set",
+  MEDIA_PREVIOUS_TRACK: "media_previous_track",
+  MEDIA_PLAY: "media_play",
+  MEDIA_PAUSE: "media_pause",
+  MEDIA_NEXT_TRACK: "media_next_track",
+  REPEAT_SET: "repeat_set",
+};
+export type MediaControlAction =
+  (typeof MediaControlAction)[keyof typeof MediaControlAction];
+
 export interface MediaControlButton {
   iconPath: string;
-  action: string;
+  action: MediaControlAction;
 }
 
 export function getMediaControls(stateObj: MediaPlayerEntity) {
-  if (isStateUnavailable(stateObj.state)) {
-    return;
-  }
+  const { state } = stateObj;
 
-  if (!isStateActive(stateObj)) {
-    return;
+  if (isStateUnavailable(stateObj.state)) {
+    return [];
   }
 
   const buttons: MediaControlButton[] = [];
 
-  if (supportsFeature(stateObj, MediaPlayerEntityFeature.TURN_OFF)) {
+  if (
+    isStateOff(state) &&
+    supportsFeature(stateObj, MediaPlayerEntityFeature.TURN_ON)
+  ) {
     buttons.push({
       iconPath: mdiPower,
-      action: "turn_off",
+      action: MediaControlAction.TURN_ON,
+    });
+  }
+
+  if (
+    !isStateOff(state) &&
+    supportsFeature(stateObj, MediaPlayerEntityFeature.TURN_OFF)
+  ) {
+    buttons.push({
+      iconPath: mdiPower,
+      action: MediaControlAction.TURN_OFF,
+    });
+  }
+
+  if (supportsFeature(stateObj, MediaPlayerEntityFeature.SHUFFLE_SET)) {
+    buttons.push({
+      iconPath: mdiShuffle,
+      action: MediaControlAction.SHUFFLE_SET,
     });
   }
 
   if (supportsFeature(stateObj, MediaPlayerEntityFeature.PREVIOUS_TRACK)) {
     buttons.push({
       iconPath: mdiSkipPrevious,
-      action: "media_previous_track",
+      action: MediaControlAction.MEDIA_PREVIOUS_TRACK,
     });
   }
 
-  if (supportsFeature(stateObj, MediaPlayerEntityFeature.PLAY)) {
+  if (
+    state !== MediaPlayerState.PLAYING &&
+    supportsFeature(stateObj, MediaPlayerEntityFeature.PLAY)
+  ) {
     buttons.push({
       iconPath: mdiPlay,
-      action: "media_play",
+      action: MediaControlAction.MEDIA_PLAY,
     });
   }
 
-  if (supportsFeature(stateObj, MediaPlayerEntityFeature.PAUSE)) {
+  if (
+    state !== MediaPlayerState.PAUSED &&
+    supportsFeature(stateObj, MediaPlayerEntityFeature.PAUSE)
+  ) {
     buttons.push({
       iconPath: mdiPause,
-      action: "media_pause",
+      action: MediaControlAction.MEDIA_PAUSE,
     });
   }
 
   if (supportsFeature(stateObj, MediaPlayerEntityFeature.NEXT_TRACK)) {
     buttons.push({
       iconPath: mdiSkipNext,
-      action: "media_next_track",
+      action: MediaControlAction.MEDIA_NEXT_TRACK,
+    });
+  }
+
+  if (supportsFeature(stateObj, MediaPlayerEntityFeature.REPEAT_SET)) {
+    buttons.push({
+      iconPath: mdiRepeat,
+      action: MediaControlAction.REPEAT_SET,
     });
   }
 
