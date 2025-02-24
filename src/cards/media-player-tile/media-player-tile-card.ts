@@ -325,6 +325,7 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+        max-width: 100%;
       }
 
       .media-info .primary {
