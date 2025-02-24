@@ -17,17 +17,19 @@ export type ButtonShape = (typeof ButtonShape)[keyof typeof ButtonShape];
 
 export const ButtonSize = {
   SM: "sm",
+  MD: "md",
   LG: "lg",
+  XL: "xl",
 } as const;
 export type ButtonSize = (typeof ButtonSize)[keyof typeof ButtonSize];
 
 @customElement("mpt-button")
 export class Button extends ControlSurface {
-  @property() public iconPath?: string;
+  @property({ attribute: false }) public iconPath?: string;
 
   @property() variant: ButtonVariant = ButtonVariant.PLAIN;
   @property() shape: ButtonShape = ButtonShape.SQUARE;
-  @property() size: ButtonSize = ButtonSize.LG;
+  @property() size: ButtonSize = ButtonSize.MD;
 
   protected render() {
     return html`
@@ -39,18 +41,38 @@ export class Button extends ControlSurface {
   }
 
   static styles = css`
-    :host {
-      --button-size: 64px;
-      --icon-size: 40%;
+    mpt-control-surface {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      --control-surface-border-radius: calc(
+        var(--ha-card-border-radius, 12px) / 2
+      );
+      min-width: 53px;
+      height: 53px;
+      --icon-size: 24px;
     }
 
-    :host([size="sm"]) {
-      --button-size: var(--feature-height, 42px);
-      --icon-size: var(--feature-height, 42px);
+    :host([size="sm"]) mpt-control-surface {
+      min-width: 42px;
+      height: 42px;
+      --icon-size: 20px;
+    }
+
+    :host([size="lg"]) mpt-control-surface {
+      min-width: 64px;
+      height: 64px;
+      --icon-size: 26px;
+    }
+
+    :host([size="xl"]) mpt-control-surface {
+      min-width: 128px;
+      height: 64px;
+      --icon-size: 26px;
     }
 
     :host([shape="rounded"]) mpt-control-surface {
-      --control-surface-border-radius: 50%;
+      --control-surface-border-radius: 32px;
     }
 
     :host([variant="plain"]) mpt-control-surface {
@@ -66,17 +88,6 @@ export class Button extends ControlSurface {
     :host([variant="filled"]) mpt-control-surface {
       --control-surface-background-color: var(--tile-color);
       --control-surface-color: var(--ha-card-background);
-    }
-
-    mpt-control-surface {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: var(--button-size);
-      height: var(--button-size);
-      --control-button-border-radius: calc(
-        var(--ha-card-border-radius, 12px) / 2
-      );
     }
 
     ha-svg-icon {

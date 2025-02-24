@@ -1,11 +1,11 @@
 import { customElement, property } from "lit/decorators";
-import { css, html, LitElement } from "lit";
+import { css, html, LitElement, nothing } from "lit";
 import { MediaControlButton } from "../helpers/media-player";
 import { classMap } from "lit-html/directives/class-map";
 
 @customElement("mpt-media-control-button-row")
 export class MediaControlButtonRow extends LitElement {
-  @property() public controls?: MediaControlButton[];
+  @property({ attribute: false }) public controls?: MediaControlButton[];
 
   @property() public center?: boolean;
 
@@ -19,10 +19,10 @@ export class MediaControlButtonRow extends LitElement {
         ${this.controls?.map(
           (control) => html`
             <mpt-button
-              iconPath=${control.iconPath}
-              size=${control.size}
-              shape=${control.shape}
-              variant=${control.variant}
+              .iconPath=${control.iconPath}
+              size=${control.size ?? nothing}
+              shape=${control.shape ?? nothing}
+              variant=${control.variant ?? nothing}
             ></mpt-button>
           `,
         )}
@@ -31,9 +31,14 @@ export class MediaControlButtonRow extends LitElement {
   }
 
   static styles = css`
+    :host {
+      --button-row-gap: 0px;
+    }
+
     .controls {
       display: flex;
       align-items: center;
+      gap: var(--button-row-gap);
     }
 
     .controls.center {

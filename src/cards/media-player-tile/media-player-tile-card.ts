@@ -204,10 +204,10 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
       window.matchMedia("(prefers-color-scheme: dark)").matches;
     this._foregroundColor = darkMode
       ? swatches.LightVibrant?.hex
-      : swatches.DarkVibrant?.hex;
+      : swatches.DarkMuted?.hex;
     this._backgroundColor = darkMode
-      ? swatches.DarkMuted?.hex
-      : swatches.LightMuted?.hex;
+      ? swatches.Vibrant?.hex
+      : swatches.LightVibrant?.hex;
   }
 
   private _handleAction(ev: ActionHandlerEvent) {
@@ -239,7 +239,9 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         height: 100%;
         transition:
           box-shadow 180ms ease-in-out,
-          border-color 180ms ease-in-out;
+          border-color 180ms ease-in-out,
+          color 180ms ease-in-out,
+          background-color 180ms ease-in-out;
         display: flex;
         flex-direction: column;
         justify-content: space-between;

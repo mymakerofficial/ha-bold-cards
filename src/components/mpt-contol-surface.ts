@@ -36,6 +36,12 @@ export class ControlSurface extends LitElement {
       --ha-ripple-pressed-opacity: 0.12;
       color: var(--control-surface-color);
       -webkit-tap-highlight-color: transparent;
+      transition:
+        min-width 180ms ease-in-out,
+        height 180ms ease-in-out,
+        border-radius 180ms ease-in-out,
+        background-color 180ms ease-in-out,
+        color 180ms ease-in-out;
     }
 
     .button {

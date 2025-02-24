@@ -29,7 +29,7 @@ class MediaPlayerProgressControlFeature
 {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: MediaPlayerEntity;
 
   @state() private _config?: MediaPlayerProgressControlFeatureConfig;
 
@@ -56,7 +56,7 @@ class MediaPlayerProgressControlFeature
       return nothing;
     }
 
-    const controls = getMediaControls(this.stateObj as MediaPlayerEntity)
+    const controls = getMediaControls(this.stateObj)
       .filter(({ action }) => this._config?.controls?.includes(action))
       .map((it) => ({
         ...it,
@@ -81,6 +81,9 @@ class MediaPlayerProgressControlFeature
       ].includes(action),
     );
 
+    const mediaPosition = this.stateObj.attributes.media_position;
+    const mediaDuration = this.stateObj.attributes.media_duration;
+
     return html`
       <div
         class="container ${classMap({
@@ -88,11 +91,17 @@ class MediaPlayerProgressControlFeature
         })}"
       >
         <mpt-media-control-button-row
-          controls=${left}
+          .controls=${left}
         ></mpt-media-control-button-row>
-        <ha-slider min=${0} max=${100} value=${50}></ha-slider>
+        <span>${mediaPosition}</span>
+        <ha-slider
+          min=${0}
+          max=${mediaDuration}
+          value=${mediaPosition}
+        ></ha-slider>
+        <span>${mediaDuration}</span>
         <mpt-media-control-button-row
-          controls=${right}
+          .controls=${right}
         ></mpt-media-control-button-row>
       </div>
     `;

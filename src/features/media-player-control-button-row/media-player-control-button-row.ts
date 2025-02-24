@@ -53,17 +53,20 @@ class MediaPlayerControlButtonRowFeature
       .filter(({ action }) => this._config?.controls?.includes(action))
       .map((it) => ({
         ...it,
-        shape: ButtonShape.ROUNDED,
       }));
 
     return html`<mpt-media-control-button-row
       center=${true}
-      small=${this._config.small}
-      controls=${controls}
+      .controls=${controls}
     ></mpt-media-control-button-row>`;
   }
 
   static get styles() {
-    return css``;
+    return css`
+      mpt-media-control-button-row {
+        margin: 0 8px;
+        --button-row-gap: 8px;
+      }
+    `;
   }
 }
