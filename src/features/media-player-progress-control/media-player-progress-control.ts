@@ -13,6 +13,7 @@ import { MediaPlayerEntity } from "../../types/ha/entity";
 import { classMap } from "lit-html/directives/class-map";
 import { ButtonSize } from "../../components/mpt-button";
 import { supportsFeature } from "../../helpers/supports-feature";
+import { formatDuration } from "./helper";
 
 (window as any).customCardFeatures = (window as any).customCardFeatures || [];
 (window as any).customCardFeatures.push({
@@ -84,6 +85,9 @@ class MediaPlayerProgressControlFeature
     const mediaPosition = this.stateObj.attributes.media_position;
     const mediaDuration = this.stateObj.attributes.media_duration;
 
+    const mediaPositionLabel = formatDuration(mediaPosition);
+    const mediaDurationLabel = formatDuration(mediaDuration);
+
     return html`
       <div
         class="container ${classMap({
@@ -93,13 +97,13 @@ class MediaPlayerProgressControlFeature
         <mpt-media-control-button-row
           .controls=${left}
         ></mpt-media-control-button-row>
-        <span>${mediaPosition}</span>
+        <time>${mediaPositionLabel}</time>
         <ha-slider
           min=${0}
           max=${mediaDuration}
           value=${mediaPosition}
         ></ha-slider>
-        <span>${mediaDuration}</span>
+        <time>${mediaDurationLabel}</time>
         <mpt-media-control-button-row
           .controls=${right}
         ></mpt-media-control-button-row>
@@ -128,6 +132,13 @@ class MediaPlayerProgressControlFeature
         --md-sys-color-primary: var(--tile-color);
         --_inactive-track-color: rgb(from var(--tile-color) r g b / 20%);
         flex: 1;
+      }
+
+      time {
+        color: var(--tile-color);
+        font-size: 0.8em;
+        margin: 0 8px;
+        opacity: 0.8;
       }
     `;
   }
