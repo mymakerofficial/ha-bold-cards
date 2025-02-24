@@ -27,11 +27,11 @@ export class ControlSurface extends LitElement {
     :host {
       display: block;
       --control-surface-color: var(--tile-color, --primary-text-color);
-      --control-surface-background-color: var(--control-surface-color);
+      --control-surface-background-color: transparent;
       --control-surface-border-radius: 10px;
       --control-surface-padding: 8px;
       --mdc-icon-size: 20px;
-      --ha-ripple-color: var(--control-surface-background-color);
+      --ha-ripple-color: var(--control-surface-color);
       --ha-ripple-hover-opacity: 0.04;
       --ha-ripple-pressed-opacity: 0.12;
       color: var(--control-surface-color);
@@ -59,7 +59,7 @@ export class ControlSurface extends LitElement {
       font-weight: 500;
       outline: none;
       overflow: hidden;
-      background: none;
+      background: var(--control-surface-background-color);
       /* For safari border-radius overflow */
       z-index: 0;
       font-size: inherit;

@@ -1,5 +1,5 @@
 import { customElement, property, state } from "lit/decorators";
-import { css, html, LitElement } from "lit";
+import { css, html, LitElement, nothing } from "lit";
 import { LovelaceCardFeature } from "../../types/ha/feature";
 import { HomeAssistant } from "../../types/ha/lovelace";
 import { HassEntity } from "home-assistant-js-websocket";
@@ -7,9 +7,12 @@ import { MediaPlayerProgressControlFeatureConfig } from "./types";
 import {
   getMediaControls,
   MediaControlAction,
+  MediaPlayerEntityFeature,
 } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { classMap } from "lit-html/directives/class-map";
+import { ButtonSize } from "../../components/mpt-button";
+import { supportsFeature } from "../../helpers/supports-feature";
 
 (window as any).customCardFeatures = (window as any).customCardFeatures || [];
 (window as any).customCardFeatures.push({
@@ -32,7 +35,7 @@ class MediaPlayerProgressControlFeature
 
   static getStubConfig(): MediaPlayerProgressControlFeatureConfig {
     return {
-      type: "media-player-progress-control",
+      type: "custom:media-player-progress-control",
       controls: Object.values(MediaControlAction),
     };
   }
@@ -46,12 +49,19 @@ class MediaPlayerProgressControlFeature
 
   render() {
     if (!this._config || !this.hass || !this.stateObj) {
-      return null;
+      return nothing;
     }
 
-    const controls = getMediaControls(
-      this.stateObj as MediaPlayerEntity,
-    ).filter(({ action }) => this._config?.controls?.includes(action));
+    if (!supportsFeature(this.stateObj, MediaPlayerEntityFeature.SEEK)) {
+      return nothing;
+    }
+
+    const controls = getMediaControls(this.stateObj as MediaPlayerEntity)
+      .filter(({ action }) => this._config?.controls?.includes(action))
+      .map((it) => ({
+        ...it,
+        size: ButtonSize.SM,
+      }));
 
     const left = controls.filter(({ action }) =>
       [
@@ -78,13 +88,11 @@ class MediaPlayerProgressControlFeature
         })}"
       >
         <mpt-media-control-button-row
-          .small=${true}
-          .controls=${left}
+          controls=${left}
         ></mpt-media-control-button-row>
         <ha-slider min=${0} max=${100} value=${50}></ha-slider>
         <mpt-media-control-button-row
-          .small=${true}
-          .controls=${right}
+          controls=${right}
         ></mpt-media-control-button-row>
       </div>
     `;

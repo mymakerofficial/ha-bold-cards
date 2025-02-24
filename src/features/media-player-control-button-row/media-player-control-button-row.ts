@@ -9,6 +9,7 @@ import {
   MediaControlAction,
 } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
+import { ButtonShape } from "../../components/mpt-button";
 
 (window as any).customCardFeatures = (window as any).customCardFeatures || [];
 (window as any).customCardFeatures.push({
@@ -31,7 +32,7 @@ class MediaPlayerControlButtonRowFeature
 
   static getStubConfig(): MediaPlayerControlButtonRowFeatureConfig {
     return {
-      type: "media-player-control-button-row",
+      type: "custom:media-player-control-button-row",
       controls: Object.values(MediaControlAction),
     };
   }
@@ -48,14 +49,17 @@ class MediaPlayerControlButtonRowFeature
       return null;
     }
 
-    const controls = getMediaControls(
-      this.stateObj as MediaPlayerEntity,
-    ).filter(({ action }) => this._config?.controls?.includes(action));
+    const controls = getMediaControls(this.stateObj as MediaPlayerEntity)
+      .filter(({ action }) => this._config?.controls?.includes(action))
+      .map((it) => ({
+        ...it,
+        shape: ButtonShape.ROUNDED,
+      }));
 
     return html`<mpt-media-control-button-row
-      .center=${true}
-      .small=${this._config.small}
-      .controls=${controls}
+      center=${true}
+      small=${this._config.small}
+      controls=${controls}
     ></mpt-media-control-button-row>`;
   }
 

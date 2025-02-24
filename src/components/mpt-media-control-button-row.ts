@@ -5,22 +5,25 @@ import { classMap } from "lit-html/directives/class-map";
 
 @customElement("mpt-media-control-button-row")
 export class MediaControlButtonRow extends LitElement {
-  @property({ attribute: false }) public controls?: MediaControlButton[];
+  @property() public controls?: MediaControlButton[];
 
-  @property({ attribute: false }) public center?: boolean;
-  @property({ attribute: false }) public small?: boolean;
+  @property() public center?: boolean;
 
   protected render() {
     return html`
       <div
         class="controls ${classMap({
           center: !!this.center,
-          small: !!this.small,
         })}"
       >
         ${this.controls?.map(
           (control) => html`
-            <mpt-large-button .iconPath=${control.iconPath}></mpt-large-button>
+            <mpt-button
+              iconPath=${control.iconPath}
+              size=${control.size}
+              shape=${control.shape}
+              variant=${control.variant}
+            ></mpt-button>
           `,
         )}
       </div>
@@ -28,22 +31,13 @@ export class MediaControlButtonRow extends LitElement {
   }
 
   static styles = css`
-    :host {
-      --button-size: 64px;
-      --icon-size: 40%;
-    }
-
     .controls {
       display: flex;
+      align-items: center;
     }
 
     .controls.center {
       justify-content: center;
-    }
-
-    .controls.small mpt-large-button {
-      --button-size: var(--feature-height, 42px);
-      --icon-size: var(--feature-height, 42px);
     }
   `;
 }

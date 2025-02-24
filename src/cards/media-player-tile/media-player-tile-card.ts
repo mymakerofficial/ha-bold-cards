@@ -99,7 +99,7 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
 
   private get _tileColor() {
     return this._config!.color_mode === MediaPlayerTileColorMode.AMBIENT
-      ? this._foregroundColor || ""
+      ? this._foregroundColor || `var(--${this._config!.color}-color)`
       : `var(--${this._config!.color}-color)`;
   }
 
@@ -115,8 +115,11 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
       return nothing;
     }
 
-    const mediaTitle = stateObj.attributes.media_title;
-    const mediaDescription = getMediaDescription(stateObj);
+    const mediaTitle =
+      stateObj.attributes.media_title || stateObj.attributes.friendly_name;
+    const mediaDescription = stateObj.attributes.media_title
+      ? getMediaDescription(stateObj)
+      : stateObj.state;
     const imageUrl = this._imageUrl;
 
     const controls = getMediaControls(stateObj).filter(({ action }) =>
@@ -127,6 +130,11 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
       <ha-card
         style=${styleMap({
           "--tile-color": this._tileColor,
+          "--ha-card-background":
+            this._config!.color_mode === MediaPlayerTileColorMode.AMBIENT &&
+            this._backgroundColor
+              ? `color-mix(in srgb, ${this._backgroundColor}, var(--card-background-color) 95%)`
+              : "",
         })}
         class=${classMap({
           vertical:

@@ -10,10 +10,17 @@ import {
   mdiPlay,
   mdiPower,
   mdiRepeat,
+  mdiRepeatOff,
   mdiShuffle,
+  mdiShuffleDisabled,
   mdiSkipNext,
   mdiSkipPrevious,
 } from "@mdi/js";
+import {
+  ButtonShape,
+  ButtonSize,
+  ButtonVariant,
+} from "../components/mpt-button";
 
 export const MediaPlayerEntityFeature = {
   PAUSE: 1,
@@ -70,6 +77,9 @@ export type MediaControlAction =
 export interface MediaControlButton {
   iconPath: string;
   action: MediaControlAction;
+  size?: ButtonSize;
+  shape?: ButtonShape;
+  variant?: ButtonVariant;
 }
 
 export function getMediaControls(stateObj: MediaPlayerEntity) {
@@ -103,8 +113,9 @@ export function getMediaControls(stateObj: MediaPlayerEntity) {
 
   if (supportsFeature(stateObj, MediaPlayerEntityFeature.SHUFFLE_SET)) {
     buttons.push({
-      iconPath: mdiShuffle,
+      iconPath: stateObj.attributes.shuffle ? mdiShuffle : mdiShuffleDisabled,
       action: MediaControlAction.SHUFFLE_SET,
+      size: ButtonSize.SM,
     });
   }
 
@@ -126,7 +137,7 @@ export function getMediaControls(stateObj: MediaPlayerEntity) {
   }
 
   if (
-    state !== MediaPlayerState.PAUSED &&
+    state === MediaPlayerState.PLAYING &&
     supportsFeature(stateObj, MediaPlayerEntityFeature.PAUSE)
   ) {
     buttons.push({
@@ -144,8 +155,10 @@ export function getMediaControls(stateObj: MediaPlayerEntity) {
 
   if (supportsFeature(stateObj, MediaPlayerEntityFeature.REPEAT_SET)) {
     buttons.push({
-      iconPath: mdiRepeat,
+      // TODO handle repeat one
+      iconPath: stateObj.attributes.repeat === "all" ? mdiRepeat : mdiRepeatOff,
       action: MediaControlAction.REPEAT_SET,
+      size: ButtonSize.SM,
     });
   }
 
