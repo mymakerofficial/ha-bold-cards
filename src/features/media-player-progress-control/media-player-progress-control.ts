@@ -37,6 +37,7 @@ class MediaPlayerProgressControlFeature
   static getStubConfig(): MediaPlayerProgressControlFeatureConfig {
     return {
       type: "custom:media-player-progress-control",
+      show_timestamps: true,
       controls: Object.values(MediaControlAction),
     };
   }
@@ -88,6 +89,9 @@ class MediaPlayerProgressControlFeature
     const mediaPositionLabel = formatDuration(mediaPosition);
     const mediaDurationLabel = formatDuration(mediaDuration);
 
+    const showTimestamps =
+      this._config.show_timestamps && mediaPosition && mediaDuration;
+
     return html`
       <div
         class="container ${classMap({
@@ -97,13 +101,13 @@ class MediaPlayerProgressControlFeature
         <mpt-media-control-button-row
           .controls=${left}
         ></mpt-media-control-button-row>
-        <time>${mediaPositionLabel}</time>
+        ${showTimestamps ? html`<time>${mediaPositionLabel}</time>` : nothing}
         <ha-slider
           min=${0}
           max=${mediaDuration}
           value=${mediaPosition}
         ></ha-slider>
-        <time>${mediaDurationLabel}</time>
+        ${showTimestamps ? html`<time>${mediaDurationLabel}</time>` : nothing}
         <mpt-media-control-button-row
           .controls=${right}
         ></mpt-media-control-button-row>
