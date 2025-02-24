@@ -251,6 +251,7 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         padding: 12px;
         min-width: 0;
         box-sizing: border-box;
+        overflow: hidden;
       }
 
       ha-card.vertical .content {
@@ -260,6 +261,7 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
       .hero-container {
         position: relative;
         flex: 1;
+        overflow: hidden;
       }
 
       ha-card.vertical .hero-container {
@@ -307,6 +309,10 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         display: flex;
         flex-direction: column;
         justify-content: center;
+        overflow: hidden;
+      }
+
+      .media-info * {
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
