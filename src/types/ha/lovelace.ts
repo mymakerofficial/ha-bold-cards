@@ -4,8 +4,17 @@ import {
 } from "custom-card-helpers";
 import { LovelaceCardFeatureConfig } from "./feature";
 
-export interface HomeAssistant extends HomeAssistantBase {
+export interface ThemeSettings {
+  theme: string;
+  dark?: boolean;
+  primaryColor?: string;
+  accentColor?: string;
+}
+
+export interface HomeAssistant
+  extends Omit<HomeAssistantBase, "selectedTheme"> {
   hassUrl(path?): string;
+  selectedTheme: ThemeSettings | null;
 }
 
 export interface LovelaceCardConfig {

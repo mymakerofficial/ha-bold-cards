@@ -193,17 +193,26 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
 
   private async _updateColors() {
     if (!this._imageUrl) {
+      this._foregroundColor = undefined;
+      this._backgroundColor = undefined;
       return;
     }
 
     const swatches = await extractColors(this.hass!.hassUrl(this._imageUrl));
-    this._foregroundColor = swatches.LightVibrant?.hex;
-    this._backgroundColor = swatches.DarkMuted?.hex;
+    const darkMode =
+      this.hass?.selectedTheme?.dark ??
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    this._foregroundColor = darkMode
+      ? swatches.LightVibrant?.hex
+      : swatches.DarkVibrant?.hex;
+    this._backgroundColor = darkMode
+      ? swatches.DarkMuted?.hex
+      : swatches.LightMuted?.hex;
   }
 
   private _handleAction(ev: ActionHandlerEvent) {
     if (this.hass && this._config && ev.detail.action) {
-      handleAction(this, this.hass, this._config, ev.detail.action);
+      handleAction(this, this.hass as any, this._config, ev.detail.action);
     }
   }
 
