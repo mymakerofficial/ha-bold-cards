@@ -30,6 +30,7 @@ import {
 } from "../../helpers/media-player";
 import { classMap } from "lit-html/directives/class-map";
 import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
+import { MediaPlayerProgressControlFeature } from "../../features/media-player-progress-control/media-player-progress-control";
 
 // This puts your card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
@@ -144,27 +145,28 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
             MediaPlayerTileContentLayout.VERTICAL,
         })}
       >
+        <div
+          class="background"
+          @click=${this._handleMoreInfo}
+          role="button"
+          tabindex="0"
+          aria-labelledby="info"
+        >
+          <ha-ripple></ha-ripple>
+        </div>
         <div class="container">
           <div class="content">
-            <div class="hero-container">
-              <mpt-control-surface
-                class="hero-background"
-                @click=${this._handleMoreInfo}
-                role="button"
-                aria-labelledby="info"
-              ></mpt-control-surface>
-              <div class="hero-content">
-                <mpt-cover-image .imageUrl=${imageUrl}>
-                  <ha-state-icon
-                    slot="icon"
-                    .stateObj=${stateObj}
-                    .hass=${this.hass}
-                  ></ha-state-icon>
-                </mpt-cover-image>
-                <div class="media-info" id="info">
-                  <span class="primary">${mediaTitle || mediaDescription}</span>
-                  <span class="secondary">${mediaDescription}</span>
-                </div>
+            <div class="header">
+              <mpt-cover-image .imageUrl=${imageUrl}>
+                <ha-state-icon
+                  slot="icon"
+                  .stateObj=${stateObj}
+                  .hass=${this.hass}
+                ></ha-state-icon>
+              </mpt-cover-image>
+              <div class="media-info" id="info">
+                <span class="primary">${mediaTitle || mediaDescription}</span>
+                <span class="secondary">${mediaDescription}</span>
               </div>
             </div>
             <mpt-media-control-button-row
@@ -248,6 +250,28 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         justify-content: space-between;
       }
 
+      ha-card:has(.background:focus-visible) {
+        box-shadow: 0 0 0 2px var(--tile-color) !important;
+      }
+
+      .background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        border-radius: var(--ha-card-border-radius, 12px);
+      }
+
+      [role="button"] {
+        cursor: pointer;
+        pointer-events: auto;
+      }
+
+      [role="button"]:focus {
+        outline: none;
+      }
+
       .container {
         margin: calc(-1 * var(--ha-card-border-width, 1px));
         display: flex;
@@ -264,35 +288,14 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         min-width: 0;
         box-sizing: border-box;
         overflow: hidden;
+        pointer-events: none;
       }
 
       ha-card.vertical .content {
         flex-direction: column;
       }
 
-      .hero-container {
-        position: relative;
-        flex: 1;
-        overflow: hidden;
-      }
-
-      ha-card.vertical .hero-container {
-        width: 100%;
-        padding: 12px 0;
-      }
-
-      .hero-background {
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        --control-surface-border-radius: calc(
-          var(--ha-card-border-radius, 12px) / 2
-        );
-      }
-
-      .hero-content {
+      .header {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -304,12 +307,18 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         padding-right: 12px;
       }
 
-      ha-card.vertical .hero-content {
+      ha-card.vertical .header {
         flex-direction: column;
         justify-content: center;
         width: 100%;
         padding-right: 0px;
         gap: 24px;
+      }
+
+      mpt-media-control-button-row {
+        pointer-events: all;
+        margin: -12px -12px -12px 0;
+        padding: 12px 12px 12px 0;
       }
 
       ha-card.vertical mpt-cover-image {

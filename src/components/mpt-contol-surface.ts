@@ -61,10 +61,8 @@ export class ControlSurface extends LitElement {
       padding: var(--control-surface-padding);
       box-sizing: border-box;
       line-height: inherit;
-      font-family: Roboto;
       font-weight: 500;
       outline: none;
-      overflow: hidden;
       background: var(--control-surface-background-color);
       /* For safari border-radius overflow */
       z-index: 0;

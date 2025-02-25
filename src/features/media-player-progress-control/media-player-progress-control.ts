@@ -165,6 +165,7 @@ class MediaPlayerProgressControlFeature
       ha-slider {
         width: 100%;
         --md-sys-color-primary: var(--tile-color);
+        --md-focus-ring-color: var(--tile-color);
         --_inactive-track-color: rgb(from var(--tile-color) r g b / 20%);
       }
 
