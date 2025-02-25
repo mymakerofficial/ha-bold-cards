@@ -149,11 +149,7 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
             <div class="hero-container">
               <mpt-control-surface
                 class="hero-background"
-                @action=${this._handleAction}
-                .actionHandler=${actionHandler({
-                  hasHold: hasAction(this._config!.hold_action),
-                  hasDoubleClick: hasAction(this._config!.double_tap_action),
-                })}
+                @click=${this._handleMoreInfo}
                 role="button"
                 aria-labelledby="info"
               ></mpt-control-surface>
@@ -186,14 +182,6 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
     `;
   }
 
-  private _handleAction(event: MediaControlButtonActionEvent) {
-    handleMediaPlayerAction({
-      hass: this.hass!,
-      stateObj: this._stateObj!,
-      action: event.detail.action,
-    }).then();
-  }
-
   public willUpdate(changedProps: PropertyValues) {
     super.willUpdate(changedProps);
 
@@ -219,6 +207,14 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
     this._backgroundColor = darkMode
       ? swatches.Vibrant?.hex
       : swatches.LightVibrant?.hex;
+  }
+
+  private _handleAction(event: MediaControlButtonActionEvent) {
+    handleMediaPlayerAction({
+      hass: this.hass!,
+      stateObj: this._stateObj!,
+      action: event.detail.action,
+    }).then();
   }
 
   private _handleMoreInfo() {
