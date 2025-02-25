@@ -108,13 +108,19 @@ class MediaPlayerProgressControlFeature
           .controls=${left}
           @action="${this._handleAction}"
         ></mpt-media-control-button-row>
-        ${showTimestamps ? html`<time>${mediaPositionLabel}</time>` : nothing}
-        <ha-slider
-          min=${0}
-          max=${mediaDuration}
-          value=${mediaPosition}
-        ></ha-slider>
-        ${showTimestamps ? html`<time>${mediaDurationLabel}</time>` : nothing}
+        <div class="slider-container">
+          ${showTimestamps
+            ? html`<time class="position">${mediaPositionLabel}</time>`
+            : nothing}
+          <ha-slider
+            min=${0}
+            max=${mediaDuration}
+            value=${mediaPosition}
+          ></ha-slider>
+          ${showTimestamps
+            ? html`<time class="duration">${mediaDurationLabel}</time>`
+            : nothing}
+        </div>
         <mpt-media-control-button-row
           .controls=${right}
           @action="${this._handleAction}"
@@ -148,18 +154,35 @@ class MediaPlayerProgressControlFeature
         width: 100%;
       }
 
-      ha-slider {
-        --md-sys-color-primary: var(--tile-color);
-        --_inactive-track-color: rgb(from var(--tile-color) r g b / 20%);
+      .slider-container {
         flex: 1;
+        position: relative;
+        height: var(--feature-height, 42px);
+        display: flex;
+        align-items: center;
       }
 
-      time {
-        color: var(--tile-color);
-        font-size: 0.8em;
-        margin: 0 8px;
-        opacity: 0.8;
+      ha-slider {
+        width: 100%;
+        --md-sys-color-primary: var(--tile-color);
+        --_inactive-track-color: rgb(from var(--tile-color) r g b / 20%);
       }
+
+      .slider-container time {
+        position: absolute;
+        bottom: 0;
+        font-size: 0.7em;
+        line-height: 1;
+        margin: 0 8px;
+        opacity: 0.5;
+      }
+
+      .slider-container time.position {
+        left: 2px;
+      }
+        
+      .slider-container time.duration {
+        right: 2px;
     `;
   }
 }
