@@ -1,5 +1,5 @@
 import { customElement, property } from "lit/decorators";
-import { css, html, LitElement } from "lit";
+import { css, html } from "lit";
 import { ControlSurface } from "./mpt-contol-surface";
 
 export const ButtonVariant = {
@@ -12,6 +12,7 @@ export type ButtonVariant = (typeof ButtonVariant)[keyof typeof ButtonVariant];
 export const ButtonShape = {
   ROUNDED: "rounded",
   SQUARE: "square",
+  WIDE: "wide",
 } as const;
 export type ButtonShape = (typeof ButtonShape)[keyof typeof ButtonShape];
 
@@ -29,7 +30,7 @@ export class Button extends ControlSurface {
 
   @property() variant: ButtonVariant = ButtonVariant.PLAIN;
   @property() shape: ButtonShape = ButtonShape.SQUARE;
-  @property() size: ButtonSize = ButtonSize.MD;
+  @property() size: ButtonSize = ButtonSize.LG;
 
   protected render() {
     return html`
@@ -41,53 +42,60 @@ export class Button extends ControlSurface {
   }
 
   static styles = css`
+    :host {
+      --button-border-radius: calc(var(--ha-card-border-radius, 12px) / 2);
+      --button-color: var(--tile-color, --primary-color);
+      --button-background-color: transparent;
+      --button-height: 53px;
+      --icon-size: 24px;
+      --button-width: var(--button-height);
+    }
+
     mpt-control-surface {
       display: flex;
       align-items: center;
       justify-content: center;
-      --control-surface-border-radius: calc(
-        var(--ha-card-border-radius, 12px) / 2
-      );
-      min-width: 53px;
-      height: 53px;
-      --icon-size: 24px;
+      min-width: var(--button-width);
+      height: var(--button-height);
+      --control-surface-border-radius: var(--button-border-radius);
+      --control-surface-color: var(--button-color);
+      --control-surface-background-color: var(--button-background-color);
     }
 
-    :host([size="sm"]) mpt-control-surface {
-      min-width: 42px;
-      height: 42px;
+    :host([size="sm"]) {
+      --button-height: var(--feature-height, 42px);
       --icon-size: 20px;
     }
 
-    :host([size="lg"]) mpt-control-surface {
-      min-width: 64px;
-      height: 64px;
+    :host([size="lg"]) {
+      --button-height: 53px;
+      --icon-size: 24px;
+    }
+
+    :host([size="xl"]) {
+      --button-height: 64px;
       --icon-size: 26px;
     }
 
-    :host([size="xl"]) mpt-control-surface {
-      min-width: 128px;
-      height: 64px;
-      --icon-size: 26px;
+    :host([shape="rounded"]) {
+      --button-border-radius: 32px;
     }
 
-    :host([shape="rounded"]) mpt-control-surface {
-      --control-surface-border-radius: 32px;
+    :host([shape="wide"]) {
+      --button-width: calc(var(--button-height) * 2);
     }
 
-    :host([variant="plain"]) mpt-control-surface {
-      background-color: transparent;
+    :host([variant="plain"]) {
+      --button-background-color: transparent;
     }
 
-    :host([variant="tonal"]) mpt-control-surface {
-      --control-surface-background-color: rgb(
-        from var(--tile-color) r g b / 20%
-      );
+    :host([variant="tonal"]) {
+      --button-background-color: rgb(from var(--tile-color) r g b / 20%);
     }
 
-    :host([variant="filled"]) mpt-control-surface {
-      --control-surface-background-color: var(--tile-color);
-      --control-surface-color: var(--ha-card-background);
+    :host([variant="filled"]) {
+      --button-background-color: var(--tile-color);
+      --button-color: var(--ha-card-background);
     }
 
     ha-svg-icon {

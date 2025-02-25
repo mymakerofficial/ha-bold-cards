@@ -115,7 +115,7 @@ export function getMediaControls(stateObj: MediaPlayerEntity) {
     buttons.push({
       iconPath: stateObj.attributes.shuffle ? mdiShuffle : mdiShuffleDisabled,
       action: MediaControlAction.SHUFFLE_SET,
-      size: ButtonSize.SM,
+      size: ButtonSize.MD,
     });
   }
 
@@ -134,7 +134,7 @@ export function getMediaControls(stateObj: MediaPlayerEntity) {
       iconPath: mdiPlay,
       action: MediaControlAction.MEDIA_PLAY,
       variant: ButtonVariant.FILLED,
-      size: ButtonSize.LG,
+      size: ButtonSize.XL,
       shape: ButtonShape.ROUNDED,
     });
   }
@@ -148,6 +148,7 @@ export function getMediaControls(stateObj: MediaPlayerEntity) {
       action: MediaControlAction.MEDIA_PAUSE,
       variant: ButtonVariant.FILLED,
       size: ButtonSize.XL,
+      shape: ButtonShape.WIDE,
     });
   }
 
@@ -163,7 +164,7 @@ export function getMediaControls(stateObj: MediaPlayerEntity) {
       // TODO handle repeat one
       iconPath: stateObj.attributes.repeat === "all" ? mdiRepeat : mdiRepeatOff,
       action: MediaControlAction.REPEAT_SET,
-      size: ButtonSize.SM,
+      size: ButtonSize.MD,
     });
   }
 

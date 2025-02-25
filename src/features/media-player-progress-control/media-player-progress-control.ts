@@ -62,7 +62,7 @@ class MediaPlayerProgressControlFeature
       .filter(({ action }) => this._config?.controls?.includes(action))
       .map((it) => ({
         ...it,
-        size: ButtonSize.SM,
+        size: ButtonSize.MD,
       }));
 
     const left = controls.filter(({ action }) =>

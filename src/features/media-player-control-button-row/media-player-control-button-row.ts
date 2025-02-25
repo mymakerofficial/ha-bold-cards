@@ -9,7 +9,7 @@ import {
   MediaControlAction,
 } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
-import { ButtonShape } from "../../components/mpt-button";
+import { ButtonSize } from "../../components/mpt-button";
 
 (window as any).customCardFeatures = (window as any).customCardFeatures || [];
 (window as any).customCardFeatures.push({
@@ -53,6 +53,7 @@ class MediaPlayerControlButtonRowFeature
       .filter(({ action }) => this._config?.controls?.includes(action))
       .map((it) => ({
         ...it,
+        size: ButtonSize.SM,
       }));
 
     return html`<mpt-media-control-button-row
@@ -64,7 +65,6 @@ class MediaPlayerControlButtonRowFeature
   static get styles() {
     return css`
       mpt-media-control-button-row {
-        margin: 0 8px;
         --button-row-gap: 8px;
       }
     `;
