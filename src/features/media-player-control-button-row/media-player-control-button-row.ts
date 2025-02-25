@@ -6,16 +6,20 @@ import { HassEntity } from "home-assistant-js-websocket";
 import { MediaPlayerControlButtonRowFeatureConfig } from "./types";
 import {
   getMediaControls,
+  handleMediaPlayerAction,
   MediaControlAction,
 } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { ButtonSize } from "../../components/mpt-button";
+import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
+import { computeDomain } from "../../helpers/entity";
 
 (window as any).customCardFeatures = (window as any).customCardFeatures || [];
 (window as any).customCardFeatures.push({
   type: "media-player-control-button-row",
   name: "Media Player Control Button Row",
-  // supported: (stateObj) => true,
+  supported: (stateObj: HassEntity) =>
+    computeDomain(stateObj.entity_id) === "media_player",
   configurable: false,
 });
 
@@ -26,7 +30,7 @@ class MediaPlayerControlButtonRowFeature
 {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
-  @property({ attribute: false }) public stateObj?: HassEntity;
+  @property({ attribute: false }) public stateObj?: MediaPlayerEntity;
 
   @state() private _config?: MediaPlayerControlButtonRowFeatureConfig;
 
@@ -49,7 +53,7 @@ class MediaPlayerControlButtonRowFeature
       return null;
     }
 
-    const controls = getMediaControls(this.stateObj as MediaPlayerEntity)
+    const controls = getMediaControls(this.stateObj)
       .filter(({ action }) => this._config?.controls?.includes(action))
       .map((it) => ({
         ...it,
@@ -59,7 +63,16 @@ class MediaPlayerControlButtonRowFeature
     return html`<mpt-media-control-button-row
       center=${true}
       .controls=${controls}
+      @action="${this._handleAction}"
     ></mpt-media-control-button-row>`;
+  }
+
+  private _handleAction(event: MediaControlButtonActionEvent) {
+    handleMediaPlayerAction({
+      hass: this.hass!,
+      stateObj: this.stateObj!,
+      action: event.detail.action,
+    }).then();
   }
 
   static get styles() {

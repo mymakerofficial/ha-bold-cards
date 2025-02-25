@@ -34,6 +34,14 @@ export const MediaContentType = {
 export type MediaContentType =
   (typeof MediaContentType)[keyof typeof MediaContentType];
 
+export const MediaPlayerRepeat = {
+  OFF: "off",
+  ALL: "all",
+  ONE: "one",
+} as const;
+export type MediaPlayerRepeat =
+  (typeof MediaPlayerRepeat)[keyof typeof MediaPlayerRepeat];
+
 interface MediaPlayerEntityAttributes extends HassEntityAttributeBase {
   media_content_id?: string;
   media_content_type?: MediaContentType;
@@ -52,7 +60,7 @@ interface MediaPlayerEntityAttributes extends HassEntityAttributeBase {
   entity_picture_local?: string;
   is_volume_muted?: boolean;
   volume_level?: number;
-  repeat?: string;
+  repeat?: MediaPlayerRepeat;
   shuffle?: boolean;
   source?: string;
   source_list?: string[];

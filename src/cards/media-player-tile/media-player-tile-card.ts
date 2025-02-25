@@ -25,9 +25,11 @@ import { styleMap } from "lit-html/directives/style-map";
 import {
   getMediaControls,
   getMediaDescription,
+  handleMediaPlayerAction,
   MediaControlAction,
 } from "../../helpers/media-player";
 import { classMap } from "lit-html/directives/class-map";
+import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
 
 // This puts your card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
@@ -171,6 +173,7 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
             </div>
             <mpt-media-control-button-row
               .controls=${controls}
+              @action=${this._handleAction}
             ></mpt-media-control-button-row>
           </div>
           <hui-card-features
@@ -181,6 +184,14 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
         </div>
       </ha-card>
     `;
+  }
+
+  private _handleAction(event: MediaControlButtonActionEvent) {
+    handleMediaPlayerAction({
+      hass: this.hass!,
+      stateObj: this._stateObj!,
+      action: event.detail.action,
+    }).then();
   }
 
   public willUpdate(changedProps: PropertyValues) {
@@ -208,12 +219,6 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
     this._backgroundColor = darkMode
       ? swatches.Vibrant?.hex
       : swatches.LightVibrant?.hex;
-  }
-
-  private _handleAction(ev: ActionHandlerEvent) {
-    if (this.hass && this._config && ev.detail.action) {
-      handleAction(this, this.hass as any, this._config, ev.detail.action);
-    }
   }
 
   private _handleMoreInfo() {

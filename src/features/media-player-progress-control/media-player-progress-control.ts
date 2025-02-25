@@ -6,6 +6,7 @@ import { HassEntity } from "home-assistant-js-websocket";
 import { MediaPlayerProgressControlFeatureConfig } from "./types";
 import {
   getMediaControls,
+  handleMediaPlayerAction,
   MediaControlAction,
   MediaPlayerEntityFeature,
 } from "../../helpers/media-player";
@@ -14,12 +15,16 @@ import { classMap } from "lit-html/directives/class-map";
 import { ButtonSize } from "../../components/mpt-button";
 import { supportsFeature } from "../../helpers/supports-feature";
 import { formatDuration } from "./helper";
+import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
+import { computeDomain } from "../../helpers/entity";
 
 (window as any).customCardFeatures = (window as any).customCardFeatures || [];
 (window as any).customCardFeatures.push({
   type: "media-player-progress-control",
   name: "Media Player Progress",
-  // supported: (stateObj) => true,
+  supported: (stateObj: HassEntity) =>
+    computeDomain(stateObj.entity_id) === "media_player" &&
+    supportsFeature(stateObj, MediaPlayerEntityFeature.SEEK),
   configurable: false,
 });
 
@@ -37,7 +42,8 @@ class MediaPlayerProgressControlFeature
   static getStubConfig(): MediaPlayerProgressControlFeatureConfig {
     return {
       type: "custom:media-player-progress-control",
-      show_timestamps: true,
+      full_width: true,
+      show_timestamps: false,
       controls: Object.values(MediaControlAction),
     };
   }
@@ -62,7 +68,7 @@ class MediaPlayerProgressControlFeature
       .filter(({ action }) => this._config?.controls?.includes(action))
       .map((it) => ({
         ...it,
-        size: ButtonSize.MD,
+        size: ButtonSize.SM,
       }));
 
     const left = controls.filter(({ action }) =>
@@ -100,6 +106,7 @@ class MediaPlayerProgressControlFeature
       >
         <mpt-media-control-button-row
           .controls=${left}
+          @action="${this._handleAction}"
         ></mpt-media-control-button-row>
         ${showTimestamps ? html`<time>${mediaPositionLabel}</time>` : nothing}
         <ha-slider
@@ -110,9 +117,18 @@ class MediaPlayerProgressControlFeature
         ${showTimestamps ? html`<time>${mediaDurationLabel}</time>` : nothing}
         <mpt-media-control-button-row
           .controls=${right}
+          @action="${this._handleAction}"
         ></mpt-media-control-button-row>
       </div>
     `;
+  }
+
+  private _handleAction(event: MediaControlButtonActionEvent) {
+    handleMediaPlayerAction({
+      hass: this.hass!,
+      stateObj: this.stateObj!,
+      action: event.detail.action,
+    }).then();
   }
 
   static get styles() {

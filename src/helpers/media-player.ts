@@ -1,6 +1,7 @@
 import {
   MediaContentType,
   MediaPlayerEntity,
+  MediaPlayerRepeat,
   MediaPlayerState,
 } from "../types/ha/entity";
 import { isStateOff, isStateUnavailable } from "./states";
@@ -11,6 +12,7 @@ import {
   mdiPower,
   mdiRepeat,
   mdiRepeatOff,
+  mdiRepeatOnce,
   mdiShuffle,
   mdiShuffleDisabled,
   mdiSkipNext,
@@ -21,6 +23,7 @@ import {
   ButtonSize,
   ButtonVariant,
 } from "../components/mpt-button";
+import { HomeAssistant } from "../types/ha/lovelace";
 
 export const MediaPlayerEntityFeature = {
   PAUSE: 1,
@@ -161,12 +164,60 @@ export function getMediaControls(stateObj: MediaPlayerEntity) {
 
   if (supportsFeature(stateObj, MediaPlayerEntityFeature.REPEAT_SET)) {
     buttons.push({
-      // TODO handle repeat one
-      iconPath: stateObj.attributes.repeat === "all" ? mdiRepeat : mdiRepeatOff,
+      iconPath: {
+        [MediaPlayerRepeat.OFF]: mdiRepeatOff,
+        [MediaPlayerRepeat.ALL]: mdiRepeat,
+        [MediaPlayerRepeat.ONE]: mdiRepeatOnce,
+      }[stateObj.attributes.repeat ?? MediaPlayerRepeat.OFF],
       action: MediaControlAction.REPEAT_SET,
       size: ButtonSize.MD,
     });
   }
 
   return buttons;
+}
+
+export async function handleMediaPlayerAction({
+  hass,
+  stateObj,
+  action,
+}: {
+  hass: HomeAssistant;
+  stateObj: MediaPlayerEntity;
+  action: MediaControlAction;
+}) {
+  await hass.callService(
+    "media_player",
+    action,
+    getMediaPlayerActionServiceData(stateObj, action),
+  );
+}
+
+function getMediaPlayerActionServiceData(
+  stateObj: MediaPlayerEntity,
+  action: MediaControlAction,
+) {
+  switch (action) {
+    case MediaControlAction.SHUFFLE_SET:
+      return {
+        entity_id: stateObj.entity_id,
+        shuffle: !stateObj.attributes.shuffle,
+      };
+    case MediaControlAction.REPEAT_SET:
+      return {
+        entity_id: stateObj.entity_id,
+        repeat: getNextRepeatMode(stateObj.attributes.repeat),
+      };
+    default:
+      return {
+        entity_id: stateObj.entity_id,
+      };
+  }
+}
+
+function getNextRepeatMode(
+  currentMode: MediaPlayerRepeat = MediaPlayerRepeat.OFF,
+) {
+  const values = Object.values(MediaPlayerRepeat);
+  return values[(values.indexOf(currentMode) + 1) % values.length];
 }

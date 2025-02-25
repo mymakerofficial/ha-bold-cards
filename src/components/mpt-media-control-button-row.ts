@@ -1,13 +1,31 @@
 import { customElement, property } from "lit/decorators";
 import { css, html, LitElement, nothing } from "lit";
-import { MediaControlButton } from "../helpers/media-player";
+import {
+  handleMediaPlayerAction,
+  MediaControlAction,
+  MediaControlButton,
+} from "../helpers/media-player";
 import { classMap } from "lit-html/directives/class-map";
+
+export class MediaControlButtonActionEvent extends CustomEvent<{
+  action: MediaControlAction;
+}> {
+  constructor(action: MediaControlAction) {
+    super("action", {
+      detail: { action },
+    });
+  }
+}
 
 @customElement("mpt-media-control-button-row")
 export class MediaControlButtonRow extends LitElement {
   @property({ attribute: false }) public controls?: MediaControlButton[];
 
   @property() public center?: boolean;
+
+  private _handleClick(action: string) {
+    this.dispatchEvent(new MediaControlButtonActionEvent(action));
+  }
 
   protected render() {
     return html`
@@ -23,6 +41,7 @@ export class MediaControlButtonRow extends LitElement {
               size=${control.size ?? nothing}
               shape=${control.shape ?? nothing}
               variant=${control.variant ?? nothing}
+              @click=${() => this._handleClick(control.action)}
             ></mpt-button>
           `,
         )}
