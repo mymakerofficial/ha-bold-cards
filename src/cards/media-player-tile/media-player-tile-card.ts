@@ -17,7 +17,6 @@ import {
   LovelaceCard,
   LovelaceGridOptions,
 } from "../../types/ha/lovelace";
-import { actionHandler } from "../../helpers/ha/action-handler-directive";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { PropertyValues } from "lit-element";
 import { extractColors } from "../../helpers/extract-color";
@@ -49,9 +48,30 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
     ) as LovelaceCardEditor;
   }
 
-  public static getStubConfig(): Record<string, unknown> {
+  public static getStubConfig(): MediaPlayerTileConfig {
     return {
-      controls: Object.values(MediaControlAction),
+      type: "custom:media-player-tile",
+      entity: "",
+      controls: [
+        MediaControlAction.TURN_ON,
+        MediaControlAction.TURN_OFF,
+        MediaControlAction.MEDIA_PLAY,
+        MediaControlAction.MEDIA_PAUSE,
+      ],
+      content_layout: MediaPlayerTileContentLayout.HORIZONTAL,
+      color_mode: MediaPlayerTileColorMode.AMBIENT,
+      color: "primary",
+      features: [
+        {
+          ...MediaPlayerProgressControlFeature.getStubConfig(),
+          controls: [
+            MediaControlAction.SHUFFLE_SET,
+            MediaControlAction.MEDIA_PREVIOUS_TRACK,
+            MediaControlAction.MEDIA_NEXT_TRACK,
+            MediaControlAction.REPEAT_SET,
+          ],
+        },
+      ],
     };
   }
 
@@ -80,10 +100,10 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
 
   public getGridOptions(): LovelaceGridOptions {
     return {
-      columns: 6,
-      rows: 8,
-      min_columns: 6,
-      min_rows: 8,
+      columns: "full",
+      rows: "auto",
+      min_columns: 12,
+      min_rows: 2.5,
     };
   }
 

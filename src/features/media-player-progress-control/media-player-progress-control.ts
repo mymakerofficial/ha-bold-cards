@@ -29,7 +29,7 @@ import { computeDomain } from "../../helpers/entity";
 });
 
 @customElement("media-player-progress-control")
-class MediaPlayerProgressControlFeature
+export class MediaPlayerProgressControlFeature
   extends LitElement
   implements LovelaceCardFeature
 {
