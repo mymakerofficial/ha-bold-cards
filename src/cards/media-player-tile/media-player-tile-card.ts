@@ -30,6 +30,7 @@ import {
 import { classMap } from "lit-html/directives/class-map";
 import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
 import { MediaPlayerProgressControlFeature } from "../../features/media-player-progress-control/media-player-progress-control";
+import { CustomLovelaceCard } from "../base";
 
 // This puts your card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
@@ -40,7 +41,7 @@ import { MediaPlayerProgressControlFeature } from "../../features/media-player-p
 });
 
 @customElement("media-player-tile")
-export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
+export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfig> {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./media-player-tile-editor");
     return document.createElement(
@@ -75,24 +76,9 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
     };
   }
 
-  @property({ attribute: false }) public hass?: HomeAssistant;
-
-  @state() private _config?: MediaPlayerTileConfig;
-
   @state() private _foregroundColor?: string;
 
   @state() private _backgroundColor?: string;
-
-  public setConfig(config: MediaPlayerTileConfig): void {
-    // TODO: actually validate the config
-    if (!config) {
-      throw new Error("Invalid configuration");
-    }
-
-    this._config = {
-      ...config,
-    };
-  }
 
   public getCardSize(): number {
     return 2;
@@ -102,19 +88,14 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
     return {
       columns: "full",
       rows: "auto",
-      min_columns: 12,
-      min_rows: 2.5,
+      min_columns: 6,
+      min_rows: 2,
     };
   }
 
-  private get _stateObj(): MediaPlayerEntity | undefined {
+  private get _stateObj() {
     const entityId = this._config!.entity;
-    return {
-      ...this.hass!.states[entityId],
-      __mpt__internal__: {
-        card_type: "media-player-tile",
-      },
-    } as MediaPlayerEntity;
+    return this.hass!.states[entityId] as MediaPlayerEntity | undefined;
   }
 
   private get _imageUrl() {

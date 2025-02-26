@@ -15,7 +15,7 @@ import { supportsFeature } from "../../helpers/supports-feature";
 import { formatDuration } from "./helper";
 import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
 import { computeDomain } from "../../helpers/entity";
-import { MptLovelaceCardFeature } from "../base";
+import { CustomLovelaceCardFeature } from "../base";
 
 (window as any).customCardFeatures = (window as any).customCardFeatures || [];
 (window as any).customCardFeatures.push({
@@ -28,9 +28,10 @@ import { MptLovelaceCardFeature } from "../base";
 });
 
 @customElement("media-player-progress-control")
-export class MediaPlayerProgressControlFeature extends MptLovelaceCardFeature<MediaPlayerEntity> {
-  @state() private _config?: MediaPlayerProgressControlFeatureConfig;
-
+export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature<
+  MediaPlayerEntity,
+  MediaPlayerProgressControlFeatureConfig
+> {
   static getStubConfig(): MediaPlayerProgressControlFeatureConfig {
     return {
       type: "custom:media-player-progress-control",
@@ -38,13 +39,6 @@ export class MediaPlayerProgressControlFeature extends MptLovelaceCardFeature<Me
       show_timestamps: false,
       controls: Object.values(MediaControlAction),
     };
-  }
-
-  public setConfig(config: MediaPlayerProgressControlFeatureConfig): void {
-    if (!config) {
-      throw new Error("Invalid configuration");
-    }
-    this._config = config;
   }
 
   render() {

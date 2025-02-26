@@ -11,7 +11,7 @@ import { MediaPlayerEntity } from "../../types/ha/entity";
 import { ButtonSize } from "../../components/mpt-button";
 import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
 import { computeDomain } from "../../helpers/entity";
-import { MptLovelaceCardFeature } from "../base";
+import { CustomLovelaceCardFeature } from "../base";
 import { classMap } from "lit-html/directives/class-map";
 
 (window as any).customCardFeatures = (window as any).customCardFeatures || [];
@@ -24,21 +24,15 @@ import { classMap } from "lit-html/directives/class-map";
 });
 
 @customElement("media-player-control-button-row")
-class MediaPlayerControlButtonRowFeature extends MptLovelaceCardFeature<MediaPlayerEntity> {
-  @state() private _config?: MediaPlayerControlButtonRowFeatureConfig;
-
+class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeature<
+  MediaPlayerEntity,
+  MediaPlayerControlButtonRowFeatureConfig
+> {
   static getStubConfig(): MediaPlayerControlButtonRowFeatureConfig {
     return {
       type: "custom:media-player-control-button-row",
       controls: Object.values(MediaControlAction),
     };
-  }
-
-  public setConfig(config: MediaPlayerControlButtonRowFeatureConfig): void {
-    if (!config) {
-      throw new Error("Invalid configuration");
-    }
-    this._config = config;
   }
 
   render() {
@@ -50,13 +44,13 @@ class MediaPlayerControlButtonRowFeature extends MptLovelaceCardFeature<MediaPla
       .filter(({ action }) => this._config?.controls?.includes(action))
       .map((it) => ({
         ...it,
-        size: this._isInMptCard ? it.size : ButtonSize.SM,
+        size: this._isInCustomCard ? it.size : ButtonSize.SM,
       }));
 
     return html`
       <div
         class=${classMap({
-          "extra-height": this._isInMptCard,
+          "extra-height": this._isInCustomCard,
         })}
       >
         <mpt-media-control-button-row

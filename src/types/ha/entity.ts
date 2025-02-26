@@ -1,15 +1,7 @@
 import {
-  HassEntity,
   HassEntityAttributeBase,
+  HassEntityBase,
 } from "home-assistant-js-websocket";
-
-export interface MptHassEntity extends HassEntity {
-  __mpt__internal__: {
-    card_type: string;
-  };
-}
-
-export type MaybeMptHassEntity = HassEntity & Partial<MptHassEntity>;
 
 export const BaseState = {
   UNAVAILABLE: "unavailable",
@@ -76,7 +68,7 @@ interface MediaPlayerEntityAttributes extends HassEntityAttributeBase {
   sound_mode_list?: string[];
 }
 
-export interface MediaPlayerEntity extends MaybeMptHassEntity {
+export interface MediaPlayerEntity extends HassEntityBase {
   attributes: MediaPlayerEntityAttributes;
   state: MediaPlayerState;
 }

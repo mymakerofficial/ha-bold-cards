@@ -1,6 +1,10 @@
 import { LovelaceCardConfig } from "../../types/ha/lovelace";
-import { LovelaceCardFeatureConfig } from "../../types/ha/feature";
+import {
+  FeatureConfigWithMaybeInternals,
+  LovelaceCardFeatureConfig,
+} from "../../types/ha/feature";
 import { MediaControlAction } from "../../helpers/media-player";
+import { LovelaceCardConfigWithFeatures } from "../../types/card";
 
 export const MediaPlayerTileContentLayout = {
   HORIZONTAL: "horizontal",
@@ -16,11 +20,10 @@ export const MediaPlayerTileColorMode = {
 export type MediaPlayerTileColorMode =
   (typeof MediaPlayerTileColorMode)[keyof typeof MediaPlayerTileColorMode];
 
-export interface MediaPlayerTileConfig extends LovelaceCardConfig {
+export interface MediaPlayerTileConfig extends LovelaceCardConfigWithFeatures {
   entity: string;
   color_mode: MediaPlayerTileColorMode;
   color: string;
   content_layout: MediaPlayerTileContentLayout;
   controls: MediaControlAction[];
-  features?: LovelaceCardFeatureConfig[];
 }
