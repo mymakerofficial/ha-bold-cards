@@ -1,7 +1,5 @@
-import { customElement, property, state } from "lit/decorators";
-import { css, html, LitElement } from "lit";
-import { LovelaceCardFeature } from "../../types/ha/feature";
-import { HomeAssistant } from "../../types/ha/lovelace";
+import { customElement, state } from "lit/decorators";
+import { css, html } from "lit";
 import { HassEntity } from "home-assistant-js-websocket";
 import { MediaPlayerControlButtonRowFeatureConfig } from "./types";
 import {
@@ -13,6 +11,8 @@ import { MediaPlayerEntity } from "../../types/ha/entity";
 import { ButtonSize } from "../../components/mpt-button";
 import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
 import { computeDomain } from "../../helpers/entity";
+import { MptLovelaceCardFeature } from "../base";
+import { classMap } from "lit-html/directives/class-map";
 
 (window as any).customCardFeatures = (window as any).customCardFeatures || [];
 (window as any).customCardFeatures.push({
@@ -24,14 +24,7 @@ import { computeDomain } from "../../helpers/entity";
 });
 
 @customElement("media-player-control-button-row")
-class MediaPlayerControlButtonRowFeature
-  extends LitElement
-  implements LovelaceCardFeature
-{
-  @property({ attribute: false }) public hass?: HomeAssistant;
-
-  @property({ attribute: false }) public stateObj?: MediaPlayerEntity;
-
+class MediaPlayerControlButtonRowFeature extends MptLovelaceCardFeature<MediaPlayerEntity> {
   @state() private _config?: MediaPlayerControlButtonRowFeatureConfig;
 
   static getStubConfig(): MediaPlayerControlButtonRowFeatureConfig {
@@ -57,14 +50,22 @@ class MediaPlayerControlButtonRowFeature
       .filter(({ action }) => this._config?.controls?.includes(action))
       .map((it) => ({
         ...it,
-        size: ButtonSize.SM,
+        size: this._isInMptCard ? it.size : ButtonSize.SM,
       }));
 
-    return html`<mpt-media-control-button-row
-      center=${true}
-      .controls=${controls}
-      @action="${this._handleAction}"
-    ></mpt-media-control-button-row>`;
+    return html`
+      <div
+        class=${classMap({
+          "extra-height": this._isInMptCard,
+        })}
+      >
+        <mpt-media-control-button-row
+          center=${true}
+          .controls=${controls}
+          @action="${this._handleAction}"
+        ></mpt-media-control-button-row>
+      </div>
+    `;
   }
 
   private _handleAction(event: MediaControlButtonActionEvent) {
@@ -79,6 +80,13 @@ class MediaPlayerControlButtonRowFeature
     return css`
       mpt-media-control-button-row {
         --button-row-gap: 8px;
+      }
+
+      .extra-height {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: calc(var(--feature-height) * 2 + var(--feature-padding));
       }
     `;
   }

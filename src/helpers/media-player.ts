@@ -118,7 +118,7 @@ export function getMediaControls(stateObj: MediaPlayerEntity) {
     buttons.push({
       iconPath: stateObj.attributes.shuffle ? mdiShuffle : mdiShuffleDisabled,
       action: MediaControlAction.SHUFFLE_SET,
-      size: ButtonSize.MD,
+      size: ButtonSize.SM,
     });
   }
 
@@ -170,7 +170,7 @@ export function getMediaControls(stateObj: MediaPlayerEntity) {
         [MediaPlayerRepeat.ONE]: mdiRepeatOnce,
       }[stateObj.attributes.repeat ?? MediaPlayerRepeat.OFF],
       action: MediaControlAction.REPEAT_SET,
-      size: ButtonSize.MD,
+      size: ButtonSize.SM,
     });
   }
 

@@ -109,7 +109,12 @@ export class MediaPlayerTileCard extends LitElement implements LovelaceCard {
 
   private get _stateObj(): MediaPlayerEntity | undefined {
     const entityId = this._config!.entity;
-    return this.hass!.states[entityId] as MediaPlayerEntity;
+    return {
+      ...this.hass!.states[entityId],
+      __mpt__internal__: {
+        card_type: "media-player-tile",
+      },
+    } as MediaPlayerEntity;
   }
 
   private get _imageUrl() {

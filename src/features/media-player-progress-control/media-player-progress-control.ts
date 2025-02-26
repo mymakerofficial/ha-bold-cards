@@ -1,7 +1,5 @@
-import { customElement, property, state } from "lit/decorators";
-import { css, html, LitElement, nothing } from "lit";
-import { LovelaceCardFeature } from "../../types/ha/feature";
-import { HomeAssistant } from "../../types/ha/lovelace";
+import { customElement, state } from "lit/decorators";
+import { css, html, nothing } from "lit";
 import { HassEntity } from "home-assistant-js-websocket";
 import { MediaPlayerProgressControlFeatureConfig } from "./types";
 import {
@@ -17,6 +15,7 @@ import { supportsFeature } from "../../helpers/supports-feature";
 import { formatDuration } from "./helper";
 import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
 import { computeDomain } from "../../helpers/entity";
+import { MptLovelaceCardFeature } from "../base";
 
 (window as any).customCardFeatures = (window as any).customCardFeatures || [];
 (window as any).customCardFeatures.push({
@@ -29,14 +28,7 @@ import { computeDomain } from "../../helpers/entity";
 });
 
 @customElement("media-player-progress-control")
-export class MediaPlayerProgressControlFeature
-  extends LitElement
-  implements LovelaceCardFeature
-{
-  @property({ attribute: false }) public hass?: HomeAssistant;
-
-  @property({ attribute: false }) public stateObj?: MediaPlayerEntity;
-
+export class MediaPlayerProgressControlFeature extends MptLovelaceCardFeature<MediaPlayerEntity> {
   @state() private _config?: MediaPlayerProgressControlFeatureConfig;
 
   static getStubConfig(): MediaPlayerProgressControlFeatureConfig {
