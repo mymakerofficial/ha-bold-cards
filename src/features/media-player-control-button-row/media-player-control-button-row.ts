@@ -8,7 +8,7 @@ import {
   MediaControlAction,
 } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
-import { ButtonSize } from "../../components/mpt-button";
+import { ButtonSize, limitButtonSize } from "../../components/mpt-button";
 import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
@@ -40,12 +40,17 @@ class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeature<
       .filter(({ action }) => this._config?.controls?.includes(action))
       .map((it) => ({
         ...it,
-        size: this._isInCustomCard ? (it.size ?? ButtonSize.MD) : ButtonSize.SM,
+        size: limitButtonSize(
+          it.size ?? ButtonSize.MD,
+          this._isInCustomCard ? ButtonSize.XL : ButtonSize.MD,
+        ),
       }));
   }
 
   private get _hasLargeButtons() {
-    return this._controls.some(({ size }) => size !== ButtonSize.SM);
+    return this._controls.some(
+      ({ size }) => size === ButtonSize.LG || size === ButtonSize.XL,
+    );
   }
 
   public getFeatureSize() {
@@ -60,7 +65,7 @@ class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeature<
     return html`
       <div
         class=${classMap({
-          "extra-height": this._isInCustomCard,
+          "extra-height": this._hasLargeButtons,
         })}
       >
         <mpt-media-control-button-row

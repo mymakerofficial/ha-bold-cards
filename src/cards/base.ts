@@ -40,25 +40,21 @@ export abstract class CustomLovelaceCard<
         ".container",
       )?.children;
     if (!featuresCollection) {
-      console.log("_getFeatureElements", "no featuresCollection");
       return [];
     }
-    const res = Array.from(featuresCollection).map(
+    return Array.from(featuresCollection).map(
       (featureContainer) => featureContainer.shadowRoot?.children[0]!,
     );
-    console.log("_getFeatureElements", res);
-    return res;
   }
 
   protected _getFeatureTotalSize() {
-    const res = this._getFeatureElements().reduce((totalSize, element) => {
+    // TODO this doesnt work sometime because the elements might not be rendered yet
+    return this._getFeatureElements().reduce((totalSize, element) => {
       if (isCustomFeatureElement(element)) {
         return totalSize + element.getFeatureSize();
       }
       return totalSize + 1;
     }, 0);
-    console.log("_getFeatureTotalSize", res);
-    return res;
   }
 
   abstract getCardSize(): number | Promise<number>;

@@ -182,8 +182,6 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
               "--feature-height":
                 "calc(var(--row-height) + var(--row-gap) - var(--card-padding))",
               "--feature-padding": "calc(var(--card-padding))",
-              "--feature-border-radius":
-                "calc(var(--ha-card-border-radius) / 2)",
             })}
           ></hui-card-features>
         </div>
@@ -334,6 +332,10 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
         pointer-events: all;
         margin: -12px -12px -12px 0;
         padding: 12px 12px 12px 0;
+      }
+
+      mpt-cover-image {
+        --image-size: 72px;
       }
 
       ha-card.vertical mpt-cover-image {

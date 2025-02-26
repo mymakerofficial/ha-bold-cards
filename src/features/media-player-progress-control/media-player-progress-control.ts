@@ -10,7 +10,7 @@ import {
 } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { classMap } from "lit-html/directives/class-map";
-import { ButtonSize } from "../../components/mpt-button";
+import { ButtonSize, limitButtonSize } from "../../components/mpt-button";
 import { supportsFeature } from "../../helpers/supports-feature";
 import { formatDuration } from "./helper";
 import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
@@ -41,20 +41,32 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
     };
   }
 
+  private get _canRender() {
+    return (
+      this._config &&
+      this.hass &&
+      this.stateObj &&
+      supportsFeature(this.stateObj, MediaPlayerEntityFeature.SEEK)
+    );
+  }
+
+  public getFeatureSize(): number {
+    return this._canRender ? 1 : 0;
+  }
+
   render() {
-    if (!this._config || !this.hass || !this.stateObj) {
+    if (!this._canRender) {
       return nothing;
     }
 
-    if (!supportsFeature(this.stateObj, MediaPlayerEntityFeature.SEEK)) {
-      return nothing;
-    }
-
-    const controls = getMediaControls(this.stateObj)
+    const controls = getMediaControls(this.stateObj!)
       .filter(({ action }) => this._config?.controls?.includes(action))
       .map((it) => ({
         ...it,
-        size: ButtonSize.SM,
+        size: limitButtonSize(
+          it.size ?? ButtonSize.MD,
+          this._isInCustomCard ? ButtonSize.XL : ButtonSize.MD,
+        ),
       }));
 
     const left = controls.filter(({ action }) =>
@@ -75,19 +87,19 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
       ].includes(action),
     );
 
-    const mediaPosition = this.stateObj.attributes.media_position;
-    const mediaDuration = this.stateObj.attributes.media_duration;
+    const mediaPosition = this.stateObj!.attributes.media_position;
+    const mediaDuration = this.stateObj!.attributes.media_duration;
 
     const mediaPositionLabel = formatDuration(mediaPosition);
     const mediaDurationLabel = formatDuration(mediaDuration);
 
     const showTimestamps =
-      this._config.show_timestamps && mediaPosition && mediaDuration;
+      this._config!.show_timestamps && mediaPosition && mediaDuration;
 
     return html`
       <div
         class="container ${classMap({
-          "full-width": !!this._config.full_width,
+          "full-width": !!this._config!.full_width,
         })}"
       >
         <mpt-media-control-button-row

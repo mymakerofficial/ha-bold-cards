@@ -24,6 +24,16 @@ export const ButtonSize = {
 } as const;
 export type ButtonSize = (typeof ButtonSize)[keyof typeof ButtonSize];
 
+export function limitButtonSize(
+  size: ButtonSize,
+  limit: ButtonSize,
+): ButtonSize {
+  const sizes = Object.values(ButtonSize);
+  const sizeIndex = sizes.indexOf(size);
+  const limitIndex = sizes.indexOf(limit);
+  return sizes[Math.min(sizeIndex, limitIndex)] as ButtonSize;
+}
+
 @customElement("mpt-button")
 export class Button extends ControlSurface {
   @property({ attribute: false }) public iconPath?: string;
@@ -46,7 +56,7 @@ export class Button extends ControlSurface {
       --button-border-radius: calc(var(--ha-card-border-radius, 12px) / 2);
       --button-color: var(--tile-color, --primary-color);
       --button-background-color: transparent;
-      --button-height: 53px;
+      --button-height: 52px;
       --icon-size: 24px;
       --button-width: var(--button-height);
     }
@@ -68,17 +78,17 @@ export class Button extends ControlSurface {
     }
 
     :host([size="lg"]) {
-      --button-height: 53px;
+      --button-height: 62px;
       --icon-size: 24px;
     }
 
     :host([size="xl"]) {
-      --button-height: 64px;
+      --button-height: 72px;
       --icon-size: 26px;
     }
 
     :host([shape="rounded"]) {
-      --button-border-radius: 32px;
+      --button-border-radius: calc(var(--button-height) / 2);
     }
 
     :host([shape="wide"]) {
