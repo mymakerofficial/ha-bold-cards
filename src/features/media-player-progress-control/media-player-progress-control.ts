@@ -65,7 +65,8 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
         ...it,
         size: limitButtonSize(
           it.size ?? ButtonSize.MD,
-          this._isInCustomCard ? ButtonSize.XL : ButtonSize.MD,
+          // this._isInCustomCard ? ButtonSize.MD : ButtonSize.SM,
+          ButtonSize.SM,
         ),
       }));
 

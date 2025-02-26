@@ -78,12 +78,12 @@ export class Button extends ControlSurface {
     }
 
     :host([size="lg"]) {
-      --button-height: 62px;
+      --button-height: 58px;
       --icon-size: 24px;
     }
 
     :host([size="xl"]) {
-      --button-height: 72px;
+      --button-height: 64px;
       --icon-size: 26px;
     }
 
