@@ -1,22 +1,12 @@
-import { css, CSSResultGroup, html, LitElement, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators";
-import {
-  ActionHandlerEvent,
-  fireEvent,
-  handleAction,
-  hasAction,
-  LovelaceCardEditor,
-} from "custom-card-helpers";
+import { css, CSSResultGroup, html, nothing } from "lit";
+import { customElement, state } from "lit/decorators";
+import { fireEvent, LovelaceCardEditor } from "custom-card-helpers";
 import {
   MediaPlayerTileColorMode,
   MediaPlayerTileConfig,
   MediaPlayerTileContentLayout,
 } from "./types";
-import {
-  HomeAssistant,
-  LovelaceCard,
-  LovelaceGridOptions,
-} from "../../types/ha/lovelace";
+import { LovelaceGridOptions } from "../../types/ha/lovelace";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { PropertyValues } from "lit-element";
 import { extractColors } from "../../helpers/extract-color";
@@ -81,15 +71,19 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
   @state() private _backgroundColor?: string;
 
   public getCardSize(): number {
-    return 2;
+    return (
+      (this._config?.content_layout === MediaPlayerTileContentLayout.VERTICAL
+        ? 4
+        : 2) + this._getFeatureTotalSize()
+    );
   }
 
   public getGridOptions(): LovelaceGridOptions {
     return {
       columns: "full",
-      rows: "auto",
+      rows: this.getCardSize(),
       min_columns: 6,
-      min_rows: 2,
+      min_rows: this.getCardSize(),
     };
   }
 
@@ -184,6 +178,13 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
             .hass=${this.hass}
             .stateObj=${stateObj}
             .features=${this._config.features}
+            style=${styleMap({
+              "--feature-height":
+                "calc(var(--row-height) + var(--row-gap) - var(--card-padding))",
+              "--feature-padding": "calc(var(--card-padding))",
+              "--feature-border-radius":
+                "calc(var(--ha-card-border-radius) / 2)",
+            })}
           ></hui-card-features>
         </div>
       </ha-card>
@@ -235,6 +236,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
     return css`
       :host {
         -webkit-tap-highlight-color: transparent;
+        --card-padding: 12px;
       }
 
       ha-card {
@@ -286,11 +288,12 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
       }
 
       .content {
+        flex: 1;
         position: relative;
         display: flex;
         flex-direction: row;
         align-items: center;
-        padding: 12px;
+        padding: var(--card-padding);
         min-width: 0;
         box-sizing: border-box;
         overflow: hidden;
@@ -311,9 +314,15 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
         box-sizing: border-box;
         pointer-events: none;
         padding-right: 12px;
+        min-height: calc(
+          var(--row-height) * 2 + var(--row-gap) - var(--card-padding) * 2
+        );
       }
 
       ha-card.vertical .header {
+        min-height: calc(
+          var(--row-height) * 4 + var(--row-gap) * 3 - var(--card-padding) * 2
+        );
         flex-direction: column;
         justify-content: center;
         width: 100%;

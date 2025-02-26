@@ -35,17 +35,27 @@ class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeature<
     };
   }
 
+  private get _controls() {
+    return getMediaControls(this.stateObj!)
+      .filter(({ action }) => this._config?.controls?.includes(action))
+      .map((it) => ({
+        ...it,
+        size: this._isInCustomCard ? (it.size ?? ButtonSize.MD) : ButtonSize.SM,
+      }));
+  }
+
+  private get _hasLargeButtons() {
+    return this._controls.some(({ size }) => size !== ButtonSize.SM);
+  }
+
+  public getFeatureSize() {
+    return this._hasLargeButtons ? 2 : 1;
+  }
+
   render() {
     if (!this._config || !this.hass || !this.stateObj) {
       return null;
     }
-
-    const controls = getMediaControls(this.stateObj)
-      .filter(({ action }) => this._config?.controls?.includes(action))
-      .map((it) => ({
-        ...it,
-        size: this._isInCustomCard ? it.size : ButtonSize.SM,
-      }));
 
     return html`
       <div
@@ -55,7 +65,7 @@ class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeature<
       >
         <mpt-media-control-button-row
           center=${true}
-          .controls=${controls}
+          .controls=${this._controls}
           @action="${this._handleAction}"
         ></mpt-media-control-button-row>
       </div>

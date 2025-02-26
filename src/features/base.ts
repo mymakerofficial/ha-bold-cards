@@ -29,11 +29,17 @@ export abstract class CustomLovelaceCardFeature<
     return this._config?.__custom_internals !== undefined;
   }
 
-  public getCardSize(): number | Promise<number> {
+  public getFeatureSize(): number {
     return 1;
   }
 
   public isCustomFeature() {
     return true;
   }
+}
+
+export function isCustomFeatureElement(
+  el: any,
+): el is CustomLovelaceCardFeature {
+  return el.isCustomFeature?.();
 }
