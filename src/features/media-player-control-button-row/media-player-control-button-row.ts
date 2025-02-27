@@ -1,6 +1,5 @@
-import { customElement, state } from "lit/decorators";
-import { css, html } from "lit";
-import { HassEntity } from "home-assistant-js-websocket";
+import { customElement } from "lit/decorators";
+import { css, html, nothing } from "lit";
 import { MediaPlayerControlButtonRowFeatureConfig } from "./types";
 import {
   getMediaControls,
@@ -12,19 +11,39 @@ import { ButtonSize, limitButtonSize } from "../../components/mpt-button";
 import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
-import { classMap } from "lit-html/directives/class-map";
+import { styleMap } from "lit-html/directives/style-map";
+import { FeatureConfigWithMaybeInternals } from "../../types/ha/feature";
 
-(window as any).customCardFeatures = (window as any).customCardFeatures || [];
-(window as any).customCardFeatures.push({
-  type: "media-player-control-button-row",
-  name: "Media Player Control Button Row",
-  supported: (stateObj: HassEntity) =>
-    computeDomain(stateObj.entity_id) === "media_player",
-  configurable: false,
-});
+function getControls(
+  config: FeatureConfigWithMaybeInternals<MediaPlayerControlButtonRowFeatureConfig>,
+  stateObj: MediaPlayerEntity,
+) {
+  if (!stateObj) {
+    return [];
+  }
+  return getMediaControls(stateObj)
+    .filter(({ action }) => config.controls?.includes(action))
+    .map((it) => ({
+      ...it,
+      size: limitButtonSize(
+        it.size ?? ButtonSize.MD,
+        config.__custom_internals ? ButtonSize.XL : ButtonSize.SM,
+      ),
+    }));
+}
+
+function getFeatureSize(
+  config: FeatureConfigWithMaybeInternals<MediaPlayerControlButtonRowFeatureConfig>,
+  stateObj: MediaPlayerEntity,
+) {
+  const hasLargeButtons = getControls(config, stateObj).some(
+    ({ size }) => size === ButtonSize.LG || size === ButtonSize.XL,
+  );
+  return hasLargeButtons ? 2 : 1;
+}
 
 @customElement("media-player-control-button-row")
-class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeature<
+export class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeature<
   MediaPlayerEntity,
   MediaPlayerControlButtonRowFeatureConfig
 > {
@@ -36,36 +55,23 @@ class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeature<
   }
 
   private get _controls() {
-    return getMediaControls(this.stateObj!)
-      .filter(({ action }) => this._config?.controls?.includes(action))
-      .map((it) => ({
-        ...it,
-        size: limitButtonSize(
-          it.size ?? ButtonSize.MD,
-          this._isInCustomCard ? ButtonSize.XL : ButtonSize.SM,
-        ),
-      }));
+    return getControls(this._config!, this.stateObj!);
   }
 
-  private get _hasLargeButtons() {
-    return this._controls.some(
-      ({ size }) => size === ButtonSize.LG || size === ButtonSize.XL,
-    );
-  }
-
-  public getFeatureSize() {
-    return this._hasLargeButtons ? 2 : 1;
+  private get _featureSize() {
+    return getFeatureSize(this._config!, this.stateObj!);
   }
 
   render() {
     if (!this._config || !this.hass || !this.stateObj) {
-      return null;
+      return nothing;
     }
 
     return html`
       <div
-        class=${classMap({
-          "extra-height": this._hasLargeButtons,
+        class="container"
+        style=${styleMap({
+          "--feature-size": this._featureSize,
         })}
       >
         <mpt-media-control-button-row
@@ -91,12 +97,26 @@ class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeature<
         --button-row-gap: 8px;
       }
 
-      .extra-height {
+      .container {
         display: flex;
         align-items: center;
         justify-content: center;
-        height: calc(var(--feature-height) * 2 + var(--feature-padding));
+        height: calc(
+          var(--feature-height) * var(--feature-size) + var(--feature-padding) *
+            (var(--feature-size) - 1)
+        );
       }
     `;
   }
 }
+
+MediaPlayerControlButtonRowFeature.registerCustomFeature<
+  MediaPlayerEntity,
+  MediaPlayerControlButtonRowFeatureConfig
+>({
+  type: "media-player-control-button-row",
+  name: "Media Player Control Button Row",
+  supported: (stateObj) => computeDomain(stateObj.entity_id) === "media_player",
+  getSize: (config, stateObj) => getFeatureSize(config, stateObj),
+  configurable: false,
+});

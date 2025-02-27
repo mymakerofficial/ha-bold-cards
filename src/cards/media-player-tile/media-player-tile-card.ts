@@ -7,7 +7,6 @@ import {
   MediaPlayerTileContentLayout,
 } from "./types";
 import { HomeAssistant, LovelaceGridOptions } from "../../types/ha/lovelace";
-import { MediaPlayerEntity } from "../../types/ha/entity";
 import { PropertyValues } from "lit-element";
 import { extractColors } from "../../helpers/extract-color";
 import { styleMap } from "lit-html/directives/style-map";
@@ -22,6 +21,7 @@ import { MediaControlButtonActionEvent } from "../../components/mpt-media-contro
 import { MediaPlayerProgressControlFeature } from "../../features/media-player-progress-control/media-player-progress-control";
 import { CustomLovelaceCard } from "../base";
 import { computeDomain } from "../../helpers/entity";
+import { MediaPlayerEntity } from "../../types/ha/entity";
 
 // This puts your card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
@@ -32,7 +32,10 @@ import { computeDomain } from "../../helpers/entity";
 });
 
 @customElement("media-player-tile")
-export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfig> {
+export class MediaPlayerTileCard extends CustomLovelaceCard<
+  MediaPlayerTileConfig,
+  MediaPlayerEntity
+> {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./media-player-tile-editor");
     return document.createElement(
@@ -76,26 +79,20 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
 
   @state() private _backgroundColor?: string;
 
-  public getCardSize(): number {
-    return (
-      (this._config?.content_layout === MediaPlayerTileContentLayout.VERTICAL
-        ? 5
-        : 2) + this._getFeatureTotalSize()
-    );
+  protected _getSizeWithoutFeatures() {
+    return this._config?.content_layout ===
+      MediaPlayerTileContentLayout.VERTICAL
+      ? 5
+      : 2;
   }
 
   public getGridOptions(): LovelaceGridOptions {
     return {
       columns: "full",
-      rows: this.getCardSize(),
+      rows: this._getSizeWithoutFeatures() + this._getTotalFeatureSize(),
       min_columns: 6,
-      min_rows: this.getCardSize(),
+      min_rows: this._getSizeWithoutFeatures() + this._getTotalFeatureSize(),
     };
-  }
-
-  private get _stateObj() {
-    const entityId = this._config!.entity;
-    return this.hass!.states[entityId] as MediaPlayerEntity | undefined;
   }
 
   private get _imageUrl() {
@@ -185,7 +182,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
                   </mpt-cover-image>`
                 : nothing}
               <div class="media-info" id="info">
-                <span class="primary">${mediaTitle || mediaDescription}</span>
+                <span class="primary">${mediaTitle || mediaDescription} </span>
                 ${mediaTitle
                   ? html`<span class="secondary">${mediaDescription}</span>`
                   : nothing}
@@ -198,16 +195,18 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
                 : nothing}
             </div>
           </div>
-          <hui-card-features
-            .hass=${this.hass}
-            .stateObj=${stateObj}
-            .features=${this._config.features}
-            style=${styleMap({
-              "--feature-height":
-                "calc(var(--row-height) + var(--row-gap) - var(--card-padding))",
-              "--feature-padding": "calc(var(--card-padding))",
-            })}
-          ></hui-card-features>
+          ${this._getRenderedFeatureSize() > 0
+            ? html`<hui-card-features
+                .hass=${this.hass}
+                .stateObj=${stateObj}
+                .features=${this._config.features}
+                style=${styleMap({
+                  "--feature-height":
+                    "calc(var(--row-height) + var(--row-gap) - var(--card-padding))",
+                  "--feature-padding": "calc(var(--card-padding))",
+                })}
+              ></hui-card-features>`
+            : nothing}
         </div>
       </ha-card>
     `;

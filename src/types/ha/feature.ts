@@ -35,3 +35,30 @@ export interface LovelaceCardFeature<
   setConfig(config: FeatureConfigWithMaybeInternals<TConfig>): void;
   color?: string;
 }
+
+export interface CustomCardFeatureEntry {
+  type: string;
+  name?: string;
+  supported?: (stateObj: HassEntity) => boolean;
+  configurable?: boolean;
+}
+
+export interface CustomCardFeatureSizeEntry<
+  TStateObj extends HassEntity = HassEntity,
+  TConfig extends LovelaceCardFeatureConfig = LovelaceCardFeatureConfig,
+> {
+  getSize?: (
+    config: FeatureConfigWithMaybeInternals<TConfig>,
+    stateObj: TStateObj,
+  ) => number;
+  doesRender?: (
+    config: FeatureConfigWithMaybeInternals<TConfig>,
+    stateObj: TStateObj,
+  ) => boolean;
+}
+
+export interface CustomCardFeatureEntryWithSize<
+  TStateObj extends HassEntity = HassEntity,
+  TConfig extends LovelaceCardFeatureConfig = LovelaceCardFeatureConfig,
+> extends CustomCardFeatureEntry,
+    CustomCardFeatureSizeEntry<TStateObj, TConfig> {}

@@ -1,6 +1,5 @@
-import { customElement, state } from "lit/decorators";
+import { customElement } from "lit/decorators";
 import { css, html, nothing } from "lit";
-import { HassEntity } from "home-assistant-js-websocket";
 import { MediaPlayerProgressControlFeatureConfig } from "./types";
 import {
   getMediaControls,
@@ -10,22 +9,13 @@ import {
 } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { classMap } from "lit-html/directives/class-map";
-import { ButtonSize, limitButtonSize } from "../../components/mpt-button";
+import { ButtonSize, ButtonVariant } from "../../components/mpt-button";
 import { supportsFeature } from "../../helpers/supports-feature";
 import { formatDuration } from "./helper";
 import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
-
-(window as any).customCardFeatures = (window as any).customCardFeatures || [];
-(window as any).customCardFeatures.push({
-  type: "media-player-progress-control",
-  name: "Media Player Progress",
-  supported: (stateObj: HassEntity) =>
-    computeDomain(stateObj.entity_id) === "media_player" &&
-    supportsFeature(stateObj, MediaPlayerEntityFeature.SEEK),
-  configurable: false,
-});
+import { HassEntity } from "home-assistant-js-websocket";
 
 @customElement("media-player-progress-control")
 export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature<
@@ -41,21 +31,12 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
     };
   }
 
-  private get _canRender() {
-    return (
-      this._config &&
-      this.hass &&
-      this.stateObj &&
-      supportsFeature(this.stateObj, MediaPlayerEntityFeature.SEEK)
-    );
-  }
-
-  public getFeatureSize(): number {
-    return this._canRender ? 1 : 0;
-  }
-
   render() {
-    if (!this._canRender) {
+    if (!this._config || !this.hass || !this.stateObj) {
+      return nothing;
+    }
+
+    if (!supportsFeature(this.stateObj, MediaPlayerEntityFeature.SEEK)) {
       return nothing;
     }
 
@@ -63,11 +44,8 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
       .filter(({ action }) => this._config?.controls?.includes(action))
       .map((it) => ({
         ...it,
-        size: limitButtonSize(
-          it.size ?? ButtonSize.MD,
-          // this._isInCustomCard ? ButtonSize.MD : ButtonSize.SM,
-          ButtonSize.SM,
-        ),
+        size: ButtonSize.SM,
+        variant: ButtonVariant.PLAIN,
       }));
 
     const left = controls.filter(({ action }) =>
@@ -189,3 +167,16 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
     `;
   }
 }
+
+MediaPlayerProgressControlFeature.registerCustomFeature<
+  MediaPlayerEntity,
+  MediaPlayerProgressControlFeatureConfig
+>({
+  type: "media-player-progress-control",
+  name: "Media Player Progress",
+  supported: (stateObj: HassEntity) =>
+    computeDomain(stateObj.entity_id) === "media_player",
+  doesRender: (_config, stateObj) =>
+    supportsFeature(stateObj, MediaPlayerEntityFeature.SEEK),
+  configurable: false,
+});

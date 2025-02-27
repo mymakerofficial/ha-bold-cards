@@ -1,5 +1,6 @@
 import { LitElement } from "lit";
 import {
+  CustomCardFeatureEntryWithSize,
   FeatureConfigWithMaybeInternals,
   LovelaceCardFeature,
   LovelaceCardFeatureConfig,
@@ -29,12 +30,24 @@ export abstract class CustomLovelaceCardFeature<
     return this._config?.__custom_internals !== undefined;
   }
 
-  public getFeatureSize(): number {
-    return 1;
-  }
+  static registerCustomFeature<
+    TStateObj extends HassEntity = HassEntity,
+    TConfig extends LovelaceCardFeatureConfig = LovelaceCardFeatureConfig,
+  >({
+    getSize,
+    doesRender,
+    ...entry
+  }: CustomCardFeatureEntryWithSize<TStateObj, TConfig>) {
+    (window as any).customCardFeatures =
+      (window as any).customCardFeatures || [];
+    (window as any).customCardFeatures.push(entry);
 
-  public isCustomFeature() {
-    return true;
+    (window as any).__customCardFeaturesSizeMap =
+      (window as any).__customCardFeaturesSizeMap || new Map();
+    (window as any).__customCardFeaturesSizeMap.set(`custom:${entry.type}`, {
+      getSize,
+      doesRender,
+    });
   }
 }
 

@@ -1,11 +1,15 @@
 import { LitElement } from "lit";
 import { HomeAssistant, LovelaceCard } from "../types/ha/lovelace";
-import { property, query, queryAll, state } from "lit/decorators";
+import { property, state } from "lit/decorators";
 import { LovelaceCardConfigWithFeatures } from "../types/card";
 import { isCustomFeatureElement } from "../features/base";
+import { getFeatureDoesRender, getFeatureSize } from "../features/size";
+import { MediaPlayerEntity } from "../types/ha/entity";
+import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
 
 export abstract class CustomLovelaceCard<
     TConfig extends LovelaceCardConfigWithFeatures,
+    TStateObj extends HassEntityBase = HassEntityBase,
   >
   extends LitElement
   implements LovelaceCard
@@ -31,31 +35,48 @@ export abstract class CustomLovelaceCard<
     };
   }
 
-  @query("hui-card-features")
-  private _featuresContainer?: LitElement;
+  protected get _stateObj() {
+    const entityId = this._config?.entity;
+    return this.hass?.states[entityId] as TStateObj | undefined;
+  }
 
-  protected _getFeatureElements() {
-    const featuresCollection =
-      this._featuresContainer?.shadowRoot?.querySelector(
-        ".container",
-      )?.children;
-    if (!featuresCollection) {
-      return [];
+  protected abstract _getSizeWithoutFeatures(): number;
+
+  // get the size of all features combined **including** features that do not render
+  protected _getTotalFeatureSize() {
+    if (!this._config?.features) {
+      return 0;
     }
-    return Array.from(featuresCollection).map(
-      (featureContainer) => featureContainer.shadowRoot?.children[0]!,
-    );
-  }
-
-  protected _getFeatureTotalSize() {
-    // TODO this doesnt work sometime because the elements might not be rendered yet
-    return this._getFeatureElements().reduce((totalSize, element) => {
-      if (isCustomFeatureElement(element)) {
-        return totalSize + element.getFeatureSize();
-      }
-      return totalSize + 1;
+    if (!this._stateObj) {
+      return 0;
+    }
+    const size = this._config.features?.reduce((totalSize, feature) => {
+      const featureSize = getFeatureSize(feature, this._stateObj!);
+      return totalSize + featureSize;
     }, 0);
+    return size || 0;
   }
 
-  abstract getCardSize(): number | Promise<number>;
+  // get the size of all features that render combined
+  protected _getRenderedFeatureSize() {
+    if (!this._config?.features) {
+      return 0;
+    }
+    if (!this._stateObj) {
+      return 0;
+    }
+    const size = this._config.features?.reduce((totalSize, feature) => {
+      const doesRender = getFeatureDoesRender(feature, this._stateObj!);
+      if (!doesRender) {
+        return totalSize;
+      }
+      const featureSize = getFeatureSize(feature, this._stateObj!);
+      return totalSize + featureSize;
+    }, 0);
+    return size || 0;
+  }
+
+  public getCardSize(): number | Promise<number> {
+    return this._getSizeWithoutFeatures() + this._getRenderedFeatureSize();
+  }
 }
