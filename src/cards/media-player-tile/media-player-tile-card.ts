@@ -124,7 +124,9 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
       return nothing;
     }
 
-    const mediaTitle = stateObj.attributes.media_title;
+    const mediaTitle = stateObj.attributes.media_title
+      ? stateObj.attributes.media_title
+      : getMediaDescription(stateObj);
     const mediaDescription = stateObj.attributes.media_title
       ? getMediaDescription(stateObj)
       : stateObj.state;
