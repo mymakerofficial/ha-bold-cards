@@ -36,7 +36,11 @@ function getFeatureSize(
   config: FeatureConfigWithMaybeInternals<MediaPlayerControlButtonRowFeatureConfig>,
   stateObj: MediaPlayerEntity,
 ) {
-  const hasLargeButtons = getControls(config, stateObj).some(
+  const controls = getControls(config, stateObj);
+  if (!controls.length) {
+    return 0;
+  }
+  const hasLargeButtons = controls.some(
     ({ size }) => size === ButtonSize.LG || size === ButtonSize.XL,
   );
   return hasLargeButtons ? 2 : 1;
