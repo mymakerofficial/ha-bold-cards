@@ -54,7 +54,14 @@ export class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeatur
   static getStubConfig(): MediaPlayerControlButtonRowFeatureConfig {
     return {
       type: "custom:media-player-control-button-row",
-      controls: Object.values(MediaControlAction),
+      controls: [
+        MediaControlAction.SHUFFLE_SET,
+        MediaControlAction.MEDIA_PLAY,
+        MediaControlAction.MEDIA_PAUSE,
+        MediaControlAction.MEDIA_PREVIOUS_TRACK,
+        MediaControlAction.MEDIA_NEXT_TRACK,
+        MediaControlAction.REPEAT_SET,
+      ],
     };
   }
 

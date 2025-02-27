@@ -27,7 +27,12 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
       type: "custom:media-player-progress-control",
       full_width: true,
       show_timestamps: false,
-      controls: Object.values(MediaControlAction),
+      controls: [
+        MediaControlAction.SHUFFLE_SET,
+        MediaControlAction.MEDIA_PREVIOUS_TRACK,
+        MediaControlAction.MEDIA_NEXT_TRACK,
+        MediaControlAction.REPEAT_SET,
+      ],
     };
   }
 

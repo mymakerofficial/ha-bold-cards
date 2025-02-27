@@ -63,17 +63,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
       color_mode: MediaPlayerTileColorMode.AMBIENT_VIBRANT,
       color: "primary",
       show_title_bar: true,
-      features: [
-        {
-          ...MediaPlayerProgressControlFeature.getStubConfig(),
-          controls: [
-            MediaControlAction.SHUFFLE_SET,
-            MediaControlAction.MEDIA_PREVIOUS_TRACK,
-            MediaControlAction.MEDIA_NEXT_TRACK,
-            MediaControlAction.REPEAT_SET,
-          ],
-        },
-      ],
+      features: [MediaPlayerProgressControlFeature.getStubConfig()],
     };
   }
 
@@ -116,7 +106,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
 
   public getGridOptions(): LovelaceGridOptions {
     return {
-      columns: "full",
+      columns: 12,
       rows: this._getSizeWithoutFeatures() + this._getTotalFeatureSize(),
       min_columns: 6,
       min_rows: this._getSizeWithoutFeatures() + this._getTotalFeatureSize(),
