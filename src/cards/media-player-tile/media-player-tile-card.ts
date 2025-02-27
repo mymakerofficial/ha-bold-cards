@@ -6,7 +6,7 @@ import {
   MediaPlayerTileConfig,
   MediaPlayerTileContentLayout,
 } from "./types";
-import { LovelaceGridOptions } from "../../types/ha/lovelace";
+import { HomeAssistant, LovelaceGridOptions } from "../../types/ha/lovelace";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { PropertyValues } from "lit-element";
 import { extractColors } from "../../helpers/extract-color";
@@ -21,6 +21,7 @@ import { classMap } from "lit-html/directives/class-map";
 import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
 import { MediaPlayerProgressControlFeature } from "../../features/media-player-progress-control/media-player-progress-control";
 import { CustomLovelaceCard } from "../base";
+import { computeDomain } from "../../helpers/entity";
 
 // This puts your card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
@@ -39,10 +40,15 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
     ) as LovelaceCardEditor;
   }
 
-  public static getStubConfig(): MediaPlayerTileConfig {
+  public static getStubConfig(hass: HomeAssistant): MediaPlayerTileConfig {
+    const entities = Object.keys(hass.states).filter(
+      (entity_id) => computeDomain(entity_id) === "media_player",
+    );
+    const entity = entities[Math.floor(Math.random() * entities.length)];
+
     return {
       type: "custom:media-player-tile",
-      entity: "",
+      entity,
       controls: [
         MediaControlAction.TURN_ON,
         MediaControlAction.TURN_OFF,
