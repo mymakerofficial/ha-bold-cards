@@ -20,8 +20,8 @@ export type MediaPlayerTileColorMode =
 export interface MediaPlayerTileConfig extends LovelaceCardConfigWithFeatures {
   entity: string;
   color_mode: MediaPlayerTileColorMode;
-  color: string;
+  color?: string;
   content_layout: MediaPlayerTileContentLayout;
   show_title_bar?: boolean;
-  controls: MediaControlAction[];
+  controls?: MediaControlAction[];
 }
