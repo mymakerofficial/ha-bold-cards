@@ -85,7 +85,11 @@ export interface MediaControlButton {
   variant?: ButtonVariant;
 }
 
-export function getMediaControls(stateObj: MediaPlayerEntity) {
+export function getMediaControls(
+  stateObj: MediaPlayerEntity,
+  // TODO only temporary
+  largePlayButton = false,
+) {
   const { state } = stateObj;
 
   if (isStateUnavailable(stateObj.state)) {
@@ -137,7 +141,7 @@ export function getMediaControls(stateObj: MediaPlayerEntity) {
       iconPath: mdiPlay,
       action: MediaControlAction.MEDIA_PLAY,
       variant: ButtonVariant.FILLED,
-      size: ButtonSize.MD,
+      size: largePlayButton ? ButtonSize.XL : ButtonSize.MD,
       shape: ButtonShape.ROUNDED,
     });
   }
@@ -150,8 +154,8 @@ export function getMediaControls(stateObj: MediaPlayerEntity) {
       iconPath: mdiPause,
       action: MediaControlAction.MEDIA_PAUSE,
       variant: ButtonVariant.FILLED,
-      size: ButtonSize.MD,
-      shape: ButtonShape.SQUARE,
+      size: largePlayButton ? ButtonSize.XL : ButtonSize.MD,
+      shape: largePlayButton ? ButtonShape.WIDE : ButtonShape.SQUARE,
     });
   }
 

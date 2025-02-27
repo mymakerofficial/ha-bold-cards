@@ -21,7 +21,7 @@ function getControls(
   if (!stateObj) {
     return [];
   }
-  return getMediaControls(stateObj)
+  return getMediaControls(stateObj, true)
     .filter(({ action }) => config.controls?.includes(action))
     .map((it) => ({
       ...it,
