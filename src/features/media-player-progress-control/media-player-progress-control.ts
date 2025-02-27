@@ -150,7 +150,10 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
       }
 
       .container.full-width {
-        width: 100%;
+        width: unset;
+        /* make the icon align and not the border of the button */
+        /* TODO: what if the outer button has a background? */
+        margin: 0 calc(-1 * var(--card-padding, 10px) + 8px);
       }
 
       .slider-container {

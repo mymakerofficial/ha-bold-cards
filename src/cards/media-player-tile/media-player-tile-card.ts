@@ -73,7 +73,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
   public getCardSize(): number {
     return (
       (this._config?.content_layout === MediaPlayerTileContentLayout.VERTICAL
-        ? 4
+        ? 5
         : 2) + this._getFeatureTotalSize()
     );
   }
@@ -118,8 +118,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
       return nothing;
     }
 
-    const mediaTitle =
-      stateObj.attributes.media_title || stateObj.attributes.friendly_name;
+    const mediaTitle = stateObj.attributes.media_title;
     const mediaDescription = stateObj.attributes.media_title
       ? getMediaDescription(stateObj)
       : stateObj.state;
@@ -156,23 +155,40 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
         </div>
         <div class="container">
           <div class="content">
-            <div class="header">
-              <mpt-cover-image .imageUrl=${imageUrl}>
+            <div class="title-bar">
+              <div class="player-title">
                 <ha-state-icon
-                  slot="icon"
                   .stateObj=${stateObj}
                   .hass=${this.hass}
                 ></ha-state-icon>
-              </mpt-cover-image>
-              <div class="media-info" id="info">
-                <span class="primary">${mediaTitle || mediaDescription}</span>
-                <span class="secondary">${mediaDescription}</span>
+                <span>${this._stateObj?.attributes.friendly_name}</span>
               </div>
             </div>
-            <mpt-media-control-button-row
-              .controls=${controls}
-              @action=${this._handleAction}
-            ></mpt-media-control-button-row>
+            <div class="header">
+              ${imageUrl ||
+              this._config.content_layout ===
+                MediaPlayerTileContentLayout.VERTICAL
+                ? html`<mpt-cover-image .imageUrl=${imageUrl}>
+                    <ha-state-icon
+                      slot="icon"
+                      .stateObj=${stateObj}
+                      .hass=${this.hass}
+                    ></ha-state-icon>
+                  </mpt-cover-image>`
+                : nothing}
+              <div class="media-info" id="info">
+                <span class="primary">${mediaTitle || mediaDescription}</span>
+                ${mediaTitle
+                  ? html`<span class="secondary">${mediaDescription}</span>`
+                  : nothing}
+              </div>
+              ${controls
+                ? html`<mpt-media-control-button-row
+                    .controls=${controls}
+                    @action=${this._handleAction}
+                  ></mpt-media-control-button-row>`
+                : nothing}
+            </div>
           </div>
           <hui-card-features
             .hass=${this.hass}
@@ -234,7 +250,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
     return css`
       :host {
         -webkit-tap-highlight-color: transparent;
-        --card-padding: 12px;
+        --card-padding: 16px;
       }
 
       ha-card {
@@ -289,53 +305,63 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<MediaPlayerTileConfi
         flex: 1;
         position: relative;
         display: flex;
-        flex-direction: row;
-        align-items: center;
+        flex-direction: column;
+        justify-content: space-between;
         padding: var(--card-padding);
         min-width: 0;
-        box-sizing: border-box;
         overflow: hidden;
         pointer-events: none;
+        min-height: calc(
+          var(--row-height) * 2 + var(--row-gap) - var(--card-padding) * 2
+        );
       }
 
       ha-card.vertical .content {
-        flex-direction: column;
+        min-height: calc(
+          var(--row-height) * 5 + var(--row-gap) * 4 - var(--card-padding) * 2
+        );
+      }
+
+      .title-bar {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+      }
+
+      .player-title {
+        display: flex;
+        gap: 8px;
+        border-radius: 12px;
+        --mdc-icon-size: 14px;
+        font-size: 0.8em;
+        font-weight: 500;
       }
 
       .header {
         display: flex;
         flex-direction: row;
         align-items: center;
-        gap: 12px;
-        flex: 1;
+        gap: var(--card-padding);
         min-width: 0;
         box-sizing: border-box;
         pointer-events: none;
-        padding-right: 12px;
-        min-height: calc(
-          var(--row-height) * 2 + var(--row-gap) - var(--card-padding) * 2
-        );
       }
 
       ha-card.vertical .header {
-        min-height: calc(
-          var(--row-height) * 4 + var(--row-gap) * 3 - var(--card-padding) * 2
-        );
+        padding-top: var(--card-padding);
         flex-direction: column;
         justify-content: center;
         width: 100%;
-        padding-right: 0px;
         gap: 24px;
       }
 
       mpt-media-control-button-row {
         pointer-events: all;
-        margin: -12px -12px -12px 0;
-        padding: 12px 12px 12px 0;
+        margin-top: auto;
       }
 
       mpt-cover-image {
-        --image-size: 72px;
+        --image-size: 53px;
       }
 
       ha-card.vertical mpt-cover-image {

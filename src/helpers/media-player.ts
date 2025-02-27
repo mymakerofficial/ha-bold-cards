@@ -137,7 +137,7 @@ export function getMediaControls(stateObj: MediaPlayerEntity) {
       iconPath: mdiPlay,
       action: MediaControlAction.MEDIA_PLAY,
       variant: ButtonVariant.FILLED,
-      size: ButtonSize.XL,
+      size: ButtonSize.MD,
       shape: ButtonShape.ROUNDED,
     });
   }
@@ -150,8 +150,8 @@ export function getMediaControls(stateObj: MediaPlayerEntity) {
       iconPath: mdiPause,
       action: MediaControlAction.MEDIA_PAUSE,
       variant: ButtonVariant.FILLED,
-      size: ButtonSize.XL,
-      shape: ButtonShape.WIDE,
+      size: ButtonSize.MD,
+      shape: ButtonShape.SQUARE,
     });
   }
 
