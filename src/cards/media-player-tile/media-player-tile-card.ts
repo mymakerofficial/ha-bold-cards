@@ -22,6 +22,8 @@ import { MediaPlayerProgressControlFeature } from "../../features/media-player-p
 import { CustomLovelaceCard } from "../base";
 import { computeDomain } from "../../helpers/entity";
 import { MediaPlayerEntity } from "../../types/ha/entity";
+import { config } from "home-assistant-js-websocket/dist/messages";
+import { MediaPlayerControlButtonRowFeature } from "../../features/media-player-control-button-row/media-player-control-button-row";
 
 // This puts your card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
@@ -73,6 +75,29 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
         },
       ],
     };
+  }
+
+  public setConfig(config: MediaPlayerTileConfig) {
+    if (
+      config.content_layout === MediaPlayerTileContentLayout.VERTICAL &&
+      config.controls.length
+    ) {
+      // move controls to feature row because its easier to measure the height there
+      super.setConfig({
+        ...config,
+        controls: [],
+        features: [
+          {
+            ...MediaPlayerControlButtonRowFeature.getStubConfig(),
+            controls: config.controls,
+          },
+          ...(config.features ?? []),
+        ],
+      });
+      return;
+    }
+
+    super.setConfig(config);
   }
 
   @state() private _foregroundColor?: string;
