@@ -63,6 +63,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
       content_layout: MediaPlayerTileContentLayout.HORIZONTAL,
       color_mode: MediaPlayerTileColorMode.AMBIENT_VIBRANT,
       color: "primary",
+      show_title_bar: true,
       features: [
         {
           ...MediaPlayerProgressControlFeature.getStubConfig(),
@@ -77,7 +78,10 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
     };
   }
 
-  public setConfig(config: MediaPlayerTileConfig) {
+  public setConfig(originalConfig: MediaPlayerTileConfig) {
+    // set default values for undefined properties
+    const config = { show_title_bar: true, ...originalConfig };
+
     if (
       config.content_layout === MediaPlayerTileContentLayout.VERTICAL &&
       config.controls.length
@@ -238,15 +242,17 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
         </div>
         <div class="container">
           <div class="content">
-            <div class="title-bar">
-              <div class="player-title">
-                <ha-state-icon
-                  .stateObj=${stateObj}
-                  .hass=${this.hass}
-                ></ha-state-icon>
-                <span>${this._stateObj?.attributes.friendly_name}</span>
-              </div>
-            </div>
+            ${this._config.show_title_bar
+              ? html`<div class="title-bar">
+                  <div class="player-title">
+                    <ha-state-icon
+                      .stateObj=${stateObj}
+                      .hass=${this.hass}
+                    ></ha-state-icon>
+                    <span>${this._stateObj?.attributes.friendly_name}</span>
+                  </div>
+                </div>`
+              : nothing}
             <div class="header">
               ${showCoverImage
                 ? html`<mpt-cover-image .imageUrl=${imageUrl}>
@@ -258,7 +264,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
                   </mpt-cover-image>`
                 : nothing}
               <div class="media-info" id="info">
-                <span class="primary">${mediaTitle || mediaDescription} </span>
+                <span class="primary">${mediaTitle || mediaDescription}</span>
                 ${mediaTitle
                   ? html`<span class="secondary">${mediaDescription}</span>`
                   : nothing}
@@ -476,6 +482,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
         min-width: 0;
         box-sizing: border-box;
         pointer-events: none;
+        margin-top: auto;
       }
 
       ha-card.vertical .header {

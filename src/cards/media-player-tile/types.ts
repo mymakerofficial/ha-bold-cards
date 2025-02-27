@@ -1,8 +1,3 @@
-import { LovelaceCardConfig } from "../../types/ha/lovelace";
-import {
-  FeatureConfigWithMaybeInternals,
-  LovelaceCardFeatureConfig,
-} from "../../types/ha/feature";
 import { MediaControlAction } from "../../helpers/media-player";
 import { LovelaceCardConfigWithFeatures } from "../../types/card";
 
@@ -27,5 +22,6 @@ export interface MediaPlayerTileConfig extends LovelaceCardConfigWithFeatures {
   color_mode: MediaPlayerTileColorMode;
   color: string;
   content_layout: MediaPlayerTileContentLayout;
+  show_title_bar?: boolean;
   controls: MediaControlAction[];
 }

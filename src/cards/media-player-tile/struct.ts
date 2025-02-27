@@ -2,6 +2,7 @@ import {
   any,
   array,
   assign,
+  boolean,
   enums,
   object,
   optional,
@@ -17,14 +18,12 @@ import { MediaControlAction } from "../../helpers/media-player";
 export const cardConfigStruct = assign(
   baseLovelaceCardConfig,
   object({
-    entity: optional(string()),
-    color_mode: optional(enums(Object.values(MediaPlayerTileColorMode))),
+    entity: string(),
+    color_mode: enums(Object.values(MediaPlayerTileColorMode)),
     color: optional(string()),
-    content_layout: optional(
-      enums(Object.values(MediaPlayerTileContentLayout)),
-    ),
+    content_layout: enums(Object.values(MediaPlayerTileContentLayout)),
     controls: optional(array(enums(Object.values(MediaControlAction)))),
+    show_title_bar: optional(boolean()),
     features: optional(array(any())),
-    features_position: optional(enums(["bottom", "inline"])),
   }),
 );

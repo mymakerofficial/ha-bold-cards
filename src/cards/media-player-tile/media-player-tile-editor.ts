@@ -12,7 +12,7 @@ import {
 import { customElement, property, state } from "lit/decorators";
 import { assert } from "superstruct";
 import { cardConfigStruct } from "./struct";
-import { mdiPalette } from "@mdi/js";
+import { mdiPageLayoutHeader, mdiPalette } from "@mdi/js";
 
 @customElement("media-player-tile-editor")
 export class MediaPlayerTileEditor
@@ -111,6 +111,20 @@ export class MediaPlayerTileEditor
           },
         ],
       },
+      {
+        name: "title_bar",
+        flatten: true,
+        type: "expandable",
+        iconPath: mdiPageLayoutHeader,
+        schema: [
+          {
+            name: "show_title_bar",
+            selector: {
+              boolean: {},
+            },
+          },
+        ],
+      },
     ];
 
     return html`
@@ -122,6 +136,10 @@ export class MediaPlayerTileEditor
         .computeHelper=${this._computeHelperCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
+      <ha-alert alert-type="info" title="Heads up!">
+        This card is still in early development. Head to the YAML editor for
+        more settings.
+      </ha-alert>
     `;
   }
 
@@ -150,6 +168,8 @@ export class MediaPlayerTileEditor
         color_mode: "Color Mode",
         color: "Fallback Color",
         content_layout: "Layout",
+        title_bar: "Title Bar",
+        show_title_bar: "Show Title Bar",
       }[schema.name] ?? ""
     );
   };
@@ -160,9 +180,16 @@ export class MediaPlayerTileEditor
       {
         color:
           'Only applicable when "Color Mode" is set to "Fixed Color", or no artwork is available.',
+        show_title_bar: "Show the media player's name.",
       }[schema.name] ?? ""
     );
   };
 
-  static styles: CSSResultGroup = css``;
+  static styles: CSSResultGroup = css`
+    :host {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+  `;
 }
