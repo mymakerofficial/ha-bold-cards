@@ -59,7 +59,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
         MediaControlAction.MEDIA_PAUSE,
       ],
       content_layout: MediaPlayerTileContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerTileColorMode.AMBIENT,
+      color_mode: MediaPlayerTileColorMode.AMBIENT_VIBRANT,
       color: "primary",
       features: [
         {
@@ -103,10 +103,49 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
     );
   }
 
-  private get _tileColor() {
-    return this._config!.color_mode === MediaPlayerTileColorMode.AMBIENT
-      ? this._foregroundColor || `var(--${this._config!.color}-color)`
-      : `var(--${this._config!.color}-color)`;
+  private get _foregroundColorCSS() {
+    switch (
+      (this._foregroundColor ? this._config?.color_mode : undefined) ??
+      MediaPlayerTileColorMode.MANUAL
+    ) {
+      case MediaPlayerTileColorMode.AMBIENT:
+      case MediaPlayerTileColorMode.AMBIENT_VIBRANT:
+        return this._foregroundColor;
+      case MediaPlayerTileColorMode.PICTURE:
+        return this._foregroundColor;
+      default:
+        return `var(--${this._config!.color}-color)`;
+    }
+  }
+
+  private get _backgroundColorCSS() {
+    switch (
+      (this._backgroundColor ? this._config?.color_mode : undefined) ??
+      MediaPlayerTileColorMode.MANUAL
+    ) {
+      case MediaPlayerTileColorMode.AMBIENT:
+      case MediaPlayerTileColorMode.AMBIENT_VIBRANT:
+        return `color-mix(in srgb, ${this._backgroundColor}, var(--card-background-color) 95%)`;
+      case MediaPlayerTileColorMode.PICTURE:
+        return this._backgroundColor;
+      default:
+        return "var(--card-background-color)";
+    }
+  }
+
+  private get _textColorCSS() {
+    switch (
+      (this._foregroundColor ? this._config?.color_mode : undefined) ??
+      MediaPlayerTileColorMode.MANUAL
+    ) {
+      case MediaPlayerTileColorMode.PICTURE:
+        return "color-mix(in srgb, white, var(--tile-color) 20%)";
+      case MediaPlayerTileColorMode.AMBIENT:
+      case MediaPlayerTileColorMode.AMBIENT_VIBRANT:
+        return "color-mix(in srgb, var(--primary-text-color), var(--tile-color) 20%)";
+      default:
+        return "inherit";
+    }
   }
 
   protected render() {
@@ -115,6 +154,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
     }
 
     const stateObj = this._stateObj;
+    const imageUrl = this._imageUrl;
 
     if (!stateObj) {
       // TODO show error or something
@@ -127,21 +167,26 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
     const mediaDescription = stateObj.attributes.media_title
       ? getMediaDescription(stateObj)
       : stateObj.state;
-    const imageUrl = this._imageUrl;
 
     const controls = getMediaControls(stateObj).filter(({ action }) =>
       this._config?.controls?.includes(action),
     );
 
+    const showBackgroundImage =
+      this._config?.color_mode === MediaPlayerTileColorMode.PICTURE &&
+      !!imageUrl;
+
+    const showCoverImage =
+      !showBackgroundImage &&
+      (!!imageUrl ||
+        this._config.content_layout === MediaPlayerTileContentLayout.VERTICAL);
+
     return html`
       <ha-card
         style=${styleMap({
-          "--tile-color": this._tileColor,
-          "--ha-card-background":
-            this._config!.color_mode === MediaPlayerTileColorMode.AMBIENT &&
-            this._backgroundColor
-              ? `color-mix(in srgb, ${this._backgroundColor}, var(--card-background-color) 95%)`
-              : "",
+          "--tile-color": this._foregroundColorCSS,
+          "--ha-card-background": this._backgroundColorCSS,
+          color: this._textColorCSS,
         })}
         class=${classMap({
           vertical:
@@ -156,6 +201,14 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
           tabindex="0"
           aria-labelledby="info"
         >
+          ${showBackgroundImage
+            ? html`<div
+                class="background-image"
+                style=${styleMap({
+                  "background-image": imageUrl ? `url(${imageUrl})` : "",
+                })}
+              ></div>`
+            : nothing}
           <ha-ripple></ha-ripple>
         </div>
         <div class="container">
@@ -170,9 +223,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
               </div>
             </div>
             <div class="header">
-              ${imageUrl ||
-              this._config.content_layout ===
-                MediaPlayerTileContentLayout.VERTICAL
+              ${showCoverImage
                 ? html`<mpt-cover-image .imageUrl=${imageUrl}>
                     <ha-state-icon
                       slot="icon"
@@ -215,9 +266,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
   public willUpdate(changedProps: PropertyValues) {
     super.willUpdate(changedProps);
 
-    if (this._config!.color_mode === MediaPlayerTileColorMode.AMBIENT) {
-      this._updateColors().then();
-    }
+    this._updateColors().then();
   }
 
   private async _updateColors() {
@@ -231,12 +280,29 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
     const darkMode =
       this.hass?.selectedTheme?.dark ??
       window.matchMedia("(prefers-color-scheme: dark)").matches;
-    this._foregroundColor = darkMode
-      ? swatches.LightVibrant?.hex
-      : swatches.DarkMuted?.hex;
-    this._backgroundColor = darkMode
-      ? swatches.Vibrant?.hex
-      : swatches.LightVibrant?.hex;
+
+    switch (this._config?.color_mode) {
+      case MediaPlayerTileColorMode.AMBIENT:
+        this._foregroundColor = darkMode
+          ? swatches.LightVibrant?.hex
+          : swatches.DarkMuted?.hex;
+        this._backgroundColor = darkMode
+          ? swatches.DarkMuted?.hex
+          : swatches.LightVibrant?.hex;
+        break;
+      case MediaPlayerTileColorMode.AMBIENT_VIBRANT:
+        this._foregroundColor = darkMode
+          ? swatches.LightVibrant?.hex
+          : swatches.DarkVibrant?.hex;
+        this._backgroundColor = darkMode
+          ? swatches.Vibrant?.hex
+          : swatches.LightVibrant?.hex;
+        break;
+      case MediaPlayerTileColorMode.PICTURE:
+        this._foregroundColor = swatches.LightVibrant?.hex;
+        this._backgroundColor = swatches.DarkMuted?.hex;
+        break;
+    }
   }
 
   private _handleAction(event: MediaControlButtonActionEvent) {
@@ -290,6 +356,39 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
         bottom: 0;
         right: 0;
         border-radius: var(--ha-card-border-radius, 12px);
+        overflow: hidden;
+      }
+
+      .background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background-position: center;
+        background-size: cover;
+        mask-image: radial-gradient(
+          circle at center,
+          rgba(0, 0, 0, 0.8) 15%,
+          rgba(0, 0, 0, 0.1) 80%,
+          rgba(0, 0, 0, 0) 100%
+        );
+        max-height: calc(var(--row-height) * 6 + var(--row-gap) * 5);
+      }
+
+      .background-image::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(
+          to top,
+          var(--ha-card-background) 0%,
+          transparent 50%
+        );
+        min-height: calc(var(--row-height) * 6 + var(--row-gap) * 5);
       }
 
       [role="button"] {
@@ -391,12 +490,14 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
       }
 
       .media-info .primary {
+        font-size: 1.05rem;
         font-weight: 500;
       }
 
       .media-info .secondary {
-        font-size: 12px;
+        font-size: 0.8rem;
         font-weight: 400;
+        opacity: 0.9;
       }
 
       ha-card.vertical .media-info {
@@ -406,7 +507,12 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
       }
 
       ha-card.vertical .media-info .primary {
-        font-size: 18px;
+        font-size: 1.4rem;
+        font-weight: 400;
+      }
+
+      ha-card.vertical .media-info .secondary {
+        font-size: 0.9rem;
         font-weight: 400;
       }
     `;

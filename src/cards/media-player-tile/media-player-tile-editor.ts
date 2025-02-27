@@ -1,7 +1,7 @@
-import { LitElement, html, TemplateResult, css, CSSResultGroup } from "lit";
+import { css, CSSResultGroup, html, LitElement, nothing } from "lit";
 import {
-  HomeAssistant,
   fireEvent,
+  HomeAssistant,
   LovelaceCardEditor,
 } from "custom-card-helpers";
 import {
@@ -28,10 +28,13 @@ export class MediaPlayerTileEditor
     this._config = config;
   }
 
-  protected render(): TemplateResult | void {
+  protected render() {
     if (!this.hass) {
-      return html``;
+      return nothing;
     }
+
+    const entityId = this._config!.entity;
+    const stateObj = entityId ? this.hass!.states[entityId] : undefined;
 
     const schema = [
       {
@@ -44,34 +47,6 @@ export class MediaPlayerTileEditor
         type: "expandable",
         iconPath: mdiPalette,
         schema: [
-          {
-            name: "color_mode",
-            required: true,
-            selector: {
-              select: {
-                mode: "dropdown",
-                options: [
-                  {
-                    label: "Ambient",
-                    value: MediaPlayerTileColorMode.AMBIENT,
-                  },
-                  {
-                    label: "Manual",
-                    value: MediaPlayerTileColorMode.MANUAL,
-                  },
-                ],
-              },
-            },
-          },
-          {
-            name: "color",
-            selector: {
-              ui_color: {
-                default_color: "state",
-                // include_state: true,
-              },
-            },
-          },
           {
             name: "content_layout",
             required: true,
@@ -90,6 +65,49 @@ export class MediaPlayerTileEditor
                 ],
               },
             },
+          },
+          {
+            name: "",
+            type: "grid",
+            schema: [
+              {
+                name: "color_mode",
+                required: true,
+                selector: {
+                  select: {
+                    mode: "dropdown",
+                    options: [
+                      {
+                        label: "Ambient",
+                        value: MediaPlayerTileColorMode.AMBIENT,
+                      },
+                      {
+                        label: "Ambient Vibrant",
+                        value: MediaPlayerTileColorMode.AMBIENT_VIBRANT,
+                      },
+                      {
+                        label: "Picture Background",
+                        value: MediaPlayerTileColorMode.PICTURE,
+                      },
+                      {
+                        label: "Fixed Color",
+                        value: MediaPlayerTileColorMode.MANUAL,
+                      },
+                    ],
+                  },
+                },
+              },
+              {
+                name: "color",
+                required: true,
+                selector: {
+                  ui_color: {
+                    default_color: "state",
+                    // include_state: true,
+                  },
+                },
+              },
+            ],
           },
         ],
       },
@@ -130,7 +148,7 @@ export class MediaPlayerTileEditor
         entity: "Entity",
         appearance: "Appearance",
         color_mode: "Color Mode",
-        color: "Color",
+        color: "Fallback Color",
         content_layout: "Layout",
       }[schema.name] ?? ""
     );
@@ -140,7 +158,8 @@ export class MediaPlayerTileEditor
     // TODO Add translations
     return (
       {
-        color: 'Only applicable when "Color Mode" is set to "Manual"',
+        color:
+          'Only applicable when "Color Mode" is set to "Fixed Color", or no artwork is available.',
       }[schema.name] ?? ""
     );
   };

@@ -15,6 +15,8 @@ export type MediaPlayerTileContentLayout =
 
 export const MediaPlayerTileColorMode = {
   AMBIENT: "ambient",
+  AMBIENT_VIBRANT: "ambient_vibrant",
+  PICTURE: "picture",
   MANUAL: "manual",
 };
 export type MediaPlayerTileColorMode =
