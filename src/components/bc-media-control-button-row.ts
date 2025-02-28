@@ -17,7 +17,7 @@ export class MediaControlButtonActionEvent extends CustomEvent<{
   }
 }
 
-@customElement("mpt-media-control-button-row")
+@customElement("bc-media-control-button-row")
 export class MediaControlButtonRow extends LitElement {
   @property({ attribute: false }) public controls?: MediaControlButton[];
 
@@ -36,13 +36,13 @@ export class MediaControlButtonRow extends LitElement {
       >
         ${this.controls?.map(
           (control) => html`
-            <mpt-button
+            <bc-button
               .iconPath=${control.iconPath}
               size=${control.size ?? nothing}
               shape=${control.shape ?? nothing}
               variant=${control.variant ?? nothing}
               @click=${() => this._handleClick(control.action)}
-            ></mpt-button>
+            ></bc-button>
           `,
         )}
       </div>

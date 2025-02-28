@@ -1,7 +1,7 @@
 import { customElement, property } from "lit/decorators";
 import { css, html, LitElement } from "lit";
 
-@customElement("mpt-cover-image")
+@customElement("bc-cover-image")
 export class CoverImage extends LitElement {
   @property({ attribute: false })
   public imageUrl?: string;

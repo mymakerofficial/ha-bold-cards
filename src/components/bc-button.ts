@@ -1,6 +1,6 @@
 import { customElement, property } from "lit/decorators";
 import { css, html } from "lit";
-import { ControlSurface } from "./mpt-contol-surface";
+import { ControlSurface } from "./bc-contol-surface";
 
 export const ButtonVariant = {
   PLAIN: "plain",
@@ -34,7 +34,7 @@ export function limitButtonSize(
   return sizes[Math.min(sizeIndex, limitIndex)] as ButtonSize;
 }
 
-@customElement("mpt-button")
+@customElement("bc-button")
 export class Button extends ControlSurface {
   @property({ attribute: false }) public iconPath?: string;
 
@@ -44,10 +44,10 @@ export class Button extends ControlSurface {
 
   protected render() {
     return html`
-      <mpt-control-surface .disabled=${this.disabled}>
+      <bc-control-surface .disabled=${this.disabled}>
         <ha-svg-icon .path=${this.iconPath}></ha-svg-icon>
         <slot></slot>
-      </mpt-control-surface>
+      </bc-control-surface>
     `;
   }
 
@@ -61,7 +61,7 @@ export class Button extends ControlSurface {
       --button-width: var(--button-height);
     }
 
-    mpt-control-surface {
+    bc-control-surface {
       display: flex;
       align-items: center;
       justify-content: center;

@@ -2,9 +2,7 @@ import { LitElement } from "lit";
 import { HomeAssistant, LovelaceCard } from "../types/ha/lovelace";
 import { property, state } from "lit/decorators";
 import { LovelaceCardConfigWithFeatures } from "../types/card";
-import { isCustomFeatureElement } from "../features/base";
 import { getFeatureDoesRender, getFeatureSize } from "../features/size";
-import { MediaPlayerEntity } from "../types/ha/entity";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
 
 export abstract class CustomLovelaceCard<

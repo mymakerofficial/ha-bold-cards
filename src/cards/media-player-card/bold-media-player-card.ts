@@ -2,9 +2,9 @@ import { css, CSSResultGroup, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
 import { fireEvent, LovelaceCardEditor } from "custom-card-helpers";
 import {
-  MediaPlayerTileColorMode,
+  MediaPlayerCardColorMode,
   MediaPlayerTileConfig,
-  MediaPlayerTileContentLayout,
+  MediaPlayerCardContentLayout,
 } from "./types";
 import { HomeAssistant, LovelaceGridOptions } from "../../types/ha/lovelace";
 import { PropertyValues } from "lit-element";
@@ -17,30 +17,29 @@ import {
   MediaControlAction,
 } from "../../helpers/media-player";
 import { classMap } from "lit-html/directives/class-map";
-import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
+import { MediaControlButtonActionEvent } from "../../components/bc-media-control-button-row";
 import { MediaPlayerProgressControlFeature } from "../../features/media-player-progress-control/media-player-progress-control";
 import { CustomLovelaceCard } from "../base";
 import { computeDomain } from "../../helpers/entity";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { MediaPlayerControlButtonRowFeature } from "../../features/media-player-control-button-row/media-player-control-button-row";
 
-// This puts your card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
-  type: "media-player-tile",
-  name: "Media Player Tile",
-  description: "A template custom card for you to create something awesome",
+  type: "bold-media-player-card",
+  name: "Bold Media Player",
+  description: "A media player card that's bold and beautiful.",
 });
 
-@customElement("media-player-tile")
-export class MediaPlayerTileCard extends CustomLovelaceCard<
+@customElement("bold-media-player-card")
+export class BoldMediaPlayerCard extends CustomLovelaceCard<
   MediaPlayerTileConfig,
   MediaPlayerEntity
 > {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
-    await import("./media-player-tile-editor");
+    await import("./bold-media-player-card-editor");
     return document.createElement(
-      "media-player-tile-editor",
+      "bold-media-player-card-editor",
     ) as LovelaceCardEditor;
   }
 
@@ -51,7 +50,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
     const entity = entities[Math.floor(Math.random() * entities.length)];
 
     return {
-      type: "custom:media-player-tile",
+      type: "custom:bold-media-player-card",
       entity,
       controls: [
         MediaControlAction.TURN_ON,
@@ -59,8 +58,8 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
         MediaControlAction.MEDIA_PLAY,
         MediaControlAction.MEDIA_PAUSE,
       ],
-      content_layout: MediaPlayerTileContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerTileColorMode.AMBIENT_VIBRANT,
+      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
+      color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
       show_title_bar: true,
       features: [MediaPlayerProgressControlFeature.getStubConfig()],
@@ -72,7 +71,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
     const config = { show_title_bar: true, ...originalConfig };
 
     if (
-      config.content_layout === MediaPlayerTileContentLayout.VERTICAL &&
+      config.content_layout === MediaPlayerCardContentLayout.VERTICAL &&
       config.controls?.length
     ) {
       // move controls to feature row because its easier to measure the height there
@@ -99,7 +98,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
 
   protected _getSizeWithoutFeatures() {
     return this._config?.content_layout ===
-      MediaPlayerTileContentLayout.VERTICAL
+      MediaPlayerCardContentLayout.VERTICAL
       ? 5
       : 2;
   }
@@ -124,12 +123,12 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
   private get _foregroundColorCSS() {
     switch (
       (this._foregroundColor ? this._config?.color_mode : undefined) ??
-      MediaPlayerTileColorMode.MANUAL
+      MediaPlayerCardColorMode.MANUAL
     ) {
-      case MediaPlayerTileColorMode.AMBIENT:
-      case MediaPlayerTileColorMode.AMBIENT_VIBRANT:
+      case MediaPlayerCardColorMode.AMBIENT:
+      case MediaPlayerCardColorMode.AMBIENT_VIBRANT:
         return this._foregroundColor;
-      case MediaPlayerTileColorMode.PICTURE:
+      case MediaPlayerCardColorMode.PICTURE:
         return this._foregroundColor;
       default:
         return `var(--${this._config!.color}-color)`;
@@ -139,12 +138,12 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
   private get _backgroundColorCSS() {
     switch (
       (this._backgroundColor ? this._config?.color_mode : undefined) ??
-      MediaPlayerTileColorMode.MANUAL
+      MediaPlayerCardColorMode.MANUAL
     ) {
-      case MediaPlayerTileColorMode.AMBIENT:
-      case MediaPlayerTileColorMode.AMBIENT_VIBRANT:
+      case MediaPlayerCardColorMode.AMBIENT:
+      case MediaPlayerCardColorMode.AMBIENT_VIBRANT:
         return `color-mix(in srgb, ${this._backgroundColor}, var(--card-background-color) 95%)`;
-      case MediaPlayerTileColorMode.PICTURE:
+      case MediaPlayerCardColorMode.PICTURE:
         return this._backgroundColor;
       default:
         return "var(--card-background-color)";
@@ -154,12 +153,12 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
   private get _textColorCSS() {
     switch (
       (this._foregroundColor ? this._config?.color_mode : undefined) ??
-      MediaPlayerTileColorMode.MANUAL
+      MediaPlayerCardColorMode.MANUAL
     ) {
-      case MediaPlayerTileColorMode.PICTURE:
+      case MediaPlayerCardColorMode.PICTURE:
         return "color-mix(in srgb, white, var(--tile-color) 20%)";
-      case MediaPlayerTileColorMode.AMBIENT:
-      case MediaPlayerTileColorMode.AMBIENT_VIBRANT:
+      case MediaPlayerCardColorMode.AMBIENT:
+      case MediaPlayerCardColorMode.AMBIENT_VIBRANT:
         return "color-mix(in srgb, var(--primary-text-color), var(--tile-color) 20%)";
       default:
         return "inherit";
@@ -191,13 +190,13 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
     );
 
     const showBackgroundImage =
-      this._config?.color_mode === MediaPlayerTileColorMode.PICTURE &&
+      this._config?.color_mode === MediaPlayerCardColorMode.PICTURE &&
       !!imageUrl;
 
     const showCoverImage =
       !showBackgroundImage &&
       (!!imageUrl ||
-        this._config.content_layout === MediaPlayerTileContentLayout.VERTICAL);
+        this._config.content_layout === MediaPlayerCardContentLayout.VERTICAL);
 
     return html`
       <ha-card
@@ -209,7 +208,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
         class=${classMap({
           vertical:
             this._config.content_layout ===
-            MediaPlayerTileContentLayout.VERTICAL,
+            MediaPlayerCardContentLayout.VERTICAL,
         })}
       >
         <div
@@ -244,13 +243,13 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
               : nothing}
             <div class="header">
               ${showCoverImage
-                ? html`<mpt-cover-image .imageUrl=${imageUrl}>
+                ? html`<bc-cover-image .imageUrl=${imageUrl}>
                     <ha-state-icon
                       slot="icon"
                       .stateObj=${stateObj}
                       .hass=${this.hass}
                     ></ha-state-icon>
-                  </mpt-cover-image>`
+                  </bc-cover-image>`
                 : nothing}
               <div class="media-info" id="info">
                 <span class="primary">${mediaTitle || mediaDescription}</span>
@@ -259,10 +258,10 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
                   : nothing}
               </div>
               ${controls
-                ? html`<mpt-media-control-button-row
+                ? html`<bc-media-control-button-row
                     .controls=${controls}
                     @action=${this._handleAction}
-                  ></mpt-media-control-button-row>`
+                  ></bc-media-control-button-row>`
                 : nothing}
             </div>
           </div>
@@ -302,7 +301,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
       window.matchMedia("(prefers-color-scheme: dark)").matches;
 
     switch (this._config?.color_mode) {
-      case MediaPlayerTileColorMode.AMBIENT:
+      case MediaPlayerCardColorMode.AMBIENT:
         this._foregroundColor = darkMode
           ? swatches.LightVibrant?.hex
           : swatches.DarkMuted?.hex;
@@ -310,7 +309,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
           ? swatches.DarkMuted?.hex
           : swatches.LightVibrant?.hex;
         break;
-      case MediaPlayerTileColorMode.AMBIENT_VIBRANT:
+      case MediaPlayerCardColorMode.AMBIENT_VIBRANT:
         this._foregroundColor = darkMode
           ? swatches.LightVibrant?.hex
           : swatches.DarkVibrant?.hex;
@@ -318,7 +317,7 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
           ? swatches.Vibrant?.hex
           : swatches.LightVibrant?.hex;
         break;
-      case MediaPlayerTileColorMode.PICTURE:
+      case MediaPlayerCardColorMode.PICTURE:
         this._foregroundColor = swatches.LightVibrant?.hex;
         this._backgroundColor = swatches.DarkMuted?.hex;
         break;
@@ -482,16 +481,16 @@ export class MediaPlayerTileCard extends CustomLovelaceCard<
         gap: 24px;
       }
 
-      mpt-media-control-button-row {
+      bc-media-control-button-row {
         pointer-events: all;
         margin-top: auto;
       }
 
-      mpt-cover-image {
+      bc-cover-image {
         --image-size: 53px;
       }
 
-      ha-card.vertical mpt-cover-image {
+      ha-card.vertical bc-cover-image {
         --image-size: 148px;
       }
 

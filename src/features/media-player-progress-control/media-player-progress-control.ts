@@ -9,10 +9,10 @@ import {
 } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { classMap } from "lit-html/directives/class-map";
-import { ButtonSize, ButtonVariant } from "../../components/mpt-button";
+import { ButtonSize, ButtonVariant } from "../../components/bc-button";
 import { supportsFeature } from "../../helpers/supports-feature";
 import { formatDuration } from "./helper";
-import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
+import { MediaControlButtonActionEvent } from "../../components/bc-media-control-button-row";
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
 import { HassEntity } from "home-assistant-js-websocket";
@@ -86,10 +86,10 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
           "full-width": !!this._config!.full_width,
         })}"
       >
-        <mpt-media-control-button-row
+        <bc-media-control-button-row
           .controls=${left}
           @action="${this._handleAction}"
-        ></mpt-media-control-button-row>
+        ></bc-media-control-button-row>
         <div class="slider-container">
           ${showTimestamps
             ? html`<time class="position">${mediaPositionLabel}</time>`
@@ -103,10 +103,10 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
             ? html`<time class="duration">${mediaDurationLabel}</time>`
             : nothing}
         </div>
-        <mpt-media-control-button-row
+        <bc-media-control-button-row
           .controls=${right}
           @action="${this._handleAction}"
-        ></mpt-media-control-button-row>
+        ></bc-media-control-button-row>
       </div>
     `;
   }

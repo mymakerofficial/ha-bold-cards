@@ -22,7 +22,7 @@ import {
   ButtonShape,
   ButtonSize,
   ButtonVariant,
-} from "../components/mpt-button";
+} from "../components/bc-button";
 import { HomeAssistant } from "../types/ha/lovelace";
 
 export const MediaPlayerEntityFeature = {

@@ -5,9 +5,9 @@ import {
   LovelaceCardEditor,
 } from "custom-card-helpers";
 import {
-  MediaPlayerTileColorMode,
+  MediaPlayerCardColorMode,
   MediaPlayerTileConfig,
-  MediaPlayerTileContentLayout,
+  MediaPlayerCardContentLayout,
 } from "./types";
 import { customElement, property, state } from "lit/decorators";
 import { assert } from "superstruct";
@@ -27,8 +27,8 @@ const presets = [
         MediaControlAction.MEDIA_PLAY,
         MediaControlAction.MEDIA_PAUSE,
       ],
-      content_layout: MediaPlayerTileContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerTileColorMode.AMBIENT_VIBRANT,
+      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
+      color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
       show_title_bar: true,
       grid_options: {
@@ -47,8 +47,8 @@ const presets = [
         MediaControlAction.MEDIA_PLAY,
         MediaControlAction.MEDIA_PAUSE,
       ],
-      content_layout: MediaPlayerTileContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerTileColorMode.PICTURE,
+      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
+      color_mode: MediaPlayerCardColorMode.PICTURE,
       color: "primary",
       show_title_bar: true,
       grid_options: {
@@ -67,8 +67,8 @@ const presets = [
         MediaControlAction.MEDIA_PLAY,
         MediaControlAction.MEDIA_PAUSE,
       ],
-      content_layout: MediaPlayerTileContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerTileColorMode.PICTURE,
+      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
+      color_mode: MediaPlayerCardColorMode.PICTURE,
       color: "primary",
       show_title_bar: true,
       grid_options: {
@@ -82,8 +82,8 @@ const presets = [
     name: "Artwork Square",
     config: {
       controls: [MediaControlAction.MEDIA_PLAY, MediaControlAction.MEDIA_PAUSE],
-      content_layout: MediaPlayerTileContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerTileColorMode.PICTURE,
+      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
+      color_mode: MediaPlayerCardColorMode.PICTURE,
       color: "primary",
       show_title_bar: true,
       grid_options: {
@@ -102,8 +102,8 @@ const presets = [
         MediaControlAction.MEDIA_PLAY,
         MediaControlAction.MEDIA_PAUSE,
       ],
-      content_layout: MediaPlayerTileContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerTileColorMode.PICTURE,
+      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
+      color_mode: MediaPlayerCardColorMode.PICTURE,
       color: "primary",
       show_title_bar: true,
       grid_options: {
@@ -117,8 +117,8 @@ const presets = [
     name: "Vertical Full",
     config: {
       controls: [],
-      content_layout: MediaPlayerTileContentLayout.VERTICAL,
-      color_mode: MediaPlayerTileColorMode.AMBIENT_VIBRANT,
+      content_layout: MediaPlayerCardContentLayout.VERTICAL,
+      color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
       show_title_bar: true,
       grid_options: {
@@ -142,8 +142,8 @@ const presets = [
     name: "Vertical Full Artwork Background",
     config: {
       controls: [],
-      content_layout: MediaPlayerTileContentLayout.VERTICAL,
-      color_mode: MediaPlayerTileColorMode.PICTURE,
+      content_layout: MediaPlayerCardContentLayout.VERTICAL,
+      color_mode: MediaPlayerCardColorMode.PICTURE,
       color: "primary",
       show_title_bar: true,
       grid_options: {
@@ -167,8 +167,8 @@ const presets = [
     name: "Horizontal Full Artwork Background",
     config: {
       controls: [],
-      content_layout: MediaPlayerTileContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerTileColorMode.PICTURE,
+      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
+      color_mode: MediaPlayerCardColorMode.PICTURE,
       color: "primary",
       show_title_bar: true,
       grid_options: {
@@ -193,8 +193,8 @@ const presets = [
     name: "Simple Play/Pause",
     config: {
       controls: [MediaControlAction.MEDIA_PLAY, MediaControlAction.MEDIA_PAUSE],
-      content_layout: MediaPlayerTileContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerTileColorMode.AMBIENT_VIBRANT,
+      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
+      color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
       show_title_bar: true,
       grid_options: {
@@ -208,8 +208,8 @@ const presets = [
   config: Partial<MediaPlayerTileConfig>;
 }[];
 
-@customElement("media-player-tile-editor")
-export class MediaPlayerTileEditor
+@customElement("bold-media-player-card-editor")
+export class BoldMediaPlayerCardEditor
   extends LitElement
   implements LovelaceCardEditor
 {
@@ -250,11 +250,11 @@ export class MediaPlayerTileEditor
                 options: [
                   {
                     label: "Horizontal",
-                    value: MediaPlayerTileContentLayout.HORIZONTAL,
+                    value: MediaPlayerCardContentLayout.HORIZONTAL,
                   },
                   {
                     label: "Vertical",
-                    value: MediaPlayerTileContentLayout.VERTICAL,
+                    value: MediaPlayerCardContentLayout.VERTICAL,
                   },
                 ],
               },
@@ -273,19 +273,19 @@ export class MediaPlayerTileEditor
                     options: [
                       {
                         label: "Ambient",
-                        value: MediaPlayerTileColorMode.AMBIENT,
+                        value: MediaPlayerCardColorMode.AMBIENT,
                       },
                       {
                         label: "Ambient Vibrant",
-                        value: MediaPlayerTileColorMode.AMBIENT_VIBRANT,
+                        value: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
                       },
                       {
                         label: "Picture Background",
-                        value: MediaPlayerTileColorMode.PICTURE,
+                        value: MediaPlayerCardColorMode.PICTURE,
                       },
                       {
                         label: "Fixed Color",
-                        value: MediaPlayerTileColorMode.MANUAL,
+                        value: MediaPlayerCardColorMode.MANUAL,
                       },
                     ],
                   },

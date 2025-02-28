@@ -7,8 +7,8 @@ import {
   MediaControlAction,
 } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
-import { ButtonSize, limitButtonSize } from "../../components/mpt-button";
-import { MediaControlButtonActionEvent } from "../../components/mpt-media-control-button-row";
+import { ButtonSize, limitButtonSize } from "../../components/bc-button";
+import { MediaControlButtonActionEvent } from "../../components/bc-media-control-button-row";
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
 import { styleMap } from "lit-html/directives/style-map";
@@ -85,11 +85,11 @@ export class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeatur
           "--feature-size": this._featureSize,
         })}
       >
-        <mpt-media-control-button-row
+        <bc-media-control-button-row
           center=${true}
           .controls=${this._controls}
           @action="${this._handleAction}"
-        ></mpt-media-control-button-row>
+        ></bc-media-control-button-row>
       </div>
     `;
   }
@@ -104,7 +104,7 @@ export class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeatur
 
   static get styles() {
     return css`
-      mpt-media-control-button-row {
+      bc-media-control-button-row {
         --button-row-gap: 8px;
       }
 

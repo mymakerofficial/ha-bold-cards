@@ -9,7 +9,7 @@ export default [
   {
     input: "src/main.ts",
     output: {
-      file: "./dist/media-player-tile.js",
+      file: "./dist/bold-cards.js",
       format: "es",
       inlineDynamicImports: true,
     },
