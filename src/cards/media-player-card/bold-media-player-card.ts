@@ -255,7 +255,7 @@ export class BoldMediaPlayerCard extends CustomLovelaceCard<
                   ? html`<span class="secondary">${mediaDescription}</span>`
                   : nothing}
               </div>
-              ${controls
+              ${controls.length > 0
                 ? html`<bc-media-control-button-row
                     .controls=${controls}
                     @action=${this._handleAction}

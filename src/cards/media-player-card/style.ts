@@ -152,6 +152,7 @@ export const mediaPlayerCardStyles = css`
   ha-card.vertical .header {
     padding-top: var(--card-padding);
     flex-direction: column;
+    justify-content: space-between;
     align-items: center;
     width: 100%;
     gap: 24px;
@@ -176,6 +177,7 @@ export const mediaPlayerCardStyles = css`
     flex-direction: column;
     justify-content: center;
     overflow: hidden;
+    margin-top: auto;
     min-height: 52px;
   }
 
