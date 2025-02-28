@@ -23,6 +23,7 @@ import { CustomLovelaceCard } from "../base";
 import { computeDomain } from "../../helpers/entity";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { MediaPlayerControlButtonRowFeature } from "../../features/media-player-control-button-row/media-player-control-button-row";
+import { mediaPlayerCardStyles } from "./style";
 
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
@@ -95,6 +96,8 @@ export class BoldMediaPlayerCard extends CustomLovelaceCard<
   @state() private _foregroundColor?: string;
 
   @state() private _backgroundColor?: string;
+
+  @state() private _hasLoadedImage = false;
 
   protected _getSizeWithoutFeatures() {
     return this._config?.content_layout ===
@@ -189,13 +192,12 @@ export class BoldMediaPlayerCard extends CustomLovelaceCard<
       this._config?.controls?.includes(action),
     );
 
-    const showBackgroundImage =
-      this._config?.color_mode === MediaPlayerCardColorMode.PICTURE &&
-      !!imageUrl;
+    const renderBackgroundImage =
+      this._config?.color_mode === MediaPlayerCardColorMode.PICTURE;
 
-    const showCoverImage =
-      !showBackgroundImage &&
-      (!!imageUrl ||
+    const renderCoverImage =
+      !renderBackgroundImage &&
+      (this._hasLoadedImage ||
         this._config.content_layout === MediaPlayerCardContentLayout.VERTICAL);
 
     return html`
@@ -218,9 +220,11 @@ export class BoldMediaPlayerCard extends CustomLovelaceCard<
           tabindex="0"
           aria-labelledby="info"
         >
-          ${showBackgroundImage
+          ${renderBackgroundImage
             ? html`<div
-                class="background-image"
+                class="background-image ${classMap({
+                  hidden: !this._hasLoadedImage,
+                })}"
                 style=${styleMap({
                   "background-image": imageUrl ? `url(${imageUrl})` : "",
                 })}
@@ -242,14 +246,8 @@ export class BoldMediaPlayerCard extends CustomLovelaceCard<
                 </div>`
               : nothing}
             <div class="header">
-              ${showCoverImage
-                ? html`<bc-cover-image .imageUrl=${imageUrl}>
-                    <ha-state-icon
-                      slot="icon"
-                      .stateObj=${stateObj}
-                      .hass=${this.hass}
-                    ></ha-state-icon>
-                  </bc-cover-image>`
+              ${renderCoverImage
+                ? html`<div class="image"><img src=${imageUrl}></img></div>`
                 : nothing}
               <div class="media-info" id="info">
                 <span class="primary">${mediaTitle || mediaDescription}</span>
@@ -292,6 +290,7 @@ export class BoldMediaPlayerCard extends CustomLovelaceCard<
     if (!this._imageUrl) {
       this._foregroundColor = undefined;
       this._backgroundColor = undefined;
+      this._hasLoadedImage = false;
       return;
     }
 
@@ -322,6 +321,8 @@ export class BoldMediaPlayerCard extends CustomLovelaceCard<
         this._backgroundColor = swatches.DarkMuted?.hex;
         break;
     }
+
+    this._hasLoadedImage = true;
   }
 
   private _handleAction(event: MediaControlButtonActionEvent) {
@@ -338,203 +339,7 @@ export class BoldMediaPlayerCard extends CustomLovelaceCard<
     });
   }
 
-  static get styles(): CSSResultGroup {
-    return css`
-      :host {
-        -webkit-tap-highlight-color: transparent;
-        --card-padding: 16px;
-      }
-
-      ha-card {
-        --tile-color: var(--primary-color);
-        --tile-icon-color: var(--tile-color);
-        --state-color: var(--tile-color);
-        --state-icon-color: var(--tile-color);
-        --ha-ripple-color: var(--tile-color);
-        --ha-ripple-hover-opacity: 0.04;
-        --ha-ripple-pressed-opacity: 0.12;
-        height: 100%;
-        transition:
-          box-shadow 180ms ease-in-out,
-          border-color 180ms ease-in-out,
-          color 180ms ease-in-out,
-          background-color 180ms ease-in-out;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
-
-      ha-card:has(.background:focus-visible) {
-        box-shadow: 0 0 0 2px var(--tile-color) !important;
-      }
-
-      .background {
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        border-radius: var(--ha-card-border-radius, 12px);
-        overflow: hidden;
-      }
-
-      .background-image {
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        background-position: center;
-        background-size: cover;
-        mask-image: radial-gradient(
-          circle at center,
-          rgba(0, 0, 0, 0.8) 15%,
-          rgba(0, 0, 0, 0.1) 80%,
-          rgba(0, 0, 0, 0) 100%
-        );
-        max-height: calc(var(--row-height) * 6 + var(--row-gap) * 5);
-      }
-
-      .background-image::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        background: linear-gradient(
-          to top,
-          var(--ha-card-background) 0%,
-          transparent 50%
-        );
-        min-height: calc(var(--row-height) * 6 + var(--row-gap) * 5);
-      }
-
-      [role="button"] {
-        cursor: pointer;
-        pointer-events: auto;
-      }
-
-      [role="button"]:focus {
-        outline: none;
-      }
-
-      .container {
-        margin: calc(-1 * var(--ha-card-border-width, 1px));
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-      }
-
-      .content {
-        flex: 1;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: var(--card-padding);
-        min-width: 0;
-        overflow: hidden;
-        pointer-events: none;
-        min-height: calc(
-          var(--row-height) * 2 + var(--row-gap) - var(--card-padding) * 2
-        );
-      }
-
-      ha-card.vertical .content {
-        min-height: calc(
-          var(--row-height) * 5 + var(--row-gap) * 4 - var(--card-padding) * 2
-        );
-      }
-
-      .title-bar {
-        display: flex;
-        align-items: start;
-        justify-content: space-between;
-      }
-
-      .player-title {
-        display: flex;
-        gap: 8px;
-        border-radius: 12px;
-        --mdc-icon-size: 14px;
-        font-size: 0.8em;
-        font-weight: 500;
-      }
-
-      .header {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: var(--card-padding);
-        min-width: 0;
-        box-sizing: border-box;
-        pointer-events: none;
-        margin-top: auto;
-      }
-
-      ha-card.vertical .header {
-        padding-top: var(--card-padding);
-        flex-direction: column;
-        justify-content: center;
-        width: 100%;
-        gap: 24px;
-      }
-
-      bc-media-control-button-row {
-        pointer-events: all;
-        margin-top: auto;
-      }
-
-      bc-cover-image {
-        --image-size: 53px;
-      }
-
-      ha-card.vertical bc-cover-image {
-        --image-size: 148px;
-      }
-
-      .media-info {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        overflow: hidden;
-      }
-
-      .media-info * {
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-        max-width: 100%;
-      }
-
-      .media-info .primary {
-        font-size: 1.05rem;
-        font-weight: 500;
-      }
-
-      .media-info .secondary {
-        font-size: 0.8rem;
-        font-weight: 400;
-        opacity: 0.9;
-      }
-
-      ha-card.vertical .media-info {
-        width: 100%;
-        align-items: center;
-        gap: 8px;
-      }
-
-      ha-card.vertical .media-info .primary {
-        font-size: 1.4rem;
-        font-weight: 400;
-      }
-
-      ha-card.vertical .media-info .secondary {
-        font-size: 0.9rem;
-        font-weight: 400;
-      }
-    `;
+  static get styles() {
+    return mediaPlayerCardStyles;
   }
 }
