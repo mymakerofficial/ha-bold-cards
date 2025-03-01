@@ -400,6 +400,31 @@ export class BoldMediaPlayerCardEditor
           ></bc-controls-editor>
         </div>
       </ha-expansion-panel>
+      ${this._config?.features
+        ?.filter(
+          (feature) =>
+            feature.type === "custom:media-player-control-button-row" ||
+            feature.type === "custom:media-player-progress-control",
+        )
+        .map(
+          (feature, index) =>
+            html`<ha-expansion-panel outlined>
+              <h3 slot="header">
+                <ha-svg-icon .path=${mdiButtonPointer}></ha-svg-icon>
+                <span>
+                  ${t("editor.card.media_player.label.additional_controls", {
+                    count: index + 2,
+                  })}
+                </span>
+              </h3>
+              <div class="content">
+                <bc-controls-editor
+                  .controls=${feature.controls ?? []}
+                  .stateObj=${stateObj}
+                ></bc-controls-editor>
+              </div>
+            </ha-expansion-panel>`,
+        )}
       <ha-expansion-panel outlined>
         <h3 slot="header">
           <ha-svg-icon .path=${mdiListBox}></ha-svg-icon>

@@ -82,6 +82,7 @@ const i18n = new I18n(
               show_title_bar: "Show Title Bar",
               media_info: "Media Info",
               controls: "Controls",
+              additional_controls: `Controls (%{count})`,
             },
             helper_text: {
               color:
