@@ -196,10 +196,7 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
     const renderBackgroundImage =
       this._config?.color_mode === MediaPlayerCardColorMode.PICTURE;
 
-    const renderCoverImage =
-      !renderBackgroundImage &&
-      (this._hasLoadedImage ||
-        this._config.content_layout === MediaPlayerCardContentLayout.VERTICAL);
+    const renderCoverImage = !renderBackgroundImage && this._hasLoadedImage;
 
     const renderingFeatures = this._renderingFeatures;
 
