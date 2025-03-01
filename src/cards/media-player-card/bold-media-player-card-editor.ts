@@ -20,6 +20,7 @@ import { MediaPlayerControlButtonRowFeature } from "../../features/media-player-
 import { t } from "../../localization/i18n";
 import { HomeAssistant, LovelaceCardEditor } from "../../types/ha/lovelace";
 import { ControlType, MediaButtonAction } from "../../lib/controls/types";
+import { editorBaseStyles } from "../../editors/styles";
 
 const presets = [
   {
@@ -465,21 +466,14 @@ export class BoldMediaPlayerCardEditor
     });
   };
 
-  static styles: CSSResultGroup = css`
-    :host {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    ha-expansion-panel {
-      display: block;
-      --expansion-panel-content-padding: 0;
-      border-radius: 6px;
-      --ha-card-border-radius: 6px;
-    }
-    ha-expansion-panel .content {
-      padding: 12px;
-    }
-  `;
+  static styles: CSSResultGroup = [
+    editorBaseStyles,
+    css`
+      :host {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+    `,
+  ];
 }

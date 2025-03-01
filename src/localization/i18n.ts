@@ -1,6 +1,11 @@
 import { I18n } from "i18n-js";
 
 import { MediaButtonAction } from "../lib/controls/types";
+import {
+  ButtonShape,
+  ButtonSize,
+  ButtonVariant,
+} from "../components/bc-button";
 
 const i18n = new I18n(
   {
@@ -19,6 +24,24 @@ const i18n = new I18n(
           [MediaButtonAction.MEDIA_NEXT_TRACK]: "Next Track",
           [MediaButtonAction.REPEAT_SET]: "Set Repeat",
         },
+        button: {
+          size: {
+            [ButtonSize.SM]: "Small",
+            [ButtonSize.MD]: "Medium",
+            [ButtonSize.LG]: "Large",
+            [ButtonSize.XL]: "Extra Large",
+          },
+          variant: {
+            [ButtonVariant.FILLED]: "Filled",
+            [ButtonVariant.TONAL]: "Tonal",
+            [ButtonVariant.PLAIN]: "Plain",
+          },
+          shape: {
+            [ButtonShape.ROUNDED]: "Rounded",
+            [ButtonShape.SQUARE]: "Square",
+            [ButtonShape.WIDE]: "Wide",
+          },
+        },
       },
       editor: {
         common: {
@@ -30,6 +53,13 @@ const i18n = new I18n(
         },
         controls: {
           add: "Add element",
+          media_button_control: {
+            label: {
+              size: "Size",
+              variant: "Variant",
+              shape: "Shape",
+            },
+          },
         },
         card: {
           media_player: {
@@ -42,7 +72,7 @@ const i18n = new I18n(
               title_bar: "Title Bar",
               show_title_bar: "Show Title Bar",
               media_info: "Media Info",
-              controls: "Inline Controls",
+              controls: "Controls",
             },
             helper_text: {
               color:

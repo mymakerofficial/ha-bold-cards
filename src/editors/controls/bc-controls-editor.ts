@@ -1,16 +1,17 @@
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { repeat } from "lit-html/directives/repeat";
-import { mdiDrag, mdiPlus } from "@mdi/js";
-import { HomeAssistant } from "../types/ha/lovelace";
-import { t } from "../localization/i18n";
+import { mdiDelete, mdiDrag, mdiPlus } from "@mdi/js";
+import { HomeAssistant } from "../../types/ha/lovelace";
+import { t } from "../../localization/i18n";
 import {
   ControlConfig,
   MediaButtonControlConfig,
   MediaButtonAction,
-} from "../lib/controls/types";
-import { getControlIcon } from "../lib/controls/helpers";
+} from "../../lib/controls/types";
+import { getControlIcon, getControlLabel } from "../../lib/controls/helpers";
 import { HassEntityBase } from "home-assistant-js-websocket";
+import { editorBaseStyles } from "../styles";
 
 export class ControlsEditorItemMovedEvent extends CustomEvent<{
   oldIndex: number;
@@ -27,6 +28,7 @@ export class ControlsEditorItemMovedEvent extends CustomEvent<{
 export class ControlsEditor extends LitElement {
   @property({ attribute: false }) public controls?: ControlConfig[];
 
+  @property({ attribute: false }) public hass?: HomeAssistant;
   @property({ attribute: false }) public stateObj?: HassEntityBase;
 
   private _handleItemMoved(ev: CustomEvent) {
@@ -51,17 +53,26 @@ export class ControlsEditor extends LitElement {
                 control.type + (control as MediaButtonControlConfig).action,
               (control, _index) =>
                 html` <div class="item">
-                  <div class="handle">
-                    <ha-svg-icon .path=${mdiDrag}></ha-svg-icon>
-                  </div>
-                  <div class="content">
-                    <ha-icon icon=${getControlIcon(control)}></ha-icon>
-                    <div>
-                      ${t((control as MediaButtonControlConfig).action, {
-                        scope: "common.media_control_action",
-                      })}
+                  <ha-expansion-panel outlined>
+                    <h3 class="header" slot="header">
+                      <ha-icon icon=${getControlIcon(control)}></ha-icon>
+                      <div>${getControlLabel(control)}</div>
+                    </h3>
+                    <div class="handle" slot="icons">
+                      <ha-svg-icon .path=${mdiDrag}></ha-svg-icon>
                     </div>
-                  </div>
+                    <ha-icon-button
+                      .path=${mdiDelete}
+                      slot="icons"
+                    ></ha-icon-button>
+                    <div class="content">
+                      <bc-media-button-control-editor
+                        .control=${control as MediaButtonControlConfig}
+                        .hass=${this.hass}
+                        .stateObj=${this.stateObj}
+                      />
+                    </div>
+                  </ha-expansion-panel>
                 </div>`,
             )}
           </div>
@@ -86,38 +97,38 @@ export class ControlsEditor extends LitElement {
     `;
   }
 
-  static styles = css`
-    .container {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
+  static styles = [
+    editorBaseStyles,
+    css`
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
 
-    .item {
-      display: flex;
-      align-items: center;
-    }
+      .items {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
 
-    .item .handle {
-      cursor: move; /* fallback if grab cursor is unsupported */
-      cursor: grab;
-      padding-right: 8px;
-      padding-inline-end: 8px;
-      padding-inline-start: initial;
-      direction: var(--direction);
-    }
+      .item .handle {
+        cursor: move; /* fallback if grab cursor is unsupported */
+        cursor: grab;
+        padding: 12px;
+        margin-left: 8px;
+        direction: var(--direction);
+      }
 
-    .item .handle > * {
-      pointer-events: none;
-    }
+      .item .handle > * {
+        pointer-events: none;
+      }
 
-    .item .content {
-      height: 60px;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-grow: 1;
-    }
-  `;
+      .item .header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    `,
+  ];
 }

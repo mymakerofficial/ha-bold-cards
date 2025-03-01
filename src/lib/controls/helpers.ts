@@ -1,7 +1,8 @@
 import { mediaButtonActionIconMap } from "./constants";
-import { ControlConfig, ControlType } from "./types";
+import { ControlConfig, ControlType, MediaButtonControlConfig } from "./types";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
 import { MediaPlayerEntity } from "../../types/ha/entity";
+import { t } from "../../localization/i18n";
 
 export function getControlIcon(
   control: ControlConfig,
@@ -15,5 +16,16 @@ export function getControlIcon(
       );
     default:
       return "";
+  }
+}
+
+export function getControlLabel(control: ControlConfig) {
+  switch (control.type) {
+    case ControlType.MEDIA_BUTTON:
+      return t(control.action, {
+        scope: "common.media_control_action",
+      });
+    default:
+      return control.type;
   }
 }
