@@ -14,33 +14,47 @@ import {
   mdiPageLayoutBody,
   mdiPageLayoutHeader,
   mdiPalette,
+  mdiStar,
 } from "@mdi/js";
 import { MediaPlayerProgressControlFeature } from "../../features/media-player-progress-control/media-player-progress-control";
 import { MediaPlayerControlButtonRowFeature } from "../../features/media-player-control-button-row/media-player-control-button-row";
 import { t } from "../../localization/i18n";
 import { HomeAssistant, LovelaceCardEditor } from "../../types/ha/lovelace";
 import {
-  ControlConfig,
   ControlType,
+  ElementWhenUnavailable,
   MediaButtonAction,
   MediaButtonControlConfig,
 } from "../../lib/controls/types";
 import { editorBaseStyles } from "../../editors/styles";
+import { ButtonShape, ButtonSize } from "../../components/bc-button";
 
 const presets = [
   {
     name: "Horizontal Default",
     config: {
       controls: [
-        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_ON },
-        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_OFF },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaButtonAction.TURN_ON,
+          size: ButtonSize.MD,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaButtonAction.TURN_OFF,
+          size: ButtonSize.MD,
+        },
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PLAY,
+          size: ButtonSize.MD,
+          shape: ButtonShape.ROUNDED,
         },
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PAUSE,
+          size: ButtonSize.MD,
+          shape: ButtonShape.SQUARE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -58,15 +72,27 @@ const presets = [
     name: "Horizontal Artwork Background",
     config: {
       controls: [
-        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_ON },
-        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_OFF },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaButtonAction.TURN_ON,
+          size: ButtonSize.MD,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaButtonAction.TURN_OFF,
+          size: ButtonSize.MD,
+        },
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PLAY,
+          size: ButtonSize.MD,
+          shape: ButtonShape.ROUNDED,
         },
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PAUSE,
+          size: ButtonSize.MD,
+          shape: ButtonShape.SQUARE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -84,15 +110,27 @@ const presets = [
     name: "Horizontal Artwork Background Space",
     config: {
       controls: [
-        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_ON },
-        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_OFF },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaButtonAction.TURN_ON,
+          size: ButtonSize.MD,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaButtonAction.TURN_OFF,
+          size: ButtonSize.MD,
+        },
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PLAY,
+          size: ButtonSize.MD,
+          shape: ButtonShape.ROUNDED,
         },
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PAUSE,
+          size: ButtonSize.MD,
+          shape: ButtonShape.SQUARE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -113,10 +151,16 @@ const presets = [
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PLAY,
+          size: ButtonSize.MD,
+          shape: ButtonShape.ROUNDED,
+          when_unavailable: ElementWhenUnavailable.HIDE,
         },
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PAUSE,
+          size: ButtonSize.MD,
+          shape: ButtonShape.SQUARE,
+          when_unavailable: ElementWhenUnavailable.HIDE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -134,15 +178,27 @@ const presets = [
     name: "Artwork Square Large",
     config: {
       controls: [
-        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_ON },
-        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_OFF },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaButtonAction.TURN_ON,
+          size: ButtonSize.MD,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaButtonAction.TURN_OFF,
+          size: ButtonSize.MD,
+        },
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PLAY,
+          size: ButtonSize.MD,
+          shape: ButtonShape.ROUNDED,
         },
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PAUSE,
+          size: ButtonSize.MD,
+          shape: ButtonShape.SQUARE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -239,10 +295,16 @@ const presets = [
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PLAY,
+          size: ButtonSize.MD,
+          shape: ButtonShape.ROUNDED,
+          when_unavailable: ElementWhenUnavailable.HIDE,
         },
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PAUSE,
+          size: ButtonSize.MD,
+          shape: ButtonShape.SQUARE,
+          when_unavailable: ElementWhenUnavailable.HIDE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -433,8 +495,8 @@ export class BoldMediaPlayerCardEditor
         )}
       <ha-expansion-panel outlined>
         <h3 slot="header">
-          <ha-svg-icon .path=${mdiListBox}></ha-svg-icon>
-          <span>${t("common.label.presets")}</span>
+          <ha-svg-icon .path=${mdiStar}></ha-svg-icon>
+          <span>${t("editor.common.label.presets")}</span>
         </h3>
         <div class="content">
           ${presets.map(

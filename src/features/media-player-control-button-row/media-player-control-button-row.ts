@@ -65,15 +65,15 @@ export class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeatur
         },
         {
           type: ControlType.MEDIA_BUTTON,
+          action: MediaButtonAction.MEDIA_PREVIOUS_TRACK,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PLAY,
         },
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PAUSE,
-        },
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PREVIOUS_TRACK,
         },
         {
           type: ControlType.MEDIA_BUTTON,

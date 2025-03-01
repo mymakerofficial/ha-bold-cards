@@ -14,9 +14,6 @@ const i18n = new I18n(
   {
     en: {
       common: {
-        label: {
-          presets: "Presets",
-        },
         media_button_action: {
           [MediaButtonAction.TURN_ON]: "Turn On",
           [MediaButtonAction.TURN_OFF]: "Turn Off",
@@ -54,6 +51,7 @@ const i18n = new I18n(
         common: {
           default_with_value: "Default (%{value})",
           label: {
+            presets: "Presets",
             features: "Features",
           },
           wip_section_text:
