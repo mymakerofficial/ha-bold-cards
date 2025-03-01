@@ -1,10 +1,10 @@
-import { css, CSSResultGroup, html, nothing } from "lit";
+import { html, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
 import { fireEvent, LovelaceCardEditor } from "custom-card-helpers";
 import {
   MediaPlayerCardColorMode,
-  MediaPlayerTileConfig,
   MediaPlayerCardContentLayout,
+  MediaPlayerTileConfig,
 } from "./types";
 import { HomeAssistant, LovelaceGridOptions } from "../../types/ha/lovelace";
 import { PropertyValues } from "lit-element";
@@ -19,21 +19,14 @@ import {
 import { classMap } from "lit-html/directives/class-map";
 import { MediaControlButtonActionEvent } from "../../components/bc-media-control-button-row";
 import { MediaPlayerProgressControlFeature } from "../../features/media-player-progress-control/media-player-progress-control";
-import { CustomLovelaceCard } from "../base";
+import { BoldCardWithFeatures } from "../base";
 import { computeDomain } from "../../helpers/entity";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { MediaPlayerControlButtonRowFeature } from "../../features/media-player-control-button-row/media-player-control-button-row";
 import { mediaPlayerCardStyles } from "./style";
 
-(window as any).customCards = (window as any).customCards || [];
-(window as any).customCards.push({
-  type: "bold-media-player-card",
-  name: "Bold Media Player",
-  description: "A media player card that's bold and beautiful.",
-});
-
 @customElement("bold-media-player-card")
-export class BoldMediaPlayerCard extends CustomLovelaceCard<
+export class BoldMediaPlayerCard extends BoldCardWithFeatures<
   MediaPlayerTileConfig,
   MediaPlayerEntity
 > {
@@ -343,3 +336,10 @@ export class BoldMediaPlayerCard extends CustomLovelaceCard<
     return mediaPlayerCardStyles;
   }
 }
+
+BoldMediaPlayerCard.registerCustomCard({
+  type: "bold-media-player-card",
+  name: "Bold Media Player",
+  description: "A media player card that's bold and beautiful.",
+  preview: true,
+});
