@@ -1,6 +1,7 @@
 import {
   ActionConfig,
   HomeAssistant as HomeAssistantBase,
+  LovelaceConfig,
 } from "custom-card-helpers";
 import { LovelaceCardFeatureConfig } from "./feature";
 
@@ -77,4 +78,12 @@ export interface LovelaceCard extends HTMLElement {
   getLayoutOptions?(): LovelaceLayoutOptions;
   getGridOptions?(): LovelaceGridOptions;
   setConfig(config: LovelaceCardConfig): void;
+}
+
+export interface LovelaceCardEditor extends HTMLElement {
+  hass?: HomeAssistant;
+  lovelace?: LovelaceConfig;
+  context?: any;
+  setConfig(config: any): void;
+  focusYamlEditor?: () => void;
 }

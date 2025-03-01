@@ -1,9 +1,5 @@
 import { css, CSSResultGroup, html, LitElement, nothing } from "lit";
-import {
-  fireEvent,
-  HomeAssistant,
-  LovelaceCardEditor,
-} from "custom-card-helpers";
+import { fireEvent } from "custom-card-helpers";
 import {
   MediaPlayerCardColorMode,
   MediaPlayerCardContentLayout,
@@ -23,7 +19,8 @@ import { MediaPlayerProgressControlFeature } from "../../features/media-player-p
 import { MediaControlAction } from "../../helpers/media-player";
 import { MediaPlayerControlButtonRowFeature } from "../../features/media-player-control-button-row/media-player-control-button-row";
 import { ControlType } from "../../lib/controls";
-import { styleMap } from "lit-html/directives/style-map";
+import { t } from "../../localization/i18n";
+import { HomeAssistant, LovelaceCardEditor } from "../../types/ha/lovelace";
 
 const presets = [
   {
@@ -383,20 +380,18 @@ export class BoldMediaPlayerCardEditor
       <ha-expansion-panel outlined>
         <h3 slot="header">
           <ha-svg-icon .path=${mdiPageLayoutBody}></ha-svg-icon>
-          Media Info
+          ${t("editor.card.media_player.label.media_info")}
         </h3>
         <div class="content">
-          <ha-alert alert-type="info" title="WIP">
-            In the future, this section will contain settings for how to display
-            media information. For now, you can access these settings through
-            the YAML editor.
+          <ha-alert alert-type="info">
+            ${t("editor.common.wip_section_text")}
           </ha-alert>
         </div>
       </ha-expansion-panel>
       <ha-expansion-panel outlined>
         <h3 slot="header">
           <ha-svg-icon .path=${mdiButtonPointer}></ha-svg-icon>
-          Inline Controls
+          <span>${t("editor.card.media_player.label.controls")}</span>
         </h3>
         <div class="content">
           <bc-controls-editor
@@ -407,7 +402,7 @@ export class BoldMediaPlayerCardEditor
       <ha-expansion-panel outlined>
         <h3 slot="header">
           <ha-svg-icon .path=${mdiListBox}></ha-svg-icon>
-          Presets
+          <span>${t("common.presets")}</span>
         </h3>
         <div class="content">
           ${presets.map(
@@ -424,15 +419,11 @@ export class BoldMediaPlayerCardEditor
       <ha-expansion-panel outlined>
         <h3 slot="header">
           <ha-svg-icon .path=${mdiListBox}></ha-svg-icon>
-          ${this.hass!.localize(
-            "ui.panel.lovelace.editor.card.generic.features",
-          )}
+          ${t("editor.common.features")}
         </h3>
         <div class="content">
-          <ha-alert alert-type="info" title="WIP">
-            In the future, this section will let you configure additional card
-            features. For now, you can access these settings through the YAML
-            editor.
+          <ha-alert alert-type="info">
+            ${t("editor.common.wip_section_text")}
           </ha-alert>
         </div>
       </ha-expansion-panel>
@@ -461,30 +452,14 @@ export class BoldMediaPlayerCardEditor
     fireEvent(this, "config-changed", { config });
   }
 
-  private _computeLabelCallback = (schema: { name: string }) => {
-    // TODO Add translations
-    return (
-      {
-        entity: "Entity",
-        appearance: "Appearance",
-        color_mode: "Color Mode",
-        color: "Fallback Color",
-        content_layout: "Layout",
-        title_bar: "Title Bar",
-        show_title_bar: "Show Title Bar",
-      }[schema.name] ?? ""
-    );
+  private _computeLabelCallback = ({ name }: { name: string }) => {
+    return t(`editor.card.media_player.label.${name}`);
   };
 
-  private _computeHelperCallback = (schema: { name: string }) => {
-    // TODO Add translations
-    return (
-      {
-        color:
-          'Only applicable when "Color Mode" is set to "Fixed Color", or no artwork is available.',
-        show_title_bar: "Show the media player's name.",
-      }[schema.name] ?? ""
-    );
+  private _computeHelperCallback = ({ name }: { name: string }) => {
+    return t(`editor.card.media_player.helper_text.${name}`, {
+      defaultValue: "",
+    });
   };
 
   static styles: CSSResultGroup = css`

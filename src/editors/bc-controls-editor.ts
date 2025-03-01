@@ -5,6 +5,7 @@ import { mdiDrag, mdiPlus } from "@mdi/js";
 import { ControlConfig, MediaButtonControlConfig } from "../lib/controls";
 import { HomeAssistant } from "../types/ha/lovelace";
 import { MediaControlAction } from "../helpers/media-player";
+import { t } from "../localization/i18n";
 
 export class ControlsEditorItemMovedEvent extends CustomEvent<{
   oldIndex: number;
@@ -61,7 +62,7 @@ export class ControlsEditor extends LitElement {
           @action=${() => {}}
           @close=${(ev) => ev.stopPropagation()}
         >
-          <ha-button slot="trigger" outlined .label=${"Add"}>
+          <ha-button slot="trigger" outlined .label=${t("editor.controls.add")}>
             <ha-svg-icon .path=${mdiPlus} slot="icon"></ha-svg-icon>
           </ha-button>
           ${Object.values(MediaControlAction).map(

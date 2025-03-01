@@ -12,6 +12,7 @@
     "@mdi/js": "^7.4.47",
     "custom-card-helpers": "^1.9.0",
     "home-assistant-js-websocket": "^9.4.0",
+    "i18n-js": "^4.5.1",
     "lit-element": "^4.1.1",
     "lit-html": "^3.2.1",
     "node-vibrant": "^4.0.3",
