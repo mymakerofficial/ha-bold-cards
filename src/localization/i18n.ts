@@ -92,7 +92,10 @@ const i18n = new I18n(
       },
     },
   },
-  {},
+  {
+    enableFallback: true,
+    defaultLocale: "en",
+  },
 );
 
 export type TranslateOptions = {
