@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { HomeAssistant } from "../../types/ha/lovelace";
 import { t } from "../../localization/i18n";
@@ -13,6 +13,8 @@ import {
   ButtonSize,
   ButtonVariant,
 } from "../../components/bc-button";
+import { getMediaButtonControlDefaultConfig } from "../../lib/controls/helpers";
+import { enumToOptions } from "../helpers";
 
 @customElement("bc-media-button-control-editor")
 export class MediaButtonControlEditor extends LitElement {
@@ -22,101 +24,91 @@ export class MediaButtonControlEditor extends LitElement {
   @property({ attribute: false }) public stateObj?: MediaPlayerEntity;
 
   protected render() {
-    const schema = [
-      {
-        name: "",
-        type: "grid",
-        schema: [
-          {
-            name: "size",
-            required: false,
-            selector: {
-              select: {
-                mode: "dropdown",
-                options: Object.values(ButtonSize).map((value) => ({
-                  value,
-                  label: t(value, {
-                    scope: "common.button.size",
-                  }),
-                })),
-              },
-            },
-          },
-          {
-            name: "variant",
-            required: false,
-            selector: {
-              select: {
-                mode: "dropdown",
-                options: Object.values(ButtonVariant).map((value) => ({
-                  value,
-                  label: t(value, {
-                    scope: "common.button.variant",
-                  }),
-                })),
-              },
-            },
-          },
-          {
-            name: "shape",
-            required: false,
-            selector: {
-              select: {
-                mode: "dropdown",
-                options: Object.values(ButtonShape).map((value) => ({
-                  value,
-                  label: t(value, {
-                    scope: "common.button.shape",
-                  }),
-                })),
-              },
-            },
-          },
-          {
-            name: "when_unavailable",
-            required: false,
-            selector: {
-              select: {
-                mode: "dropdown",
-                options: Object.values(MediaButtonWhenUnavailable).map(
-                  (value) => ({
-                    value,
-                    label: t(value, {
-                      scope: "common.media_button_when_unavailable",
-                    }),
-                  }),
-                ),
-              },
-            },
-          },
-        ],
-      },
-    ];
+    const defaultConfig = getMediaButtonControlDefaultConfig(
+      this.control?.action!,
+      this.stateObj as MediaPlayerEntity,
+    );
 
     return html`
-      <ha-form
-        .hass=${this.hass}
-        .data=${this.control}
-        .schema=${schema}
-        .computeLabel=${this._computeLabelCallback}
-        .computeHelper=${this._computeHelperCallback}
-        @value-changed=${() => {}}
-      ></ha-form>
+      <div class="grid">
+        <bc-selector-select
+          .label=${t("editor.controls.media_button_control.label.size")}
+          .required=${true}
+          .hass=${this.hass}
+          .value=${this.control?.size}
+          .default=${defaultConfig.size}
+          @value-changed=${console.log}
+          .selector=${{
+            select: {
+              mode: "dropdown",
+              options: enumToOptions(ButtonSize, {
+                scope: "common.button.size",
+              }),
+            },
+          }}
+        ></bc-selector-select>
+        <bc-selector-select
+          .label=${t("editor.controls.media_button_control.label.variant")}
+          .required=${true}
+          .hass=${this.hass}
+          .value=${this.control?.variant}
+          .default=${defaultConfig.variant}
+          @value-changed=${console.log}
+          .selector=${{
+            select: {
+              mode: "dropdown",
+              options: enumToOptions(ButtonVariant, {
+                scope: "common.button.variant",
+              }),
+            },
+          }}
+        ></bc-selector-select>
+        <bc-selector-select
+          .label=${t("editor.controls.media_button_control.label.shape")}
+          .required=${true}
+          .hass=${this.hass}
+          .value=${this.control?.shape}
+          .default=${defaultConfig.shape}
+          @value-changed=${console.log}
+          .selector=${{
+            select: {
+              mode: "dropdown",
+              options: enumToOptions(ButtonShape, {
+                scope: "common.button.shape",
+              }),
+            },
+          }}
+        ></bc-selector-select>
+        <bc-selector-select
+          .label=${t(
+            "editor.controls.media_button_control.label.when_unavailable",
+          )}
+          .required=${true}
+          .hass=${this.hass}
+          .value=${this.control?.when_unavailable}
+          .default=${defaultConfig.when_unavailable}
+          @value-changed=${console.log}
+          .selector=${{
+            select: {
+              mode: "dropdown",
+              options: enumToOptions(MediaButtonWhenUnavailable, {
+                scope: "common.media_button_when_unavailable",
+              }),
+            },
+          }}
+        ></bc-selector-select>
+      </div>
     `;
   }
 
-  private _computeLabelCallback = ({ name }: { name: string }) => {
-    return t(name, {
-      scope: "editor.controls.media_button_control.label",
-    });
-  };
-
-  private _computeHelperCallback = ({ name }: { name: string }) => {
-    return t(name, {
-      scope: "editor.controls.media_button_control.helper_text",
-      defaultValue: "",
-    });
-  };
-
-  static styles = [editorBaseStyles];
+  static styles = [
+    editorBaseStyles,
+    css`
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 8px;
+      }
+    `,
+  ];
 }

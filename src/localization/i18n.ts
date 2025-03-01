@@ -52,6 +52,7 @@ const i18n = new I18n(
       },
       editor: {
         common: {
+          default_with_value: "Default (%{value})",
           label: {
             features: "Features",
           },
@@ -95,18 +96,20 @@ const i18n = new I18n(
   {},
 );
 
+export type TranslateOptions = {
+  defaultValue?: any;
+  count?: number;
+  scope?: Readonly<string | string[]>;
+  defaults?: {
+    [key: string]: any;
+  }[];
+  missingBehavior?: "message" | "guess" | "error" | string;
+  [key: string]: any;
+};
+
 export function t(
   scope: Readonly<string | string[]>,
-  options?: {
-    defaultValue?: any;
-    count?: number;
-    scope?: Readonly<string | string[]>;
-    defaults?: {
-      [key: string]: any;
-    }[];
-    missingBehavior?: "message" | "guess" | "error" | string;
-    [key: string]: any;
-  },
+  options?: TranslateOptions,
 ): string {
   i18n.locale = (localStorage.getItem("selectedLanguage") || "en").replace(
     /['"]+/g,

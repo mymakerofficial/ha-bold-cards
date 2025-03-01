@@ -1,6 +1,7 @@
 import "./components/bc-contol-surface";
 import "./components/bc-cover-image";
 import "./components/bc-button";
+import "./components/bc-selector-select";
 import "./components/bc-media-control-button-row";
 import "./editors/controls/bc-media-button-control-editor";
 import "./editors/controls/bc-controls-editor";

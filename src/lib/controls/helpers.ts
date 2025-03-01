@@ -1,9 +1,11 @@
 import { mediaButtonActionIconMap, mediaButtonDefaultMap } from "./constants";
 import {
+  BaseButtonControlConfig,
   ConcreteControl,
   ConcreteMediaButtonControl,
   ControlConfig,
   ControlType,
+  MediaButtonAction,
   MediaButtonWhenUnavailable,
 } from "./types";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
@@ -37,6 +39,13 @@ export function getControlLabel(control: ControlConfig) {
   }
 }
 
+export function getMediaButtonControlDefaultConfig(
+  action: MediaButtonAction,
+  stateObj: MediaPlayerEntity,
+): BaseButtonControlConfig {
+  return mediaButtonDefaultMap[action](stateObj as MediaPlayerEntity);
+}
+
 export function translateControls({
   controls,
   stateObj,
@@ -65,7 +74,8 @@ export function translateControls({
           }
 
           const config = {
-            ...mediaButtonDefaultMap[control.action](
+            ...getMediaButtonControlDefaultConfig(
+              control.action,
               stateObj as MediaPlayerEntity,
             ),
             ...control,
