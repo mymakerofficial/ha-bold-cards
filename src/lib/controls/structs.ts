@@ -1,5 +1,9 @@
 import { assert, define, enums, object, optional, string } from "superstruct";
-import { ControlType, MediaButtonAction } from "./types";
+import {
+  ControlType,
+  ElementWhenUnavailable,
+  MediaButtonAction,
+} from "./types";
 import {
   ButtonShape,
   ButtonSize,
@@ -19,6 +23,7 @@ export const mediaButtonControlConfigStruct = object({
   size: optional(enums(Object.values(ButtonSize))),
   shape: optional(enums(Object.values(ButtonShape))),
   variant: optional(enums(Object.values(ButtonVariant))),
+  when_unavailable: optional(enums(Object.values(ElementWhenUnavailable))),
 });
 
 export const mediaProgressControlConfigStruct = object({
