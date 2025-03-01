@@ -12,6 +12,7 @@ import {
 } from "../types/card";
 import { getFeatureDoesRender, getFeatureSize } from "../features/size";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
+import { FeatureConfigWithMaybeInternals } from "../types/ha/feature";
 
 export abstract class BoldLovelaceCard<TConfig extends LovelaceCardConfig>
   extends LitElement
@@ -76,14 +77,26 @@ export abstract class BoldCardWithFeatures<
     });
   }
 
+  protected get _renderingFeatures(): FeatureConfigWithMaybeInternals[] {
+    if (!this._config?.features) {
+      return [];
+    }
+    if (!this._stateObj) {
+      return [];
+    }
+    return this._config.features.filter((feature) => {
+      return getFeatureDoesRender(feature, this._stateObj!);
+    });
+  }
+
   protected abstract _getSizeWithoutFeatures(): number;
 
   // get the size of all features combined **including** features that do not render
   protected _getTotalFeatureSize() {
-    if (!this._config?.features) {
+    if (!this._stateObj) {
       return 0;
     }
-    if (!this._stateObj) {
+    if (!this._config?.features) {
       return 0;
     }
     const size = this._config.features?.reduce((totalSize, feature) => {
@@ -95,21 +108,16 @@ export abstract class BoldCardWithFeatures<
 
   // get the size of all features that render combined
   protected _getRenderedFeatureSize() {
-    if (!this._config?.features) {
-      return 0;
-    }
     if (!this._stateObj) {
       return 0;
     }
-    const size = this._config.features?.reduce((totalSize, feature) => {
-      const doesRender = getFeatureDoesRender(feature, this._stateObj!);
-      if (!doesRender) {
-        return totalSize;
-      }
+    if (!this._renderingFeatures) {
+      return 0;
+    }
+    return this._renderingFeatures.reduce((totalSize, feature) => {
       const featureSize = getFeatureSize(feature, this._stateObj!);
       return totalSize + featureSize;
     }, 0);
-    return size || 0;
   }
 
   public getCardSize(): number | Promise<number> {

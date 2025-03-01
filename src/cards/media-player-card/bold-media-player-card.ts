@@ -201,6 +201,8 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
       (this._hasLoadedImage ||
         this._config.content_layout === MediaPlayerCardContentLayout.VERTICAL);
 
+    const renderingFeatures = this._renderingFeatures;
+
     return html`
       <ha-card
         style=${styleMap({
@@ -264,11 +266,11 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
                 : nothing}
             </div>
           </div>
-          ${this._getRenderedFeatureSize() > 0
+          ${renderingFeatures.length > 0
             ? html`<hui-card-features
                 .hass=${this.hass}
                 .stateObj=${stateObj}
-                .features=${this._config.features}
+                .features=${renderingFeatures}
                 style=${styleMap({
                   "--feature-height":
                     "calc(var(--row-height) + var(--row-gap) - var(--card-padding))",
