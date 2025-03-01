@@ -1,5 +1,5 @@
 import { mediaButtonActionIconMap } from "./constants";
-import { ControlConfig, ControlType, MediaButtonControlConfig } from "./types";
+import { ControlConfig, ControlType } from "./types";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { t } from "../../localization/i18n";

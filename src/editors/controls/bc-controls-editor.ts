@@ -8,6 +8,7 @@ import {
   ControlConfig,
   MediaButtonControlConfig,
   MediaButtonAction,
+  ControlType,
 } from "../../lib/controls/types";
 import { getControlIcon, getControlLabel } from "../../lib/controls/helpers";
 import { HassEntityBase } from "home-assistant-js-websocket";
@@ -86,9 +87,15 @@ export class ControlsEditor extends LitElement {
             <ha-svg-icon .path=${mdiPlus} slot="icon"></ha-svg-icon>
           </ha-button>
           ${Object.values(MediaButtonAction).map(
-            (type) => html`
-              <ha-list-item .value=${type}>
-                ${t(type, { scope: "common.media_control_action" })}
+            (action) => html`
+              <ha-list-item .value=${action}>
+                <ha-icon
+                  icon=${getControlIcon({
+                    type: ControlType.MEDIA_BUTTON,
+                    action,
+                  })}
+                ></ha-icon>
+                ${t(action, { scope: "common.media_control_action" })}
               </ha-list-item>
             `,
           )}
@@ -128,6 +135,10 @@ export class ControlsEditor extends LitElement {
         display: flex;
         align-items: center;
         gap: 8px;
+      }
+
+      ha-list-item ha-icon {
+        margin-right: 8px;
       }
     `,
   ];
