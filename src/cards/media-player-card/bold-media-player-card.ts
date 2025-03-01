@@ -24,6 +24,7 @@ import { computeDomain } from "../../helpers/entity";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { MediaPlayerControlButtonRowFeature } from "../../features/media-player-control-button-row/media-player-control-button-row";
 import { mediaPlayerCardStyles } from "./style";
+import { ControlType, MediaButtonControlConfig } from "../../lib/controls";
 
 @customElement("bold-media-player-card")
 export class BoldMediaPlayerCard extends BoldCardWithFeatures<
@@ -47,10 +48,16 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
       type: "custom:bold-media-player-card",
       entity,
       controls: [
-        MediaControlAction.TURN_ON,
-        MediaControlAction.TURN_OFF,
-        MediaControlAction.MEDIA_PLAY,
-        MediaControlAction.MEDIA_PAUSE,
+        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_ON },
+        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_OFF },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PLAY,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PAUSE,
+        },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
@@ -182,7 +189,9 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
       : stateObj.state;
 
     const controls = getMediaControls(stateObj).filter(({ action }) =>
-      this._config?.controls?.includes(action),
+      this._config?.controls
+        ?.map((control) => (control as MediaButtonControlConfig).action)
+        .includes(action),
     );
 
     const renderBackgroundImage =

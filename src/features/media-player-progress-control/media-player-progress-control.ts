@@ -16,6 +16,7 @@ import { MediaControlButtonActionEvent } from "../../components/bc-media-control
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
 import { HassEntity } from "home-assistant-js-websocket";
+import { ControlType, MediaButtonControlConfig } from "../../lib/controls";
 
 @customElement("media-player-progress-control")
 export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature<
@@ -28,10 +29,22 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
       full_width: true,
       show_timestamps: false,
       controls: [
-        MediaControlAction.SHUFFLE_SET,
-        MediaControlAction.MEDIA_PREVIOUS_TRACK,
-        MediaControlAction.MEDIA_NEXT_TRACK,
-        MediaControlAction.REPEAT_SET,
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.SHUFFLE_SET,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PREVIOUS_TRACK,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_NEXT_TRACK,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.REPEAT_SET,
+        },
       ],
     };
   }
@@ -46,7 +59,11 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
     }
 
     const controls = getMediaControls(this.stateObj!)
-      .filter(({ action }) => this._config?.controls?.includes(action))
+      .filter(({ action }) =>
+        this._config?.controls
+          ?.map((control) => (control as MediaButtonControlConfig).action)
+          .includes(action),
+      )
       .map((it) => ({
         ...it,
         size: ButtonSize.SM,

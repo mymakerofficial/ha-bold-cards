@@ -6,26 +6,40 @@ import {
 } from "custom-card-helpers";
 import {
   MediaPlayerCardColorMode,
-  MediaPlayerTileConfig,
   MediaPlayerCardContentLayout,
+  MediaPlayerTileConfig,
 } from "./types";
 import { customElement, property, state } from "lit/decorators";
 import { assert } from "superstruct";
 import { cardConfigStruct } from "./struct";
-import { mdiListBox, mdiPageLayoutHeader, mdiPalette } from "@mdi/js";
+import {
+  mdiButtonPointer,
+  mdiListBox,
+  mdiPageLayoutBody,
+  mdiPageLayoutHeader,
+  mdiPalette,
+} from "@mdi/js";
 import { MediaPlayerProgressControlFeature } from "../../features/media-player-progress-control/media-player-progress-control";
 import { MediaControlAction } from "../../helpers/media-player";
 import { MediaPlayerControlButtonRowFeature } from "../../features/media-player-control-button-row/media-player-control-button-row";
+import { ControlType } from "../../lib/controls";
+import { styleMap } from "lit-html/directives/style-map";
 
 const presets = [
   {
     name: "Horizontal Default",
     config: {
       controls: [
-        MediaControlAction.TURN_ON,
-        MediaControlAction.TURN_OFF,
-        MediaControlAction.MEDIA_PLAY,
-        MediaControlAction.MEDIA_PAUSE,
+        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_ON },
+        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_OFF },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PLAY,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PAUSE,
+        },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
@@ -42,10 +56,16 @@ const presets = [
     name: "Horizontal Artwork Background",
     config: {
       controls: [
-        MediaControlAction.TURN_ON,
-        MediaControlAction.TURN_OFF,
-        MediaControlAction.MEDIA_PLAY,
-        MediaControlAction.MEDIA_PAUSE,
+        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_ON },
+        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_OFF },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PLAY,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PAUSE,
+        },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
       color_mode: MediaPlayerCardColorMode.PICTURE,
@@ -62,10 +82,16 @@ const presets = [
     name: "Horizontal Artwork Background Space",
     config: {
       controls: [
-        MediaControlAction.TURN_ON,
-        MediaControlAction.TURN_OFF,
-        MediaControlAction.MEDIA_PLAY,
-        MediaControlAction.MEDIA_PAUSE,
+        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_ON },
+        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_OFF },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PLAY,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PAUSE,
+        },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
       color_mode: MediaPlayerCardColorMode.PICTURE,
@@ -81,7 +107,16 @@ const presets = [
   {
     name: "Artwork Square",
     config: {
-      controls: [MediaControlAction.MEDIA_PLAY, MediaControlAction.MEDIA_PAUSE],
+      controls: [
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PLAY,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PAUSE,
+        },
+      ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
       color_mode: MediaPlayerCardColorMode.PICTURE,
       color: "primary",
@@ -97,10 +132,16 @@ const presets = [
     name: "Artwork Square Large",
     config: {
       controls: [
-        MediaControlAction.TURN_ON,
-        MediaControlAction.TURN_OFF,
-        MediaControlAction.MEDIA_PLAY,
-        MediaControlAction.MEDIA_PAUSE,
+        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_ON },
+        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_OFF },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PLAY,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PAUSE,
+        },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
       color_mode: MediaPlayerCardColorMode.PICTURE,
@@ -192,7 +233,16 @@ const presets = [
   {
     name: "Simple Play/Pause",
     config: {
-      controls: [MediaControlAction.MEDIA_PLAY, MediaControlAction.MEDIA_PAUSE],
+      controls: [
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PLAY,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PAUSE,
+        },
+      ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
@@ -332,6 +382,30 @@ export class BoldMediaPlayerCardEditor
       ></ha-form>
       <ha-expansion-panel outlined>
         <h3 slot="header">
+          <ha-svg-icon .path=${mdiPageLayoutBody}></ha-svg-icon>
+          Media Info
+        </h3>
+        <div class="content">
+          <ha-alert alert-type="info" title="WIP">
+            In the future, this section will contain settings for how to display
+            media information. For now, you can access these settings through
+            the YAML editor.
+          </ha-alert>
+        </div>
+      </ha-expansion-panel>
+      <ha-expansion-panel outlined>
+        <h3 slot="header">
+          <ha-svg-icon .path=${mdiButtonPointer}></ha-svg-icon>
+          Inline Controls
+        </h3>
+        <div class="content">
+          <bc-controls-editor
+            .controls=${this._config?.controls ?? []}
+          ></bc-controls-editor>
+        </div>
+      </ha-expansion-panel>
+      <ha-expansion-panel outlined>
+        <h3 slot="header">
           <ha-svg-icon .path=${mdiListBox}></ha-svg-icon>
           Presets
         </h3>
@@ -347,10 +421,21 @@ export class BoldMediaPlayerCardEditor
           )}
         </div>
       </ha-expansion-panel>
-      <ha-alert alert-type="info" title="Heads up!">
-        This card is still in early development. Head to the YAML editor for
-        more settings.
-      </ha-alert>
+      <ha-expansion-panel outlined>
+        <h3 slot="header">
+          <ha-svg-icon .path=${mdiListBox}></ha-svg-icon>
+          ${this.hass!.localize(
+            "ui.panel.lovelace.editor.card.generic.features",
+          )}
+        </h3>
+        <div class="content">
+          <ha-alert alert-type="info" title="WIP">
+            In the future, this section will let you configure additional card
+            features. For now, you can access these settings through the YAML
+            editor.
+          </ha-alert>
+        </div>
+      </ha-expansion-panel>
     `;
   }
 

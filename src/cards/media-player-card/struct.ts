@@ -13,7 +13,7 @@ import {
   MediaPlayerCardColorMode,
   MediaPlayerCardContentLayout,
 } from "./types";
-import { MediaControlAction } from "../../helpers/media-player";
+import { controlConfigStruct } from "../../lib/controls";
 
 export const cardConfigStruct = assign(
   baseLovelaceCardConfig,
@@ -22,7 +22,7 @@ export const cardConfigStruct = assign(
     color_mode: enums(Object.values(MediaPlayerCardColorMode)),
     color: optional(string()),
     content_layout: enums(Object.values(MediaPlayerCardContentLayout)),
-    controls: optional(array(enums(Object.values(MediaControlAction)))),
+    controls: optional(array(controlConfigStruct)),
     show_title_bar: optional(boolean()),
     features: optional(array(any())),
   }),

@@ -13,6 +13,7 @@ import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
 import { styleMap } from "lit-html/directives/style-map";
 import { FeatureConfigWithMaybeInternals } from "../../types/ha/feature";
+import { ControlType, MediaButtonControlConfig } from "../../lib/controls";
 
 function getControls(
   config: FeatureConfigWithMaybeInternals<MediaPlayerControlButtonRowFeatureConfig>,
@@ -22,7 +23,11 @@ function getControls(
     return [];
   }
   return getMediaControls(stateObj, true)
-    .filter(({ action }) => config.controls?.includes(action))
+    .filter(({ action }) =>
+      config.controls
+        ?.map((control) => (control as MediaButtonControlConfig).action)
+        .includes(action),
+    )
     .map((it) => ({
       ...it,
       size: limitButtonSize(
@@ -55,12 +60,30 @@ export class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeatur
     return {
       type: "custom:media-player-control-button-row",
       controls: [
-        MediaControlAction.SHUFFLE_SET,
-        MediaControlAction.MEDIA_PLAY,
-        MediaControlAction.MEDIA_PAUSE,
-        MediaControlAction.MEDIA_PREVIOUS_TRACK,
-        MediaControlAction.MEDIA_NEXT_TRACK,
-        MediaControlAction.REPEAT_SET,
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.SHUFFLE_SET,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PLAY,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PAUSE,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_PREVIOUS_TRACK,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.MEDIA_NEXT_TRACK,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaControlAction.REPEAT_SET,
+        },
       ],
     };
   }
