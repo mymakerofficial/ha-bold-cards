@@ -4,7 +4,7 @@ import { HomeAssistant } from "../../types/ha/lovelace";
 import { t } from "../../localization/i18n";
 import {
   MediaButtonControlConfig,
-  MediaButtonWhenUnavailable,
+  ElementWhenUnavailable,
 } from "../../lib/controls/types";
 import { editorBaseStyles } from "../styles";
 import { MediaPlayerEntity } from "../../types/ha/entity";
@@ -91,8 +91,8 @@ export class MediaButtonControlEditor extends LitElement {
           .selector=${{
             select: {
               mode: "dropdown",
-              options: enumToOptions(MediaButtonWhenUnavailable, {
-                scope: "common.media_button_when_unavailable",
+              options: enumToOptions(ElementWhenUnavailable, {
+                scope: "common.element_when_unavailable",
               }),
             },
           }}

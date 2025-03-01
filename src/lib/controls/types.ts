@@ -24,18 +24,18 @@ export const MediaButtonAction = {
 export type MediaButtonAction =
   (typeof MediaButtonAction)[keyof typeof MediaButtonAction];
 
-export const MediaButtonWhenUnavailable = {
+export const ElementWhenUnavailable = {
   HIDE: "hide",
   DISABLE: "disable",
 } as const;
-export type MediaButtonWhenUnavailable =
-  (typeof MediaButtonWhenUnavailable)[keyof typeof MediaButtonWhenUnavailable];
+export type ElementWhenUnavailable =
+  (typeof ElementWhenUnavailable)[keyof typeof ElementWhenUnavailable];
 
 export interface BaseButtonControlConfig {
   size: ButtonSize;
   shape: ButtonShape;
   variant: ButtonVariant;
-  when_unavailable: MediaButtonWhenUnavailable;
+  when_unavailable: ElementWhenUnavailable;
 }
 
 export interface MediaButtonControlConfig

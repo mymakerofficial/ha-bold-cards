@@ -6,7 +6,7 @@ import {
   ControlConfig,
   ControlType,
   MediaButtonAction,
-  MediaButtonWhenUnavailable,
+  ElementWhenUnavailable,
 } from "./types";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
 import { MediaPlayerEntity } from "../../types/ha/entity";
@@ -83,7 +83,7 @@ export function translateControls({
 
           if (
             !available &&
-            config.when_unavailable === MediaButtonWhenUnavailable.HIDE
+            config.when_unavailable === ElementWhenUnavailable.HIDE
           ) {
             // the action is unavailable and the user has requested to hide it
             return undefined;

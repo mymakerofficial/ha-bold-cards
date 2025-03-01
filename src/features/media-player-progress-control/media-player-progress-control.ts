@@ -14,13 +14,28 @@ import { MediaControlButtonActionEvent } from "../../components/bc-media-control
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
 import { HassEntity } from "home-assistant-js-websocket";
-
 import {
   ControlType,
+  ElementWhenUnavailable,
   MediaButtonAction,
   MediaButtonControlConfig,
 } from "../../lib/controls/types";
 import { translateControls } from "../../lib/controls/helpers";
+
+function doesRender(
+  config: MediaPlayerProgressControlFeatureConfig,
+  stateObj: MediaPlayerEntity,
+) {
+  const controls = translateControls({
+    controls: config.controls,
+    stateObj,
+  });
+  return !(
+    config.when_unavailable !== ElementWhenUnavailable.DISABLE &&
+    !supportsFeature(stateObj, MediaPlayerEntityFeature.SEEK) &&
+    (!controls.length || controls.every(({ disabled }) => disabled))
+  );
+}
 
 @customElement("media-player-progress-control")
 export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature<
@@ -58,9 +73,14 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
       return nothing;
     }
 
-    if (!supportsFeature(this.stateObj, MediaPlayerEntityFeature.SEEK)) {
+    if (!doesRender(this._config, this.stateObj)) {
       return nothing;
     }
+
+    const supportsSeek = supportsFeature(
+      this.stateObj,
+      MediaPlayerEntityFeature.SEEK,
+    );
 
     const controls =
       translateControls({
@@ -109,19 +129,21 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
           .controls=${left}
           @action="${this._handleAction}"
         ></bc-media-control-button-row>
-        <div class="slider-container">
-          ${showTimestamps
-            ? html`<time class="position">${mediaPositionLabel}</time>`
-            : nothing}
-          <ha-slider
-            min=${0}
-            max=${mediaDuration}
-            value=${mediaPosition}
-          ></ha-slider>
-          ${showTimestamps
-            ? html`<time class="duration">${mediaDurationLabel}</time>`
-            : nothing}
-        </div>
+        ${supportsSeek
+          ? html`<div class="slider-container">
+              ${showTimestamps
+                ? html`<time class="position">${mediaPositionLabel}</time>`
+                : nothing}
+              <ha-slider
+                min=${0}
+                max=${mediaDuration}
+                value=${mediaPosition}
+              ></ha-slider>
+              ${showTimestamps
+                ? html`<time class="duration">${mediaDurationLabel}</time>`
+                : nothing}
+            </div>`
+          : html`<div class="slider-placeholder"></div>`}
         <bc-media-control-button-row
           .controls=${right}
           @action="${this._handleAction}"
@@ -165,6 +187,13 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
         display: flex;
         align-items: center;
       }
+        
+      .slider-placeholder {
+        flex: 1;
+        height: 4px;
+        border-radius: 2px;
+        background: rgb(from var(--tile-color) r g b / 20%);
+      }
 
       ha-slider {
         width: 100%;
@@ -200,7 +229,6 @@ MediaPlayerProgressControlFeature.registerCustomFeature<
   name: "Media Player Progress",
   supported: (stateObj: HassEntity) =>
     computeDomain(stateObj.entity_id) === "media_player",
-  doesRender: (_config, stateObj) =>
-    supportsFeature(stateObj, MediaPlayerEntityFeature.SEEK),
+  doesRender,
   configurable: false,
 });

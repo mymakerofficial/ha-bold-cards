@@ -1,7 +1,7 @@
 import {
   BaseButtonControlConfig,
   MediaButtonAction,
-  MediaButtonWhenUnavailable,
+  ElementWhenUnavailable,
 } from "./types";
 import { MediaPlayerEntity, MediaPlayerRepeat } from "../../types/ha/entity";
 import {
@@ -19,49 +19,49 @@ export const mediaButtonDefaultMap: {
     size: ButtonSize.MD,
     shape: ButtonShape.SQUARE,
     variant: ButtonVariant.PLAIN,
-    when_unavailable: MediaButtonWhenUnavailable.HIDE,
+    when_unavailable: ElementWhenUnavailable.HIDE,
   }),
   [MediaButtonAction.TURN_OFF]: () => ({
     size: ButtonSize.MD,
     shape: ButtonShape.SQUARE,
     variant: ButtonVariant.PLAIN,
-    when_unavailable: MediaButtonWhenUnavailable.HIDE,
+    when_unavailable: ElementWhenUnavailable.HIDE,
   }),
   [MediaButtonAction.SHUFFLE_SET]: () => ({
     size: ButtonSize.SM,
     shape: ButtonShape.SQUARE,
     variant: ButtonVariant.PLAIN,
-    when_unavailable: MediaButtonWhenUnavailable.HIDE,
+    when_unavailable: ElementWhenUnavailable.HIDE,
   }),
   [MediaButtonAction.MEDIA_PREVIOUS_TRACK]: () => ({
     size: ButtonSize.LG,
     shape: ButtonShape.SQUARE,
     variant: ButtonVariant.PLAIN,
-    when_unavailable: MediaButtonWhenUnavailable.DISABLE,
+    when_unavailable: ElementWhenUnavailable.DISABLE,
   }),
   [MediaButtonAction.MEDIA_PLAY]: () => ({
     size: ButtonSize.XL,
     shape: ButtonShape.ROUNDED,
     variant: ButtonVariant.FILLED,
-    when_unavailable: MediaButtonWhenUnavailable.DISABLE,
+    when_unavailable: ElementWhenUnavailable.DISABLE,
   }),
   [MediaButtonAction.MEDIA_PAUSE]: () => ({
     size: ButtonSize.XL,
     shape: ButtonShape.WIDE,
     variant: ButtonVariant.FILLED,
-    when_unavailable: MediaButtonWhenUnavailable.DISABLE,
+    when_unavailable: ElementWhenUnavailable.DISABLE,
   }),
   [MediaButtonAction.MEDIA_NEXT_TRACK]: () => ({
     size: ButtonSize.LG,
     shape: ButtonShape.SQUARE,
     variant: ButtonVariant.PLAIN,
-    when_unavailable: MediaButtonWhenUnavailable.DISABLE,
+    when_unavailable: ElementWhenUnavailable.DISABLE,
   }),
   [MediaButtonAction.REPEAT_SET]: () => ({
     size: ButtonSize.SM,
     shape: ButtonShape.SQUARE,
     variant: ButtonVariant.PLAIN,
-    when_unavailable: MediaButtonWhenUnavailable.HIDE,
+    when_unavailable: ElementWhenUnavailable.HIDE,
   }),
 };
 

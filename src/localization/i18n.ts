@@ -2,7 +2,7 @@ import { I18n } from "i18n-js";
 
 import {
   MediaButtonAction,
-  MediaButtonWhenUnavailable,
+  ElementWhenUnavailable,
 } from "../lib/controls/types";
 import {
   ButtonShape,
@@ -27,9 +27,9 @@ const i18n = new I18n(
           [MediaButtonAction.MEDIA_NEXT_TRACK]: "Next Track",
           [MediaButtonAction.REPEAT_SET]: "Set Repeat",
         },
-        media_button_when_unavailable: {
-          [MediaButtonWhenUnavailable.HIDE]: "Hide",
-          [MediaButtonWhenUnavailable.DISABLE]: "Disable",
+        element_when_unavailable: {
+          [ElementWhenUnavailable.HIDE]: "Hide",
+          [ElementWhenUnavailable.DISABLE]: "Disable",
         },
         button: {
           size: {
