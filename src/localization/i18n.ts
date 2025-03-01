@@ -1,14 +1,30 @@
 import { I18n } from "i18n-js";
 
+import { MediaButtonAction } from "../lib/controls/types";
+
 const i18n = new I18n(
   {
     en: {
       common: {
-        presets: "Presets",
+        label: {
+          presets: "Presets",
+        },
+        media_control_action: {
+          [MediaButtonAction.TURN_ON]: "Turn On",
+          [MediaButtonAction.TURN_OFF]: "Turn Off",
+          [MediaButtonAction.SHUFFLE_SET]: "Set Shuffle",
+          [MediaButtonAction.MEDIA_PREVIOUS_TRACK]: "Previous Track",
+          [MediaButtonAction.MEDIA_PLAY]: "Play",
+          [MediaButtonAction.MEDIA_PAUSE]: "Pause",
+          [MediaButtonAction.MEDIA_NEXT_TRACK]: "Next Track",
+          [MediaButtonAction.REPEAT_SET]: "Set Repeat",
+        },
       },
       editor: {
         common: {
-          features: "Features",
+          label: {
+            features: "Features",
+          },
           wip_section_text:
             "This section isn't ready yet. In the meantime, you can use the YAML editor to customize your card.",
         },

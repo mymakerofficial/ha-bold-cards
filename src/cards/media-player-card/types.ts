@@ -1,5 +1,6 @@
 import { LovelaceCardConfigWithFeatures } from "../../types/card";
-import { ControlConfig } from "../../lib/controls";
+
+import { ControlConfig } from "../../lib/controls/types";
 
 export const MediaPlayerCardContentLayout = {
   HORIZONTAL: "horizontal",

@@ -24,6 +24,7 @@ import {
   ButtonVariant,
 } from "../components/bc-button";
 import { HomeAssistant } from "../types/ha/lovelace";
+import { MediaButtonAction } from "../lib/controls/types";
 
 export const MediaPlayerEntityFeature = {
   PAUSE: 1,
@@ -64,22 +65,9 @@ export function getMediaDescription(stateObj: MediaPlayerEntity) {
   }
 }
 
-export const MediaControlAction = {
-  TURN_ON: "turn_on",
-  TURN_OFF: "turn_off",
-  SHUFFLE_SET: "shuffle_set",
-  MEDIA_PREVIOUS_TRACK: "media_previous_track",
-  MEDIA_PLAY: "media_play",
-  MEDIA_PAUSE: "media_pause",
-  MEDIA_NEXT_TRACK: "media_next_track",
-  REPEAT_SET: "repeat_set",
-};
-export type MediaControlAction =
-  (typeof MediaControlAction)[keyof typeof MediaControlAction];
-
 export interface MediaControlButton {
   iconPath: string;
-  action: MediaControlAction;
+  action: MediaButtonAction;
   size?: ButtonSize;
   shape?: ButtonShape;
   variant?: ButtonVariant;
@@ -104,7 +92,7 @@ export function getMediaControls(
   ) {
     buttons.push({
       iconPath: mdiPower,
-      action: MediaControlAction.TURN_ON,
+      action: MediaButtonAction.TURN_ON,
     });
   }
 
@@ -114,14 +102,14 @@ export function getMediaControls(
   ) {
     buttons.push({
       iconPath: mdiPower,
-      action: MediaControlAction.TURN_OFF,
+      action: MediaButtonAction.TURN_OFF,
     });
   }
 
   if (supportsFeature(stateObj, MediaPlayerEntityFeature.SHUFFLE_SET)) {
     buttons.push({
       iconPath: stateObj.attributes.shuffle ? mdiShuffle : mdiShuffleDisabled,
-      action: MediaControlAction.SHUFFLE_SET,
+      action: MediaButtonAction.SHUFFLE_SET,
       size: ButtonSize.SM,
     });
   }
@@ -129,7 +117,7 @@ export function getMediaControls(
   if (supportsFeature(stateObj, MediaPlayerEntityFeature.PREVIOUS_TRACK)) {
     buttons.push({
       iconPath: mdiSkipPrevious,
-      action: MediaControlAction.MEDIA_PREVIOUS_TRACK,
+      action: MediaButtonAction.MEDIA_PREVIOUS_TRACK,
     });
   }
 
@@ -139,7 +127,7 @@ export function getMediaControls(
   ) {
     buttons.push({
       iconPath: mdiPlay,
-      action: MediaControlAction.MEDIA_PLAY,
+      action: MediaButtonAction.MEDIA_PLAY,
       variant: ButtonVariant.FILLED,
       size: largePlayButton ? ButtonSize.XL : ButtonSize.MD,
       shape: ButtonShape.ROUNDED,
@@ -152,7 +140,7 @@ export function getMediaControls(
   ) {
     buttons.push({
       iconPath: mdiPause,
-      action: MediaControlAction.MEDIA_PAUSE,
+      action: MediaButtonAction.MEDIA_PAUSE,
       variant: ButtonVariant.FILLED,
       size: largePlayButton ? ButtonSize.XL : ButtonSize.MD,
       shape: largePlayButton ? ButtonShape.WIDE : ButtonShape.SQUARE,
@@ -162,7 +150,7 @@ export function getMediaControls(
   if (supportsFeature(stateObj, MediaPlayerEntityFeature.NEXT_TRACK)) {
     buttons.push({
       iconPath: mdiSkipNext,
-      action: MediaControlAction.MEDIA_NEXT_TRACK,
+      action: MediaButtonAction.MEDIA_NEXT_TRACK,
     });
   }
 
@@ -173,7 +161,7 @@ export function getMediaControls(
         [MediaPlayerRepeat.ALL]: mdiRepeat,
         [MediaPlayerRepeat.ONE]: mdiRepeatOnce,
       }[stateObj.attributes.repeat ?? MediaPlayerRepeat.OFF],
-      action: MediaControlAction.REPEAT_SET,
+      action: MediaButtonAction.REPEAT_SET,
       size: ButtonSize.SM,
     });
   }
@@ -188,7 +176,7 @@ export async function handleMediaPlayerAction({
 }: {
   hass: HomeAssistant;
   stateObj: MediaPlayerEntity;
-  action: MediaControlAction;
+  action: MediaButtonAction;
 }) {
   await hass.callService(
     "media_player",
@@ -199,15 +187,15 @@ export async function handleMediaPlayerAction({
 
 function getMediaPlayerActionServiceData(
   stateObj: MediaPlayerEntity,
-  action: MediaControlAction,
+  action: MediaButtonAction,
 ) {
   switch (action) {
-    case MediaControlAction.SHUFFLE_SET:
+    case MediaButtonAction.SHUFFLE_SET:
       return {
         entity_id: stateObj.entity_id,
         shuffle: !stateObj.attributes.shuffle,
       };
-    case MediaControlAction.REPEAT_SET:
+    case MediaButtonAction.REPEAT_SET:
       return {
         entity_id: stateObj.entity_id,
         repeat: getNextRepeatMode(stateObj.attributes.repeat),

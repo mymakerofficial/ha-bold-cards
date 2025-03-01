@@ -14,7 +14,6 @@ import {
   getMediaControls,
   getMediaDescription,
   handleMediaPlayerAction,
-  MediaControlAction,
 } from "../../helpers/media-player";
 import { classMap } from "lit-html/directives/class-map";
 import { MediaControlButtonActionEvent } from "../../components/bc-media-control-button-row";
@@ -24,7 +23,12 @@ import { computeDomain } from "../../helpers/entity";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { MediaPlayerControlButtonRowFeature } from "../../features/media-player-control-button-row/media-player-control-button-row";
 import { mediaPlayerCardStyles } from "./style";
-import { ControlType, MediaButtonControlConfig } from "../../lib/controls";
+
+import {
+  ControlType,
+  MediaButtonControlConfig,
+  MediaButtonAction,
+} from "../../lib/controls/types";
 
 @customElement("bold-media-player-card")
 export class BoldMediaPlayerCard extends BoldCardWithFeatures<
@@ -48,15 +52,15 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
       type: "custom:bold-media-player-card",
       entity,
       controls: [
-        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_ON },
-        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_OFF },
+        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_ON },
+        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_OFF },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PLAY,
+          action: MediaButtonAction.MEDIA_PLAY,
         },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PAUSE,
+          action: MediaButtonAction.MEDIA_PAUSE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,

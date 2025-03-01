@@ -1,4 +1,4 @@
-import { ControlConfig } from "../../lib/controls";
+import { ControlConfig } from "../../lib/controls/types";
 
 export interface MediaPlayerProgressControlFeatureConfig {
   type: "custom:media-player-progress-control";

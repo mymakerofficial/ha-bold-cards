@@ -2,15 +2,15 @@ import { customElement, property } from "lit/decorators";
 import { css, html, LitElement, nothing } from "lit";
 import {
   handleMediaPlayerAction,
-  MediaControlAction,
   MediaControlButton,
 } from "../helpers/media-player";
 import { classMap } from "lit-html/directives/class-map";
+import { MediaButtonAction } from "../lib/controls/types";
 
 export class MediaControlButtonActionEvent extends CustomEvent<{
-  action: MediaControlAction;
+  action: MediaButtonAction;
 }> {
-  constructor(action: MediaControlAction) {
+  constructor(action: MediaButtonAction) {
     super("action", {
       detail: { action },
     });

@@ -2,10 +2,15 @@ import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { repeat } from "lit-html/directives/repeat";
 import { mdiDrag, mdiPlus } from "@mdi/js";
-import { ControlConfig, MediaButtonControlConfig } from "../lib/controls";
 import { HomeAssistant } from "../types/ha/lovelace";
-import { MediaControlAction } from "../helpers/media-player";
 import { t } from "../localization/i18n";
+import {
+  ControlConfig,
+  MediaButtonControlConfig,
+  MediaButtonAction,
+} from "../lib/controls/types";
+import { getControlIcon } from "../lib/controls/helpers";
+import { HassEntityBase } from "home-assistant-js-websocket";
 
 export class ControlsEditorItemMovedEvent extends CustomEvent<{
   oldIndex: number;
@@ -21,6 +26,8 @@ export class ControlsEditorItemMovedEvent extends CustomEvent<{
 @customElement("bc-controls-editor")
 export class ControlsEditor extends LitElement {
   @property({ attribute: false }) public controls?: ControlConfig[];
+
+  @property({ attribute: false }) public stateObj?: HassEntityBase;
 
   private _handleItemMoved(ev: CustomEvent) {
     this.dispatchEvent(new ControlsEditorItemMovedEvent(ev.detail));
@@ -48,10 +55,12 @@ export class ControlsEditor extends LitElement {
                     <ha-svg-icon .path=${mdiDrag}></ha-svg-icon>
                   </div>
                   <div class="content">
-                    <ha-svg-icon
-                      .path=${(control as MediaButtonControlConfig).icon}
-                    ></ha-svg-icon>
-                    <div>${(control as MediaButtonControlConfig).action}</div>
+                    <ha-icon icon=${getControlIcon(control)}></ha-icon>
+                    <div>
+                      ${t((control as MediaButtonControlConfig).action, {
+                        scope: "common.media_control_action",
+                      })}
+                    </div>
                   </div>
                 </div>`,
             )}
@@ -65,9 +74,11 @@ export class ControlsEditor extends LitElement {
           <ha-button slot="trigger" outlined .label=${t("editor.controls.add")}>
             <ha-svg-icon .path=${mdiPlus} slot="icon"></ha-svg-icon>
           </ha-button>
-          ${Object.values(MediaControlAction).map(
+          ${Object.values(MediaButtonAction).map(
             (type) => html`
-              <ha-list-item .value=${type}> ${type} </ha-list-item>
+              <ha-list-item .value=${type}>
+                ${t(type, { scope: "common.media_control_action" })}
+              </ha-list-item>
             `,
           )}
         </ha-button-menu>
@@ -95,22 +106,18 @@ export class ControlsEditor extends LitElement {
       padding-inline-start: initial;
       direction: var(--direction);
     }
+
     .item .handle > * {
       pointer-events: none;
     }
 
-    .feature-content {
+    .item .content {
       height: 60px;
       font-size: 16px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 8px;
       flex-grow: 1;
-    }
-
-    .feature-content div {
-      display: flex;
-      flex-direction: column;
     }
   `;
 }

@@ -1,53 +1,11 @@
+import { assert, define, enums, object, optional, string } from "superstruct";
+import { ControlType, MediaButtonAction } from "./types";
 import {
   ButtonShape,
   ButtonSize,
   ButtonVariant,
-} from "../components/bc-button";
-import { MediaControlAction } from "../helpers/media-player";
-import {
-  assert,
-  define,
-  enums,
-  object,
-  optional,
-  refine,
-  string,
-  union,
-  validate,
-} from "superstruct";
+} from "../../components/bc-button";
 import { StructError } from "superstruct/dist/error";
-
-export const ControlType = {
-  MEDIA_BUTTON: "media_button",
-  MEDIA_PROGRES: "media_progress",
-  CUSTOM: "custom",
-} as const;
-export type ControlType = (typeof ControlType)[keyof typeof ControlType];
-
-interface BaseButtonControlConfig {
-  icon?: string;
-  size?: ButtonSize;
-  shape?: ButtonShape;
-  variant?: ButtonVariant;
-}
-
-export interface MediaButtonControlConfig extends BaseButtonControlConfig {
-  type: "media_button";
-  action: MediaControlAction;
-}
-
-export interface MediaProgressControlConfig {
-  type: "media_progress";
-}
-
-export interface CustomControlConfig {
-  type: "custom";
-}
-
-export type ControlConfig =
-  | MediaButtonControlConfig
-  | MediaProgressControlConfig
-  | CustomControlConfig;
 
 export const mediaButtonControlConfigStruct = object({
   type: define(
@@ -56,13 +14,12 @@ export const mediaButtonControlConfigStruct = object({
       value === ControlType.MEDIA_BUTTON ||
       `Expected to be "${ControlType.MEDIA_BUTTON}", but received "${value}"`,
   ),
-  action: enums(Object.values(MediaControlAction)),
+  action: enums(Object.values(MediaButtonAction)),
   icon: optional(string()),
   size: optional(enums(Object.values(ButtonSize))),
   shape: optional(enums(Object.values(ButtonShape))),
   variant: optional(enums(Object.values(ButtonVariant))),
 });
-
 export const mediaProgressControlConfigStruct = object({
   type: define(
     "type",
@@ -71,7 +28,6 @@ export const mediaProgressControlConfigStruct = object({
       `Expected to be "${ControlType.MEDIA_PROGRES}", but received "${value}"`,
   ),
 });
-
 export const customControlConfigStruct = object({
   type: define(
     "type",
@@ -80,7 +36,6 @@ export const customControlConfigStruct = object({
       `Expected to be "${ControlType.CUSTOM}", but received "${value}"`,
   ),
 });
-
 export const controlConfigStruct = define("controlConfig", (value) => {
   if (!value || typeof value !== "object" || !("type" in value)) {
     return `Expected an object containing at least a "type" key, but received "${value}"`;

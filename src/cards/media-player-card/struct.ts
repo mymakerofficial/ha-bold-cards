@@ -13,7 +13,8 @@ import {
   MediaPlayerCardColorMode,
   MediaPlayerCardContentLayout,
 } from "./types";
-import { controlConfigStruct } from "../../lib/controls";
+
+import { controlConfigStruct } from "../../lib/controls/structs";
 
 export const cardConfigStruct = assign(
   baseLovelaceCardConfig,

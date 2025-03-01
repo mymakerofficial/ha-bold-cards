@@ -4,7 +4,6 @@ import { MediaPlayerProgressControlFeatureConfig } from "./types";
 import {
   getMediaControls,
   handleMediaPlayerAction,
-  MediaControlAction,
   MediaPlayerEntityFeature,
 } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
@@ -16,7 +15,12 @@ import { MediaControlButtonActionEvent } from "../../components/bc-media-control
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
 import { HassEntity } from "home-assistant-js-websocket";
-import { ControlType, MediaButtonControlConfig } from "../../lib/controls";
+
+import {
+  ControlType,
+  MediaButtonControlConfig,
+  MediaButtonAction,
+} from "../../lib/controls/types";
 
 @customElement("media-player-progress-control")
 export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature<
@@ -31,19 +35,19 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
       controls: [
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.SHUFFLE_SET,
+          action: MediaButtonAction.SHUFFLE_SET,
         },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PREVIOUS_TRACK,
+          action: MediaButtonAction.MEDIA_PREVIOUS_TRACK,
         },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_NEXT_TRACK,
+          action: MediaButtonAction.MEDIA_NEXT_TRACK,
         },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.REPEAT_SET,
+          action: MediaButtonAction.REPEAT_SET,
         },
       ],
     };
@@ -72,19 +76,19 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
 
     const left = controls.filter(({ action }) =>
       [
-        MediaControlAction.TURN_ON,
-        MediaControlAction.TURN_OFF,
-        MediaControlAction.SHUFFLE_SET,
-        MediaControlAction.MEDIA_PREVIOUS_TRACK,
+        MediaButtonAction.TURN_ON,
+        MediaButtonAction.TURN_OFF,
+        MediaButtonAction.SHUFFLE_SET,
+        MediaButtonAction.MEDIA_PREVIOUS_TRACK,
       ].includes(action),
     );
 
     const right = controls.filter(({ action }) =>
       [
-        MediaControlAction.MEDIA_PLAY,
-        MediaControlAction.MEDIA_PAUSE,
-        MediaControlAction.MEDIA_NEXT_TRACK,
-        MediaControlAction.REPEAT_SET,
+        MediaButtonAction.MEDIA_PLAY,
+        MediaButtonAction.MEDIA_PAUSE,
+        MediaButtonAction.MEDIA_NEXT_TRACK,
+        MediaButtonAction.REPEAT_SET,
       ].includes(action),
     );
 

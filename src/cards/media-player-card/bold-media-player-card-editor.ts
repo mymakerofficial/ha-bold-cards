@@ -16,26 +16,25 @@ import {
   mdiPalette,
 } from "@mdi/js";
 import { MediaPlayerProgressControlFeature } from "../../features/media-player-progress-control/media-player-progress-control";
-import { MediaControlAction } from "../../helpers/media-player";
 import { MediaPlayerControlButtonRowFeature } from "../../features/media-player-control-button-row/media-player-control-button-row";
-import { ControlType } from "../../lib/controls";
 import { t } from "../../localization/i18n";
 import { HomeAssistant, LovelaceCardEditor } from "../../types/ha/lovelace";
+import { ControlType, MediaButtonAction } from "../../lib/controls/types";
 
 const presets = [
   {
     name: "Horizontal Default",
     config: {
       controls: [
-        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_ON },
-        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_OFF },
+        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_ON },
+        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_OFF },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PLAY,
+          action: MediaButtonAction.MEDIA_PLAY,
         },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PAUSE,
+          action: MediaButtonAction.MEDIA_PAUSE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -53,15 +52,15 @@ const presets = [
     name: "Horizontal Artwork Background",
     config: {
       controls: [
-        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_ON },
-        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_OFF },
+        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_ON },
+        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_OFF },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PLAY,
+          action: MediaButtonAction.MEDIA_PLAY,
         },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PAUSE,
+          action: MediaButtonAction.MEDIA_PAUSE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -79,15 +78,15 @@ const presets = [
     name: "Horizontal Artwork Background Space",
     config: {
       controls: [
-        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_ON },
-        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_OFF },
+        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_ON },
+        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_OFF },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PLAY,
+          action: MediaButtonAction.MEDIA_PLAY,
         },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PAUSE,
+          action: MediaButtonAction.MEDIA_PAUSE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -107,11 +106,11 @@ const presets = [
       controls: [
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PLAY,
+          action: MediaButtonAction.MEDIA_PLAY,
         },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PAUSE,
+          action: MediaButtonAction.MEDIA_PAUSE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -129,15 +128,15 @@ const presets = [
     name: "Artwork Square Large",
     config: {
       controls: [
-        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_ON },
-        { type: ControlType.MEDIA_BUTTON, action: MediaControlAction.TURN_OFF },
+        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_ON },
+        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_OFF },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PLAY,
+          action: MediaButtonAction.MEDIA_PLAY,
         },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PAUSE,
+          action: MediaButtonAction.MEDIA_PAUSE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -233,11 +232,11 @@ const presets = [
       controls: [
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PLAY,
+          action: MediaButtonAction.MEDIA_PLAY,
         },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PAUSE,
+          action: MediaButtonAction.MEDIA_PAUSE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -396,13 +395,14 @@ export class BoldMediaPlayerCardEditor
         <div class="content">
           <bc-controls-editor
             .controls=${this._config?.controls ?? []}
+            .stateObj=${stateObj}
           ></bc-controls-editor>
         </div>
       </ha-expansion-panel>
       <ha-expansion-panel outlined>
         <h3 slot="header">
           <ha-svg-icon .path=${mdiListBox}></ha-svg-icon>
-          <span>${t("common.presets")}</span>
+          <span>${t("common.label.presets")}</span>
         </h3>
         <div class="content">
           ${presets.map(
@@ -419,7 +419,7 @@ export class BoldMediaPlayerCardEditor
       <ha-expansion-panel outlined>
         <h3 slot="header">
           <ha-svg-icon .path=${mdiListBox}></ha-svg-icon>
-          ${t("editor.common.features")}
+          ${t("editor.common.label.features")}
         </h3>
         <div class="content">
           <ha-alert alert-type="info">
@@ -453,11 +453,14 @@ export class BoldMediaPlayerCardEditor
   }
 
   private _computeLabelCallback = ({ name }: { name: string }) => {
-    return t(`editor.card.media_player.label.${name}`);
+    return t(name, {
+      scope: "editor.card.media_player.label",
+    });
   };
 
   private _computeHelperCallback = ({ name }: { name: string }) => {
-    return t(`editor.card.media_player.helper_text.${name}`, {
+    return t(name, {
+      scope: "editor.card.media_player.helper_text",
       defaultValue: "",
     });
   };

@@ -4,7 +4,6 @@ import { MediaPlayerControlButtonRowFeatureConfig } from "./types";
 import {
   getMediaControls,
   handleMediaPlayerAction,
-  MediaControlAction,
 } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { ButtonSize, limitButtonSize } from "../../components/bc-button";
@@ -13,7 +12,12 @@ import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
 import { styleMap } from "lit-html/directives/style-map";
 import { FeatureConfigWithMaybeInternals } from "../../types/ha/feature";
-import { ControlType, MediaButtonControlConfig } from "../../lib/controls";
+
+import {
+  ControlType,
+  MediaButtonControlConfig,
+  MediaButtonAction,
+} from "../../lib/controls/types";
 
 function getControls(
   config: FeatureConfigWithMaybeInternals<MediaPlayerControlButtonRowFeatureConfig>,
@@ -62,27 +66,27 @@ export class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeatur
       controls: [
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.SHUFFLE_SET,
+          action: MediaButtonAction.SHUFFLE_SET,
         },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PLAY,
+          action: MediaButtonAction.MEDIA_PLAY,
         },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PAUSE,
+          action: MediaButtonAction.MEDIA_PAUSE,
         },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_PREVIOUS_TRACK,
+          action: MediaButtonAction.MEDIA_PREVIOUS_TRACK,
         },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.MEDIA_NEXT_TRACK,
+          action: MediaButtonAction.MEDIA_NEXT_TRACK,
         },
         {
           type: ControlType.MEDIA_BUTTON,
-          action: MediaControlAction.REPEAT_SET,
+          action: MediaButtonAction.REPEAT_SET,
         },
       ],
     };
