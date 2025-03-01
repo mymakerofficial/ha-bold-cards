@@ -23,6 +23,26 @@ export class MediaButtonControlEditor extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @property({ attribute: false }) public stateObj?: MediaPlayerEntity;
 
+  protected _handleValueChanged(
+    field: keyof MediaButtonControlConfig,
+    ev: CustomEvent,
+  ) {
+    ev.stopPropagation();
+
+    const newValue = {
+      ...this.control!,
+      [field]: ev.detail.value,
+    };
+
+    this.dispatchEvent(
+      new CustomEvent("value-changed", {
+        detail: {
+          value: newValue,
+        },
+      }),
+    );
+  }
+
   protected render() {
     const defaultConfig = getMediaButtonControlDefaultConfig(
       this.control?.action!,
@@ -37,7 +57,7 @@ export class MediaButtonControlEditor extends LitElement {
           .hass=${this.hass}
           .value=${this.control?.size}
           .default=${defaultConfig.size}
-          @value-changed=${console.log}
+          @value-changed=${(ev) => this._handleValueChanged("size", ev)}
           .selector=${{
             select: {
               mode: "dropdown",
@@ -53,7 +73,7 @@ export class MediaButtonControlEditor extends LitElement {
           .hass=${this.hass}
           .value=${this.control?.variant}
           .default=${defaultConfig.variant}
-          @value-changed=${console.log}
+          @value-changed=${(ev) => this._handleValueChanged("variant", ev)}
           .selector=${{
             select: {
               mode: "dropdown",
@@ -69,7 +89,7 @@ export class MediaButtonControlEditor extends LitElement {
           .hass=${this.hass}
           .value=${this.control?.shape}
           .default=${defaultConfig.shape}
-          @value-changed=${console.log}
+          @value-changed=${(ev) => this._handleValueChanged("shape", ev)}
           .selector=${{
             select: {
               mode: "dropdown",
@@ -87,7 +107,8 @@ export class MediaButtonControlEditor extends LitElement {
           .hass=${this.hass}
           .value=${this.control?.when_unavailable}
           .default=${defaultConfig.when_unavailable}
-          @value-changed=${console.log}
+          @value-changed=${(ev) =>
+            this._handleValueChanged("when_unavailable", ev)}
           .selector=${{
             select: {
               mode: "dropdown",

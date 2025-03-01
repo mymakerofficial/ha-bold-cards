@@ -14,17 +14,6 @@ import { getControlIcon, getControlLabel } from "../../lib/controls/helpers";
 import { HassEntityBase } from "home-assistant-js-websocket";
 import { editorBaseStyles } from "../styles";
 
-export class ControlsEditorItemMovedEvent extends CustomEvent<{
-  oldIndex: number;
-  newIndex: number;
-}> {
-  constructor(detail: { oldIndex: number; newIndex: number }) {
-    super("item-moved", {
-      detail,
-    });
-  }
-}
-
 @customElement("bc-controls-editor")
 export class ControlsEditor extends LitElement {
   @property({ attribute: false }) public controls?: ControlConfig[];
@@ -33,11 +22,68 @@ export class ControlsEditor extends LitElement {
   @property({ attribute: false }) public stateObj?: HassEntityBase;
 
   private _handleItemMoved(ev: CustomEvent) {
-    this.dispatchEvent(new ControlsEditorItemMovedEvent(ev.detail));
+    ev.stopPropagation();
+
+    const newValue = [...this.controls!];
+    const [movedItem] = newValue.splice(ev.detail.oldIndex, 1);
+    newValue.splice(ev.detail.newIndex, 0, movedItem);
+
+    this.dispatchEvent(
+      new CustomEvent("value-changed", {
+        detail: {
+          value: newValue,
+        },
+      }),
+    );
   }
 
-  private _handleAddControl(_ev: CustomEvent) {
-    // todo
+  private _handleValueChanged(index: number, ev: CustomEvent) {
+    ev.stopPropagation();
+
+    const newValue = [...this.controls!];
+    newValue[index] = ev.detail.value;
+
+    this.dispatchEvent(
+      new CustomEvent("value-changed", {
+        detail: {
+          value: newValue,
+        },
+      }),
+    );
+  }
+
+  _handleRemoveControl(index: number, ev: CustomEvent) {
+    ev.stopPropagation();
+
+    const newValue = [...this.controls!];
+    newValue.splice(index, 1);
+
+    this.dispatchEvent(
+      new CustomEvent("value-changed", {
+        detail: {
+          value: newValue,
+        },
+      }),
+    );
+  }
+
+  _handleAddControl(ev: CustomEvent) {
+    ev.stopPropagation();
+
+    const action = Object.values(MediaButtonAction)[ev.detail.index];
+
+    const newControl: MediaButtonControlConfig = {
+      type: ControlType.MEDIA_BUTTON,
+      action,
+    };
+
+    this.dispatchEvent(
+      new CustomEvent("value-changed", {
+        detail: {
+          value: [...(this.controls ?? []), newControl],
+        },
+      }),
+    );
   }
 
   protected render() {
@@ -52,7 +98,7 @@ export class ControlsEditor extends LitElement {
               this.controls ?? [],
               (control) =>
                 control.type + (control as MediaButtonControlConfig).action,
-              (control, _index) =>
+              (control, index) =>
                 html` <div class="item">
                   <ha-expansion-panel outlined>
                     <h3 class="header" slot="header">
@@ -65,12 +111,15 @@ export class ControlsEditor extends LitElement {
                     <ha-icon-button
                       .path=${mdiDelete}
                       slot="icons"
+                      @click=${(ev) => this._handleRemoveControl(index, ev)}
                     ></ha-icon-button>
                     <div class="content">
                       <bc-media-button-control-editor
                         .control=${control as MediaButtonControlConfig}
                         .hass=${this.hass}
                         .stateObj=${this.stateObj}
+                        @value-changed=${(ev) =>
+                          this._handleValueChanged(index, ev)}
                       />
                     </div>
                   </ha-expansion-panel>
@@ -80,8 +129,8 @@ export class ControlsEditor extends LitElement {
         </ha-sortable>
         <ha-button-menu
           fixed
-          @action=${() => {}}
-          @close=${(ev) => ev.stopPropagation()}
+          @action=${this._handleAddControl}
+          @close=${stopPropagation}
         >
           <ha-button slot="trigger" outlined .label=${t("editor.controls.add")}>
             <ha-svg-icon .path=${mdiPlus} slot="icon"></ha-svg-icon>
@@ -142,4 +191,8 @@ export class ControlsEditor extends LitElement {
       }
     `,
   ];
+}
+
+function stopPropagation(ev: Event) {
+  ev.stopPropagation();
 }

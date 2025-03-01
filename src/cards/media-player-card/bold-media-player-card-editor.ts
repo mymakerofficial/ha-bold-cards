@@ -19,7 +19,12 @@ import { MediaPlayerProgressControlFeature } from "../../features/media-player-p
 import { MediaPlayerControlButtonRowFeature } from "../../features/media-player-control-button-row/media-player-control-button-row";
 import { t } from "../../localization/i18n";
 import { HomeAssistant, LovelaceCardEditor } from "../../types/ha/lovelace";
-import { ControlType, MediaButtonAction } from "../../lib/controls/types";
+import {
+  ControlConfig,
+  ControlType,
+  MediaButtonAction,
+  MediaButtonControlConfig,
+} from "../../lib/controls/types";
 import { editorBaseStyles } from "../../editors/styles";
 
 const presets = [
@@ -274,8 +279,8 @@ export class BoldMediaPlayerCardEditor
       return nothing;
     }
 
-    const entityId = this._config!.entity;
-    const stateObj = entityId ? this.hass!.states[entityId] : undefined;
+    const entityId = this._config?.entity;
+    const stateObj = entityId ? this.hass?.states[entityId] : undefined;
 
     const schema = [
       {
@@ -397,6 +402,7 @@ export class BoldMediaPlayerCardEditor
           <bc-controls-editor
             .controls=${this._config?.controls ?? []}
             .stateObj=${stateObj}
+            @value-changed=${this._handleControlsChanged}
           ></bc-controls-editor>
         </div>
       </ha-expansion-panel>
@@ -473,6 +479,22 @@ export class BoldMediaPlayerCardEditor
     const config: MediaPlayerTileConfig = {
       features: this._config.features,
       ...newConfig,
+    };
+
+    fireEvent(this, "config-changed", { config });
+  }
+
+  private _handleControlsChanged(ev: CustomEvent): void {
+    ev.stopPropagation();
+    if (!this._config || !this.hass) {
+      return;
+    }
+
+    const newControls = ev.detail.value as MediaButtonControlConfig[];
+
+    const config: MediaPlayerTileConfig = {
+      ...this._config,
+      controls: newControls,
     };
 
     fireEvent(this, "config-changed", { config });
