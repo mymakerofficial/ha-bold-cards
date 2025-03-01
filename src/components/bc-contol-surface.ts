@@ -81,8 +81,7 @@ export class ControlSurface extends LitElement {
 
     .button:disabled {
       cursor: not-allowed;
-      --control-surface-background-color: var(--disabled-color);
-      --control-surface-color: var(--disabled-text-color);
+      opacity: 0.5;
     }
 
     .button {

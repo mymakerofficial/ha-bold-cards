@@ -1,5 +1,5 @@
 import { customElement, property } from "lit/decorators";
-import { css, html } from "lit";
+import { css, html, nothing } from "lit";
 import { ControlSurface } from "./bc-contol-surface";
 
 export const ButtonVariant = {
@@ -37,15 +37,21 @@ export function limitButtonSize(
 @customElement("bc-button")
 export class Button extends ControlSurface {
   @property({ attribute: false }) public iconPath?: string;
+  @property({ attribute: false }) public icon?: string;
 
   @property() variant: ButtonVariant = ButtonVariant.PLAIN;
   @property() shape: ButtonShape = ButtonShape.SQUARE;
   @property() size: ButtonSize = ButtonSize.LG;
 
+  @property({ type: Boolean }) disabled = false;
+
   protected render() {
     return html`
       <bc-control-surface .disabled=${this.disabled}>
-        <ha-svg-icon .path=${this.iconPath}></ha-svg-icon>
+        ${this.iconPath
+          ? html`<ha-svg-icon .path=${this.iconPath}></ha-svg-icon>`
+          : nothing}
+        ${this.icon ? html`<ha-icon .icon=${this.icon}></ha-icon>` : nothing}
         <slot></slot>
       </bc-control-surface>
     `;

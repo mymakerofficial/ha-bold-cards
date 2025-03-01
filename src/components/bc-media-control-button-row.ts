@@ -1,11 +1,10 @@
 import { customElement, property } from "lit/decorators";
 import { css, html, LitElement, nothing } from "lit";
-import {
-  handleMediaPlayerAction,
-  MediaControlButton,
-} from "../helpers/media-player";
 import { classMap } from "lit-html/directives/class-map";
-import { MediaButtonAction } from "../lib/controls/types";
+import {
+  ConcreteMediaButtonControl,
+  MediaButtonAction,
+} from "../lib/controls/types";
 
 export class MediaControlButtonActionEvent extends CustomEvent<{
   action: MediaButtonAction;
@@ -19,7 +18,8 @@ export class MediaControlButtonActionEvent extends CustomEvent<{
 
 @customElement("bc-media-control-button-row")
 export class MediaControlButtonRow extends LitElement {
-  @property({ attribute: false }) public controls?: MediaControlButton[];
+  @property({ attribute: false })
+  public controls?: ConcreteMediaButtonControl[];
 
   @property() public center?: boolean;
 
@@ -37,10 +37,11 @@ export class MediaControlButtonRow extends LitElement {
         ${this.controls?.map(
           (control) => html`
             <bc-button
-              .iconPath=${control.iconPath}
+              .icon=${control.icon}
               size=${control.size ?? nothing}
               shape=${control.shape ?? nothing}
               variant=${control.variant ?? nothing}
+              .disabled=${control.disabled}
               @click=${() => this._handleClick(control.action)}
             ></bc-button>
           `,

@@ -1,6 +1,9 @@
 import { I18n } from "i18n-js";
 
-import { MediaButtonAction } from "../lib/controls/types";
+import {
+  MediaButtonAction,
+  MediaButtonWhenUnavailable,
+} from "../lib/controls/types";
 import {
   ButtonShape,
   ButtonSize,
@@ -14,7 +17,7 @@ const i18n = new I18n(
         label: {
           presets: "Presets",
         },
-        media_control_action: {
+        media_button_action: {
           [MediaButtonAction.TURN_ON]: "Turn On",
           [MediaButtonAction.TURN_OFF]: "Turn Off",
           [MediaButtonAction.SHUFFLE_SET]: "Set Shuffle",
@@ -23,6 +26,10 @@ const i18n = new I18n(
           [MediaButtonAction.MEDIA_PAUSE]: "Pause",
           [MediaButtonAction.MEDIA_NEXT_TRACK]: "Next Track",
           [MediaButtonAction.REPEAT_SET]: "Set Repeat",
+        },
+        media_button_when_unavailable: {
+          [MediaButtonWhenUnavailable.HIDE]: "Hide",
+          [MediaButtonWhenUnavailable.DISABLE]: "Disable",
         },
         button: {
           size: {
@@ -58,6 +65,7 @@ const i18n = new I18n(
               size: "Size",
               variant: "Variant",
               shape: "Shape",
+              when_unavailable: "When Unavailable",
             },
           },
         },

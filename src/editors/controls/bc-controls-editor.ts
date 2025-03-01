@@ -95,7 +95,7 @@ export class ControlsEditor extends LitElement {
                     action,
                   })}
                 ></ha-icon>
-                ${t(action, { scope: "common.media_control_action" })}
+                ${t(action, { scope: "common.media_button_action" })}
               </ha-list-item>
             `,
           )}

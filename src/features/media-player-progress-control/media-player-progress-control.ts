@@ -2,7 +2,6 @@ import { customElement } from "lit/decorators";
 import { css, html, nothing } from "lit";
 import { MediaPlayerProgressControlFeatureConfig } from "./types";
 import {
-  getMediaControls,
   handleMediaPlayerAction,
   MediaPlayerEntityFeature,
 } from "../../helpers/media-player";
@@ -18,9 +17,10 @@ import { HassEntity } from "home-assistant-js-websocket";
 
 import {
   ControlType,
-  MediaButtonControlConfig,
   MediaButtonAction,
+  MediaButtonControlConfig,
 } from "../../lib/controls/types";
+import { translateControls } from "../../lib/controls/helpers";
 
 @customElement("media-player-progress-control")
 export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature<
@@ -62,17 +62,15 @@ export class MediaPlayerProgressControlFeature extends CustomLovelaceCardFeature
       return nothing;
     }
 
-    const controls = getMediaControls(this.stateObj!)
-      .filter(({ action }) =>
-        this._config?.controls
-          ?.map((control) => (control as MediaButtonControlConfig).action)
-          .includes(action),
-      )
-      .map((it) => ({
-        ...it,
+    const controls =
+      translateControls({
+        controls: this._config.controls,
+        stateObj: this.stateObj,
+      }).map((control) => ({
+        ...(control as MediaButtonControlConfig),
         size: ButtonSize.SM,
         variant: ButtonVariant.PLAIN,
-      }));
+      })) ?? [];
 
     const left = controls.filter(({ action }) =>
       [

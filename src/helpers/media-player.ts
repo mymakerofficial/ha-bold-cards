@@ -7,18 +7,6 @@ import {
 import { isStateOff, isStateUnavailable } from "./states";
 import { supportsFeature } from "./supports-feature";
 import {
-  mdiPause,
-  mdiPlay,
-  mdiPower,
-  mdiRepeat,
-  mdiRepeatOff,
-  mdiRepeatOnce,
-  mdiShuffle,
-  mdiShuffleDisabled,
-  mdiSkipNext,
-  mdiSkipPrevious,
-} from "@mdi/js";
-import {
   ButtonShape,
   ButtonSize,
   ButtonVariant,
@@ -73,98 +61,75 @@ export interface MediaControlButton {
   variant?: ButtonVariant;
 }
 
-export function getMediaControls(
-  stateObj: MediaPlayerEntity,
-  // TODO only temporary
-  largePlayButton = false,
-) {
+export interface MediaButtonActionAvailability {
+  // this feature is supported by the media player
+  available: boolean;
+  // when false the button should always be hidden
+  //  because the current state makes the action redundant (e.g. play button when already playing)
+  applicable: boolean;
+}
+
+export function getMediaButtonActionAvailability(stateObj: MediaPlayerEntity) {
   const { state } = stateObj;
 
+  const buttons: {
+    [key in MediaButtonAction]: MediaButtonActionAvailability;
+  } = Object.values(MediaButtonAction).reduce((acc, action) => {
+    acc[action] = { available: false, applicable: true };
+    return acc;
+  }, {} as any);
+
   if (isStateUnavailable(stateObj.state)) {
-    return [];
+    return buttons;
   }
 
-  const buttons: MediaControlButton[] = [];
+  // TURN_ON
+  buttons[MediaButtonAction.TURN_ON] = {
+    available: supportsFeature(stateObj, MediaPlayerEntityFeature.TURN_ON),
+    applicable: isStateOff(state),
+  };
 
-  if (
-    isStateOff(state) &&
-    supportsFeature(stateObj, MediaPlayerEntityFeature.TURN_ON)
-  ) {
-    buttons.push({
-      iconPath: mdiPower,
-      action: MediaButtonAction.TURN_ON,
-    });
-  }
+  // TURN_OFF
+  buttons[MediaButtonAction.TURN_OFF] = {
+    available: supportsFeature(stateObj, MediaPlayerEntityFeature.TURN_OFF),
+    applicable: !isStateOff(state),
+  };
 
-  if (
-    !isStateOff(state) &&
-    supportsFeature(stateObj, MediaPlayerEntityFeature.TURN_OFF)
-  ) {
-    buttons.push({
-      iconPath: mdiPower,
-      action: MediaButtonAction.TURN_OFF,
-    });
-  }
+  // MEDIA_PLAY
+  buttons[MediaButtonAction.MEDIA_PLAY] = {
+    available: supportsFeature(stateObj, MediaPlayerEntityFeature.PLAY),
+    applicable: state !== MediaPlayerState.PLAYING,
+  };
 
-  if (supportsFeature(stateObj, MediaPlayerEntityFeature.SHUFFLE_SET)) {
-    buttons.push({
-      iconPath: stateObj.attributes.shuffle ? mdiShuffle : mdiShuffleDisabled,
-      action: MediaButtonAction.SHUFFLE_SET,
-      size: ButtonSize.SM,
-    });
-  }
+  // MEDIA_PAUSE
+  buttons[MediaButtonAction.MEDIA_PAUSE] = {
+    available: supportsFeature(stateObj, MediaPlayerEntityFeature.PAUSE),
+    applicable: state === MediaPlayerState.PLAYING,
+  };
 
-  if (supportsFeature(stateObj, MediaPlayerEntityFeature.PREVIOUS_TRACK)) {
-    buttons.push({
-      iconPath: mdiSkipPrevious,
-      action: MediaButtonAction.MEDIA_PREVIOUS_TRACK,
-    });
-  }
+  // MEDIA_PREVIOUS_TRACK
+  buttons[MediaButtonAction.MEDIA_PREVIOUS_TRACK].available = supportsFeature(
+    stateObj,
+    MediaPlayerEntityFeature.PREVIOUS_TRACK,
+  );
 
-  if (
-    state !== MediaPlayerState.PLAYING &&
-    supportsFeature(stateObj, MediaPlayerEntityFeature.PLAY)
-  ) {
-    buttons.push({
-      iconPath: mdiPlay,
-      action: MediaButtonAction.MEDIA_PLAY,
-      variant: ButtonVariant.FILLED,
-      size: largePlayButton ? ButtonSize.XL : ButtonSize.MD,
-      shape: ButtonShape.ROUNDED,
-    });
-  }
+  // MEDIA_NEXT_TRACK
+  buttons[MediaButtonAction.MEDIA_NEXT_TRACK].available = supportsFeature(
+    stateObj,
+    MediaPlayerEntityFeature.NEXT_TRACK,
+  );
 
-  if (
-    state === MediaPlayerState.PLAYING &&
-    supportsFeature(stateObj, MediaPlayerEntityFeature.PAUSE)
-  ) {
-    buttons.push({
-      iconPath: mdiPause,
-      action: MediaButtonAction.MEDIA_PAUSE,
-      variant: ButtonVariant.FILLED,
-      size: largePlayButton ? ButtonSize.XL : ButtonSize.MD,
-      shape: largePlayButton ? ButtonShape.WIDE : ButtonShape.SQUARE,
-    });
-  }
+  // SHUFFLE_SET
+  buttons[MediaButtonAction.SHUFFLE_SET].available = supportsFeature(
+    stateObj,
+    MediaPlayerEntityFeature.SHUFFLE_SET,
+  );
 
-  if (supportsFeature(stateObj, MediaPlayerEntityFeature.NEXT_TRACK)) {
-    buttons.push({
-      iconPath: mdiSkipNext,
-      action: MediaButtonAction.MEDIA_NEXT_TRACK,
-    });
-  }
-
-  if (supportsFeature(stateObj, MediaPlayerEntityFeature.REPEAT_SET)) {
-    buttons.push({
-      iconPath: {
-        [MediaPlayerRepeat.OFF]: mdiRepeatOff,
-        [MediaPlayerRepeat.ALL]: mdiRepeat,
-        [MediaPlayerRepeat.ONE]: mdiRepeatOnce,
-      }[stateObj.attributes.repeat ?? MediaPlayerRepeat.OFF],
-      action: MediaButtonAction.REPEAT_SET,
-      size: ButtonSize.SM,
-    });
-  }
+  // REPEAT_SET
+  buttons[MediaButtonAction.REPEAT_SET].available = supportsFeature(
+    stateObj,
+    MediaPlayerEntityFeature.REPEAT_SET,
+  );
 
   return buttons;
 }

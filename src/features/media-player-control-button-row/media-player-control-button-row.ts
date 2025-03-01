@@ -2,7 +2,7 @@ import { customElement } from "lit/decorators";
 import { css, html, nothing } from "lit";
 import { MediaPlayerControlButtonRowFeatureConfig } from "./types";
 import {
-  getMediaControls,
+  getMediaButtonActionAvailability,
   handleMediaPlayerAction,
 } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
@@ -18,27 +18,22 @@ import {
   MediaButtonControlConfig,
   MediaButtonAction,
 } from "../../lib/controls/types";
+import { translateControls } from "../../lib/controls/helpers";
 
 function getControls(
   config: FeatureConfigWithMaybeInternals<MediaPlayerControlButtonRowFeatureConfig>,
   stateObj: MediaPlayerEntity,
 ) {
-  if (!stateObj) {
-    return [];
-  }
-  return getMediaControls(stateObj, true)
-    .filter(({ action }) =>
-      config.controls
-        ?.map((control) => (control as MediaButtonControlConfig).action)
-        .includes(action),
-    )
-    .map((it) => ({
-      ...it,
-      size: limitButtonSize(
-        it.size ?? ButtonSize.MD,
-        config.__custom_internals ? ButtonSize.XL : ButtonSize.SM,
-      ),
-    }));
+  return translateControls({
+    controls: config.controls,
+    stateObj,
+  }).map((control) => ({
+    ...control,
+    size: limitButtonSize(
+      (control as MediaButtonControlConfig).size ?? ButtonSize.MD,
+      config.__custom_internals ? ButtonSize.XL : ButtonSize.SM,
+    ),
+  }));
 }
 
 function getFeatureSize(

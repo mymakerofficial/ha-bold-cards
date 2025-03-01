@@ -1,19 +1,13 @@
-import { css, html, LitElement } from "lit";
+import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
-import { repeat } from "lit-html/directives/repeat";
-import { mdiDelete, mdiDrag, mdiPlus } from "@mdi/js";
 import { HomeAssistant } from "../../types/ha/lovelace";
 import { t } from "../../localization/i18n";
 import {
-  ControlConfig,
   MediaButtonControlConfig,
-  MediaButtonAction,
+  MediaButtonWhenUnavailable,
 } from "../../lib/controls/types";
-import { getControlIcon, getControlLabel } from "../../lib/controls/helpers";
-import { HassEntityBase } from "home-assistant-js-websocket";
 import { editorBaseStyles } from "../styles";
 import { MediaPlayerEntity } from "../../types/ha/entity";
-import { MediaPlayerCardColorMode } from "../../cards/media-player-card/types";
 import {
   ButtonShape,
   ButtonSize,
@@ -36,7 +30,6 @@ export class MediaButtonControlEditor extends LitElement {
           {
             name: "size",
             required: false,
-            default: ButtonSize.MD,
             selector: {
               select: {
                 mode: "dropdown",
@@ -52,7 +45,6 @@ export class MediaButtonControlEditor extends LitElement {
           {
             name: "variant",
             required: false,
-            default: ButtonVariant.PLAIN,
             selector: {
               select: {
                 mode: "dropdown",
@@ -68,7 +60,6 @@ export class MediaButtonControlEditor extends LitElement {
           {
             name: "shape",
             required: false,
-            default: ButtonShape.SQUARE,
             selector: {
               select: {
                 mode: "dropdown",
@@ -78,6 +69,23 @@ export class MediaButtonControlEditor extends LitElement {
                     scope: "common.button.shape",
                   }),
                 })),
+              },
+            },
+          },
+          {
+            name: "when_unavailable",
+            required: false,
+            selector: {
+              select: {
+                mode: "dropdown",
+                options: Object.values(MediaButtonWhenUnavailable).map(
+                  (value) => ({
+                    value,
+                    label: t(value, {
+                      scope: "common.media_button_when_unavailable",
+                    }),
+                  }),
+                ),
               },
             },
           },

@@ -11,7 +11,6 @@ import { PropertyValues } from "lit-element";
 import { extractColors } from "../../helpers/extract-color";
 import { styleMap } from "lit-html/directives/style-map";
 import {
-  getMediaControls,
   getMediaDescription,
   handleMediaPlayerAction,
 } from "../../helpers/media-player";
@@ -24,11 +23,8 @@ import { MediaPlayerEntity } from "../../types/ha/entity";
 import { MediaPlayerControlButtonRowFeature } from "../../features/media-player-control-button-row/media-player-control-button-row";
 import { mediaPlayerCardStyles } from "./style";
 
-import {
-  ControlType,
-  MediaButtonControlConfig,
-  MediaButtonAction,
-} from "../../lib/controls/types";
+import { ControlType, MediaButtonAction } from "../../lib/controls/types";
+import { translateControls } from "../../lib/controls/helpers";
 
 @customElement("bold-media-player-card")
 export class BoldMediaPlayerCard extends BoldCardWithFeatures<
@@ -192,11 +188,10 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
       ? getMediaDescription(stateObj)
       : stateObj.state;
 
-    const controls = getMediaControls(stateObj).filter(({ action }) =>
-      this._config?.controls
-        ?.map((control) => (control as MediaButtonControlConfig).action)
-        .includes(action),
-    );
+    const controls = translateControls({
+      controls: this._config.controls,
+      stateObj,
+    });
 
     const renderBackgroundImage =
       this._config?.color_mode === MediaPlayerCardColorMode.PICTURE;

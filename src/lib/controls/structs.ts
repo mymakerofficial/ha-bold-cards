@@ -20,6 +20,7 @@ export const mediaButtonControlConfigStruct = object({
   shape: optional(enums(Object.values(ButtonShape))),
   variant: optional(enums(Object.values(ButtonVariant))),
 });
+
 export const mediaProgressControlConfigStruct = object({
   type: define(
     "type",
@@ -28,6 +29,7 @@ export const mediaProgressControlConfigStruct = object({
       `Expected to be "${ControlType.MEDIA_PROGRES}", but received "${value}"`,
   ),
 });
+
 export const customControlConfigStruct = object({
   type: define(
     "type",
@@ -36,6 +38,7 @@ export const customControlConfigStruct = object({
       `Expected to be "${ControlType.CUSTOM}", but received "${value}"`,
   ),
 });
+
 export const controlConfigStruct = define("controlConfig", (value) => {
   if (!value || typeof value !== "object" || !("type" in value)) {
     return `Expected an object containing at least a "type" key, but received "${value}"`;

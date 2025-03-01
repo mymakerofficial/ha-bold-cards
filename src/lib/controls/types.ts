@@ -11,13 +11,6 @@ export const ControlType = {
 } as const;
 export type ControlType = (typeof ControlType)[keyof typeof ControlType];
 
-interface BaseButtonControlConfig {
-  icon?: string;
-  size?: ButtonSize;
-  shape?: ButtonShape;
-  variant?: ButtonVariant;
-}
-
 export const MediaButtonAction = {
   TURN_ON: "turn_on",
   TURN_OFF: "turn_off",
@@ -31,9 +24,25 @@ export const MediaButtonAction = {
 export type MediaButtonAction =
   (typeof MediaButtonAction)[keyof typeof MediaButtonAction];
 
-export interface MediaButtonControlConfig extends BaseButtonControlConfig {
+export const MediaButtonWhenUnavailable = {
+  HIDE: "hide",
+  DISABLE: "disable",
+} as const;
+export type MediaButtonWhenUnavailable =
+  (typeof MediaButtonWhenUnavailable)[keyof typeof MediaButtonWhenUnavailable];
+
+export interface BaseButtonControlConfig {
+  size: ButtonSize;
+  shape: ButtonShape;
+  variant: ButtonVariant;
+  when_unavailable: MediaButtonWhenUnavailable;
+}
+
+export interface MediaButtonControlConfig
+  extends Partial<BaseButtonControlConfig> {
   type: "media_button";
   action: MediaButtonAction;
+  icon?: string;
 }
 
 export interface MediaProgressControlConfig {
@@ -48,3 +57,16 @@ export type ControlConfig =
   | MediaButtonControlConfig
   | MediaProgressControlConfig
   | CustomControlConfig;
+
+export interface ConcreteMediaButtonControl {
+  type: "media_button";
+  action: MediaButtonAction;
+  icon: string;
+  label: string;
+  size: ButtonSize;
+  shape: ButtonShape;
+  variant: ButtonVariant;
+  disabled: boolean;
+}
+
+export type ConcreteControl = ConcreteMediaButtonControl;
