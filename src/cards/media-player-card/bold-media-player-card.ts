@@ -26,6 +26,7 @@ import { ControlType, MediaButtonAction } from "../../lib/controls/types";
 import { translateControls } from "../../lib/controls/helpers";
 import { ButtonShape, ButtonSize } from "../../components/bc-button";
 import { isMediaPlayerEntity, isStateActive } from "../../helpers/states";
+import { randomFrom } from "../../lib/helpers";
 
 @customElement("bold-media-player-card")
 export class BoldMediaPlayerCard extends BoldCardWithFeatures<
@@ -371,6 +372,6 @@ function getStubEntity(hass: HomeAssistant) {
   const activeEntities = entities.filter(isStateActive);
 
   return activeEntities.length > 0
-    ? activeEntities[Math.floor(Math.random() * activeEntities.length)]
-    : entities[Math.floor(Math.random() * entities.length)];
+    ? randomFrom(activeEntities)
+    : randomFrom(entities);
 }
