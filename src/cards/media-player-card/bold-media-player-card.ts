@@ -18,7 +18,6 @@ import { classMap } from "lit-html/directives/class-map";
 import { MediaControlButtonActionEvent } from "../../components/bc-media-control-button-row";
 import { MediaPlayerProgressControlFeature } from "../../features/media-player-progress-control/media-player-progress-control";
 import { BoldCardWithFeatures } from "../base";
-import { computeDomain } from "../../helpers/entity";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { MediaPlayerControlButtonRowFeature } from "../../features/media-player-control-button-row/media-player-control-button-row";
 import { mediaPlayerCardStyles } from "./style";
@@ -26,6 +25,7 @@ import { mediaPlayerCardStyles } from "./style";
 import { ControlType, MediaButtonAction } from "../../lib/controls/types";
 import { translateControls } from "../../lib/controls/helpers";
 import { ButtonShape, ButtonSize } from "../../components/bc-button";
+import { isMediaPlayerEntity, isStateActive } from "../../helpers/states";
 
 @customElement("bold-media-player-card")
 export class BoldMediaPlayerCard extends BoldCardWithFeatures<
@@ -40,14 +40,11 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
   }
 
   public static getStubConfig(hass: HomeAssistant): MediaPlayerTileConfig {
-    const entities = Object.keys(hass.states).filter(
-      (entity_id) => computeDomain(entity_id) === "media_player",
-    );
-    const entity = entities[Math.floor(Math.random() * entities.length)];
+    const entity = getStubEntity(hass);
 
     return {
       type: "custom:bold-media-player-card",
-      entity,
+      entity: entity?.entity_id ?? "",
       controls: [
         {
           type: ControlType.MEDIA_BUTTON,
@@ -363,3 +360,17 @@ BoldMediaPlayerCard.registerCustomCard({
   description: "A media player card that's bold and beautiful.",
   preview: true,
 });
+
+function getStubEntity(hass: HomeAssistant) {
+  const entities = Object.values(hass.states).filter(isMediaPlayerEntity);
+
+  if (entities.length === 0) {
+    return undefined;
+  }
+
+  const activeEntities = entities.filter(isStateActive);
+
+  return activeEntities.length > 0
+    ? activeEntities[Math.floor(Math.random() * activeEntities.length)]
+    : entities[Math.floor(Math.random() * entities.length)];
+}
