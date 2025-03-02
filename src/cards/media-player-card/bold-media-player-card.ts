@@ -25,6 +25,7 @@ import { mediaPlayerCardStyles } from "./style";
 
 import { ControlType, MediaButtonAction } from "../../lib/controls/types";
 import { translateControls } from "../../lib/controls/helpers";
+import { ButtonShape, ButtonSize } from "../../components/bc-button";
 
 @customElement("bold-media-player-card")
 export class BoldMediaPlayerCard extends BoldCardWithFeatures<
@@ -48,19 +49,31 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
       type: "custom:bold-media-player-card",
       entity,
       controls: [
-        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_ON },
-        { type: ControlType.MEDIA_BUTTON, action: MediaButtonAction.TURN_OFF },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaButtonAction.TURN_ON,
+          size: ButtonSize.MD,
+        },
+        {
+          type: ControlType.MEDIA_BUTTON,
+          action: MediaButtonAction.TURN_OFF,
+          size: ButtonSize.MD,
+        },
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PLAY,
+          size: ButtonSize.MD,
+          shape: ButtonShape.ROUNDED,
         },
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.MEDIA_PAUSE,
+          size: ButtonSize.MD,
+          shape: ButtonShape.SQUARE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
+      color_mode: MediaPlayerCardColorMode.PICTURE,
       color: "primary",
       show_title_bar: true,
       features: [MediaPlayerProgressControlFeature.getStubConfig()],
