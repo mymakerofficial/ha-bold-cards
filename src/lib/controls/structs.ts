@@ -11,6 +11,7 @@ import {
 } from "../../components/bc-button";
 import { StructError } from "superstruct/dist/error";
 import { exactMatch } from "../struct";
+import { MediaPositionTimestampPosition } from "../../components/bc-media-position-control";
 
 export const mediaButtonControlConfigStruct = object({
   type: exactMatch(ControlType.MEDIA_BUTTON),
@@ -23,7 +24,10 @@ export const mediaButtonControlConfigStruct = object({
 });
 
 export const mediaProgressControlConfigStruct = object({
-  type: exactMatch(ControlType.MEDIA_PROGRES),
+  type: exactMatch(ControlType.MEDIA_POSITION),
+  timestamp_position: optional(
+    enums(Object.values(MediaPositionTimestampPosition)),
+  ),
 });
 
 export const customControlConfigStruct = object({
@@ -43,7 +47,7 @@ export const controlConfigStruct = define("controlConfig", (value) => {
         return (e as StructError).message;
       }
       return true;
-    case ControlType.MEDIA_PROGRES:
+    case ControlType.MEDIA_POSITION:
       try {
         assert(value, mediaProgressControlConfigStruct);
       } catch (e) {

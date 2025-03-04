@@ -4,7 +4,6 @@ import { BoldMediaPlayerControlRowFeatureConfig } from "./types";
 import { handleMediaPlayerAction } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { ButtonSize, limitButtonSize } from "../../components/bc-button";
-import { MediaControlButtonActionEvent } from "../../components/bc-media-control-button-row";
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
 import { styleMap } from "lit-html/directives/style-map";
@@ -114,29 +113,18 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
           "--feature-size": this._featureSize,
         })}
       >
-        <bc-media-control-button-row
+        <bc-control-row
           center=${true}
+          .hass=${this.hass}
+          .stateObj=${this.stateObj}
           .controls=${this._controls}
-          @action="${this._handleAction}"
-        ></bc-media-control-button-row>
+        ></bc-control-row>
       </div>
     `;
   }
 
-  private _handleAction(event: MediaControlButtonActionEvent) {
-    handleMediaPlayerAction({
-      hass: this.hass!,
-      stateObj: this.stateObj!,
-      action: event.detail.action,
-    }).then();
-  }
-
   static get styles() {
     return css`
-      bc-media-control-button-row {
-        --button-row-gap: 8px;
-      }
-
       .container {
         display: flex;
         align-items: center;
@@ -145,6 +133,11 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
           var(--feature-height) * var(--feature-size) + var(--feature-padding) *
             (var(--feature-size) - 1)
         );
+      }
+
+      bc-control-row {
+        --button-row-gap: 8px;
+        flex: 1;
       }
     `;
   }

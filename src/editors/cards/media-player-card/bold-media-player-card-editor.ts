@@ -164,9 +164,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
       </ha-expansion-panel>
       ${this._config?.features
         ?.filter(
-          (feature) =>
-            feature.type === "custom:bold-media-player-control-row" ||
-            feature.type === "custom:media-player-progress-control",
+          (feature) => feature.type === "custom:bold-media-player-control-row",
         )
         .map(
           (feature, index) =>

@@ -3,10 +3,11 @@ import {
   ButtonSize,
   ButtonVariant,
 } from "../../components/bc-button";
+import { MediaPositionTimestampPosition } from "../../components/bc-media-position-control";
 
 export const ControlType = {
   MEDIA_BUTTON: "media_button",
-  MEDIA_PROGRES: "media_progress",
+  MEDIA_POSITION: "media_position",
   CUSTOM: "custom",
 } as const;
 export type ControlType = (typeof ControlType)[keyof typeof ControlType];
@@ -45,8 +46,10 @@ export interface MediaButtonControlConfig
   icon?: string;
 }
 
-export interface MediaProgressControlConfig {
-  type: "media_progress";
+export interface MediaPositionControlConfig {
+  type: "media_position";
+  timestamp_position?: MediaPositionTimestampPosition;
+  when_unavailable?: ElementWhenUnavailable;
 }
 
 export interface CustomControlConfig {
@@ -55,7 +58,7 @@ export interface CustomControlConfig {
 
 export type ControlConfig =
   | MediaButtonControlConfig
-  | MediaProgressControlConfig
+  | MediaPositionControlConfig
   | CustomControlConfig;
 
 export interface ConcreteMediaButtonControl {
@@ -69,4 +72,12 @@ export interface ConcreteMediaButtonControl {
   disabled: boolean;
 }
 
-export type ConcreteControl = ConcreteMediaButtonControl;
+export interface ConcreteMediaPositionControl {
+  type: "media_position";
+  timestamp_position: MediaPositionTimestampPosition;
+  // TODO disabled etc.
+}
+
+export type ConcreteControl =
+  | ConcreteMediaButtonControl
+  | ConcreteMediaPositionControl;

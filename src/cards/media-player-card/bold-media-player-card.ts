@@ -14,23 +14,16 @@ import {
 import { PropertyValues } from "lit-element";
 import { extractColors } from "../../helpers/extract-color";
 import { styleMap } from "lit-html/directives/style-map";
-import {
-  getMediaDescription,
-  handleMediaPlayerAction,
-} from "../../helpers/media-player";
+import { getMediaDescription } from "../../helpers/media-player";
 import { classMap } from "lit-html/directives/class-map";
-import { MediaControlButtonActionEvent } from "../../components/bc-media-control-button-row";
-import { MediaPlayerProgressControlFeature } from "../../features/media-player-progress-control/media-player-progress-control";
 import { BoldCardWithFeatures } from "../base";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { BoldMediaPlayerControlRowFeature } from "../../features/media-player-control-row-feature/bold-media-player-control-row-feature";
 import { mediaPlayerCardStyles } from "./style";
-
-import { ControlType, MediaButtonAction } from "../../lib/controls/types";
 import { translateControls } from "../../lib/controls/helpers";
-import { ButtonShape, ButtonSize } from "../../components/bc-button";
 import { isMediaPlayerEntity, isStateActive } from "../../helpers/states";
 import { randomFrom } from "../../lib/helpers";
+import { presets } from "../../editors/cards/media-player-card/constants";
 
 @customElement("bold-media-player-card")
 export class BoldMediaPlayerCard extends BoldCardWithFeatures<
@@ -50,37 +43,9 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
     const entity = getStubEntity(hass);
 
     return {
+      ...presets[1].config,
       type: "custom:bold-media-player-card",
       entity: entity?.entity_id ?? "",
-      controls: [
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.TURN_ON,
-          size: ButtonSize.MD,
-        },
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.TURN_OFF,
-          size: ButtonSize.MD,
-        },
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PLAY,
-          size: ButtonSize.MD,
-          shape: ButtonShape.ROUNDED,
-        },
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PAUSE,
-          size: ButtonSize.MD,
-          shape: ButtonShape.SQUARE,
-        },
-      ],
-      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerCardColorMode.PICTURE,
-      color: "primary",
-      show_title_bar: true,
-      features: [MediaPlayerProgressControlFeature.getStubConfig()],
     };
   }
 
@@ -273,10 +238,11 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
                   : nothing}
               </div>
               ${controls.length > 0
-                ? html`<bc-media-control-button-row
+                ? html`<bc-control-row
+                    .hass=${this.hass}
+                    .stateObj=${stateObj}
                     .controls=${controls}
-                    @action=${this._handleAction}
-                  ></bc-media-control-button-row>`
+                  ></bc-control-row>`
                 : nothing}
             </div>
           </div>
@@ -340,14 +306,6 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
     }
 
     this._hasLoadedImage = true;
-  }
-
-  private _handleAction(event: MediaControlButtonActionEvent) {
-    handleMediaPlayerAction({
-      hass: this.hass!,
-      stateObj: this._stateObj!,
-      action: event.detail.action,
-    }).then();
   }
 
   private _handleMoreInfo() {

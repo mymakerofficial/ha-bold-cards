@@ -23,6 +23,8 @@ export function getControlIcon(
         control.icon ??
         mediaButtonActionIconMap[control.action](stateObj as MediaPlayerEntity)
       );
+    case ControlType.MEDIA_POSITION:
+      return "mdi:ray-vertex";
     default:
       return "";
   }
@@ -100,7 +102,7 @@ export function translateControls({
             disabled: !supported,
           } as ConcreteMediaButtonControl;
         default:
-          return undefined;
+          return control; // TODO
       }
     })
     .filter((control) => control !== undefined) as ConcreteControl[];

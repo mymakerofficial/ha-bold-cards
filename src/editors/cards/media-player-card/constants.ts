@@ -9,8 +9,47 @@ import {
   MediaPlayerCardContentLayout,
   MediaPlayerTileConfig,
 } from "../../../cards/media-player-card/types";
-import { MediaPlayerProgressControlFeature } from "../../../features/media-player-progress-control/media-player-progress-control";
 import { BoldMediaPlayerControlRowFeature } from "../../../features/media-player-control-row-feature/bold-media-player-control-row-feature";
+import { MediaPositionTimestampPosition } from "../../../components/bc-media-position-control";
+
+const positionOnly = {
+  ...BoldMediaPlayerControlRowFeature.getStubConfig(),
+  controls: [
+    {
+      type: ControlType.MEDIA_POSITION,
+      timestamp_position: MediaPositionTimestampPosition.BOTTOM,
+    },
+  ],
+};
+
+const positionPlusButtons = {
+  ...BoldMediaPlayerControlRowFeature.getStubConfig(),
+  controls: [
+    {
+      type: ControlType.MEDIA_BUTTON,
+      action: MediaButtonAction.SHUFFLE_SET,
+      size: ButtonSize.SM,
+    },
+    {
+      type: ControlType.MEDIA_BUTTON,
+      action: MediaButtonAction.MEDIA_PREVIOUS_TRACK,
+      size: ButtonSize.SM,
+    },
+    {
+      type: ControlType.MEDIA_POSITION,
+    },
+    {
+      type: ControlType.MEDIA_BUTTON,
+      action: MediaButtonAction.MEDIA_NEXT_TRACK,
+      size: ButtonSize.SM,
+    },
+    {
+      type: ControlType.MEDIA_BUTTON,
+      action: MediaButtonAction.REPEAT_SET,
+      size: ButtonSize.SM,
+    },
+  ],
+};
 
 export const presets = [
   {
@@ -48,7 +87,7 @@ export const presets = [
         rows: 3,
         columns: 12,
       },
-      features: [MediaPlayerProgressControlFeature.getStubConfig()],
+      features: [positionPlusButtons],
     },
   },
   {
@@ -86,7 +125,7 @@ export const presets = [
         rows: 3,
         columns: 12,
       },
-      features: [MediaPlayerProgressControlFeature.getStubConfig()],
+      features: [positionPlusButtons],
     },
   },
   {
@@ -124,7 +163,7 @@ export const presets = [
         rows: 4,
         columns: 12,
       },
-      features: [MediaPlayerProgressControlFeature.getStubConfig()],
+      features: [positionPlusButtons],
     },
   },
   {
@@ -192,7 +231,7 @@ export const presets = [
         rows: 7,
         columns: 12,
       },
-      features: [MediaPlayerProgressControlFeature.getStubConfig()],
+      features: [positionPlusButtons],
     },
   },
   {
@@ -207,12 +246,7 @@ export const presets = [
         columns: 12,
       },
       features: [
-        {
-          ...MediaPlayerProgressControlFeature.getStubConfig(),
-          full_width: false,
-          show_timestamps: true,
-          controls: [],
-        },
+        positionOnly,
         BoldMediaPlayerControlRowFeature.getStubConfig(),
         {
           type: "media-player-volume-slider",
@@ -232,12 +266,7 @@ export const presets = [
         columns: 12,
       },
       features: [
-        {
-          ...MediaPlayerProgressControlFeature.getStubConfig(),
-          full_width: false,
-          show_timestamps: true,
-          controls: [],
-        },
+        positionOnly,
         BoldMediaPlayerControlRowFeature.getStubConfig(),
         {
           type: "media-player-volume-slider",
@@ -258,12 +287,7 @@ export const presets = [
         columns: 12,
       },
       features: [
-        {
-          ...MediaPlayerProgressControlFeature.getStubConfig(),
-          full_width: true,
-          show_timestamps: true,
-          controls: [],
-        },
+        positionOnly,
         BoldMediaPlayerControlRowFeature.getStubConfig(),
         {
           type: "media-player-volume-slider",

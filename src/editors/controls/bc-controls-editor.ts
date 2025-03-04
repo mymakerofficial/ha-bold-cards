@@ -17,12 +17,27 @@ import { stopPropagation } from "../helpers";
 
 import "./bc-media-button-control-editor";
 
+const seperator = Symbol("seperator");
+
 @customElement("bc-controls-editor")
 export class ControlsEditor extends LitElement {
   @property({ attribute: false }) public controls?: ControlConfig[];
 
   @property({ attribute: false }) public hass?: HomeAssistant;
   @property({ attribute: false }) public stateObj?: HassEntityBase;
+
+  private get _availableControls(): (ControlConfig | typeof seperator)[] {
+    return [
+      ...Object.values(MediaButtonAction).map((action) => ({
+        type: ControlType.MEDIA_BUTTON,
+        action,
+      })),
+      seperator,
+      {
+        type: ControlType.MEDIA_POSITION,
+      },
+    ];
+  }
 
   private _handleItemMoved(ev: CustomEvent) {
     ev.stopPropagation();
@@ -74,12 +89,9 @@ export class ControlsEditor extends LitElement {
     ev.stopPropagation();
     ev.preventDefault();
 
-    const action = Object.values(MediaButtonAction)[ev.detail.index];
-
-    const newControl: MediaButtonControlConfig = {
-      type: ControlType.MEDIA_BUTTON,
-      action,
-    };
+    const newControl = this._availableControls.filter((it) => it !== seperator)[
+      ev.detail.index
+    ];
 
     this.dispatchEvent(
       new CustomEvent("value-changed", {
@@ -139,19 +151,15 @@ export class ControlsEditor extends LitElement {
           <ha-button slot="trigger" outlined .label=${t("editor.controls.add")}>
             <ha-svg-icon .path=${mdiPlus} slot="icon"></ha-svg-icon>
           </ha-button>
-          ${Object.values(MediaButtonAction).map(
-            (action) => html`
-              <ha-list-item .value=${action}>
-                <ha-icon
-                  icon=${getControlIcon({
-                    type: ControlType.MEDIA_BUTTON,
-                    action,
-                  })}
-                ></ha-icon>
-                ${t(action, { scope: "common.media_button_action" })}
-              </ha-list-item>
-            `,
-          )}
+          ${this._availableControls.map((control) => {
+            if (control === seperator) {
+              return html`<li divider role="separator"></li>`;
+            }
+            return html`<ha-list-item .value=${control}>
+              <ha-icon icon=${getControlIcon(control)}></ha-icon>
+              ${getControlLabel(control)}
+            </ha-list-item>`;
+          })}
         </ha-button-menu>
       </div>
     `;
@@ -192,6 +200,10 @@ export class ControlsEditor extends LitElement {
 
       ha-list-item ha-icon {
         margin-right: 8px;
+      }
+
+      li[divider] {
+        border-bottom-color: var(--divider-color);
       }
     `,
   ];
