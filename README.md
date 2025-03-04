@@ -1,7 +1,22 @@
 # **Bold Cards** for Home Assistant
 Beautiful and customizable cards for Home Assistant Lovelace UI.
 
+## Roadmap
+
+- [ ] (wip) Media Player Card
+- [ ] Themperature Sensor Card
+- [ ] Airquality Sensor Card
+- [ ] Humidity Sensor Card
+- [ ] Light Card
+- [ ] Weather Card
+- [ ] Glance Card
+- [ ] Multi Media Player Card
+- [ ] Occupancy Card
+
 ## Installation
+
+> [!NOTE]
+> This project is still in a very early stage so we only support building from source for now.
 
 ### Prerequisites
 - Node.js and npm installed on your computer
@@ -25,5 +40,5 @@ Beautiful and customizable cards for Home Assistant Lovelace UI.
 7. Refresh your browser
 8. Enjoy!
 
-# HACS
+## HACS
 soon™
