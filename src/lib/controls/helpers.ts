@@ -11,7 +11,11 @@ import {
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { t } from "../../localization/i18n";
-import { getMediaButtonActionAvailability } from "../../helpers/media-player";
+import {
+  getMediaButtonActionAvailability,
+  MediaPlayerEntityFeature,
+} from "../../helpers/media-player";
+import { supportsFeature } from "../../helpers/supports-feature";
 
 export function getControlIcon(
   control: ControlConfig,
@@ -103,8 +107,21 @@ export function translateControls({
             variant: config.variant,
             disabled: !supported,
           } as ConcreteMediaButtonControl;
+        case ControlType.MEDIA_POSITION:
+          const supportsSeek = stateObj
+            ? supportsFeature(
+                stateObj as MediaPlayerEntity,
+                MediaPlayerEntityFeature.SEEK,
+              )
+            : false;
+
+          return {
+            type: ControlType.MEDIA_POSITION,
+            timestamp_position: control.timestamp_position,
+            disabled: !supportsSeek,
+          };
         default:
-          return control; // TODO
+          return undefined;
       }
     })
     .filter((control) => control !== undefined) as ConcreteControl[];

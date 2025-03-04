@@ -23,6 +23,7 @@ export class MediaPositionControl extends LitElement {
       return nothing;
     }
 
+    // TODO this should be an attribute
     const supportsSeek = supportsFeature(
       this.stateObj,
       MediaPlayerEntityFeature.SEEK,

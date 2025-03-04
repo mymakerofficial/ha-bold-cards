@@ -75,7 +75,7 @@ export interface ConcreteMediaButtonControl {
 export interface ConcreteMediaPositionControl {
   type: "media_position";
   timestamp_position: MediaPositionTimestampPosition;
-  // TODO disabled etc.
+  disabled: boolean;
 }
 
 export type ConcreteControl =

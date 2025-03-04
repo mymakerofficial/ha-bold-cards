@@ -29,7 +29,7 @@ export function getFeatureDoesRender(
     config.type,
   ) as CustomCardFeatureSizeEntry | undefined;
   if (!sizeFns?.doesRender) {
-    return true;
+    return getFeatureSize(config, stateObj) > 0;
   }
   return sizeFns.doesRender(config, stateObj);
 }

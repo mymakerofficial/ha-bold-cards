@@ -14,8 +14,8 @@ import { FeatureConfigWithMaybeInternals } from "../../types/ha/feature";
 
 import {
   ControlType,
+  ElementWhenUnavailable,
   MediaButtonAction,
-  MediaButtonControlConfig,
 } from "../../lib/controls/types";
 import { translateControls } from "../../lib/controls/helpers";
 import { LovelaceCardFeatureEditor } from "../../types/ha/lovelace";
@@ -29,13 +29,18 @@ function getControls(
   return translateControls({
     controls: config.controls,
     stateObj,
-  }).map((control) => ({
-    ...control,
-    size: limitButtonSize(
-      (control as MediaButtonControlConfig).size ?? ButtonSize.MD,
-      config.__custom_internals ? ButtonSize.XL : ButtonSize.SM,
-    ),
-  }));
+  }).map((control) => {
+    if (control.type === ControlType.MEDIA_BUTTON) {
+      return {
+        ...control,
+        size: limitButtonSize(
+          control.size ?? ButtonSize.MD,
+          config.__custom_internals ? ButtonSize.XL : ButtonSize.SM,
+        ),
+      };
+    }
+    return control;
+  });
 }
 
 function getFeatureSize(
@@ -43,12 +48,25 @@ function getFeatureSize(
   stateObj: MediaPlayerEntity,
 ) {
   const controls = getControls(config, stateObj);
+
   if (!controls.length) {
     return 0;
   }
-  const hasLargeButtons = controls.some(
-    ({ size }) => size === ButtonSize.LG || size === ButtonSize.XL,
-  );
+
+  if (
+    config.when_unavailable === ElementWhenUnavailable.HIDE &&
+    controls.every((it) => it.disabled)
+  ) {
+    return 0;
+  }
+
+  const hasLargeButtons = controls.some((it) => {
+    if (it.type === ControlType.MEDIA_BUTTON) {
+      return it.size === ButtonSize.LG || it.size === ButtonSize.XL;
+    }
+    return false;
+  });
+
   return hasLargeButtons ? 2 : 1;
 }
 
