@@ -3,6 +3,7 @@ import { I18n } from "i18n-js";
 import {
   MediaButtonAction,
   ElementWhenUnavailable,
+  ControlType,
 } from "../lib/controls/types";
 import {
   ButtonShape,
@@ -14,6 +15,10 @@ const i18n = new I18n(
   {
     en: {
       common: {
+        control_type: {
+          [ControlType.MEDIA_BUTTON]: "Media Button",
+          [ControlType.MEDIA_POSITION]: "Media Position",
+        },
         media_button_action: {
           [MediaButtonAction.TURN_ON]: "Turn On",
           [MediaButtonAction.TURN_OFF]: "Turn Off",

@@ -37,7 +37,9 @@ export function getControlLabel(control: ControlConfig) {
         scope: "common.media_button_action",
       });
     default:
-      return control.type;
+      return t(control.type, {
+        scope: "common.control_type",
+      });
   }
 }
 
