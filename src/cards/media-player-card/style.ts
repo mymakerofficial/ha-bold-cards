@@ -216,7 +216,7 @@ export const mediaPlayerCardStyles = css`
     font-weight: 400;
   }
 
-  bc-media-control-button-row {
+  bc-control-row {
     pointer-events: all;
   }
 `;
