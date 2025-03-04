@@ -131,13 +131,17 @@ export class ControlsEditor extends LitElement {
                           @click=${(ev) => this._handleRemoveControl(index, ev)}
                         ></ha-icon-button>
                         <div class="content">
-                          <bc-media-button-control-editor
-                            .control=${control as MediaButtonControlConfig}
-                            .hass=${this.hass}
-                            .stateObj=${this.stateObj}
-                            @value-changed=${(ev) =>
-                              this._handleValueChanged(index, ev)}
-                          />
+                          ${control.type === ControlType.MEDIA_BUTTON
+                            ? html` <bc-media-button-control-editor
+                                .control=${control as MediaButtonControlConfig}
+                                .hass=${this.hass}
+                                .stateObj=${this.stateObj}
+                                @value-changed=${(ev) =>
+                                  this._handleValueChanged(index, ev)}
+                              />`
+                            : html` <div class="placeholder">
+                                ${t("editor.controls.no_settings")}
+                              </div>`}
                         </div>
                       </ha-expansion-panel>
                     </div>`,

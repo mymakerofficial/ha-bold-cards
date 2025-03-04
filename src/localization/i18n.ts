@@ -65,6 +65,7 @@ const i18n = new I18n(
         controls: {
           add: "Add control",
           no_controls: "Looks like you want to add some controls.",
+          no_settings: "No settings available for this control.",
           media_button_control: {
             label: {
               size: "Size",
