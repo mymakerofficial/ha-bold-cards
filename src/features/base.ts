@@ -4,6 +4,7 @@ import {
   FeatureConfigWithMaybeInternals,
   LovelaceCardFeature,
   LovelaceCardFeatureConfig,
+  LovelaceCardFeatureContext,
 } from "../types/ha/feature";
 import { property, state } from "lit/decorators";
 import { HomeAssistant } from "../types/ha/lovelace";
@@ -17,6 +18,8 @@ export abstract class CustomLovelaceCardFeature<
   implements LovelaceCardFeature<TStateObj, TConfig>
 {
   @property({ attribute: false }) public hass?: HomeAssistant;
+
+  @property({ attribute: false }) public context?: LovelaceCardFeatureContext;
 
   @property({ attribute: false }) public stateObj?: TStateObj;
 

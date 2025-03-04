@@ -12,6 +12,10 @@ export type LovelaceCardFeatureConfig =
   | MediaPlayerControlButtonRowFeatureConfig
   | MediaPlayerProgressControlFeatureConfig;
 
+export interface LovelaceCardFeatureContext {
+  entity_id?: string;
+}
+
 export interface FeatureConfigInternals {
   __custom_internals: {
     parent_card_type: string;

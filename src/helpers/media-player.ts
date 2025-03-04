@@ -63,7 +63,7 @@ export interface MediaControlButton {
 
 export interface MediaButtonActionAvailability {
   // this feature is supported by the media player
-  available: boolean;
+  supported: boolean;
   // when false the button should always be hidden
   //  because the current state makes the action redundant (e.g. play button when already playing)
   applicable: boolean;
@@ -85,48 +85,48 @@ export function getMediaButtonActionAvailability(stateObj: MediaPlayerEntity) {
 
   // TURN_ON
   buttons[MediaButtonAction.TURN_ON] = {
-    available: supportsFeature(stateObj, MediaPlayerEntityFeature.TURN_ON),
+    supported: supportsFeature(stateObj, MediaPlayerEntityFeature.TURN_ON),
     applicable: isStateOff(state),
   };
 
   // TURN_OFF
   buttons[MediaButtonAction.TURN_OFF] = {
-    available: supportsFeature(stateObj, MediaPlayerEntityFeature.TURN_OFF),
+    supported: supportsFeature(stateObj, MediaPlayerEntityFeature.TURN_OFF),
     applicable: !isStateOff(state),
   };
 
   // MEDIA_PLAY
   buttons[MediaButtonAction.MEDIA_PLAY] = {
-    available: supportsFeature(stateObj, MediaPlayerEntityFeature.PLAY),
+    supported: supportsFeature(stateObj, MediaPlayerEntityFeature.PLAY),
     applicable: state !== MediaPlayerState.PLAYING,
   };
 
   // MEDIA_PAUSE
   buttons[MediaButtonAction.MEDIA_PAUSE] = {
-    available: supportsFeature(stateObj, MediaPlayerEntityFeature.PAUSE),
+    supported: supportsFeature(stateObj, MediaPlayerEntityFeature.PAUSE),
     applicable: state === MediaPlayerState.PLAYING,
   };
 
   // MEDIA_PREVIOUS_TRACK
-  buttons[MediaButtonAction.MEDIA_PREVIOUS_TRACK].available = supportsFeature(
+  buttons[MediaButtonAction.MEDIA_PREVIOUS_TRACK].supported = supportsFeature(
     stateObj,
     MediaPlayerEntityFeature.PREVIOUS_TRACK,
   );
 
   // MEDIA_NEXT_TRACK
-  buttons[MediaButtonAction.MEDIA_NEXT_TRACK].available = supportsFeature(
+  buttons[MediaButtonAction.MEDIA_NEXT_TRACK].supported = supportsFeature(
     stateObj,
     MediaPlayerEntityFeature.NEXT_TRACK,
   );
 
   // SHUFFLE_SET
-  buttons[MediaButtonAction.SHUFFLE_SET].available = supportsFeature(
+  buttons[MediaButtonAction.SHUFFLE_SET].supported = supportsFeature(
     stateObj,
     MediaPlayerEntityFeature.SHUFFLE_SET,
   );
 
   // REPEAT_SET
-  buttons[MediaButtonAction.REPEAT_SET].available = supportsFeature(
+  buttons[MediaButtonAction.REPEAT_SET].supported = supportsFeature(
     stateObj,
     MediaPlayerEntityFeature.REPEAT_SET,
   );

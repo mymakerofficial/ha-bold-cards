@@ -65,7 +65,7 @@ export function translateControls({
     .map((control) => {
       switch (control.type) {
         case ControlType.MEDIA_BUTTON:
-          const { available, applicable } =
+          const { supported, applicable } =
             mediaButtonActionAvailability[control.action];
 
           if (!applicable) {
@@ -82,7 +82,7 @@ export function translateControls({
           };
 
           if (
-            !available &&
+            !supported &&
             config.when_unavailable === ElementWhenUnavailable.HIDE
           ) {
             // the action is unavailable and the user has requested to hide it
@@ -97,7 +97,7 @@ export function translateControls({
             size: config.size,
             shape: config.shape,
             variant: config.variant,
-            disabled: !available,
+            disabled: !supported,
           } as ConcreteMediaButtonControl;
         default:
           return undefined;

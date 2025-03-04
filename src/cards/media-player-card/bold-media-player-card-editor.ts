@@ -337,7 +337,7 @@ export class BoldMediaPlayerCardEditor
   }
 
   protected render() {
-    if (!this.hass) {
+    if (!this.hass || !this._config) {
       return nothing;
     }
 
