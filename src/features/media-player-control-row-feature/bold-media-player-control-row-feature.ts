@@ -151,5 +151,5 @@ BoldMediaPlayerControlRowFeature.registerCustomFeature<
   name: "Media Player Control Row",
   supported: (stateObj) => computeDomain(stateObj.entity_id) === "media_player",
   getSize: (config, stateObj) => getFeatureSize(config, stateObj),
-  configurable: false,
+  configurable: true,
 });
