@@ -1,12 +1,16 @@
 import { html, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
-import { fireEvent, LovelaceCardEditor } from "custom-card-helpers";
+import { fireEvent } from "custom-card-helpers";
 import {
   MediaPlayerCardColorMode,
   MediaPlayerCardContentLayout,
   MediaPlayerTileConfig,
 } from "./types";
-import { HomeAssistant, LovelaceGridOptions } from "../../types/ha/lovelace";
+import {
+  HomeAssistant,
+  LovelaceCardEditor,
+  LovelaceGridOptions,
+} from "../../types/ha/lovelace";
 import { PropertyValues } from "lit-element";
 import { extractColors } from "../../helpers/extract-color";
 import { styleMap } from "lit-html/directives/style-map";
@@ -34,7 +38,9 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
   MediaPlayerEntity
 > {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
-    await import("./bold-media-player-card-editor");
+    await import(
+      "../../editors/cards/media-player-card/bold-media-player-card-editor"
+    );
     return document.createElement(
       "bold-media-player-card-editor",
     ) as LovelaceCardEditor;

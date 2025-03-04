@@ -1,5 +1,5 @@
 import { HomeAssistant } from "./lovelace";
-import { HassEntity, HassEntityBase } from "home-assistant-js-websocket";
+import { HassEntity } from "home-assistant-js-websocket";
 import { MediaPlayerControlButtonRowFeatureConfig } from "../../features/media-player-control-button-row/types";
 import { MediaPlayerProgressControlFeatureConfig } from "../../features/media-player-progress-control/types";
 

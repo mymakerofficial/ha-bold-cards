@@ -1,5 +1,4 @@
 import {
-  ActionConfig,
   HomeAssistant as HomeAssistantBase,
   LovelaceConfig,
 } from "custom-card-helpers";
@@ -32,25 +31,6 @@ export interface LovelaceCardConfig {
   }[];
 }
 
-export interface TileCardConfig extends LovelaceCardConfig {
-  entity: string;
-  name?: string;
-  hide_state?: boolean;
-  state_content?: string | string[];
-  icon?: string;
-  color?: string;
-  show_entity_picture?: boolean;
-  vertical?: boolean;
-  tap_action?: ActionConfig;
-  hold_action?: ActionConfig;
-  double_tap_action?: ActionConfig;
-  icon_tap_action?: ActionConfig;
-  icon_hold_action?: ActionConfig;
-  icon_double_tap_action?: ActionConfig;
-  features?: LovelaceCardFeatureConfig[];
-  features_position?: "bottom" | "inline";
-}
-
 export interface LovelaceLayoutOptions {
   grid_columns?: number | "full";
   grid_rows?: number | "auto";
@@ -80,10 +60,19 @@ export interface LovelaceCard extends HTMLElement {
   setConfig(config: LovelaceCardConfig): void;
 }
 
-export interface LovelaceCardEditor extends HTMLElement {
+export interface LovelaceGenericElementEditor<C = any> extends HTMLElement {
   hass?: HomeAssistant;
   lovelace?: LovelaceConfig;
-  context?: any;
+  context?: C;
   setConfig(config: any): void;
   focusYamlEditor?: () => void;
+}
+
+export interface LovelaceCardEditor extends LovelaceGenericElementEditor {
+  setConfig(config: LovelaceCardConfig): void;
+}
+
+export interface LovelaceCardFeatureEditor
+  extends LovelaceGenericElementEditor {
+  setConfig(config: LovelaceCardFeatureConfig): void;
 }

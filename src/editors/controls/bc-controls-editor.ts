@@ -15,6 +15,8 @@ import { HassEntityBase } from "home-assistant-js-websocket";
 import { editorBaseStyles } from "../styles";
 import { stopPropagation } from "../helpers";
 
+import "./bc-media-button-control-editor";
+
 @customElement("bc-controls-editor")
 export class ControlsEditor extends LitElement {
   @property({ attribute: false }) public controls?: ControlConfig[];

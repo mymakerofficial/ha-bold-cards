@@ -1,10 +1,7 @@
 import { customElement } from "lit/decorators";
 import { css, html, nothing } from "lit";
 import { MediaPlayerControlButtonRowFeatureConfig } from "./types";
-import {
-  getMediaButtonActionAvailability,
-  handleMediaPlayerAction,
-} from "../../helpers/media-player";
+import { handleMediaPlayerAction } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { ButtonSize, limitButtonSize } from "../../components/bc-button";
 import { MediaControlButtonActionEvent } from "../../components/bc-media-control-button-row";
@@ -15,10 +12,11 @@ import { FeatureConfigWithMaybeInternals } from "../../types/ha/feature";
 
 import {
   ControlType,
-  MediaButtonControlConfig,
   MediaButtonAction,
+  MediaButtonControlConfig,
 } from "../../lib/controls/types";
 import { translateControls } from "../../lib/controls/helpers";
+import { LovelaceCardFeatureEditor } from "../../types/ha/lovelace";
 
 function getControls(
   config: FeatureConfigWithMaybeInternals<MediaPlayerControlButtonRowFeatureConfig>,
@@ -55,6 +53,15 @@ export class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeatur
   MediaPlayerEntity,
   MediaPlayerControlButtonRowFeatureConfig
 > {
+  public static async getConfigElement(): Promise<LovelaceCardFeatureEditor> {
+    await import(
+      "../../editors/features/media-player-control-button-row/media-player-control-button-row-editor"
+    );
+    return document.createElement(
+      "media-player-control-button-row-editor",
+    ) as LovelaceCardFeatureEditor;
+  }
+
   static getStubConfig(): MediaPlayerControlButtonRowFeatureConfig {
     return {
       type: "custom:media-player-control-button-row",
