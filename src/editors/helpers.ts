@@ -17,3 +17,9 @@ export function arrayToOptions(
     label: options ? t(item, options) : item,
   })) as SelectOption[];
 }
+
+export function stopPropagation(ev: Event) {
+  ev.stopImmediatePropagation();
+  ev.stopPropagation();
+  ev.preventDefault();
+}

@@ -13,6 +13,7 @@ import {
 import { getControlIcon, getControlLabel } from "../../lib/controls/helpers";
 import { HassEntityBase } from "home-assistant-js-websocket";
 import { editorBaseStyles } from "../styles";
+import { stopPropagation } from "../helpers";
 
 @customElement("bc-controls-editor")
 export class ControlsEditor extends LitElement {
@@ -69,6 +70,7 @@ export class ControlsEditor extends LitElement {
 
   _handleAddControl(ev: CustomEvent) {
     ev.stopPropagation();
+    ev.preventDefault();
 
     const action = Object.values(MediaButtonAction)[ev.detail.index];
 
@@ -130,7 +132,7 @@ export class ControlsEditor extends LitElement {
         <ha-button-menu
           fixed
           @action=${this._handleAddControl}
-          @close=${stopPropagation}
+          @closed=${stopPropagation}
         >
           <ha-button slot="trigger" outlined .label=${t("editor.controls.add")}>
             <ha-svg-icon .path=${mdiPlus} slot="icon"></ha-svg-icon>
@@ -191,8 +193,4 @@ export class ControlsEditor extends LitElement {
       }
     `,
   ];
-}
-
-function stopPropagation(ev: Event) {
-  ev.stopPropagation();
 }
