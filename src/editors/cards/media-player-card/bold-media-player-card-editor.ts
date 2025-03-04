@@ -8,6 +8,7 @@ import {
 import { customElement } from "lit/decorators";
 import {
   mdiButtonPointer,
+  mdiListBox,
   mdiPageLayoutBody,
   mdiPageLayoutHeader,
   mdiPalette,
