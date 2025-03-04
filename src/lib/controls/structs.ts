@@ -10,14 +10,10 @@ import {
   ButtonVariant,
 } from "../../components/bc-button";
 import { StructError } from "superstruct/dist/error";
+import { exactMatch } from "../struct";
 
 export const mediaButtonControlConfigStruct = object({
-  type: define(
-    "type",
-    (value) =>
-      value === ControlType.MEDIA_BUTTON ||
-      `Expected to be "${ControlType.MEDIA_BUTTON}", but received "${value}"`,
-  ),
+  type: exactMatch(ControlType.MEDIA_BUTTON),
   action: enums(Object.values(MediaButtonAction)),
   icon: optional(string()),
   size: optional(enums(Object.values(ButtonSize))),
@@ -27,21 +23,11 @@ export const mediaButtonControlConfigStruct = object({
 });
 
 export const mediaProgressControlConfigStruct = object({
-  type: define(
-    "type",
-    (value) =>
-      value === ControlType.MEDIA_PROGRES ||
-      `Expected to be "${ControlType.MEDIA_PROGRES}", but received "${value}"`,
-  ),
+  type: exactMatch(ControlType.MEDIA_PROGRES),
 });
 
 export const customControlConfigStruct = object({
-  type: define(
-    "type",
-    (value) =>
-      value === ControlType.CUSTOM ||
-      `Expected to be "${ControlType.CUSTOM}", but received "${value}"`,
-  ),
+  type: exactMatch(ControlType.CUSTOM),
 });
 
 export const controlConfigStruct = define("controlConfig", (value) => {

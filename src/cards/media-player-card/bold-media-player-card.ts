@@ -23,7 +23,7 @@ import { MediaControlButtonActionEvent } from "../../components/bc-media-control
 import { MediaPlayerProgressControlFeature } from "../../features/media-player-progress-control/media-player-progress-control";
 import { BoldCardWithFeatures } from "../base";
 import { MediaPlayerEntity } from "../../types/ha/entity";
-import { MediaPlayerControlButtonRowFeature } from "../../features/media-player-control-button-row/media-player-control-button-row";
+import { BoldMediaPlayerControlRowFeature } from "../../features/media-player-control-row-feature/bold-media-player-control-row-feature";
 import { mediaPlayerCardStyles } from "./style";
 
 import { ControlType, MediaButtonAction } from "../../lib/controls/types";
@@ -98,7 +98,7 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
         controls: [],
         features: [
           {
-            ...MediaPlayerControlButtonRowFeature.getStubConfig(),
+            ...BoldMediaPlayerControlRowFeature.getStubConfig(),
             controls: config.controls,
           },
           ...(config.features ?? []),

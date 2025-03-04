@@ -10,7 +10,7 @@ import {
   MediaPlayerTileConfig,
 } from "../../../cards/media-player-card/types";
 import { MediaPlayerProgressControlFeature } from "../../../features/media-player-progress-control/media-player-progress-control";
-import { MediaPlayerControlButtonRowFeature } from "../../../features/media-player-control-button-row/media-player-control-button-row";
+import { BoldMediaPlayerControlRowFeature } from "../../../features/media-player-control-row-feature/bold-media-player-control-row-feature";
 
 export const presets = [
   {
@@ -213,7 +213,7 @@ export const presets = [
           show_timestamps: true,
           controls: [],
         },
-        MediaPlayerControlButtonRowFeature.getStubConfig(),
+        BoldMediaPlayerControlRowFeature.getStubConfig(),
         {
           type: "media-player-volume-slider",
         },
@@ -238,7 +238,7 @@ export const presets = [
           show_timestamps: true,
           controls: [],
         },
-        MediaPlayerControlButtonRowFeature.getStubConfig(),
+        BoldMediaPlayerControlRowFeature.getStubConfig(),
         {
           type: "media-player-volume-slider",
         },
@@ -264,7 +264,7 @@ export const presets = [
           show_timestamps: true,
           controls: [],
         },
-        MediaPlayerControlButtonRowFeature.getStubConfig(),
+        BoldMediaPlayerControlRowFeature.getStubConfig(),
         {
           type: "media-player-volume-slider",
         },

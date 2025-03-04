@@ -1,6 +1,6 @@
 import { customElement } from "lit/decorators";
 import { css, html, nothing } from "lit";
-import { MediaPlayerControlButtonRowFeatureConfig } from "./types";
+import { BoldMediaPlayerControlRowFeatureConfig } from "./types";
 import { handleMediaPlayerAction } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { ButtonSize, limitButtonSize } from "../../components/bc-button";
@@ -19,7 +19,7 @@ import { translateControls } from "../../lib/controls/helpers";
 import { LovelaceCardFeatureEditor } from "../../types/ha/lovelace";
 
 function getControls(
-  config: FeatureConfigWithMaybeInternals<MediaPlayerControlButtonRowFeatureConfig>,
+  config: FeatureConfigWithMaybeInternals<BoldMediaPlayerControlRowFeatureConfig>,
   stateObj: MediaPlayerEntity,
 ) {
   return translateControls({
@@ -35,7 +35,7 @@ function getControls(
 }
 
 function getFeatureSize(
-  config: FeatureConfigWithMaybeInternals<MediaPlayerControlButtonRowFeatureConfig>,
+  config: FeatureConfigWithMaybeInternals<BoldMediaPlayerControlRowFeatureConfig>,
   stateObj: MediaPlayerEntity,
 ) {
   const controls = getControls(config, stateObj);
@@ -48,23 +48,23 @@ function getFeatureSize(
   return hasLargeButtons ? 2 : 1;
 }
 
-@customElement("media-player-control-button-row")
-export class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeature<
+@customElement("bold-media-player-control-row")
+export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
   MediaPlayerEntity,
-  MediaPlayerControlButtonRowFeatureConfig
+  BoldMediaPlayerControlRowFeatureConfig
 > {
   public static async getConfigElement(): Promise<LovelaceCardFeatureEditor> {
     await import(
-      "../../editors/features/media-player-control-button-row/media-player-control-button-row-editor"
+      "../../editors/features/media-player-control-row-feature/bold-media-player-control-row-feature-editor"
     );
     return document.createElement(
-      "media-player-control-button-row-editor",
+      "bold-media-player-control-row-feature-editor",
     ) as LovelaceCardFeatureEditor;
   }
 
-  static getStubConfig(): MediaPlayerControlButtonRowFeatureConfig {
+  static getStubConfig(): BoldMediaPlayerControlRowFeatureConfig {
     return {
-      type: "custom:media-player-control-button-row",
+      type: "custom:bold-media-player-control-row",
       controls: [
         {
           type: ControlType.MEDIA_BUTTON,
@@ -150,12 +150,12 @@ export class MediaPlayerControlButtonRowFeature extends CustomLovelaceCardFeatur
   }
 }
 
-MediaPlayerControlButtonRowFeature.registerCustomFeature<
+BoldMediaPlayerControlRowFeature.registerCustomFeature<
   MediaPlayerEntity,
-  MediaPlayerControlButtonRowFeatureConfig
+  BoldMediaPlayerControlRowFeatureConfig
 >({
-  type: "media-player-control-button-row",
-  name: "Media Player Control Button Row",
+  type: "bold-media-player-control-row",
+  name: "Media Player Control Row",
   supported: (stateObj) => computeDomain(stateObj.entity_id) === "media_player",
   getSize: (config, stateObj) => getFeatureSize(config, stateObj),
   configurable: false,

@@ -166,7 +166,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
       ${this._config?.features
         ?.filter(
           (feature) =>
-            feature.type === "custom:media-player-control-button-row" ||
+            feature.type === "custom:bold-media-player-control-row" ||
             feature.type === "custom:media-player-progress-control",
         )
         .map(
@@ -205,17 +205,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
           )}
         </div>
       </ha-expansion-panel>
-      <ha-expansion-panel outlined>
-        <h3 slot="header">
-          <ha-svg-icon .path=${mdiListBox}></ha-svg-icon>
-          ${t("editor.common.label.features")}
-        </h3>
-        <div class="content">
-          <ha-alert alert-type="info">
-            ${t("editor.common.wip_section_text")}
-          </ha-alert>
-        </div>
-      </ha-expansion-panel>
+      ${this._featureEditorTemplate()}
     `;
   }
 
