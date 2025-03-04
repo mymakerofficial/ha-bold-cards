@@ -109,39 +109,43 @@ export class ControlsEditor extends LitElement {
           handle-selector=".handle"
           @item-moved=${this._handleItemMoved}
         >
-          <div class="items">
-            ${repeat(
-              this.controls ?? [],
-              (control) =>
-                control.type + (control as MediaButtonControlConfig).action,
-              (control, index) =>
-                html` <div class="item">
-                  <ha-expansion-panel outlined>
-                    <h3 class="header" slot="header">
-                      <ha-icon icon=${getControlIcon(control)}></ha-icon>
-                      <div>${getControlLabel(control)}</div>
-                    </h3>
-                    <div class="handle" slot="icons">
-                      <ha-svg-icon .path=${mdiDrag}></ha-svg-icon>
-                    </div>
-                    <ha-icon-button
-                      .path=${mdiDelete}
-                      slot="icons"
-                      @click=${(ev) => this._handleRemoveControl(index, ev)}
-                    ></ha-icon-button>
-                    <div class="content">
-                      <bc-media-button-control-editor
-                        .control=${control as MediaButtonControlConfig}
-                        .hass=${this.hass}
-                        .stateObj=${this.stateObj}
-                        @value-changed=${(ev) =>
-                          this._handleValueChanged(index, ev)}
-                      />
-                    </div>
-                  </ha-expansion-panel>
-                </div>`,
-            )}
-          </div>
+          ${!!this.controls?.length
+            ? html`<div class="items">
+                ${repeat(
+                  this.controls ?? [],
+                  (control) =>
+                    control.type + (control as MediaButtonControlConfig).action,
+                  (control, index) =>
+                    html` <div class="item">
+                      <ha-expansion-panel outlined>
+                        <h3 class="header" slot="header">
+                          <ha-icon icon=${getControlIcon(control)}></ha-icon>
+                          <div>${getControlLabel(control)}</div>
+                        </h3>
+                        <div class="handle" slot="icons">
+                          <ha-svg-icon .path=${mdiDrag}></ha-svg-icon>
+                        </div>
+                        <ha-icon-button
+                          .path=${mdiDelete}
+                          slot="icons"
+                          @click=${(ev) => this._handleRemoveControl(index, ev)}
+                        ></ha-icon-button>
+                        <div class="content">
+                          <bc-media-button-control-editor
+                            .control=${control as MediaButtonControlConfig}
+                            .hass=${this.hass}
+                            .stateObj=${this.stateObj}
+                            @value-changed=${(ev) =>
+                              this._handleValueChanged(index, ev)}
+                          />
+                        </div>
+                      </ha-expansion-panel>
+                    </div>`,
+                )}
+              </div>`
+            : html`<div class="placeholder">
+                ${t("editor.controls.no_controls")}
+              </div>`}
         </ha-sortable>
         <ha-button-menu
           fixed
@@ -204,6 +208,14 @@ export class ControlsEditor extends LitElement {
 
       li[divider] {
         border-bottom-color: var(--divider-color);
+      }
+
+      .placeholder {
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--secondary-text-color);
       }
     `,
   ];
