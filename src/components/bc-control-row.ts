@@ -93,12 +93,6 @@ export class ControlRow extends LitElement {
       justify-content: center;
     }
 
-    .controls {
-      /* TODO */
-      /* make the icon align and not the border of the button */
-      /* margin: 0 calc(-1 * var(--card-padding, 10px) + 6px); */
-    }
-
     bc-media-position-control {
       flex: 1;
     }

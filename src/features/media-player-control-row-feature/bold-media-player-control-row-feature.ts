@@ -1,9 +1,12 @@
 import { customElement } from "lit/decorators";
 import { css, html, nothing } from "lit";
 import { BoldMediaPlayerControlRowFeatureConfig } from "./types";
-import { handleMediaPlayerAction } from "../../helpers/media-player";
 import { MediaPlayerEntity } from "../../types/ha/entity";
-import { ButtonSize, limitButtonSize } from "../../components/bc-button";
+import {
+  ButtonSize,
+  ButtonVariant,
+  limitButtonSize,
+} from "../../components/bc-button";
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
 import { styleMap } from "lit-html/directives/style-map";
@@ -16,6 +19,8 @@ import {
 } from "../../lib/controls/types";
 import { translateControls } from "../../lib/controls/helpers";
 import { LovelaceCardFeatureEditor } from "../../types/ha/lovelace";
+import { classMap } from "lit-html/directives/class-map";
+import { firstOf, lastOf } from "../../lib/helpers";
 
 function getControls(
   config: FeatureConfigWithMaybeInternals<BoldMediaPlayerControlRowFeatureConfig>,
@@ -106,9 +111,19 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
       return nothing;
     }
 
+    const firstControl = firstOf(this._controls);
+    const lastControl = lastOf(this._controls);
+
     return html`
       <div
-        class="container"
+        class="container ${classMap({
+          "inset-left":
+            firstControl?.type === ControlType.MEDIA_BUTTON &&
+            firstControl.variant === ButtonVariant.PLAIN,
+          "inset-right":
+            lastControl?.type === ControlType.MEDIA_BUTTON &&
+            lastControl.variant === ButtonVariant.PLAIN,
+        })}"
         style=${styleMap({
           "--feature-size": this._featureSize,
         })}
@@ -138,6 +153,16 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
       bc-control-row {
         --button-row-gap: 8px;
         flex: 1;
+      }
+
+      .inset-left {
+        /* make the icon align and not the border of the button */
+        margin-left: calc(-1 * var(--card-padding, 10px) + 6px);
+      }
+
+      .inset-right {
+        /* make the icon align and not the border of the button */
+        margin-right: calc(-1 * var(--card-padding, 10px) + 6px);
       }
     `;
   }
