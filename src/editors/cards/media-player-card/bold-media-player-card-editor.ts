@@ -8,7 +8,6 @@ import {
 import { customElement } from "lit/decorators";
 import {
   mdiButtonPointer,
-  mdiListBox,
   mdiPageLayoutBody,
   mdiPageLayoutHeader,
   mdiPalette,
@@ -18,7 +17,7 @@ import { t } from "../../../localization/i18n";
 import { MediaButtonControlConfig } from "../../../lib/controls/types";
 import { editorBaseStyles } from "../../styles";
 import { BoldLovelaceCardEditorWithFeatures } from "../base";
-import { cardConfigStruct } from "../../../cards/media-player-card/struct";
+import { mediaPlayerCardConfigStruct } from "../../../cards/media-player-card/struct";
 import { MediaPlayerEntity } from "../../../types/ha/entity";
 import { presets } from "./constants";
 
@@ -28,7 +27,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
   MediaPlayerEntity
 > {
   protected get _struct() {
-    return cardConfigStruct;
+    return mediaPlayerCardConfigStruct;
   }
 
   protected render() {

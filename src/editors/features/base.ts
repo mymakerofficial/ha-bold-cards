@@ -1,13 +1,15 @@
-import {
-  LovelaceCardConfig,
-  LovelaceCardEditor,
-  LovelaceCardFeatureEditor,
-} from "../../types/ha/lovelace";
+import { LovelaceCardFeatureEditor } from "../../types/ha/lovelace";
 import { BoldLovelaceEditor } from "../base";
 import { LovelaceCardFeatureConfig } from "../../types/ha/feature";
+import { property } from "lit/decorators";
+import { HassEntity } from "home-assistant-js-websocket";
 
 export abstract class BoldLovelaceCardFeatureEditor<
     TConfig extends LovelaceCardFeatureConfig,
+    TStateObj extends HassEntity = HassEntity,
   >
   extends BoldLovelaceEditor<TConfig>
-  implements LovelaceCardFeatureEditor {}
+  implements LovelaceCardFeatureEditor
+{
+  @property({ attribute: false }) public stateObj?: TStateObj;
+}

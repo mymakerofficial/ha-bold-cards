@@ -58,7 +58,7 @@ const i18n = new I18n(
             "This section isn't ready yet. In the meantime, you can use the YAML editor to customize your card.",
         },
         controls: {
-          add: "Add element",
+          add: "Add control",
           media_button_control: {
             label: {
               size: "Size",

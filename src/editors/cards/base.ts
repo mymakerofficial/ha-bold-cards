@@ -11,6 +11,8 @@ import {
   LovelaceCardConfigWithFeatures,
 } from "../../types/card";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
+import { FeatureConfigWithMaybeInternals } from "../../types/ha/feature";
+import { fireEvent } from "custom-card-helpers";
 
 // import elements
 import "./bc-card-feature-editor";
@@ -52,10 +54,28 @@ export abstract class BoldLovelaceCardEditorWithFeatures<
           <bc-card-features-editor
             .hass=${this.hass}
             .stateObj=${this._stateObj}
-            .features=${this._config.features}
+            .features=${this._config.features ?? []}
+            @value-changed=${this._handleFeaturesChanged}
           ></bc-card-features-editor>
         </div>
       </ha-expansion-panel>
     `;
+  }
+
+  private _handleFeaturesChanged(
+    ev: CustomEvent<{ value: FeatureConfigWithMaybeInternals[] }>,
+  ): void {
+    ev.stopPropagation();
+
+    if (!this._config || !this.hass) {
+      return;
+    }
+
+    fireEvent(this, "config-changed", {
+      config: {
+        ...this._config,
+        features: ev.detail.value,
+      },
+    });
   }
 }

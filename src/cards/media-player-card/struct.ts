@@ -15,7 +15,7 @@ import {
 } from "./types";
 import { mediaButtonControlConfigStruct } from "../../lib/controls/structs";
 
-export const cardConfigStruct = assign(
+export const mediaPlayerCardConfigStruct = assign(
   baseLovelaceCardConfig,
   object({
     entity: string(),

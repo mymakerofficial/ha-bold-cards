@@ -6,6 +6,7 @@ import { LovelaceCardFeatureConfig } from "../../types/ha/feature";
 import { repeat } from "lit-html/directives/repeat";
 import { mdiDelete, mdiDrag, mdiPencil } from "@mdi/js";
 import { editorBaseStyles } from "../styles";
+import { fireEvent } from "custom-card-helpers";
 
 @customElement("bc-card-features-editor")
 export class BoldCardFeatureEditor extends LitElement {
@@ -39,8 +40,7 @@ export class BoldCardFeatureEditor extends LitElement {
                     )}
                     .path=${mdiPencil}
                     class="edit-icon"
-                    .index=${index}
-                    @click=${() => {}}
+                    @click=${() => this._editFeature(index)}
                   ></ha-icon-button>
                   <ha-icon-button
                     .label=${this.hass!.localize(
@@ -57,6 +57,34 @@ export class BoldCardFeatureEditor extends LitElement {
         </ha-sortable>
       </div>
     `;
+  }
+
+  private _editFeature(index: number) {
+    const config = this.features![index!];
+
+    fireEvent(this, "edit-sub-element" as any, {
+      config: config,
+      saveConfig: (newConfig) => this._handleFeatureSaved(index, newConfig),
+      context: {
+        entity_id: this.stateObj?.entity_id,
+      },
+      type: "feature",
+    });
+  }
+
+  private _handleFeatureSaved(
+    index: number,
+    newConfig: LovelaceCardFeatureConfig,
+  ) {
+    const features = [...this.features!];
+    features[index] = newConfig;
+    this.dispatchEvent(
+      new CustomEvent("value-changed", {
+        detail: {
+          value: features,
+        },
+      }),
+    );
   }
 
   static styles = [
