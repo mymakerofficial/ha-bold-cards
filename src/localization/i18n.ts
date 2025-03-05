@@ -74,6 +74,7 @@ const i18n = new I18n(
           no_settings: "No settings available for this control.",
           media_button_control: {
             label: {
+              icon: "Icon",
               size: "Size",
               variant: "Variant",
               shape: "Shape",

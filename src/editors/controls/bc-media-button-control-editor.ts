@@ -15,7 +15,10 @@ import {
   ButtonSize,
   ButtonVariant,
 } from "../../components/bc-button";
-import { getMediaButtonControlDefaultConfig } from "../../lib/controls/helpers";
+import {
+  getControlIcon,
+  getMediaButtonControlDefaultConfig,
+} from "../../lib/controls/helpers";
 import { enumToOptions } from "../helpers";
 
 @customElement("bc-media-button-control-editor")
@@ -32,7 +35,7 @@ export class MediaButtonControlEditor extends LitElement {
 
     const newValue = {
       ...this.control!,
-      [field]: ev.detail.value,
+      [field]: ev.detail.value === "" ? undefined : ev.detail.value,
     };
 
     this.dispatchEvent(
@@ -69,11 +72,18 @@ export class MediaButtonControlEditor extends LitElement {
 
     return html`
       <div class="container">
+        <ha-icon-picker
+          .label=${t("editor.controls.media_button_control.label.icon")}
+          .hass=${this.hass}
+          .value=${this.control.icon}
+          .placeholder=${getControlIcon(this.control, this.stateObj)}
+          @value-changed=${(ev) => this._handleValueChanged("icon", ev)}
+        ></ha-icon-picker>
         <div class="grid">
           <bc-selector-select
             .label=${t("editor.controls.media_button_control.label.size")}
             .hass=${this.hass}
-            .value=${this.control?.size}
+            .value=${this.control.size}
             .default=${defaultConfig.size}
             @value-changed=${(ev) => this._handleValueChanged("size", ev)}
             .selector=${{
@@ -88,7 +98,7 @@ export class MediaButtonControlEditor extends LitElement {
           <bc-selector-select
             .label=${t("editor.controls.media_button_control.label.variant")}
             .hass=${this.hass}
-            .value=${this.control?.variant}
+            .value=${this.control.variant}
             .default=${defaultConfig.variant}
             @value-changed=${(ev) => this._handleValueChanged("variant", ev)}
             .selector=${{
@@ -103,7 +113,7 @@ export class MediaButtonControlEditor extends LitElement {
           <bc-selector-select
             .label=${t("editor.controls.media_button_control.label.shape")}
             .hass=${this.hass}
-            .value=${this.control?.shape}
+            .value=${this.control.shape}
             .default=${defaultConfig.shape}
             @value-changed=${(ev) => this._handleValueChanged("shape", ev)}
             .selector=${{
@@ -123,7 +133,7 @@ export class MediaButtonControlEditor extends LitElement {
               "editor.controls.media_button_control.helper.when_unavailable",
             )}
             .hass=${this.hass}
-            .value=${this.control?.when_unavailable}
+            .value=${this.control.when_unavailable}
             .default=${defaultConfig.when_unavailable}
             @value-changed=${(ev) =>
               this._handleValueChanged("when_unavailable", ev)}
