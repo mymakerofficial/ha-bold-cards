@@ -1,12 +1,7 @@
 import { customElement, property } from "lit/decorators";
 import { css, html, LitElement, nothing } from "lit";
 import { classMap } from "lit-html/directives/class-map";
-import {
-  ConcreteControl,
-  ConcreteMediaButtonControl,
-  ControlType,
-  MediaButtonAction,
-} from "../lib/controls/types";
+import { ConcreteControl, ControlType } from "../lib/controls/types";
 import { handleMediaPlayerAction } from "../helpers/media-player";
 import { HassEntityBase } from "home-assistant-js-websocket";
 import { HomeAssistant } from "../types/ha/lovelace";
@@ -45,8 +40,6 @@ export class ControlRow extends LitElement {
       >
         ${this.controls?.map((control) => {
           // TODO extract this
-
-          console.log(control);
 
           if (control.type === ControlType.MEDIA_BUTTON) {
             return html`
