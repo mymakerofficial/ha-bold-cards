@@ -98,7 +98,7 @@ export class MediaToggleControlEditor extends LitElement {
                 <span>${getControlLabel(buttonConfig)}</span>
               </h4>
               <bc-button-config-editor
-                .config=${this.control![action]}
+                .config=${this.control![action] ?? {}}
                 .hass=${this.hass}
                 .defaultConfig=${defaultButtonConfig}
                 .iconPlaceholder=${getControlIcon(buttonConfig)}

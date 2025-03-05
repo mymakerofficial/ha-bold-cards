@@ -42,9 +42,6 @@ export class ControlsEditor extends LitElement {
       ...Object.values(MediaToggleKind).map((kind) => ({
         type: ControlType.MEDIA_TOGGLE,
         kind,
-        ...Object.fromEntries(
-          mediaToggleKindActionMap[kind].map((action) => [action, {}]),
-        ),
       })),
       seperator,
       ...Object.values(MediaButtonAction).map((action) => ({
