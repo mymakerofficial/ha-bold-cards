@@ -47,7 +47,8 @@ export interface ButtonBaseConfig {
   variant: ButtonVariant;
 }
 
-export interface BaseButtonControlConfig {
+export interface MediaButtonControlBaseConfig {
+  icon?: string;
   size: ButtonSize;
   shape: ButtonShape;
   variant: ButtonVariant;
@@ -55,10 +56,9 @@ export interface BaseButtonControlConfig {
 }
 
 export interface MediaButtonControlConfig
-  extends Partial<BaseButtonControlConfig> {
+  extends Partial<MediaButtonControlBaseConfig> {
   type: "media_button";
   action: MediaButtonAction;
-  icon?: string;
   always_show?: boolean;
 }
 
@@ -68,12 +68,16 @@ export interface MediaPositionControlConfig {
   when_unavailable?: ElementWhenUnavailable;
 }
 
+export interface MediaToggleControlBaseConfig {
+  when_unavailable: ElementWhenUnavailable;
+}
+
 export type MediaToggleControlConfig = {
   type: "media_toggle";
   kind: MediaToggleKind;
-} & {
-  [key in MediaButtonAction]?: Partial<ButtonBaseConfig>;
-};
+} & Partial<MediaToggleControlBaseConfig> & {
+    [key in MediaButtonAction]?: Partial<ButtonBaseConfig>;
+  };
 
 export interface CustomControlConfig {
   type: "custom";

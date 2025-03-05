@@ -1,7 +1,8 @@
 import {
-  BaseButtonControlConfig,
-  MediaButtonAction,
   ElementWhenUnavailable,
+  MediaButtonAction,
+  MediaButtonControlBaseConfig,
+  MediaToggleControlBaseConfig,
   MediaToggleKind,
 } from "./types";
 import { MediaPlayerEntity, MediaPlayerRepeat } from "../../types/ha/entity";
@@ -14,7 +15,7 @@ import {
 export const mediaButtonDefaultMap: {
   [action in MediaButtonAction]: (
     stateObj?: MediaPlayerEntity,
-  ) => BaseButtonControlConfig;
+  ) => MediaButtonControlBaseConfig;
 } = {
   [MediaButtonAction.TURN_ON]: () => ({
     size: ButtonSize.MD,
@@ -107,4 +108,15 @@ export const mediaToggleKindActionMap: {
     MediaButtonAction.TURN_ON,
     MediaButtonAction.TURN_OFF,
   ],
+};
+
+export const mediaToggleDefaultMap: {
+  [kind in MediaToggleKind]: MediaToggleControlBaseConfig;
+} = {
+  [MediaToggleKind.PLAY_PAUSE]: {
+    when_unavailable: ElementWhenUnavailable.DISABLE,
+  },
+  [MediaToggleKind.ON_OFF]: {
+    when_unavailable: ElementWhenUnavailable.HIDE,
+  },
 };

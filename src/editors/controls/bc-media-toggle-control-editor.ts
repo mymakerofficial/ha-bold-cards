@@ -3,6 +3,7 @@ import { customElement, property } from "lit/decorators";
 import { HomeAssistant } from "../../types/ha/lovelace";
 import {
   ControlType,
+  ElementWhenUnavailable,
   MediaToggleControlConfig,
 } from "../../lib/controls/types";
 import { editorBaseStyles } from "../styles";
@@ -11,10 +12,13 @@ import {
   getControlIcon,
   getControlLabel,
   getMediaButtonControlDefaultConfig,
+  getMediaToggleControlDefaultConfig,
   mediaToggleActionToMediaButtonControlConfig,
 } from "../../lib/controls/helpers";
 import { repeat } from "lit-html/directives/repeat";
 import { mediaToggleKindActionMap } from "../../lib/controls/constants";
+import { enumToOptions } from "../helpers";
+import { t } from "../../localization/i18n";
 
 @customElement("bc-media-toggle-control-editor")
 export class MediaToggleControlEditor extends LitElement {
@@ -26,8 +30,6 @@ export class MediaToggleControlEditor extends LitElement {
     field: keyof MediaToggleControlConfig,
     ev: CustomEvent,
   ) {
-    console.log("field", field, ev.detail.value);
-
     ev.stopPropagation();
 
     const newValue = {
@@ -53,15 +55,38 @@ export class MediaToggleControlEditor extends LitElement {
       return nothing;
     }
 
+    const defaultConfig = getMediaToggleControlDefaultConfig(this.control.kind);
+
     return html`
       <div class="container">
+        <bc-selector-select
+          .label=${t(
+            "editor.controls.media_button_control.label.when_unavailable",
+          )}
+          .helper=${t(
+            "editor.controls.media_button_control.helper.when_unavailable",
+          )}
+          .hass=${this.hass}
+          .value=${this.control.when_unavailable}
+          .default=${defaultConfig.when_unavailable}
+          @value-changed=${(ev) =>
+            this._handleValueChanged("when_unavailable", ev)}
+          .selector=${{
+            select: {
+              mode: "dropdown",
+              options: enumToOptions(ElementWhenUnavailable, {
+                scope: "common.element_when_unavailable",
+              }),
+            },
+          }}
+        ></bc-selector-select>
         ${repeat(mediaToggleKindActionMap[this.control.kind], (action) => {
           const buttonConfig = mediaToggleActionToMediaButtonControlConfig(
             this.control!,
             action,
           );
 
-          const defaultConfig = getMediaButtonControlDefaultConfig(
+          const defaultButtonConfig = getMediaButtonControlDefaultConfig(
             action,
             this.stateObj,
           );
@@ -75,7 +100,7 @@ export class MediaToggleControlEditor extends LitElement {
               <bc-button-config-editor
                 .config=${this.control![action]}
                 .hass=${this.hass}
-                .defaultConfig=${defaultConfig}
+                .defaultConfig=${defaultButtonConfig}
                 .iconPlaceholder=${getControlIcon(buttonConfig)}
                 @value-changed=${(ev) => this._handleValueChanged(action, ev)}
               ></bc-button-config-editor>
