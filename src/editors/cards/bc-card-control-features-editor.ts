@@ -21,6 +21,17 @@ export class BoldCardControlFeaturesEditor extends LitElement {
   }
 
   protected render() {
+    if (
+      !this.hass ||
+      !this.stateObj ||
+      !this.features ||
+      !this.features.some(
+        (feature) => feature.type === "custom:bold-media-player-control-row",
+      )
+    ) {
+      return nothing;
+    }
+
     return html`
       <div class="container">
         ${repeat(

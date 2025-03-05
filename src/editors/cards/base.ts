@@ -65,7 +65,13 @@ export abstract class BoldLovelaceCardEditorWithFeatures<
   }
 
   protected _controlsEditorTemplate() {
-    if (!this._config) {
+    if (
+      !this._config ||
+      !this._config.features ||
+      !this._config.features.some(
+        (feature) => feature.type === "custom:bold-media-player-control-row",
+      )
+    ) {
       return nothing;
     }
 
