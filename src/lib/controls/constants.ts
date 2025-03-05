@@ -2,6 +2,7 @@ import {
   BaseButtonControlConfig,
   MediaButtonAction,
   ElementWhenUnavailable,
+  MediaToggleKind,
 } from "./types";
 import { MediaPlayerEntity, MediaPlayerRepeat } from "../../types/ha/entity";
 import {
@@ -86,4 +87,24 @@ export const mediaButtonActionIconMap: {
       [MediaPlayerRepeat.ONE]: "mdi:repeat-once",
     }[stateObj?.attributes.repeat ?? MediaPlayerRepeat.OFF];
   },
+};
+
+export const mediaToggleKindIconMap: {
+  [kind in MediaToggleKind]: string;
+} = {
+  [MediaToggleKind.PLAY_PAUSE]: "mdi:play-pause",
+  [MediaToggleKind.ON_OFF]: "mdi:power",
+};
+
+export const mediaToggleKindActionMap: {
+  [kind in MediaToggleKind]: MediaButtonAction[];
+} = {
+  [MediaToggleKind.PLAY_PAUSE]: [
+    MediaButtonAction.MEDIA_PLAY,
+    MediaButtonAction.MEDIA_PAUSE,
+  ],
+  [MediaToggleKind.ON_OFF]: [
+    MediaButtonAction.TURN_ON,
+    MediaButtonAction.TURN_OFF,
+  ],
 };

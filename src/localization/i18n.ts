@@ -4,6 +4,7 @@ import {
   MediaButtonAction,
   ElementWhenUnavailable,
   ControlType,
+  MediaToggleKind,
 } from "../lib/controls/types";
 import {
   ButtonShape,
@@ -18,6 +19,7 @@ const i18n = new I18n(
         control_type: {
           [ControlType.MEDIA_BUTTON]: "Media Button",
           [ControlType.MEDIA_POSITION]: "Media Position",
+          [ControlType.MEDIA_TOGGLE]: "Media Toggle Button",
         },
         media_button_action: {
           [MediaButtonAction.TURN_ON]: "Turn On",
@@ -28,6 +30,10 @@ const i18n = new I18n(
           [MediaButtonAction.MEDIA_PAUSE]: "Pause",
           [MediaButtonAction.MEDIA_NEXT_TRACK]: "Next Track",
           [MediaButtonAction.REPEAT_SET]: "Set Repeat",
+        },
+        media_toggle_kind: {
+          [MediaToggleKind.ON_OFF]: "On/Off",
+          [MediaToggleKind.PLAY_PAUSE]: "Play/Pause",
         },
         element_when_unavailable: {
           [ElementWhenUnavailable.HIDE]: "Hide",

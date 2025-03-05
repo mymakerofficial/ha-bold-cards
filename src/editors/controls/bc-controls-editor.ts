@@ -9,13 +9,19 @@ import {
   MediaButtonControlConfig,
   MediaButtonAction,
   ControlType,
+  MediaToggleKind,
 } from "../../lib/controls/types";
-import { getControlIcon, getControlLabel } from "../../lib/controls/helpers";
+import {
+  getControlIcon,
+  getControlKey,
+  getControlLabel,
+} from "../../lib/controls/helpers";
 import { HassEntityBase } from "home-assistant-js-websocket";
 import { editorBaseStyles } from "../styles";
 import { stopPropagation } from "../helpers";
 
 import "./bc-media-button-control-editor";
+import { mediaToggleKindActionMap } from "../../lib/controls/constants";
 
 const seperator = Symbol("seperator");
 
@@ -28,6 +34,14 @@ export class ControlsEditor extends LitElement {
 
   private get _availableControls(): (ControlConfig | typeof seperator)[] {
     return [
+      ...Object.values(MediaToggleKind).map((kind) => ({
+        type: ControlType.MEDIA_TOGGLE,
+        kind,
+        ...Object.fromEntries(
+          mediaToggleKindActionMap[kind].map((action) => [action, {}]),
+        ),
+      })),
+      seperator,
       ...Object.values(MediaButtonAction).map((action) => ({
         type: ControlType.MEDIA_BUTTON,
         action,
@@ -113,8 +127,7 @@ export class ControlsEditor extends LitElement {
             ? html`<div class="items">
                 ${repeat(
                   this.controls ?? [],
-                  (control) =>
-                    control.type + (control as MediaButtonControlConfig).action,
+                  getControlKey,
                   (control, index) =>
                     html` <div class="item">
                       <ha-expansion-panel outlined>

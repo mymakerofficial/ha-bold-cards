@@ -8,22 +8,30 @@ import { MediaPositionTimestampPosition } from "../../components/bc-media-positi
 export const ControlType = {
   MEDIA_BUTTON: "media_button",
   MEDIA_POSITION: "media_position",
+  MEDIA_TOGGLE: "media_toggle",
   CUSTOM: "custom",
 } as const;
 export type ControlType = (typeof ControlType)[keyof typeof ControlType];
 
 export const MediaButtonAction = {
-  TURN_ON: "turn_on",
-  TURN_OFF: "turn_off",
-  SHUFFLE_SET: "shuffle_set",
-  REPEAT_SET: "repeat_set",
   MEDIA_PREVIOUS_TRACK: "media_previous_track",
   MEDIA_NEXT_TRACK: "media_next_track",
+  SHUFFLE_SET: "shuffle_set",
+  REPEAT_SET: "repeat_set",
   MEDIA_PLAY: "media_play",
   MEDIA_PAUSE: "media_pause",
+  TURN_ON: "turn_on",
+  TURN_OFF: "turn_off",
 } as const;
 export type MediaButtonAction =
   (typeof MediaButtonAction)[keyof typeof MediaButtonAction];
+
+export const MediaToggleKind = {
+  PLAY_PAUSE: "play_pause",
+  ON_OFF: "on_off",
+} as const;
+export type MediaToggleKind =
+  (typeof MediaToggleKind)[keyof typeof MediaToggleKind];
 
 export const ElementWhenUnavailable = {
   HIDE: "hide",
@@ -31,6 +39,13 @@ export const ElementWhenUnavailable = {
 } as const;
 export type ElementWhenUnavailable =
   (typeof ElementWhenUnavailable)[keyof typeof ElementWhenUnavailable];
+
+export interface ButtonBaseConfig {
+  icon?: string;
+  size: ButtonSize;
+  shape: ButtonShape;
+  variant: ButtonVariant;
+}
 
 export interface BaseButtonControlConfig {
   size: ButtonSize;
@@ -53,6 +68,13 @@ export interface MediaPositionControlConfig {
   when_unavailable?: ElementWhenUnavailable;
 }
 
+export type MediaToggleControlConfig = {
+  type: "media_toggle";
+  kind: MediaToggleKind;
+} & {
+  [key in MediaButtonAction]?: Partial<ButtonBaseConfig>;
+};
+
 export interface CustomControlConfig {
   type: "custom";
 }
@@ -60,6 +82,7 @@ export interface CustomControlConfig {
 export type ControlConfig =
   | MediaButtonControlConfig
   | MediaPositionControlConfig
+  | MediaToggleControlConfig
   | CustomControlConfig;
 
 export interface ConcreteMediaButtonControl {
