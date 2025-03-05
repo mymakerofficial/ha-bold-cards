@@ -38,6 +38,7 @@ export abstract class BoldLovelaceCardEditorWithFeatures<
   protected constructor() {
     super();
     import("./bc-card-feature-editor");
+    import("./bc-card-control-features-editor");
   }
 
   protected _featureEditorTemplate() {
@@ -61,6 +62,19 @@ export abstract class BoldLovelaceCardEditorWithFeatures<
         </div>
       </ha-expansion-panel>
     `;
+  }
+
+  protected _controlsEditorTemplate() {
+    if (!this._config) {
+      return nothing;
+    }
+
+    return html`<bc-card-control-features-editor
+      .hass=${this.hass}
+      .stateObj=${this._stateObj}
+      .features=${this._config.features ?? []}
+      @value-changed=${this._handleFeaturesChanged}
+    ></bc-card-control-features-editor>`;
   }
 
   private _handleFeaturesChanged(

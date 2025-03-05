@@ -170,30 +170,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
           ></bc-controls-editor>
         </div>
       </ha-expansion-panel>
-      ${this._config?.features
-        ?.filter(
-          (feature) => feature.type === "custom:bold-media-player-control-row",
-        )
-        .map(
-          (feature, index) =>
-            html`<ha-expansion-panel outlined>
-              <h3 slot="header">
-                <ha-svg-icon .path=${mdiButtonPointer}></ha-svg-icon>
-                <span>
-                  ${t("editor.card.media_player.label.additional_controls", {
-                    count: index + 2,
-                  })}
-                </span>
-              </h3>
-              <div class="content">
-                <bc-controls-editor
-                  .controls=${feature.controls ?? []}
-                  .hass=${this.hass}
-                  .stateObj=${stateObj}
-                ></bc-controls-editor>
-              </div>
-            </ha-expansion-panel>`,
-        )}
+      ${this._controlsEditorTemplate()}
       <ha-expansion-panel outlined>
         <h3 slot="header">
           <ha-svg-icon .path=${mdiStar}></ha-svg-icon>
