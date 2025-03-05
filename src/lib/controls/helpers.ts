@@ -209,6 +209,13 @@ export function translateControls({
               )
             : false;
 
+          if (
+            control.when_unavailable === ElementWhenUnavailable.HIDE &&
+            !supportsSeek
+          ) {
+            return undefined;
+          }
+
           return {
             type: ControlType.MEDIA_POSITION,
             timestamp_position: control.timestamp_position,

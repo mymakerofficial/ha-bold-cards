@@ -37,6 +37,7 @@ export class ControlsEditor extends LitElement {
     import("./components/bc-button-config-editor");
     import("./bc-media-button-control-editor");
     import("./bc-media-toggle-control-editor");
+    import("./bc-media-position-control-editor");
   }
 
   private get _availableControls(): (ControlConfig | typeof seperator)[] {
@@ -136,6 +137,13 @@ export class ControlsEditor extends LitElement {
           .hass=${this.hass}
           .stateObj=${this.stateObj}
           .mediaButtonControlDefaultMap=${this.mediaButtonControlDefaultMap}
+          @value-changed=${(ev) => this._handleValueChanged(index, ev)}
+        />`;
+      case ControlType.MEDIA_POSITION:
+        return html`<bc-media-position-control-editor
+          .control=${control}
+          .hass=${this.hass}
+          .stateObj=${this.stateObj}
           @value-changed=${(ev) => this._handleValueChanged(index, ev)}
         />`;
       default:

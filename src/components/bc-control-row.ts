@@ -58,6 +58,7 @@ export class ControlRow extends LitElement {
             return html`
               <bc-media-position-control
                 .stateObj=${this.stateObj as MediaPlayerEntity}
+                .disabled=${control.disabled}
                 .timestampPosition=${control.timestamp_position}
                 .fullWidth=${true}
               ></bc-media-position-control>

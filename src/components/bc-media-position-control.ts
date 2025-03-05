@@ -1,8 +1,6 @@
 import { customElement, property } from "lit/decorators";
 import { css, html, LitElement, nothing } from "lit";
-import { MediaPlayerEntityFeature } from "../helpers/media-player";
 import { MediaPlayerEntity } from "../types/ha/entity";
-import { supportsFeature } from "../helpers/supports-feature";
 
 export const MediaPositionTimestampPosition = {
   HIDDEN: "hidden",
@@ -16,6 +14,7 @@ export type MediaPositionTimestampPosition =
 export class MediaPositionControl extends LitElement {
   @property({ attribute: false }) public stateObj?: MediaPlayerEntity;
 
+  @property({ type: Boolean }) public disabled = false;
   @property() public timestampPosition?: MediaPositionTimestampPosition;
 
   render() {
@@ -23,32 +22,38 @@ export class MediaPositionControl extends LitElement {
       return nothing;
     }
 
-    // TODO this should be an attribute
-    const supportsSeek = supportsFeature(
-      this.stateObj,
-      MediaPlayerEntityFeature.SEEK,
-    );
-
     const mediaPosition = this.stateObj!.attributes.media_position;
     const mediaDuration = this.stateObj!.attributes.media_duration;
 
     const mediaPositionLabel = formatDuration(mediaPosition);
     const mediaDurationLabel = formatDuration(mediaDuration);
 
+    const showTimestamps =
+      this.timestampPosition !== undefined &&
+      this.timestampPosition !== MediaPositionTimestampPosition.HIDDEN;
+
     return html`
       <div class="container">
-        ${supportsSeek
+        ${!this.disabled
           ? html`<div class="slider-container">
-              ${this.timestampPosition === MediaPositionTimestampPosition.BOTTOM
-                ? html`<time class="position">${mediaPositionLabel}</time>`
+              ${showTimestamps
+                ? html`<time
+                    class="position"
+                    data-position=${this.timestampPosition}
+                    >${mediaPositionLabel}</time
+                  >`
                 : nothing}
               <ha-slider
                 min=${0}
                 max=${mediaDuration}
                 value=${mediaPosition}
               ></ha-slider>
-              ${this.timestampPosition === MediaPositionTimestampPosition.BOTTOM
-                ? html`<time class="duration">${mediaDurationLabel}</time>`
+              ${showTimestamps
+                ? html`<time
+                    class="duration"
+                    data-position=${this.timestampPosition}
+                    >${mediaDurationLabel}</time
+                  >`
                 : nothing}
             </div>`
           : html`<div class="slider-placeholder"></div>`}
@@ -89,13 +94,21 @@ export class MediaPositionControl extends LitElement {
         --_inactive-track-color: rgb(from var(--tile-color) r g b / 20%);
       }
 
-      .slider-container time {
+      .slider-container time[data-position="bottom"] {
         position: absolute;
         bottom: 0;
         font-size: 0.7em;
         line-height: 1;
         margin: 0 8px;
         opacity: 0.5;
+      }
+
+      .slider-container time[data-position="inline"] {
+        color: var(--tile-color);
+        font-size: 0.8em;
+        font-weight: 500;
+        line-height: 1;
+        opacity: 0.8;
       }
 
       .slider-container time.position {

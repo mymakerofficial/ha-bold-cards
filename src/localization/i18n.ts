@@ -11,6 +11,7 @@ import {
   ButtonSize,
   ButtonVariant,
 } from "../components/bc-button";
+import { MediaPositionTimestampPosition } from "../components/bc-media-position-control";
 
 const i18n = new I18n(
   {
@@ -38,6 +39,11 @@ const i18n = new I18n(
         element_when_unavailable: {
           [ElementWhenUnavailable.HIDE]: "Hide",
           [ElementWhenUnavailable.DISABLE]: "Disable",
+        },
+        timestamp_position: {
+          [MediaPositionTimestampPosition.HIDDEN]: "Hidden",
+          [MediaPositionTimestampPosition.BOTTOM]: "Bottom",
+          [MediaPositionTimestampPosition.INLINE]: "Inline",
         },
         button: {
           size: {
@@ -86,6 +92,16 @@ const i18n = new I18n(
                 "What to do when this feature is not supported by the entity.",
               always_show:
                 "Show this control even when it might not make sense (e.g. play button when already playing). The control might still be hidden or disabled depending on the 'When Unavailable' setting.",
+            },
+          },
+          media_position_control: {
+            label: {
+              timestamp_position: "Timestamp Position",
+              when_unavailable: "When Unavailable",
+            },
+            helper: {
+              when_unavailable:
+                "What to do when this feature is not supported by the entity.",
             },
           },
         },
