@@ -2,11 +2,25 @@ import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
 import { HomeAssistant } from "../../types/ha/lovelace";
 import { HassEntity } from "home-assistant-js-websocket";
-import { LovelaceCardFeatureConfig } from "../../types/ha/feature";
+import {
+  CustomCardFeatureEntry,
+  LovelaceCardFeatureConfig,
+} from "../../types/ha/feature";
 import { repeat } from "lit-html/directives/repeat";
 import { mdiDelete, mdiDrag, mdiPencil } from "@mdi/js";
 import { editorBaseStyles } from "../styles";
 import { fireEvent } from "custom-card-helpers";
+
+function getCustomFeatureEntries() {
+  return (
+    ((window as any).customCardFeatures as
+      | CustomCardFeatureEntry[]
+      | undefined) ?? []
+  ).reduce((acc, entry) => {
+    acc[entry.type] = entry;
+    return acc;
+  }, {}) as Record<string, CustomCardFeatureEntry>;
+}
 
 @customElement("bc-card-features-editor")
 export class BoldCardFeatureEditor extends LitElement {
@@ -16,10 +30,26 @@ export class BoldCardFeatureEditor extends LitElement {
 
   @property({ attribute: false }) public features?: LovelaceCardFeatureConfig[];
 
+  private _getFeatureTypeLabel(type: string) {
+    if (isCustomType(type)) {
+      const customType = stripCustomPrefix(type);
+      const customFeatureEntry = getCustomFeatureEntries()[customType];
+      return customFeatureEntry?.name || type;
+    }
+    return (
+      this.hass!.localize(
+        `ui.panel.lovelace.editor.features.types.${type}.label`,
+      ) || type
+    );
+  }
+
   protected render() {
     return html`
       <div class="container">
-        <ha-sortable handle-selector=".handle" @item-moved=${() => {}}>
+        <ha-sortable
+          handle-selector=".handle"
+          @item-moved=${this._handleFeatureMoved}
+        >
           <div class="items">
             ${repeat(
               this.features ?? [],
@@ -31,7 +61,7 @@ export class BoldCardFeatureEditor extends LitElement {
                   </div>
                   <div class="content">
                     <div>
-                      <span>${feature.type}</span>
+                      <span>${this._getFeatureTypeLabel(feature.type)}</span>
                     </div>
                   </div>
                   <ha-icon-button
@@ -60,7 +90,11 @@ export class BoldCardFeatureEditor extends LitElement {
   }
 
   private _editFeature(index: number) {
-    const config = this.features![index];
+    if (!this.features) {
+      return;
+    }
+
+    const config = this.features[index];
 
     fireEvent(this, "edit-sub-element" as any, {
       config: config,
@@ -80,8 +114,33 @@ export class BoldCardFeatureEditor extends LitElement {
     index: number,
     newConfig: LovelaceCardFeatureConfig,
   ) {
+    if (!this.features) {
+      return;
+    }
+
     const features = [...this.features!];
     features[index] = newConfig;
+
+    this.dispatchEvent(
+      new CustomEvent("value-changed", {
+        detail: {
+          value: features,
+        },
+      }),
+    );
+  }
+
+  private _handleFeatureMoved(ev: CustomEvent) {
+    ev.stopPropagation();
+
+    if (!this.features) {
+      return;
+    }
+
+    const features = [...this.features];
+    const [movedFeature] = features.splice(ev.detail.oldIndex, 1);
+    features.splice(ev.detail.newIndex, 0, movedFeature);
+
     this.dispatchEvent(
       new CustomEvent("value-changed", {
         detail: {
@@ -121,6 +180,11 @@ export class BoldCardFeatureEditor extends LitElement {
         display: flex;
         align-items: center;
         gap: 8px;
+        box-shadow: none;
+        border-width: 1px;
+        border-style: solid;
+        border-color: var(--outline-color);
+        border-radius: 6px;
       }
 
       .content {
@@ -129,3 +193,7 @@ export class BoldCardFeatureEditor extends LitElement {
     `,
   ];
 }
+
+export const isCustomType = (type: string) => type.startsWith("custom:");
+
+export const stripCustomPrefix = (type: string) => type.slice("custom:".length);
