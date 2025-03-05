@@ -51,6 +51,7 @@ export const mediaProgressControlConfigStruct = object({
 export const mediaToggleControlConfigStruct = object({
   type: exactMatch(ControlType.MEDIA_TOGGLE),
   kind: enums(Object.values(MediaToggleKind)),
+  when_unavailable: optional(enums(Object.values(ElementWhenUnavailable))),
   // TODO only allow actions that are used in the media toggle type
   ...Object.fromEntries(
     Object.values(MediaButtonAction).map((action) => [
