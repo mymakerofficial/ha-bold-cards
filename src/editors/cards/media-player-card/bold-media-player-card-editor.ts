@@ -26,6 +26,11 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
   MediaPlayerTileConfig,
   MediaPlayerEntity
 > {
+  constructor() {
+    super();
+    import("../../controls/bc-controls-editor");
+  }
+
   protected get _struct() {
     return mediaPlayerCardConfigStruct;
   }

@@ -14,10 +14,6 @@ import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
 import { FeatureConfigWithMaybeInternals } from "../../types/ha/feature";
 import { fireEvent } from "custom-card-helpers";
 
-// import elements
-import "./bc-card-feature-editor";
-import "../controls/bc-controls-editor";
-
 export abstract class BoldLovelaceCardEditor<TConfig extends LovelaceCardConfig>
   extends BoldLovelaceEditor<TConfig>
   implements LovelaceCardEditor {}
@@ -39,6 +35,11 @@ export abstract class BoldLovelaceCardEditorWithFeatures<
   TConfig extends LovelaceCardConfigWithFeatures,
   TStateObj extends HassEntityBase = HassEntityBase,
 > extends BoldLovelaceCardEditorWithEntity<TConfig, TStateObj> {
+  protected constructor() {
+    super();
+    import("./bc-card-feature-editor");
+  }
+
   protected _featureEditorTemplate() {
     if (!this._config) {
       return nothing;

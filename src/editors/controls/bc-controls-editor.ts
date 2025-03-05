@@ -19,8 +19,6 @@ import {
 import { HassEntityBase } from "home-assistant-js-websocket";
 import { editorBaseStyles } from "../styles";
 import { stopPropagation } from "../helpers";
-
-import "./bc-media-button-control-editor";
 import { mediaToggleKindActionMap } from "../../lib/controls/constants";
 
 const seperator = Symbol("seperator");
@@ -31,6 +29,13 @@ export class ControlsEditor extends LitElement {
 
   @property({ attribute: false }) public hass?: HomeAssistant;
   @property({ attribute: false }) public stateObj?: HassEntityBase;
+
+  constructor() {
+    super();
+    import("./components/bc-button-config-editor");
+    import("./bc-media-button-control-editor");
+    import("./bc-media-toggle-control-editor");
+  }
 
   private get _availableControls(): (ControlConfig | typeof seperator)[] {
     return [
@@ -116,6 +121,29 @@ export class ControlsEditor extends LitElement {
     );
   }
 
+  protected _editorTemplate(control: ControlConfig, index: number) {
+    switch (control.type) {
+      case ControlType.MEDIA_BUTTON:
+        return html`<bc-media-button-control-editor
+          .control=${control}
+          .hass=${this.hass}
+          .stateObj=${this.stateObj}
+          @value-changed=${(ev) => this._handleValueChanged(index, ev)}
+        />`;
+      case ControlType.MEDIA_TOGGLE:
+        return html`<bc-media-toggle-control-editor
+          .control=${control}
+          .hass=${this.hass}
+          .stateObj=${this.stateObj}
+          @value-changed=${(ev) => this._handleValueChanged(index, ev)}
+        />`;
+      default:
+        return html`<div class="placeholder">
+          ${t("editor.controls.no_settings")}
+        </div>`;
+    }
+  }
+
   protected render() {
     return html`
       <div class="container">
@@ -146,17 +174,7 @@ export class ControlsEditor extends LitElement {
                           @click=${(ev) => this._handleRemoveControl(index, ev)}
                         ></ha-icon-button>
                         <div class="content">
-                          ${control.type === ControlType.MEDIA_BUTTON
-                            ? html` <bc-media-button-control-editor
-                                .control=${control as MediaButtonControlConfig}
-                                .hass=${this.hass}
-                                .stateObj=${this.stateObj}
-                                @value-changed=${(ev) =>
-                                  this._handleValueChanged(index, ev)}
-                              />`
-                            : html` <div class="placeholder">
-                                ${t("editor.controls.no_settings")}
-                              </div>`}
+                          ${this._editorTemplate(control, index)}
                         </div>
                       </ha-expansion-panel>
                     </div>`,

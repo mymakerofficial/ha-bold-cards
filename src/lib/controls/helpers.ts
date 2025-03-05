@@ -6,6 +6,7 @@ import {
 } from "./constants";
 import {
   BaseButtonControlConfig,
+  ButtonBaseConfig,
   ConcreteControl,
   ConcreteMediaButtonControl,
   ControlConfig,
@@ -13,6 +14,7 @@ import {
   ElementWhenUnavailable,
   MediaButtonAction,
   MediaButtonControlConfig,
+  MediaToggleControlConfig,
 } from "./types";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
 import { MediaPlayerEntity } from "../../types/ha/entity";
@@ -118,6 +120,17 @@ function translateMediaButtonControl(
   } as ConcreteMediaButtonControl;
 }
 
+export function mediaToggleActionToMediaButtonControlConfig(
+  config: MediaToggleControlConfig,
+  action: MediaButtonAction,
+): MediaButtonControlConfig {
+  return {
+    type: ControlType.MEDIA_BUTTON,
+    action,
+    ...(config[action] ?? {}),
+  };
+}
+
 export function translateControls({
   controls,
   stateObj,
@@ -140,11 +153,7 @@ export function translateControls({
         case ControlType.MEDIA_TOGGLE:
           return mediaToggleKindActionMap[control.kind].map((action) =>
             translateMediaButtonControl(
-              {
-                type: ControlType.MEDIA_BUTTON,
-                action,
-                ...(control[action] ?? {}),
-              },
+              mediaToggleActionToMediaButtonControlConfig(control, action),
               stateObj,
             ),
           );

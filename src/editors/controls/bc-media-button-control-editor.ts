@@ -3,18 +3,13 @@ import { customElement, property } from "lit/decorators";
 import { HomeAssistant } from "../../types/ha/lovelace";
 import { t } from "../../localization/i18n";
 import {
-  MediaButtonControlConfig,
-  ElementWhenUnavailable,
   ControlType,
+  ElementWhenUnavailable,
   MediaButtonAction,
+  MediaButtonControlConfig,
 } from "../../lib/controls/types";
 import { editorBaseStyles } from "../styles";
 import { MediaPlayerEntity } from "../../types/ha/entity";
-import {
-  ButtonShape,
-  ButtonSize,
-  ButtonVariant,
-} from "../../components/bc-button";
 import {
   getControlIcon,
   getMediaButtonControlDefaultConfig,
@@ -72,59 +67,18 @@ export class MediaButtonControlEditor extends LitElement {
 
     return html`
       <div class="container">
-        <ha-icon-picker
-          .label=${t("editor.controls.media_button_control.label.icon")}
+        <bc-button-config-editor
+          .config=${this.control}
           .hass=${this.hass}
-          .value=${this.control.icon}
-          .placeholder=${getControlIcon(this.control, this.stateObj)}
-          @value-changed=${(ev) => this._handleValueChanged("icon", ev)}
-        ></ha-icon-picker>
-        <div class="grid">
-          <bc-selector-select
-            .label=${t("editor.controls.media_button_control.label.size")}
-            .hass=${this.hass}
-            .value=${this.control.size}
-            .default=${defaultConfig.size}
-            @value-changed=${(ev) => this._handleValueChanged("size", ev)}
-            .selector=${{
-              select: {
-                mode: "dropdown",
-                options: enumToOptions(ButtonSize, {
-                  scope: "common.button.size",
-                }),
-              },
-            }}
-          ></bc-selector-select>
-          <bc-selector-select
-            .label=${t("editor.controls.media_button_control.label.variant")}
-            .hass=${this.hass}
-            .value=${this.control.variant}
-            .default=${defaultConfig.variant}
-            @value-changed=${(ev) => this._handleValueChanged("variant", ev)}
-            .selector=${{
-              select: {
-                mode: "dropdown",
-                options: enumToOptions(ButtonVariant, {
-                  scope: "common.button.variant",
-                }),
-              },
-            }}
-          ></bc-selector-select>
-          <bc-selector-select
-            .label=${t("editor.controls.media_button_control.label.shape")}
-            .hass=${this.hass}
-            .value=${this.control.shape}
-            .default=${defaultConfig.shape}
-            @value-changed=${(ev) => this._handleValueChanged("shape", ev)}
-            .selector=${{
-              select: {
-                mode: "dropdown",
-                options: enumToOptions(ButtonShape, {
-                  scope: "common.button.shape",
-                }),
-              },
-            }}
-          ></bc-selector-select>
+          .defaultConfig=${defaultConfig}
+          .iconPlaceholder=${getControlIcon(this.control, this.stateObj)}
+          @value-changed=${(ev) =>
+            this.dispatchEvent(
+              new CustomEvent("value-changed", {
+                detail: ev.detail,
+              }),
+            )}
+        >
           <bc-selector-select
             .label=${t(
               "editor.controls.media_button_control.label.when_unavailable",
@@ -146,7 +100,7 @@ export class MediaButtonControlEditor extends LitElement {
               },
             }}
           ></bc-selector-select>
-        </div>
+        </bc-button-config-editor>
         ${allowShowAlways
           ? html`<ha-selector-boolean
               .label=${t(
@@ -171,12 +125,6 @@ export class MediaButtonControlEditor extends LitElement {
         display: flex;
         flex-direction: column;
         gap: 24px;
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 8px;
       }
     `,
   ];
