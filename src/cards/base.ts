@@ -16,7 +16,7 @@ import { FeatureConfigWithMaybeInternals } from "../types/ha/feature";
 
 export abstract class BoldLovelaceCard<TConfig extends LovelaceCardConfig>
   extends LitElement
-  implements LovelaceCard
+  implements LovelaceCard<TConfig>
 {
   @property({ attribute: false }) public hass?: HomeAssistant;
 

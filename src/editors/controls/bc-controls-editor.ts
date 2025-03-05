@@ -132,7 +132,9 @@ export class ControlsEditor extends LitElement {
                     html` <div class="item">
                       <ha-expansion-panel outlined>
                         <h3 class="header" slot="header">
-                          <ha-icon icon=${getControlIcon(control)}></ha-icon>
+                          <ha-icon
+                            icon=${getControlIcon(control, this.stateObj)}
+                          ></ha-icon>
                           <div>${getControlLabel(control)}</div>
                         </h3>
                         <div class="handle" slot="icons">

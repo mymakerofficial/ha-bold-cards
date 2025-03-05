@@ -1,5 +1,6 @@
 import {
   HomeAssistant,
+  LovelaceCardFeatureEditorContext,
   LovelaceGenericElementEditor,
 } from "../types/ha/lovelace";
 import { CSSResultGroup, LitElement } from "lit";
@@ -8,12 +9,17 @@ import { assert, Struct } from "superstruct";
 import { editorBaseStyles } from "./styles";
 import { LovelaceConfig } from "custom-card-helpers";
 
-export abstract class BoldLovelaceEditor<TConfig extends {}>
+export abstract class BoldLovelaceEditor<
+    TConfig extends {},
+    TContext = LovelaceCardFeatureEditorContext,
+  >
   extends LitElement
-  implements LovelaceGenericElementEditor
+  implements LovelaceGenericElementEditor<TConfig, TContext>
 {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @property({ attribute: false }) public lovelace?: LovelaceConfig;
+
+  @property({ attribute: false }) public context?: TContext;
 
   @state() protected _config?: TConfig;
 

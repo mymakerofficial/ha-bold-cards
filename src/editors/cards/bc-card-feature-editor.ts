@@ -60,14 +60,17 @@ export class BoldCardFeatureEditor extends LitElement {
   }
 
   private _editFeature(index: number) {
-    const config = this.features![index!];
+    const config = this.features![index];
 
     fireEvent(this, "edit-sub-element" as any, {
       config: config,
       saveConfig: (newConfig) => this._handleFeatureSaved(index, newConfig),
       context: {
         entity_id: this.stateObj?.entity_id,
-        // TODO: include feature internals
+        internals: {
+          // TODO actually compute this
+          parent_card_type: "custom:bold-media-player-card",
+        },
       },
       type: "feature",
     });

@@ -10,14 +10,12 @@ export type LovelaceCardFeatureConfig =
   | MediaPlayerVolumeSliderCardFeatureConfig
   | BoldMediaPlayerControlRowFeatureConfig;
 
-export interface LovelaceCardFeatureContext {
-  entity_id?: string;
+export interface FeatureInternals {
+  parent_card_type: string;
 }
 
 export interface FeatureConfigInternals {
-  __custom_internals: {
-    parent_card_type: string;
-  };
+  __custom_internals: FeatureInternals;
 }
 
 export type FeatureConfigWithInternals<

@@ -2,7 +2,7 @@ import {
   HomeAssistant as HomeAssistantBase,
   LovelaceConfig,
 } from "custom-card-helpers";
-import { LovelaceCardFeatureConfig } from "./feature";
+import { FeatureInternals, LovelaceCardFeatureConfig } from "./feature";
 
 export interface ThemeSettings {
   theme: string;
@@ -49,7 +49,8 @@ export interface LovelaceGridOptions {
   max_rows?: number;
 }
 
-export interface LovelaceCard extends HTMLElement {
+export interface LovelaceCard<TConfig = LovelaceCardConfig>
+  extends HTMLElement {
   hass?: HomeAssistant;
   preview?: boolean;
   layout?: string;
@@ -57,22 +58,32 @@ export interface LovelaceCard extends HTMLElement {
   /** @deprecated Use `getGridOptions` instead */
   getLayoutOptions?(): LovelaceLayoutOptions;
   getGridOptions?(): LovelaceGridOptions;
-  setConfig(config: LovelaceCardConfig): void;
+  setConfig(config: TConfig): void;
 }
 
-export interface LovelaceGenericElementEditor<C = any> extends HTMLElement {
+export interface LovelaceGenericElementEditor<
+  TConfig = any,
+  TContext = LovelaceCardFeatureEditorContext,
+> extends HTMLElement {
   hass?: HomeAssistant;
   lovelace?: LovelaceConfig;
-  context?: C;
-  setConfig(config: any): void;
+  context?: TContext;
+  setConfig(config: TConfig): void;
   focusYamlEditor?: () => void;
 }
 
-export interface LovelaceCardEditor extends LovelaceGenericElementEditor {
-  setConfig(config: LovelaceCardConfig): void;
-}
+export interface LovelaceCardEditor<
+  TConfig = LovelaceCardConfig,
+  TContext = any,
+> extends LovelaceGenericElementEditor<TConfig, TContext> {}
 
-export interface LovelaceCardFeatureEditor
-  extends LovelaceGenericElementEditor {
-  setConfig(config: LovelaceCardFeatureConfig): void;
+export interface LovelaceCardFeatureEditor<
+  TConfig = LovelaceCardFeatureConfig,
+  TContext = LovelaceCardFeatureEditorContext,
+> extends LovelaceGenericElementEditor<TConfig, TContext> {}
+
+export interface LovelaceCardFeatureEditorContext {
+  // TODO what if we want to pass more than just the entity?
+  entity_id?: string;
+  internals?: FeatureInternals;
 }
