@@ -16,12 +16,12 @@ export const MediaButtonAction = {
   TURN_ON: "turn_on",
   TURN_OFF: "turn_off",
   SHUFFLE_SET: "shuffle_set",
+  REPEAT_SET: "repeat_set",
   MEDIA_PREVIOUS_TRACK: "media_previous_track",
+  MEDIA_NEXT_TRACK: "media_next_track",
   MEDIA_PLAY: "media_play",
   MEDIA_PAUSE: "media_pause",
-  MEDIA_NEXT_TRACK: "media_next_track",
-  REPEAT_SET: "repeat_set",
-};
+} as const;
 export type MediaButtonAction =
   (typeof MediaButtonAction)[keyof typeof MediaButtonAction];
 
@@ -44,6 +44,7 @@ export interface MediaButtonControlConfig
   type: "media_button";
   action: MediaButtonAction;
   icon?: string;
+  always_show?: boolean;
 }
 
 export interface MediaPositionControlConfig {

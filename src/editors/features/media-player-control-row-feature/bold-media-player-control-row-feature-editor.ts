@@ -44,6 +44,7 @@ export class BoldMediaPlayerControlRowFeatureEditor extends BoldLovelaceCardFeat
         </div>
         <bc-controls-editor
           .controls=${this._config?.controls ?? []}
+          .hass=${this.hass}
           .stateObj=${this.stateObj}
           @value-changed=${this._handleControlsChanged}
         ></bc-controls-editor>

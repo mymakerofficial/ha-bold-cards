@@ -49,9 +49,9 @@ export function getControlLabel(control: ControlConfig) {
 
 export function getMediaButtonControlDefaultConfig(
   action: MediaButtonAction,
-  stateObj: MediaPlayerEntity,
+  stateObj?: MediaPlayerEntity,
 ): BaseButtonControlConfig {
-  return mediaButtonDefaultMap[action](stateObj as MediaPlayerEntity);
+  return mediaButtonDefaultMap[action](stateObj);
 }
 
 export function translateControls({
@@ -76,7 +76,7 @@ export function translateControls({
           const { supported, applicable } =
             mediaButtonActionAvailability[control.action];
 
-          if (!applicable) {
+          if (!applicable && !control.always_show) {
             // the action is available but should not be shown because of the state
             return undefined;
           }

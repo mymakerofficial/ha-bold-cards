@@ -11,5 +11,6 @@ export abstract class BoldLovelaceCardFeatureEditor<
   extends BoldLovelaceEditor<TConfig>
   implements LovelaceCardFeatureEditor
 {
+  // TODO this is actually never set, use context instead
   @property({ attribute: false }) public stateObj?: TStateObj;
 }

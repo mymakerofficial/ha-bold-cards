@@ -157,6 +157,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
         <div class="content">
           <bc-controls-editor
             .controls=${this._config?.controls ?? []}
+            .hass=${this.hass}
             .stateObj=${stateObj}
             @value-changed=${this._handleControlsChanged}
           ></bc-controls-editor>
@@ -180,6 +181,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
               <div class="content">
                 <bc-controls-editor
                   .controls=${feature.controls ?? []}
+                  .hass=${this.hass}
                   .stateObj=${stateObj}
                 ></bc-controls-editor>
               </div>

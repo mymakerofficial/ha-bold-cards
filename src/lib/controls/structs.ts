@@ -1,4 +1,12 @@
-import { assert, define, enums, object, optional, string } from "superstruct";
+import {
+  assert,
+  boolean,
+  define,
+  enums,
+  object,
+  optional,
+  string,
+} from "superstruct";
 import {
   ControlType,
   ElementWhenUnavailable,
@@ -21,6 +29,7 @@ export const mediaButtonControlConfigStruct = object({
   shape: optional(enums(Object.values(ButtonShape))),
   variant: optional(enums(Object.values(ButtonVariant))),
   when_unavailable: optional(enums(Object.values(ElementWhenUnavailable))),
+  always_show: optional(boolean()),
 });
 
 export const mediaProgressControlConfigStruct = object({

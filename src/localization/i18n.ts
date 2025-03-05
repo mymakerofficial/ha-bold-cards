@@ -72,6 +72,13 @@ const i18n = new I18n(
               variant: "Variant",
               shape: "Shape",
               when_unavailable: "When Unavailable",
+              always_show: "Always Show",
+            },
+            helper: {
+              when_unavailable:
+                "What to do when this feature is not supported by the entity.",
+              always_show:
+                "Show this control even when it might not make sense (e.g. play button when already playing). The control might still be hidden or disabled depending on the 'When Unavailable' setting.",
             },
           },
         },

@@ -67,6 +67,7 @@ export class BoldCardFeatureEditor extends LitElement {
       saveConfig: (newConfig) => this._handleFeatureSaved(index, newConfig),
       context: {
         entity_id: this.stateObj?.entity_id,
+        // TODO: include feature internals
       },
       type: "feature",
     });
