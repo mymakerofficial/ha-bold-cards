@@ -45,9 +45,9 @@ export class ControlRow extends LitElement {
             return html`
               <bc-button
                 .icon=${control.icon}
-                size=${control.size ?? nothing}
-                shape=${control.shape ?? nothing}
-                variant=${control.variant ?? nothing}
+                size=${control.size}
+                shape=${control.shape}
+                variant=${control.variant}
                 .disabled=${control.disabled}
                 @click=${() => this._handleClick(control)}
               ></bc-button>

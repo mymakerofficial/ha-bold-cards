@@ -20,6 +20,7 @@ import { BoldLovelaceCardEditorWithFeatures } from "../base";
 import { mediaPlayerCardConfigStruct } from "../../../cards/media-player-card/struct";
 import { MediaPlayerEntity } from "../../../types/ha/entity";
 import { presets } from "./constants";
+import { mediaButtonControlDefaultMaps } from "../../../lib/controls/constants";
 
 @customElement("bold-media-player-card-editor")
 export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeatures<
@@ -164,6 +165,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
             .controls=${this._config?.controls ?? []}
             .hass=${this.hass}
             .stateObj=${stateObj}
+            .mediaButtonControlDefaultMap=${mediaButtonControlDefaultMaps.header}
             @value-changed=${this._handleControlsChanged}
           ></bc-controls-editor>
         </div>

@@ -1,6 +1,7 @@
 import {
   mediaButtonActionIconMap,
-  mediaButtonDefaultMap,
+  MediaButtonControlDefaultMap,
+  mediaButtonControlDefaultMaps,
   mediaToggleDefaultMap,
   mediaToggleKindActionMap,
   mediaToggleKindIconMap,
@@ -73,11 +74,23 @@ export function getControlKey(control: ControlConfig) {
   }
 }
 
+type ControlTranslationProps<T = ControlConfig> = {
+  controls?: T[];
+  stateObj?: HassEntityBase;
+  mediaButtonDefaultMap?: MediaButtonControlDefaultMap;
+};
+
+type ControlSingleTranslationProps<T = ControlConfig> = {
+  control: T;
+  stateObj?: HassEntityBase;
+  mediaButtonDefaultMap?: MediaButtonControlDefaultMap;
+} & Omit<ControlTranslationProps, "controls">;
+
 export function getMediaButtonControlDefaultConfig(
   action: MediaButtonAction,
-  stateObj?: MediaPlayerEntity,
+  defaultMap: MediaButtonControlDefaultMap = mediaButtonControlDefaultMaps.default,
 ): MediaButtonControlBaseConfig {
-  return mediaButtonDefaultMap[action](stateObj);
+  return defaultMap[action];
 }
 
 export function getMediaToggleControlDefaultConfig(
@@ -86,10 +99,13 @@ export function getMediaToggleControlDefaultConfig(
   return mediaToggleDefaultMap[kind];
 }
 
-function translateMediaButtonControl(
-  control: MediaButtonControlConfig,
-  stateObj?: HassEntityBase,
-): ConcreteMediaButtonControl | undefined {
+function translateMediaButtonControl({
+  control,
+  stateObj,
+  mediaButtonDefaultMap,
+}: ControlSingleTranslationProps<MediaButtonControlConfig>):
+  | ConcreteMediaButtonControl
+  | undefined {
   const mediaButtonActionAvailability = getMediaButtonActionAvailability(
     stateObj as MediaPlayerEntity,
   );
@@ -105,7 +121,7 @@ function translateMediaButtonControl(
   const config = {
     ...getMediaButtonControlDefaultConfig(
       control.action,
-      stateObj as MediaPlayerEntity,
+      mediaButtonDefaultMap,
     ),
     ...control,
   };
@@ -127,10 +143,10 @@ function translateMediaButtonControl(
   } as ConcreteMediaButtonControl;
 }
 
-function translateMediaToggleControl(
-  control: MediaToggleControlConfig,
-  stateObj?: HassEntityBase,
-) {
+function translateMediaToggleControl({
+  control,
+  ...props
+}: ControlSingleTranslationProps<MediaToggleControlConfig>) {
   const defaultConfig = getMediaToggleControlDefaultConfig(control.kind);
 
   return mediaToggleKindActionMap[control.kind].map((action) => {
@@ -139,14 +155,14 @@ function translateMediaToggleControl(
       action,
     );
 
-    return translateMediaButtonControl(
-      {
+    return translateMediaButtonControl({
+      control: {
         ...buttonConfig,
         when_unavailable:
           control.when_unavailable ?? defaultConfig.when_unavailable,
       },
-      stateObj,
-    );
+      ...props,
+    });
   });
 }
 
@@ -164,10 +180,8 @@ export function mediaToggleActionToMediaButtonControlConfig(
 export function translateControls({
   controls,
   stateObj,
-}: {
-  controls?: ControlConfig[];
-  stateObj?: HassEntityBase;
-}): ConcreteControl[] {
+  mediaButtonDefaultMap = mediaButtonControlDefaultMaps.default,
+}: ControlTranslationProps): ConcreteControl[] {
   if (!controls) {
     return [];
   }
@@ -176,9 +190,17 @@ export function translateControls({
     .flatMap((control) => {
       switch (control.type) {
         case ControlType.MEDIA_BUTTON:
-          return translateMediaButtonControl(control, stateObj);
+          return translateMediaButtonControl({
+            control,
+            stateObj,
+            mediaButtonDefaultMap,
+          });
         case ControlType.MEDIA_TOGGLE:
-          return translateMediaToggleControl(control, stateObj);
+          return translateMediaToggleControl({
+            control,
+            stateObj,
+            mediaButtonDefaultMap,
+          });
         case ControlType.MEDIA_POSITION:
           const supportsSeek = stateObj
             ? supportsFeature(

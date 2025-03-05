@@ -15,12 +15,16 @@ import {
   getMediaButtonControlDefaultConfig,
 } from "../../lib/controls/helpers";
 import { enumToOptions } from "../helpers";
+import { MediaButtonControlDefaultMap } from "../../lib/controls/constants";
 
 @customElement("bc-media-button-control-editor")
 export class MediaButtonControlEditor extends LitElement {
   @property({ attribute: false }) public control?: MediaButtonControlConfig;
   @property({ attribute: false }) public hass?: HomeAssistant;
   @property({ attribute: false }) public stateObj?: MediaPlayerEntity;
+
+  @property({ attribute: false })
+  public mediaButtonControlDefaultMap?: MediaButtonControlDefaultMap;
 
   protected _handleValueChanged(
     field: keyof MediaButtonControlConfig,
@@ -53,7 +57,7 @@ export class MediaButtonControlEditor extends LitElement {
 
     const defaultConfig = getMediaButtonControlDefaultConfig(
       this.control.action,
-      this.stateObj,
+      this.mediaButtonControlDefaultMap,
     );
 
     const allowShowAlways = (

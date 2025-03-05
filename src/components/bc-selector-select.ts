@@ -76,6 +76,7 @@ export class BcSelectSelector extends LitElement {
   }
 
   protected render() {
+    // TODO ha-selector-select might not be imported
     return html`
       <ha-selector-select
         .hass=${this.hass}

@@ -16,7 +16,10 @@ import {
   mediaToggleActionToMediaButtonControlConfig,
 } from "../../lib/controls/helpers";
 import { repeat } from "lit-html/directives/repeat";
-import { mediaToggleKindActionMap } from "../../lib/controls/constants";
+import {
+  MediaButtonControlDefaultMap,
+  mediaToggleKindActionMap,
+} from "../../lib/controls/constants";
 import { enumToOptions } from "../helpers";
 import { t } from "../../localization/i18n";
 
@@ -25,6 +28,9 @@ export class MediaToggleControlEditor extends LitElement {
   @property({ attribute: false }) public control?: MediaToggleControlConfig;
   @property({ attribute: false }) public hass?: HomeAssistant;
   @property({ attribute: false }) public stateObj?: MediaPlayerEntity;
+
+  @property({ attribute: false })
+  public mediaButtonControlDefaultMap?: MediaButtonControlDefaultMap;
 
   protected _handleValueChanged(
     field: keyof MediaToggleControlConfig,
@@ -88,7 +94,7 @@ export class MediaToggleControlEditor extends LitElement {
 
           const defaultButtonConfig = getMediaButtonControlDefaultConfig(
             action,
-            this.stateObj,
+            this.mediaButtonControlDefaultMap,
           );
 
           return html`

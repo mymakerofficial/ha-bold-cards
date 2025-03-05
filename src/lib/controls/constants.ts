@@ -12,60 +12,89 @@ import {
   ButtonVariant,
 } from "../../components/bc-button";
 
-export const mediaButtonDefaultMap: {
-  [action in MediaButtonAction]: (
-    stateObj?: MediaPlayerEntity,
-  ) => MediaButtonControlBaseConfig;
-} = {
-  [MediaButtonAction.TURN_ON]: () => ({
+export type MediaButtonControlDefaultMap = {
+  [action in MediaButtonAction]: MediaButtonControlBaseConfig;
+};
+
+const mediaButtonControlDefaultMapDefault: MediaButtonControlDefaultMap = {
+  [MediaButtonAction.TURN_ON]: {
     size: ButtonSize.MD,
     shape: ButtonShape.SQUARE,
     variant: ButtonVariant.PLAIN,
     when_unavailable: ElementWhenUnavailable.HIDE,
-  }),
-  [MediaButtonAction.TURN_OFF]: () => ({
+  },
+  [MediaButtonAction.TURN_OFF]: {
     size: ButtonSize.MD,
     shape: ButtonShape.SQUARE,
     variant: ButtonVariant.PLAIN,
     when_unavailable: ElementWhenUnavailable.HIDE,
-  }),
-  [MediaButtonAction.SHUFFLE_SET]: () => ({
+  },
+  [MediaButtonAction.SHUFFLE_SET]: {
     size: ButtonSize.SM,
     shape: ButtonShape.SQUARE,
     variant: ButtonVariant.PLAIN,
     when_unavailable: ElementWhenUnavailable.HIDE,
-  }),
-  [MediaButtonAction.MEDIA_PREVIOUS_TRACK]: () => ({
-    size: ButtonSize.LG,
+  },
+  [MediaButtonAction.MEDIA_PREVIOUS_TRACK]: {
+    size: ButtonSize.MD,
     shape: ButtonShape.SQUARE,
     variant: ButtonVariant.PLAIN,
     when_unavailable: ElementWhenUnavailable.DISABLE,
-  }),
-  [MediaButtonAction.MEDIA_PLAY]: () => ({
+  },
+  [MediaButtonAction.MEDIA_PLAY]: {
     size: ButtonSize.XL,
     shape: ButtonShape.ROUNDED,
     variant: ButtonVariant.FILLED,
     when_unavailable: ElementWhenUnavailable.DISABLE,
-  }),
-  [MediaButtonAction.MEDIA_PAUSE]: () => ({
+  },
+  [MediaButtonAction.MEDIA_PAUSE]: {
     size: ButtonSize.XL,
     shape: ButtonShape.WIDE,
     variant: ButtonVariant.FILLED,
     when_unavailable: ElementWhenUnavailable.DISABLE,
-  }),
-  [MediaButtonAction.MEDIA_NEXT_TRACK]: () => ({
-    size: ButtonSize.LG,
+  },
+  [MediaButtonAction.MEDIA_NEXT_TRACK]: {
+    size: ButtonSize.MD,
     shape: ButtonShape.SQUARE,
     variant: ButtonVariant.PLAIN,
     when_unavailable: ElementWhenUnavailable.DISABLE,
-  }),
-  [MediaButtonAction.REPEAT_SET]: () => ({
+  },
+  [MediaButtonAction.REPEAT_SET]: {
     size: ButtonSize.SM,
     shape: ButtonShape.SQUARE,
     variant: ButtonVariant.PLAIN,
     when_unavailable: ElementWhenUnavailable.HIDE,
-  }),
+  },
 };
+
+export const mediaButtonControlDefaultMaps = {
+  default: mediaButtonControlDefaultMapDefault,
+  header: {
+    ...mediaButtonControlDefaultMapDefault,
+    [MediaButtonAction.MEDIA_PLAY]: {
+      size: ButtonSize.MD,
+      shape: ButtonShape.ROUNDED,
+      variant: ButtonVariant.FILLED,
+      when_unavailable: ElementWhenUnavailable.DISABLE,
+    },
+    [MediaButtonAction.MEDIA_PAUSE]: {
+      size: ButtonSize.MD,
+      shape: ButtonShape.SQUARE,
+      variant: ButtonVariant.FILLED,
+      when_unavailable: ElementWhenUnavailable.DISABLE,
+    },
+  },
+  small: Object.fromEntries(
+    Object.entries(mediaButtonControlDefaultMapDefault).map(([key, value]) => [
+      key,
+      {
+        ...value,
+        size: ButtonSize.SM,
+        shape: ButtonShape.SQUARE,
+      },
+    ]),
+  ) as MediaButtonControlDefaultMap,
+} as const;
 
 export const mediaButtonActionIconMap: {
   [action in MediaButtonAction]: (stateObj?: MediaPlayerEntity) => string;

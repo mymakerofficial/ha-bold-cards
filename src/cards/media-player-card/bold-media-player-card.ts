@@ -24,6 +24,7 @@ import { translateControls } from "../../lib/controls/helpers";
 import { isMediaPlayerEntity, isStateActive } from "../../helpers/states";
 import { randomFrom } from "../../lib/helpers";
 import { presets } from "../../editors/cards/media-player-card/constants";
+import { mediaButtonControlDefaultMaps } from "../../lib/controls/constants";
 
 @customElement("bold-media-player-card")
 export class BoldMediaPlayerCard extends BoldCardWithFeatures<
@@ -175,6 +176,7 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
     const controls = translateControls({
       controls: this._config.controls,
       stateObj,
+      mediaButtonDefaultMap: mediaButtonControlDefaultMaps.header,
     });
 
     const renderBackgroundImage =

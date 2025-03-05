@@ -6,9 +6,8 @@ import { HomeAssistant } from "../../types/ha/lovelace";
 import { t } from "../../localization/i18n";
 import {
   ControlConfig,
-  MediaButtonControlConfig,
-  MediaButtonAction,
   ControlType,
+  MediaButtonAction,
   MediaToggleKind,
 } from "../../lib/controls/types";
 import {
@@ -19,7 +18,7 @@ import {
 import { HassEntityBase } from "home-assistant-js-websocket";
 import { editorBaseStyles } from "../styles";
 import { stopPropagation } from "../helpers";
-import { mediaToggleKindActionMap } from "../../lib/controls/constants";
+import { MediaButtonControlDefaultMap } from "../../lib/controls/constants";
 
 const seperator = Symbol("seperator");
 
@@ -29,6 +28,9 @@ export class ControlsEditor extends LitElement {
 
   @property({ attribute: false }) public hass?: HomeAssistant;
   @property({ attribute: false }) public stateObj?: HassEntityBase;
+
+  @property({ attribute: false })
+  public mediaButtonControlDefaultMap?: MediaButtonControlDefaultMap;
 
   constructor() {
     super();
@@ -125,6 +127,7 @@ export class ControlsEditor extends LitElement {
           .control=${control}
           .hass=${this.hass}
           .stateObj=${this.stateObj}
+          .mediaButtonControlDefaultMap=${this.mediaButtonControlDefaultMap}
           @value-changed=${(ev) => this._handleValueChanged(index, ev)}
         />`;
       case ControlType.MEDIA_TOGGLE:
@@ -132,6 +135,7 @@ export class ControlsEditor extends LitElement {
           .control=${control}
           .hass=${this.hass}
           .stateObj=${this.stateObj}
+          .mediaButtonControlDefaultMap=${this.mediaButtonControlDefaultMap}
           @value-changed=${(ev) => this._handleValueChanged(index, ev)}
         />`;
       default:

@@ -22,6 +22,7 @@ import { translateControls } from "../../lib/controls/helpers";
 import { LovelaceCardFeatureEditor } from "../../types/ha/lovelace";
 import { classMap } from "lit-html/directives/class-map";
 import { firstOf, lastOf } from "../../lib/helpers";
+import { mediaButtonControlDefaultMaps } from "../../lib/controls/constants";
 
 function getControls(
   config: FeatureConfigWithMaybeInternals<BoldMediaPlayerControlRowFeatureConfig>,
@@ -30,14 +31,14 @@ function getControls(
   return translateControls({
     controls: config.controls,
     stateObj,
+    mediaButtonDefaultMap: config.__custom_internals
+      ? undefined
+      : mediaButtonControlDefaultMaps.small,
   }).map((control) => {
     if (control.type === ControlType.MEDIA_BUTTON) {
       return {
         ...control,
-        size: limitButtonSize(
-          control.size ?? ButtonSize.MD,
-          config.__custom_internals ? ButtonSize.XL : ButtonSize.SM,
-        ),
+        size: config.__custom_internals ? control.size : ButtonSize.SM,
       };
     }
     return control;

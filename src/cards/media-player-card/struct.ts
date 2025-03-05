@@ -18,7 +18,8 @@ import { controlConfigStruct } from "../../lib/controls/structs";
 export const mediaPlayerCardConfigStruct = assign(
   baseLovelaceCardConfig,
   object({
-    entity: string(),
+    // not optional but needs to be marked as such to ensure the editor stays available when the entity is missing
+    entity: optional(string()),
     color_mode: enums(Object.values(MediaPlayerCardColorMode)),
     color: optional(string()),
     content_layout: enums(Object.values(MediaPlayerCardContentLayout)),
