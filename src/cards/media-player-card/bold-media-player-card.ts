@@ -43,7 +43,9 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
     const entity = getStubEntity(hass);
 
     return {
-      ...presets[1].config,
+      color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
+      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
+      ...presets[0].config,
       type: "custom:bold-media-player-card",
       entity: entity?.entity_id ?? "",
     };

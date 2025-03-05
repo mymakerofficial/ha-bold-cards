@@ -16,6 +16,7 @@ import {
   ControlType,
   ElementWhenUnavailable,
   MediaButtonAction,
+  MediaToggleKind,
 } from "../../lib/controls/types";
 import { translateControls } from "../../lib/controls/helpers";
 import { LovelaceCardFeatureEditor } from "../../types/ha/lovelace";
@@ -97,12 +98,8 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
           action: MediaButtonAction.MEDIA_PREVIOUS_TRACK,
         },
         {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PLAY,
-        },
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PAUSE,
+          type: ControlType.MEDIA_TOGGLE,
+          kind: MediaToggleKind.PLAY_PAUSE,
         },
         {
           type: ControlType.MEDIA_BUTTON,

@@ -2,6 +2,7 @@ import {
   ControlType,
   ElementWhenUnavailable,
   MediaButtonAction,
+  MediaToggleKind,
 } from "../../../lib/controls/types";
 import { ButtonShape, ButtonSize } from "../../../components/bc-button";
 import {
@@ -20,6 +21,7 @@ const positionOnly = {
       timestamp_position: MediaPositionTimestampPosition.BOTTOM,
     },
   ],
+  when_unavailable: ElementWhenUnavailable.HIDE,
 };
 
 const positionPlusButtons = {
@@ -49,72 +51,24 @@ const positionPlusButtons = {
       size: ButtonSize.SM,
     },
   ],
+  when_unavailable: ElementWhenUnavailable.HIDE,
 };
 
-export const presets = [
+export const presets: {
+  name: string;
+  config: Partial<MediaPlayerTileConfig>;
+}[] = [
   {
-    name: "Horizontal Default",
+    name: "Default",
     config: {
       controls: [
         {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.TURN_ON,
-          size: ButtonSize.MD,
+          type: ControlType.MEDIA_TOGGLE,
+          kind: MediaToggleKind.ON_OFF,
         },
         {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.TURN_OFF,
-          size: ButtonSize.MD,
-        },
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PLAY,
-          size: ButtonSize.MD,
-          shape: ButtonShape.ROUNDED,
-        },
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PAUSE,
-          size: ButtonSize.MD,
-          shape: ButtonShape.SQUARE,
-        },
-      ],
-      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
-      color: "primary",
-      show_title_bar: true,
-      grid_options: {
-        rows: 3,
-        columns: 12,
-      },
-      features: [positionPlusButtons],
-    },
-  },
-  {
-    name: "Horizontal Artwork Background",
-    config: {
-      controls: [
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.TURN_ON,
-          size: ButtonSize.MD,
-        },
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.TURN_OFF,
-          size: ButtonSize.MD,
-        },
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PLAY,
-          size: ButtonSize.MD,
-          shape: ButtonShape.ROUNDED,
-        },
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PAUSE,
-          size: ButtonSize.MD,
-          shape: ButtonShape.SQUARE,
+          type: ControlType.MEDIA_TOGGLE,
+          kind: MediaToggleKind.PLAY_PAUSE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -129,30 +83,40 @@ export const presets = [
     },
   },
   {
+    name: "Horizontal Vibrant",
+    config: {
+      controls: [
+        {
+          type: ControlType.MEDIA_TOGGLE,
+          kind: MediaToggleKind.ON_OFF,
+        },
+        {
+          type: ControlType.MEDIA_TOGGLE,
+          kind: MediaToggleKind.PLAY_PAUSE,
+        },
+      ],
+      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
+      color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
+      color: "primary",
+      show_title_bar: true,
+      grid_options: {
+        rows: 3,
+        columns: 12,
+      },
+      features: [positionPlusButtons],
+    },
+  },
+  {
     name: "Horizontal Artwork Background Space",
     config: {
       controls: [
         {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.TURN_ON,
-          size: ButtonSize.MD,
+          type: ControlType.MEDIA_TOGGLE,
+          kind: MediaToggleKind.ON_OFF,
         },
         {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.TURN_OFF,
-          size: ButtonSize.MD,
-        },
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PLAY,
-          size: ButtonSize.MD,
-          shape: ButtonShape.ROUNDED,
-        },
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PAUSE,
-          size: ButtonSize.MD,
-          shape: ButtonShape.SQUARE,
+          type: ControlType.MEDIA_TOGGLE,
+          kind: MediaToggleKind.PLAY_PAUSE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -171,17 +135,16 @@ export const presets = [
     config: {
       controls: [
         {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PLAY,
-          size: ButtonSize.MD,
-          shape: ButtonShape.ROUNDED,
-          when_unavailable: ElementWhenUnavailable.HIDE,
-        },
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PAUSE,
-          size: ButtonSize.MD,
-          shape: ButtonShape.SQUARE,
+          type: ControlType.MEDIA_TOGGLE,
+          kind: MediaToggleKind.PLAY_PAUSE,
+          [MediaButtonAction.MEDIA_PLAY]: {
+            size: ButtonSize.MD,
+            shape: ButtonShape.ROUNDED,
+          },
+          [MediaButtonAction.MEDIA_PAUSE]: {
+            size: ButtonSize.MD,
+            shape: ButtonShape.ROUNDED,
+          },
           when_unavailable: ElementWhenUnavailable.HIDE,
         },
       ],
@@ -201,26 +164,28 @@ export const presets = [
     config: {
       controls: [
         {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.TURN_ON,
-          size: ButtonSize.MD,
+          type: ControlType.MEDIA_TOGGLE,
+          kind: MediaToggleKind.ON_OFF,
+          [MediaButtonAction.TURN_OFF]: {
+            size: ButtonSize.MD,
+            shape: ButtonShape.ROUNDED,
+          },
+          [MediaButtonAction.TURN_ON]: {
+            size: ButtonSize.MD,
+            shape: ButtonShape.ROUNDED,
+          },
         },
         {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.TURN_OFF,
-          size: ButtonSize.MD,
-        },
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PLAY,
-          size: ButtonSize.MD,
-          shape: ButtonShape.ROUNDED,
-        },
-        {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PAUSE,
-          size: ButtonSize.MD,
-          shape: ButtonShape.SQUARE,
+          type: ControlType.MEDIA_TOGGLE,
+          kind: MediaToggleKind.PLAY_PAUSE,
+          [MediaButtonAction.MEDIA_PLAY]: {
+            size: ButtonSize.MD,
+            shape: ButtonShape.ROUNDED,
+          },
+          [MediaButtonAction.MEDIA_PAUSE]: {
+            size: ButtonSize.MD,
+            shape: ButtonShape.ROUNDED,
+          },
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -300,18 +265,12 @@ export const presets = [
     config: {
       controls: [
         {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PLAY,
-          size: ButtonSize.MD,
-          shape: ButtonShape.ROUNDED,
-          when_unavailable: ElementWhenUnavailable.HIDE,
+          type: ControlType.MEDIA_TOGGLE,
+          kind: MediaToggleKind.ON_OFF,
         },
         {
-          type: ControlType.MEDIA_BUTTON,
-          action: MediaButtonAction.MEDIA_PAUSE,
-          size: ButtonSize.MD,
-          shape: ButtonShape.SQUARE,
-          when_unavailable: ElementWhenUnavailable.HIDE,
+          type: ControlType.MEDIA_TOGGLE,
+          kind: MediaToggleKind.PLAY_PAUSE,
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
@@ -324,7 +283,4 @@ export const presets = [
       features: [],
     },
   },
-] satisfies {
-  name: string;
-  config: Partial<MediaPlayerTileConfig>;
-}[];
+];
