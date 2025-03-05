@@ -64,6 +64,13 @@ const i18n = new I18n(
           },
         },
       },
+      card: {
+        air_quality: {
+          label: {
+            air_quality: "Air Quality",
+          },
+        },
+      },
       editor: {
         common: {
           default_with_value: "Default (%{value})",
