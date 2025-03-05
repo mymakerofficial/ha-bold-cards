@@ -137,14 +137,6 @@ export const presets: {
         {
           type: ControlType.MEDIA_TOGGLE,
           kind: MediaToggleKind.PLAY_PAUSE,
-          [MediaButtonAction.MEDIA_PLAY]: {
-            size: ButtonSize.MD,
-            shape: ButtonShape.ROUNDED,
-          },
-          [MediaButtonAction.MEDIA_PAUSE]: {
-            size: ButtonSize.MD,
-            shape: ButtonShape.ROUNDED,
-          },
           when_unavailable: ElementWhenUnavailable.HIDE,
         },
       ],
@@ -166,26 +158,10 @@ export const presets: {
         {
           type: ControlType.MEDIA_TOGGLE,
           kind: MediaToggleKind.ON_OFF,
-          [MediaButtonAction.TURN_OFF]: {
-            size: ButtonSize.MD,
-            shape: ButtonShape.ROUNDED,
-          },
-          [MediaButtonAction.TURN_ON]: {
-            size: ButtonSize.MD,
-            shape: ButtonShape.ROUNDED,
-          },
         },
         {
           type: ControlType.MEDIA_TOGGLE,
           kind: MediaToggleKind.PLAY_PAUSE,
-          [MediaButtonAction.MEDIA_PLAY]: {
-            size: ButtonSize.MD,
-            shape: ButtonShape.ROUNDED,
-          },
-          [MediaButtonAction.MEDIA_PAUSE]: {
-            size: ButtonSize.MD,
-            shape: ButtonShape.ROUNDED,
-          },
         },
       ],
       content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
