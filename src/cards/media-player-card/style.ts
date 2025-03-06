@@ -116,7 +116,7 @@ export const mediaPlayerCardStyles = css`
     );
   }
 
-  ha-card.vertical .content {
+  .content[data-layout="vertical"] {
     min-height: calc(
       var(--row-height) * 5 + var(--row-gap) * 4 - var(--card-padding) * 2
     );
@@ -149,7 +149,15 @@ export const mediaPlayerCardStyles = css`
     pointer-events: none;
   }
 
-  ha-card.vertical .header {
+  .header[data-align="center"] {
+    justify-content: center;
+  }
+
+  .header[data-align="right"] {
+    flex-direction: row-reverse;
+  }
+
+  .content[data-layout="vertical"] .header {
     padding-top: var(--card-padding);
     flex-direction: column;
     justify-content: space-between;
@@ -181,6 +189,12 @@ export const mediaPlayerCardStyles = css`
     min-height: 52px;
   }
 
+  .content[data-layout="vertical"] .media-info {
+    flex: 0;
+    width: 100%;
+    gap: 8px;
+  }
+
   .media-info * {
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -199,19 +213,20 @@ export const mediaPlayerCardStyles = css`
     opacity: 0.9;
   }
 
-  ha-card.vertical .media-info {
-    flex: 0;
-    width: 100%;
+  .header[data-align="center"] .media-info {
     align-items: center;
-    gap: 8px;
   }
 
-  ha-card.vertical .media-info .primary {
+  .header[data-align="right"] .media-info {
+    text-align: right;
+  }
+
+  .content[data-layout="vertical"] .media-info .primary {
     font-size: 1.4rem;
     font-weight: 400;
   }
 
-  ha-card.vertical .media-info .secondary {
+  .content[data-layout="vertical"] .media-info .secondary {
     font-size: 0.9rem;
     font-weight: 400;
   }

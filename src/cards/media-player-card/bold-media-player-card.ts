@@ -180,17 +180,14 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
     const inlineFeatures = this._getRenderingInlineFeatures();
     const bottomFeatures = this._getRenderingBottomFeatures();
 
+    // TODO inline feature moves below media info when photo position is top_center
+
     return html`
       <ha-card
         style=${styleMap({
           "--tile-color": this._foregroundColorCSS,
           "--ha-card-background": this._backgroundColorCSS,
           color: this._textColorCSS,
-        })}
-        class=${classMap({
-          vertical:
-            this._config.picture_position ===
-            MediaPlayerCardPicturePosition.TOP_CENTER,
         })}
       >
         <div
@@ -213,7 +210,13 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
           <ha-ripple></ha-ripple>
         </div>
         <div class="container">
-          <div class="content">
+          <div
+            class="content"
+            data-layout=${this._config.picture_position ===
+            MediaPlayerCardPicturePosition.TOP_CENTER
+              ? "vertical"
+              : "horizontal"}
+          >
             ${this._config.show_title_bar
               ? html`<div class="title-bar">
                   <div class="player-title">
@@ -225,7 +228,7 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
                   </div>
                 </div>`
               : nothing}
-            <div class="header">
+            <div class="header" data-align=${this._config.info_alignment}>
               ${renderCoverImage
                 ? html`<div class="image"><img src=${imageUrl} alt="" /></div>`
                 : nothing}

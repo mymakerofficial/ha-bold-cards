@@ -71,11 +71,6 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
                 mode: "box",
                 options: enumToOptions(MediaPlayerCardAlignment, {
                   labelScope: "common.media_player_card_alignment",
-                  disabled: {
-                    [MediaPlayerCardAlignment.CENTER]:
-                      this._config.picture_position ===
-                      MediaPlayerCardPicturePosition.INLINE,
-                  },
                 }),
               },
             },
@@ -93,11 +88,6 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
                     src_dark: `/static/images/form/tile_features_position_${value}_dark.svg`,
                     flip_rtl: true,
                   }),
-                  disabled: {
-                    [CardFeaturePosition.INLINE]:
-                      this._config.info_alignment ===
-                      MediaPlayerCardAlignment.CENTER,
-                  },
                 }),
               },
             },
