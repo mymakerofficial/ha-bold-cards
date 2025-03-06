@@ -18,7 +18,7 @@ import {
 import { HassEntityBase } from "home-assistant-js-websocket";
 import { editorBaseStyles } from "../styles";
 import { stopPropagation } from "../helpers";
-import { MediaButtonControlDefaultMap } from "../../lib/controls/constants";
+import { FeatureInternals } from "../../types/ha/feature";
 
 const seperator = Symbol("seperator");
 
@@ -30,7 +30,7 @@ export class ControlsEditor extends LitElement {
   @property({ attribute: false }) public stateObj?: HassEntityBase;
 
   @property({ attribute: false })
-  public mediaButtonControlDefaultMap?: MediaButtonControlDefaultMap;
+  public internals?: FeatureInternals;
 
   constructor() {
     super();
@@ -128,7 +128,7 @@ export class ControlsEditor extends LitElement {
           .control=${control}
           .hass=${this.hass}
           .stateObj=${this.stateObj}
-          .mediaButtonControlDefaultMap=${this.mediaButtonControlDefaultMap}
+          .internals=${this.internals}
           @value-changed=${(ev) => this._handleValueChanged(index, ev)}
         />`;
       case ControlType.MEDIA_TOGGLE:
@@ -136,7 +136,7 @@ export class ControlsEditor extends LitElement {
           .control=${control}
           .hass=${this.hass}
           .stateObj=${this.stateObj}
-          .mediaButtonControlDefaultMap=${this.mediaButtonControlDefaultMap}
+          .internals=${this.internals}
           @value-changed=${(ev) => this._handleValueChanged(index, ev)}
         />`;
       case ControlType.MEDIA_POSITION:

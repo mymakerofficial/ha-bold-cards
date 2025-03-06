@@ -2,11 +2,7 @@ import { customElement } from "lit/decorators";
 import { css, html, nothing } from "lit";
 import { BoldMediaPlayerControlRowFeatureConfig } from "./types";
 import { MediaPlayerEntity } from "../../types/ha/entity";
-import {
-  ButtonSize,
-  ButtonVariant,
-  limitButtonSize,
-} from "../../components/bc-button";
+import { ButtonSize, ButtonVariant } from "../../components/bc-button";
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
 import { styleMap } from "lit-html/directives/style-map";
@@ -22,7 +18,7 @@ import { translateControls } from "../../lib/controls/helpers";
 import { LovelaceCardFeatureEditor } from "../../types/ha/lovelace";
 import { classMap } from "lit-html/directives/class-map";
 import { firstOf, lastOf } from "../../lib/helpers";
-import { mediaButtonControlDefaultMaps } from "../../lib/controls/constants";
+import { getDefaultConfigTypeFromFeatureInternals } from "../../lib/features/helpers";
 
 function getControls(
   config: FeatureConfigWithMaybeInternals<BoldMediaPlayerControlRowFeatureConfig>,
@@ -31,9 +27,9 @@ function getControls(
   return translateControls({
     controls: config.controls,
     stateObj,
-    mediaButtonDefaultMap: config.__custom_internals
-      ? undefined
-      : mediaButtonControlDefaultMaps.small,
+    defaultType: getDefaultConfigTypeFromFeatureInternals(
+      config.__custom_internals,
+    ),
   }).map((control) => {
     if (control.type === ControlType.MEDIA_BUTTON) {
       return {

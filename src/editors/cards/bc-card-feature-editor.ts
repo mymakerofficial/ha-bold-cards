@@ -1,6 +1,9 @@
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators";
-import { HomeAssistant } from "../../types/ha/lovelace";
+import {
+  HomeAssistant,
+  LovelaceCardFeatureEditorContext,
+} from "../../types/ha/lovelace";
 import { HassEntity } from "home-assistant-js-websocket";
 import {
   CustomCardFeatureEntry,
@@ -10,6 +13,8 @@ import { repeat } from "lit-html/directives/repeat";
 import { mdiDelete, mdiDrag, mdiPencil } from "@mdi/js";
 import { editorBaseStyles } from "../styles";
 import { fireEvent } from "custom-card-helpers";
+import { getCardFeatureInternals } from "../../cards/features";
+import { LovelaceCardConfigWithFeatures } from "../../types/card";
 
 function getCustomFeatureEntries() {
   return (
@@ -28,7 +33,12 @@ export class BoldCardFeatureEditor extends LitElement {
 
   @property({ attribute: false }) public stateObj?: HassEntity;
 
-  @property({ attribute: false }) public features?: LovelaceCardFeatureConfig[];
+  @property({ attribute: false })
+  public config?: LovelaceCardConfigWithFeatures;
+
+  protected get _features(): LovelaceCardFeatureConfig[] {
+    return this.config?.features ?? [];
+  }
 
   private _getFeatureTypeLabel(type: string) {
     if (isCustomType(type)) {
@@ -52,7 +62,7 @@ export class BoldCardFeatureEditor extends LitElement {
         >
           <div class="items">
             ${repeat(
-              this.features ?? [],
+              this._features ?? [],
               (feature, index) => feature.type + index,
               (feature, index) =>
                 html` <div class="item">
@@ -90,22 +100,31 @@ export class BoldCardFeatureEditor extends LitElement {
   }
 
   private _editFeature(index: number) {
-    if (!this.features) {
+    if (!this.config) {
       return;
     }
 
-    const config = this.features[index];
+    const features = this._features;
+
+    if (!features) {
+      return;
+    }
+
+    const config = features[index];
+
+    const context: LovelaceCardFeatureEditorContext = {
+      entity_id: this.stateObj?.entity_id,
+      internals: getCardFeatureInternals({
+        config: this.config,
+        featureIndex: index,
+        feature: config,
+      }),
+    };
 
     fireEvent(this, "edit-sub-element" as any, {
-      config: config,
+      config,
       saveConfig: (newConfig) => this._handleFeatureSaved(index, newConfig),
-      context: {
-        entity_id: this.stateObj?.entity_id,
-        internals: {
-          // TODO actually compute this
-          parent_card_type: "custom:bold-media-player-card",
-        },
-      },
+      context,
       type: "feature",
     });
   }
@@ -114,11 +133,7 @@ export class BoldCardFeatureEditor extends LitElement {
     index: number,
     newConfig: LovelaceCardFeatureConfig,
   ) {
-    if (!this.features) {
-      return;
-    }
-
-    const features = [...this.features!];
+    const features = [...this._features];
     features[index] = newConfig;
 
     this.dispatchEvent(
@@ -133,11 +148,7 @@ export class BoldCardFeatureEditor extends LitElement {
   private _handleFeatureMoved(ev: CustomEvent) {
     ev.stopPropagation();
 
-    if (!this.features) {
-      return;
-    }
-
-    const features = [...this.features];
+    const features = [...this._features];
     const [movedFeature] = features.splice(ev.detail.oldIndex, 1);
     features.splice(ev.detail.newIndex, 0, movedFeature);
 

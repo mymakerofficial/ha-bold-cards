@@ -11,7 +11,6 @@ import {
   MediaButtonControlConfig,
 } from "../../../lib/controls/types";
 import { enumToOptions } from "../../helpers";
-import { mediaButtonControlDefaultMaps } from "../../../lib/controls/constants";
 
 @customElement("bold-media-player-control-row-feature-editor")
 export class BoldMediaPlayerControlRowFeatureEditor extends BoldLovelaceCardFeatureEditor<BoldMediaPlayerControlRowFeatureConfig> {
@@ -47,9 +46,7 @@ export class BoldMediaPlayerControlRowFeatureEditor extends BoldLovelaceCardFeat
           .controls=${this._config?.controls ?? []}
           .hass=${this.hass}
           .stateObj=${this._stateObj}
-          .mediaButtonControlDefaultMap=${!!this.context?.internals
-            ? undefined
-            : mediaButtonControlDefaultMaps.small}
+          .internals=${this._internals}
           @value-changed=${this._handleControlsChanged}
         ></bc-controls-editor>
       </div>

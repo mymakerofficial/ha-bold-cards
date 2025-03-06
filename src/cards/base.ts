@@ -7,12 +7,17 @@ import {
 import { property, state } from "lit/decorators";
 import {
   CustomCardEntry,
+  CustomCardEntryWithInternals,
+  GetFeatureInternalsContext,
   LovelaceCardConfigWithEntity,
   LovelaceCardConfigWithFeatures,
 } from "../types/card";
 import { getFeatureDoesRender, getFeatureSize } from "../features/size";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
-import { FeatureConfigWithMaybeInternals } from "../types/ha/feature";
+import {
+  FeatureConfigWithMaybeInternals,
+  FeatureInternals,
+} from "../types/ha/feature";
 
 export abstract class BoldLovelaceCard<TConfig extends LovelaceCardConfig>
   extends LitElement
@@ -59,6 +64,10 @@ export abstract class BoldCardWithFeatures<
   TConfig extends LovelaceCardConfigWithFeatures,
   TStateObj extends HassEntityBase = HassEntityBase,
 > extends BoldCardWithEntity<TConfig, TStateObj> {
+  protected abstract _getFeatureInternals(
+    context: GetFeatureInternalsContext,
+  ): FeatureInternals;
+
   public setConfig(config: TConfig): void {
     if (!config) {
       throw new Error("Invalid configuration");
@@ -68,12 +77,13 @@ export abstract class BoldCardWithFeatures<
       ...config,
       // inject custom internals into features config
       //  this is the only way to pass information and allows features to be more flexible
-      features: config.features?.map((feature) => ({
+      features: config.features?.map((feature, featureIndex) => ({
         ...feature,
-        __custom_internals: {
-          parent_card_type: config.type,
-          is_inlined: false,
-        },
+        __custom_internals: this._getFeatureInternals({
+          config,
+          feature,
+          featureIndex,
+        }),
       })),
     });
   }
@@ -135,31 +145,24 @@ export abstract class BoldCardWithFeatures<
   public getCardSize(): number | Promise<number> {
     return this._getSizeWithoutFeatures() + this._getRenderedFeatureSize();
   }
+
+  static registerCustomCard<TConfig = LovelaceCardConfig>(
+    entry: CustomCardEntryWithInternals<TConfig>,
+  ) {
+    super.registerCustomCard(entry);
+
+    (window as any).__customCardInternalsMap =
+      (window as any).__customCardInternalsMap || new Map();
+    (window as any).__customCardInternalsMap.set(`custom:${entry.type}`, {
+      getFeatureInternals: entry.getFeatureInternals,
+    });
+  }
 }
 
 export abstract class BoldCardWithInlineFeatures<
   TConfig extends LovelaceCardConfigWithFeatures,
   TStateObj extends HassEntityBase = HassEntityBase,
 > extends BoldCardWithFeatures<TConfig, TStateObj> {
-  public setConfig(config: TConfig): void {
-    if (!config) {
-      throw new Error("Invalid configuration");
-    }
-
-    super.setConfig({
-      ...config,
-      // inject custom internals into features config
-      //  this is the only way to pass information and allows features to be more flexible
-      features: config.features?.map((feature, index) => ({
-        ...feature,
-        __custom_internals: {
-          parent_card_type: config.type,
-          is_inlined: index === 0 && this._getShouldRenderInlineFeature(),
-        },
-      })),
-    });
-  }
-
   protected abstract _getShouldRenderInlineFeature(): boolean;
 
   protected get _inlineFeature(): FeatureConfigWithMaybeInternals | undefined {

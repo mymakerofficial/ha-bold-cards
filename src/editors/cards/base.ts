@@ -56,7 +56,7 @@ export abstract class BoldLovelaceCardEditorWithFeatures<
           <bc-card-features-editor
             .hass=${this.hass}
             .stateObj=${this._stateObj}
-            .features=${this._config.features ?? []}
+            .config=${this._config}
             @value-changed=${this._handleFeaturesChanged}
           ></bc-card-features-editor>
         </div>
@@ -78,7 +78,7 @@ export abstract class BoldLovelaceCardEditorWithFeatures<
     return html`<bc-card-control-features-editor
       .hass=${this.hass}
       .stateObj=${this._stateObj}
-      .features=${this._config.features ?? []}
+      .config=${this._config}
       @value-changed=${this._handleFeaturesChanged}
     ></bc-card-control-features-editor>`;
   }

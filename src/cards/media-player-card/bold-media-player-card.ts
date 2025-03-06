@@ -24,6 +24,19 @@ import { isMediaPlayerEntity, isStateActive } from "../../helpers/states";
 import { randomFrom } from "../../lib/helpers";
 import { presets } from "../../editors/cards/media-player-card/constants";
 import { CardFeaturePosition } from "../types";
+import { GetFeatureInternalsContext } from "../../types/card";
+import { FeatureInternals } from "../../types/ha/feature";
+
+function getFeatureInternals(
+  context: GetFeatureInternalsContext,
+): FeatureInternals {
+  return {
+    parent_card_type: context.config?.type ?? "",
+    is_inlined:
+      context.featureIndex === 0 &&
+      context.config?.feature_position === CardFeaturePosition.INLINE,
+  };
+}
 
 @customElement("bold-media-player-card")
 export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
@@ -66,6 +79,12 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
   @state() private _backgroundColor?: string;
 
   @state() private _hasLoadedImage = false;
+
+  protected _getFeatureInternals(
+    context: GetFeatureInternalsContext,
+  ): FeatureInternals {
+    return getFeatureInternals(context);
+  }
 
   protected _getShouldRenderInlineFeature(): boolean {
     return this._config?.feature_position === CardFeaturePosition.INLINE;
@@ -310,6 +329,7 @@ BoldMediaPlayerCard.registerCustomCard({
   name: "Bold Media Player",
   description: "A media player card that's bold and beautiful.",
   preview: true,
+  getFeatureInternals,
 });
 
 function getStubEntity(hass: HomeAssistant) {

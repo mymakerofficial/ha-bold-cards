@@ -11,6 +11,7 @@ import {
   ButtonSize,
   ButtonVariant,
 } from "../../components/bc-button";
+import { DefaultConfigMap, DefaultConfigType } from "../types";
 
 export type MediaButtonControlDefaultMap = {
   [action in MediaButtonAction]: MediaButtonControlBaseConfig;
@@ -67,34 +68,37 @@ const mediaButtonControlDefaultMapDefault: MediaButtonControlDefaultMap = {
   },
 };
 
-export const mediaButtonControlDefaultMaps = {
-  default: mediaButtonControlDefaultMapDefault,
-  header: {
-    ...mediaButtonControlDefaultMapDefault,
-    [MediaButtonAction.MEDIA_PLAY]: {
-      size: ButtonSize.MD,
-      shape: ButtonShape.ROUNDED,
-      variant: ButtonVariant.FILLED,
-      when_unavailable: ElementWhenUnavailable.DISABLE,
-    },
-    [MediaButtonAction.MEDIA_PAUSE]: {
-      size: ButtonSize.MD,
-      shape: ButtonShape.SQUARE,
-      variant: ButtonVariant.FILLED,
-      when_unavailable: ElementWhenUnavailable.DISABLE,
-    },
-  },
-  small: Object.fromEntries(
-    Object.entries(mediaButtonControlDefaultMapDefault).map(([key, value]) => [
-      key,
-      {
-        ...value,
-        size: ButtonSize.SM,
-        shape: ButtonShape.SQUARE,
+export const mediaButtonControlDefaultMaps: DefaultConfigMap<MediaButtonControlDefaultMap> =
+  {
+    [DefaultConfigType.DEFAULT]: mediaButtonControlDefaultMapDefault,
+    [DefaultConfigType.INLINED]: {
+      ...mediaButtonControlDefaultMapDefault,
+      [MediaButtonAction.MEDIA_PLAY]: {
+        size: ButtonSize.MD,
+        shape: ButtonShape.ROUNDED,
+        variant: ButtonVariant.FILLED,
+        when_unavailable: ElementWhenUnavailable.DISABLE,
       },
-    ]),
-  ) as MediaButtonControlDefaultMap,
-} as const;
+      [MediaButtonAction.MEDIA_PAUSE]: {
+        size: ButtonSize.MD,
+        shape: ButtonShape.SQUARE,
+        variant: ButtonVariant.FILLED,
+        when_unavailable: ElementWhenUnavailable.DISABLE,
+      },
+    },
+    [DefaultConfigType.EXTERNAL]: Object.fromEntries(
+      Object.entries(mediaButtonControlDefaultMapDefault).map(
+        ([key, value]) => [
+          key,
+          {
+            ...value,
+            size: ButtonSize.SM,
+            shape: ButtonShape.SQUARE,
+          },
+        ],
+      ),
+    ) as MediaButtonControlDefaultMap,
+  } as const;
 
 export const mediaButtonActionIconMap: {
   [action in MediaButtonAction]: (stateObj?: MediaPlayerEntity) => string;

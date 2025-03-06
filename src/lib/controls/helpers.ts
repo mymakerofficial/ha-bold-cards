@@ -1,6 +1,5 @@
 import {
   mediaButtonActionIconMap,
-  MediaButtonControlDefaultMap,
   mediaButtonControlDefaultMaps,
   mediaToggleDefaultMap,
   mediaToggleKindActionMap,
@@ -26,6 +25,7 @@ import {
   MediaPlayerEntityFeature,
 } from "../../helpers/media-player";
 import { supportsFeature } from "../../helpers/supports-feature";
+import { DefaultConfigType } from "../types";
 
 export function getControlIcon(
   control: ControlConfig,
@@ -77,20 +77,20 @@ export function getControlKey(control: ControlConfig) {
 type ControlTranslationProps<T = ControlConfig> = {
   controls?: T[];
   stateObj?: HassEntityBase;
-  mediaButtonDefaultMap?: MediaButtonControlDefaultMap;
+  defaultType?: DefaultConfigType;
 };
 
 type ControlSingleTranslationProps<T = ControlConfig> = {
   control: T;
   stateObj?: HassEntityBase;
-  mediaButtonDefaultMap?: MediaButtonControlDefaultMap;
+  defaultType?: DefaultConfigType;
 } & Omit<ControlTranslationProps, "controls">;
 
 export function getMediaButtonControlDefaultConfig(
   action: MediaButtonAction,
-  defaultMap: MediaButtonControlDefaultMap = mediaButtonControlDefaultMaps.default,
+  defaultType: DefaultConfigType,
 ): MediaButtonControlBaseConfig {
-  return defaultMap[action];
+  return mediaButtonControlDefaultMaps[defaultType][action];
 }
 
 export function getMediaToggleControlDefaultConfig(
@@ -102,7 +102,7 @@ export function getMediaToggleControlDefaultConfig(
 function translateMediaButtonControl({
   control,
   stateObj,
-  mediaButtonDefaultMap,
+  defaultType = DefaultConfigType.DEFAULT,
 }: ControlSingleTranslationProps<MediaButtonControlConfig>):
   | ConcreteMediaButtonControl
   | undefined {
@@ -119,10 +119,7 @@ function translateMediaButtonControl({
   }
 
   const config = {
-    ...getMediaButtonControlDefaultConfig(
-      control.action,
-      mediaButtonDefaultMap,
-    ),
+    ...getMediaButtonControlDefaultConfig(control.action, defaultType),
     ...control,
   };
 
@@ -180,7 +177,7 @@ export function mediaToggleActionToMediaButtonControlConfig(
 export function translateControls({
   controls,
   stateObj,
-  mediaButtonDefaultMap = mediaButtonControlDefaultMaps.default,
+  defaultType = DefaultConfigType.DEFAULT,
 }: ControlTranslationProps): ConcreteControl[] {
   if (!controls) {
     return [];
@@ -193,13 +190,13 @@ export function translateControls({
           return translateMediaButtonControl({
             control,
             stateObj,
-            mediaButtonDefaultMap,
+            defaultType,
           });
         case ControlType.MEDIA_TOGGLE:
           return translateMediaToggleControl({
             control,
             stateObj,
-            mediaButtonDefaultMap,
+            defaultType,
           });
         case ControlType.MEDIA_POSITION:
           const supportsSeek = stateObj

@@ -7,6 +7,8 @@ import { repeat } from "lit-html/directives/repeat";
 import { mdiButtonPointer } from "@mdi/js";
 import { editorBaseStyles } from "../styles";
 import { t } from "../../localization/i18n";
+import { LovelaceCardConfigWithFeatures } from "../../types/card";
+import { getCardFeatureInternals } from "../../cards/features";
 
 @customElement("bc-card-control-features-editor")
 export class BoldCardControlFeaturesEditor extends LitElement {
@@ -14,18 +16,25 @@ export class BoldCardControlFeaturesEditor extends LitElement {
 
   @property({ attribute: false }) public stateObj?: HassEntity;
 
-  @property({ attribute: false }) public features?: LovelaceCardFeatureConfig[];
+  @property({ attribute: false })
+  public config?: LovelaceCardConfigWithFeatures;
+
+  protected get _features(): LovelaceCardFeatureConfig[] {
+    return this.config?.features ?? [];
+  }
 
   constructor() {
     super();
   }
 
   protected render() {
+    const features = this._features;
+
     if (
       !this.hass ||
       !this.stateObj ||
-      !this.features ||
-      !this.features.some(
+      !features ||
+      !features.some(
         (feature) => feature.type === "custom:bold-media-player-control-row",
       )
     ) {
@@ -35,12 +44,18 @@ export class BoldCardControlFeaturesEditor extends LitElement {
     return html`
       <div class="container">
         ${repeat(
-          this.features ?? [],
+          features,
           (feature, index) => feature.type + index,
           (feature, index) => {
             if (feature.type !== "custom:bold-media-player-control-row") {
               return nothing;
             }
+
+            const internals = getCardFeatureInternals({
+              config: this.config,
+              feature,
+              featureIndex: index,
+            });
 
             return html` <div class="item">
               <ha-expansion-panel outlined>
@@ -57,6 +72,7 @@ export class BoldCardControlFeaturesEditor extends LitElement {
                     .hass=${this.hass}
                     .stateObj=${this.stateObj}
                     .controls=${feature.controls}
+                    .internals=${internals}
                     @value-changed=${(ev) =>
                       this._handleControlsChanged(index, ev)}
                   ></bc-controls-editor>
@@ -72,11 +88,11 @@ export class BoldCardControlFeaturesEditor extends LitElement {
   private _handleControlsChanged(featureIndex: number, ev: CustomEvent) {
     ev.stopPropagation();
 
-    if (!this.features || !this.hass) {
+    if (!this.hass) {
       return;
     }
 
-    const features = [...this.features];
+    const features = [...this._features];
     features[featureIndex] = {
       ...features[featureIndex],
       // @ts-ignore

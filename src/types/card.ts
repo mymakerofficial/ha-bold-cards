@@ -1,5 +1,9 @@
 import { LovelaceCardConfig } from "./ha/lovelace";
-import { FeatureConfigWithMaybeInternals } from "./ha/feature";
+import {
+  FeatureConfigWithMaybeInternals,
+  FeatureInternals,
+  LovelaceCardFeatureConfig,
+} from "./ha/feature";
 
 export interface CustomCardEntry {
   type: string;
@@ -8,6 +12,22 @@ export interface CustomCardEntry {
   preview?: boolean;
   documentationURL?: string;
 }
+
+export interface GetFeatureInternalsContext<TConfig = LovelaceCardConfig> {
+  config?: TConfig;
+  feature: LovelaceCardFeatureConfig;
+  featureIndex: number;
+}
+
+export interface CustomCardInternalsEntry<TConfig = LovelaceCardConfig> {
+  getFeatureInternals?: (
+    context: GetFeatureInternalsContext<TConfig>,
+  ) => FeatureInternals;
+}
+
+export interface CustomCardEntryWithInternals<TConfig = LovelaceCardConfig>
+  extends CustomCardEntry,
+    CustomCardInternalsEntry<TConfig> {}
 
 export type LovelaceCardConfigWithEntity<TConfig = LovelaceCardConfig> =
   TConfig & {

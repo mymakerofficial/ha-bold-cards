@@ -16,12 +16,11 @@ import {
   mediaToggleActionToMediaButtonControlConfig,
 } from "../../lib/controls/helpers";
 import { repeat } from "lit-html/directives/repeat";
-import {
-  MediaButtonControlDefaultMap,
-  mediaToggleKindActionMap,
-} from "../../lib/controls/constants";
+import { mediaToggleKindActionMap } from "../../lib/controls/constants";
 import { enumToOptions } from "../helpers";
 import { t } from "../../localization/i18n";
+import { FeatureInternals } from "../../types/ha/feature";
+import { getDefaultConfigTypeFromFeatureInternals } from "../../lib/features/helpers";
 
 @customElement("bc-media-toggle-control-editor")
 export class MediaToggleControlEditor extends LitElement {
@@ -30,7 +29,7 @@ export class MediaToggleControlEditor extends LitElement {
   @property({ attribute: false }) public stateObj?: MediaPlayerEntity;
 
   @property({ attribute: false })
-  public mediaButtonControlDefaultMap?: MediaButtonControlDefaultMap;
+  public internals?: FeatureInternals;
 
   protected _handleValueChanged(
     field: keyof MediaToggleControlConfig,
@@ -94,7 +93,7 @@ export class MediaToggleControlEditor extends LitElement {
 
           const defaultButtonConfig = getMediaButtonControlDefaultConfig(
             action,
-            this.mediaButtonControlDefaultMap,
+            getDefaultConfigTypeFromFeatureInternals(this.internals),
           );
 
           return html`
