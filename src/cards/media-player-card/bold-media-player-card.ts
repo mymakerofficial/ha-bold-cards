@@ -258,7 +258,9 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
                 style=${styleMap({
                   "--feature-height":
                     "calc(var(--row-height) + var(--row-gap) - var(--card-padding))",
-                  "--feature-padding": "calc(var(--card-padding))",
+                  "--feature-gap": "var(--card-padding)",
+                  padding: "0px var(--card-padding) var(--card-padding)",
+                  gap: "var(--feature-gap)",
                 })}
               ></hui-card-features>`
             : nothing}

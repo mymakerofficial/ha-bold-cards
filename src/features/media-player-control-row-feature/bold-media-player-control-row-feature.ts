@@ -161,7 +161,7 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
         align-items: center;
         justify-content: center;
         height: calc(
-          var(--feature-height) * var(--feature-size) + var(--feature-padding) *
+          var(--feature-height) * var(--feature-size) + var(--feature-gap) *
             (var(--feature-size) - 1)
         );
       }
