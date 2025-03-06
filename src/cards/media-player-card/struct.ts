@@ -10,10 +10,11 @@ import {
 } from "superstruct";
 import { baseLovelaceCardConfig } from "../../helpers/ha/base-card-struct";
 import {
+  MediaPlayerCardAlignment,
   MediaPlayerCardColorMode,
-  MediaPlayerCardContentLayout,
+  MediaPlayerCardPicturePosition,
 } from "./types";
-import { controlConfigStruct } from "../../lib/controls/structs";
+import { CardFeaturePosition } from "../types";
 
 export const mediaPlayerCardConfigStruct = assign(
   baseLovelaceCardConfig,
@@ -22,8 +23,9 @@ export const mediaPlayerCardConfigStruct = assign(
     entity: optional(string()),
     color_mode: enums(Object.values(MediaPlayerCardColorMode)),
     color: optional(string()),
-    content_layout: enums(Object.values(MediaPlayerCardContentLayout)),
-    controls: optional(array(controlConfigStruct)),
+    picture_position: enums(Object.values(MediaPlayerCardPicturePosition)),
+    info_alignment: enums(Object.values(MediaPlayerCardAlignment)),
+    feature_position: enums(Object.values(CardFeaturePosition)),
     show_title_bar: optional(boolean()),
     features: optional(array(any())),
   }),

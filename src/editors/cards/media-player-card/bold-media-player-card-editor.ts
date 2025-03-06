@@ -1,18 +1,13 @@
 import { css, CSSResultGroup, html, nothing } from "lit";
 import { fireEvent } from "custom-card-helpers";
 import {
+  MediaPlayerCardAlignment,
   MediaPlayerCardColorMode,
-  MediaPlayerCardContentLayout,
+  MediaPlayerCardPicturePosition,
   MediaPlayerTileConfig,
 } from "../../../cards/media-player-card/types";
 import { customElement } from "lit/decorators";
-import {
-  mdiButtonPointer,
-  mdiPageLayoutBody,
-  mdiPageLayoutHeader,
-  mdiPalette,
-  mdiStar,
-} from "@mdi/js";
+import { mdiStar, mdiTextShort } from "@mdi/js";
 import { t } from "../../../localization/i18n";
 import { MediaButtonControlConfig } from "../../../lib/controls/types";
 import { editorBaseStyles } from "../../styles";
@@ -20,7 +15,8 @@ import { BoldLovelaceCardEditorWithFeatures } from "../base";
 import { mediaPlayerCardConfigStruct } from "../../../cards/media-player-card/struct";
 import { MediaPlayerEntity } from "../../../types/ha/entity";
 import { presets } from "./constants";
-import { mediaButtonControlDefaultMaps } from "../../../lib/controls/constants";
+import { enumToOptions } from "../../helpers";
+import { CardFeaturePosition } from "../../../cards/types";
 
 @customElement("bold-media-player-card-editor")
 export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeatures<
@@ -50,81 +46,83 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
         selector: { entity: { domain: "media_player" } },
       },
       {
-        name: "appearance",
+        name: "content",
         flatten: true,
         type: "expandable",
-        iconPath: mdiPalette,
+        iconPath: mdiTextShort,
         schema: [
           {
-            name: "content_layout",
+            name: "picture_position",
             required: true,
             selector: {
               select: {
-                mode: "dropdown",
-                options: [
-                  {
-                    label: "Horizontal",
-                    value: MediaPlayerCardContentLayout.HORIZONTAL,
-                  },
-                  {
-                    label: "Vertical",
-                    value: MediaPlayerCardContentLayout.VERTICAL,
-                  },
-                ],
+                mode: "box",
+                options: enumToOptions(MediaPlayerCardPicturePosition, {
+                  labelScope: "common.media_player_card_picture_position",
+                }),
               },
             },
           },
           {
-            name: "",
-            type: "grid",
-            schema: [
-              {
-                name: "color_mode",
-                required: true,
-                selector: {
-                  select: {
-                    mode: "dropdown",
-                    options: [
-                      {
-                        label: "Ambient",
-                        value: MediaPlayerCardColorMode.AMBIENT,
-                      },
-                      {
-                        label: "Ambient Vibrant",
-                        value: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
-                      },
-                      {
-                        label: "Picture Background",
-                        value: MediaPlayerCardColorMode.PICTURE,
-                      },
-                      {
-                        label: "Fixed Color",
-                        value: MediaPlayerCardColorMode.MANUAL,
-                      },
-                    ],
+            name: "info_alignment",
+            required: true,
+            selector: {
+              select: {
+                mode: "box",
+                options: enumToOptions(MediaPlayerCardAlignment, {
+                  labelScope: "common.media_player_card_alignment",
+                  disabled: {
+                    [MediaPlayerCardAlignment.CENTER]:
+                      this._config.picture_position ===
+                      MediaPlayerCardPicturePosition.INLINE,
                   },
-                },
+                }),
               },
-              {
-                name: "color",
-                required: true,
-                selector: {
-                  ui_color: {
-                    default_color: "state",
-                    // include_state: true,
-                  },
-                },
-              },
-            ],
+            },
           },
-        ],
-      },
-      {
-        name: "title_bar",
-        flatten: true,
-        type: "expandable",
-        iconPath: mdiPageLayoutHeader,
-        schema: [
+          {
+            name: "feature_position",
+            required: true,
+            selector: {
+              select: {
+                mode: "box",
+                options: enumToOptions(CardFeaturePosition, {
+                  labelScope: "common.card_feature_position",
+                  image: (value) => ({
+                    src: `/static/images/form/tile_features_position_${value}.svg`,
+                    src_dark: `/static/images/form/tile_features_position_${value}_dark.svg`,
+                    flip_rtl: true,
+                  }),
+                  disabled: {
+                    [CardFeaturePosition.INLINE]:
+                      this._config.info_alignment ===
+                      MediaPlayerCardAlignment.CENTER,
+                  },
+                }),
+              },
+            },
+          },
+          {
+            name: "color_mode",
+            required: true,
+            selector: {
+              select: {
+                mode: "dropdown",
+                options: enumToOptions(MediaPlayerCardColorMode, {
+                  labelScope: "common.media_player_card_color_mode",
+                }),
+              },
+            },
+          },
+          {
+            name: "color",
+            required: true,
+            selector: {
+              ui_color: {
+                default_color: "primary",
+              },
+            },
+          },
           {
             name: "show_title_bar",
             selector: {
@@ -144,32 +142,6 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
         .computeHelper=${this._computeHelperCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
-      <ha-expansion-panel outlined>
-        <h3 slot="header">
-          <ha-svg-icon .path=${mdiPageLayoutBody}></ha-svg-icon>
-          ${t("editor.card.media_player.label.media_info")}
-        </h3>
-        <div class="content">
-          <ha-alert alert-type="info">
-            ${t("editor.common.wip_section_text")}
-          </ha-alert>
-        </div>
-      </ha-expansion-panel>
-      <ha-expansion-panel outlined>
-        <h3 slot="header">
-          <ha-svg-icon .path=${mdiButtonPointer}></ha-svg-icon>
-          <span>${t("editor.card.media_player.label.controls")}</span>
-        </h3>
-        <div class="content">
-          <bc-controls-editor
-            .controls=${this._config?.controls ?? []}
-            .hass=${this.hass}
-            .stateObj=${stateObj}
-            .mediaButtonControlDefaultMap=${mediaButtonControlDefaultMaps.header}
-            @value-changed=${this._handleControlsChanged}
-          ></bc-controls-editor>
-        </div>
-      </ha-expansion-panel>
       ${this._controlsEditorTemplate()}
       <ha-expansion-panel outlined>
         <h3 slot="header">

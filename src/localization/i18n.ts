@@ -1,9 +1,9 @@
 import { I18n } from "i18n-js";
 
 import {
-  MediaButtonAction,
-  ElementWhenUnavailable,
   ControlType,
+  ElementWhenUnavailable,
+  MediaButtonAction,
   MediaToggleKind,
 } from "../lib/controls/types";
 import {
@@ -12,11 +12,21 @@ import {
   ButtonVariant,
 } from "../components/bc-button";
 import { MediaPositionTimestampPosition } from "../components/bc-media-position-control";
+import {
+  MediaPlayerCardAlignment,
+  MediaPlayerCardColorMode,
+  MediaPlayerCardPicturePosition,
+} from "../cards/media-player-card/types";
+import { CardFeaturePosition } from "../cards/types";
 
 const i18n = new I18n(
   {
     en: {
       common: {
+        card_feature_position: {
+          [CardFeaturePosition.BOTTOM]: "Bottom",
+          [CardFeaturePosition.INLINE]: "Inline",
+        },
         control_type: {
           [ControlType.MEDIA_BUTTON]: "Media Button",
           [ControlType.MEDIA_POSITION]: "Media Position",
@@ -44,6 +54,23 @@ const i18n = new I18n(
           [MediaPositionTimestampPosition.HIDDEN]: "Hidden",
           [MediaPositionTimestampPosition.BOTTOM]: "Bottom",
           [MediaPositionTimestampPosition.INLINE]: "Inline",
+        },
+        media_player_card_picture_position: {
+          [MediaPlayerCardPicturePosition.INLINE]: "Inline",
+          [MediaPlayerCardPicturePosition.TOP_CENTER]: "Top Center",
+          [MediaPlayerCardPicturePosition.BACKGROUND]: "Background",
+          [MediaPlayerCardPicturePosition.HIDE]: "Hide",
+        },
+        media_player_card_alignment: {
+          [MediaPlayerCardAlignment.LEFT]: "Left",
+          [MediaPlayerCardAlignment.CENTER]: "Center",
+          [MediaPlayerCardAlignment.RIGHT]: "Right",
+        },
+        media_player_card_color_mode: {
+          [MediaPlayerCardColorMode.AMBIENT]: "Ambient",
+          [MediaPlayerCardColorMode.AMBIENT_VIBRANT]: "Ambient Vibrant",
+          [MediaPlayerCardColorMode.AMBIENT_SOLID]: "Ambient Solid",
+          [MediaPlayerCardColorMode.MANUAL]: "Manual",
         },
         button: {
           size: {
@@ -116,19 +143,18 @@ const i18n = new I18n(
           media_player: {
             label: {
               entity: "Entity",
-              appearance: "Appearance",
+              content: "Content",
               color_mode: "Color Mode",
               color: "Fallback Color",
-              content_layout: "Layout",
-              title_bar: "Title Bar",
+              picture_position: "Artwork Position",
+              info_alignment: "Info Alignment",
+              feature_position: "First Feature Position",
               show_title_bar: "Show Title Bar",
-              media_info: "Media Info",
-              controls: "Controls",
               additional_controls: `Controls (%{count})`,
             },
             helper_text: {
               color:
-                'Only applicable when "Color Mode" is set to "Fixed Color", or no artwork is available.',
+                'Only applicable when "Color Mode" is set to "Manual", or no artwork is available.',
               show_title_bar: "Show the media player's name.",
             },
           },

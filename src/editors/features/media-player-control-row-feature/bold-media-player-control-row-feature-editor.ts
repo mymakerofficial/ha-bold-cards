@@ -37,7 +37,7 @@ export class BoldMediaPlayerControlRowFeatureEditor extends BoldLovelaceCardFeat
               select: {
                 mode: "dropdown",
                 options: enumToOptions(ElementWhenUnavailable, {
-                  scope: "common.element_when_unavailable",
+                  labelScope: "common.element_when_unavailable",
                 }),
               },
             }}

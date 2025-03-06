@@ -69,7 +69,7 @@ export class MediaPositionControlEditor extends LitElement {
               select: {
                 mode: "dropdown",
                 options: enumToOptions(MediaPositionTimestampPosition, {
-                  scope: "common.timestamp_position",
+                  labelScope: "common.timestamp_position",
                 }),
               },
             }}
@@ -90,7 +90,7 @@ export class MediaPositionControlEditor extends LitElement {
               select: {
                 mode: "dropdown",
                 options: enumToOptions(ElementWhenUnavailable, {
-                  scope: "common.element_when_unavailable",
+                  labelScope: "common.element_when_unavailable",
                 }),
               },
             }}

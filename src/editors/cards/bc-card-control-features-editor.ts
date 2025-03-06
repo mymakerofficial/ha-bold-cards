@@ -48,7 +48,7 @@ export class BoldCardControlFeaturesEditor extends LitElement {
                   <ha-svg-icon .path=${mdiButtonPointer}></ha-svg-icon>
                   <div>
                     ${t("editor.card.media_player.label.additional_controls", {
-                      count: index + 2,
+                      count: index + 1,
                     })}
                   </div>
                 </h3>

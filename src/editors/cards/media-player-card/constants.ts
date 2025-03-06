@@ -1,17 +1,28 @@
 import {
+  ControlConfig,
   ControlType,
   ElementWhenUnavailable,
   MediaButtonAction,
   MediaToggleKind,
 } from "../../../lib/controls/types";
-import { ButtonShape, ButtonSize } from "../../../components/bc-button";
+import { ButtonSize } from "../../../components/bc-button";
 import {
+  MediaPlayerCardAlignment,
   MediaPlayerCardColorMode,
-  MediaPlayerCardContentLayout,
+  MediaPlayerCardPicturePosition,
   MediaPlayerTileConfig,
 } from "../../../cards/media-player-card/types";
 import { BoldMediaPlayerControlRowFeature } from "../../../features/media-player-control-row-feature/bold-media-player-control-row-feature";
 import { MediaPositionTimestampPosition } from "../../../components/bc-media-position-control";
+import { LovelaceCardFeatureConfig } from "../../../types/ha/feature";
+import { CardFeaturePosition } from "../../../cards/types";
+
+function controlsRow(controls: ControlConfig[]): LovelaceCardFeatureConfig {
+  return {
+    ...BoldMediaPlayerControlRowFeature.getStubConfig(),
+    controls,
+  };
+}
 
 const positionOnly = {
   ...BoldMediaPlayerControlRowFeature.getStubConfig(),
@@ -61,41 +72,37 @@ export const presets: {
   {
     name: "Default",
     config: {
-      controls: [
-        {
-          type: ControlType.MEDIA_TOGGLE,
-          kind: MediaToggleKind.ON_OFF,
-        },
-        {
-          type: ControlType.MEDIA_TOGGLE,
-          kind: MediaToggleKind.PLAY_PAUSE,
-        },
-      ],
-      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerCardColorMode.PICTURE,
+      picture_position: MediaPlayerCardPicturePosition.BACKGROUND,
+      info_alignment: MediaPlayerCardAlignment.LEFT,
+      feature_position: CardFeaturePosition.INLINE,
+      color_mode: MediaPlayerCardColorMode.AMBIENT_SOLID,
       color: "primary",
       show_title_bar: true,
       grid_options: {
         rows: 3,
         columns: 12,
       },
-      features: [positionPlusButtons],
+      features: [
+        controlsRow([
+          {
+            type: ControlType.MEDIA_TOGGLE,
+            kind: MediaToggleKind.ON_OFF,
+          },
+          {
+            type: ControlType.MEDIA_TOGGLE,
+            kind: MediaToggleKind.PLAY_PAUSE,
+          },
+        ]),
+        positionPlusButtons,
+      ],
     },
   },
   {
     name: "Horizontal Vibrant",
     config: {
-      controls: [
-        {
-          type: ControlType.MEDIA_TOGGLE,
-          kind: MediaToggleKind.ON_OFF,
-        },
-        {
-          type: ControlType.MEDIA_TOGGLE,
-          kind: MediaToggleKind.PLAY_PAUSE,
-        },
-      ],
-      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
+      picture_position: MediaPlayerCardPicturePosition.INLINE,
+      info_alignment: MediaPlayerCardAlignment.LEFT,
+      feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
       show_title_bar: true,
@@ -103,83 +110,107 @@ export const presets: {
         rows: 3,
         columns: 12,
       },
-      features: [positionPlusButtons],
+      features: [
+        controlsRow([
+          {
+            type: ControlType.MEDIA_TOGGLE,
+            kind: MediaToggleKind.ON_OFF,
+          },
+          {
+            type: ControlType.MEDIA_TOGGLE,
+            kind: MediaToggleKind.PLAY_PAUSE,
+          },
+        ]),
+        positionPlusButtons,
+      ],
     },
   },
   {
     name: "Horizontal Artwork Background Space",
     config: {
-      controls: [
-        {
-          type: ControlType.MEDIA_TOGGLE,
-          kind: MediaToggleKind.ON_OFF,
-        },
-        {
-          type: ControlType.MEDIA_TOGGLE,
-          kind: MediaToggleKind.PLAY_PAUSE,
-        },
-      ],
-      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerCardColorMode.PICTURE,
+      picture_position: MediaPlayerCardPicturePosition.BACKGROUND,
+      info_alignment: MediaPlayerCardAlignment.LEFT,
+      feature_position: CardFeaturePosition.INLINE,
+      color_mode: MediaPlayerCardColorMode.AMBIENT_SOLID,
       color: "primary",
       show_title_bar: true,
       grid_options: {
         rows: 4,
         columns: 12,
       },
-      features: [positionPlusButtons],
+      features: [
+        controlsRow([
+          {
+            type: ControlType.MEDIA_TOGGLE,
+            kind: MediaToggleKind.ON_OFF,
+          },
+          {
+            type: ControlType.MEDIA_TOGGLE,
+            kind: MediaToggleKind.PLAY_PAUSE,
+          },
+        ]),
+        positionPlusButtons,
+      ],
     },
   },
   {
     name: "Artwork Square",
     config: {
-      controls: [
-        {
-          type: ControlType.MEDIA_TOGGLE,
-          kind: MediaToggleKind.PLAY_PAUSE,
-          when_unavailable: ElementWhenUnavailable.HIDE,
-        },
-      ],
-      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerCardColorMode.PICTURE,
+      picture_position: MediaPlayerCardPicturePosition.BACKGROUND,
+      info_alignment: MediaPlayerCardAlignment.LEFT,
+      feature_position: CardFeaturePosition.INLINE,
+      color_mode: MediaPlayerCardColorMode.AMBIENT_SOLID,
       color: "primary",
       show_title_bar: true,
       grid_options: {
         rows: 4,
         columns: 6,
       },
-      features: [],
+      features: [
+        controlsRow([
+          {
+            type: ControlType.MEDIA_TOGGLE,
+            kind: MediaToggleKind.PLAY_PAUSE,
+            when_unavailable: ElementWhenUnavailable.HIDE,
+          },
+        ]),
+      ],
     },
   },
   {
     name: "Artwork Square Large",
     config: {
-      controls: [
-        {
-          type: ControlType.MEDIA_TOGGLE,
-          kind: MediaToggleKind.ON_OFF,
-        },
-        {
-          type: ControlType.MEDIA_TOGGLE,
-          kind: MediaToggleKind.PLAY_PAUSE,
-        },
-      ],
-      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerCardColorMode.PICTURE,
+      picture_position: MediaPlayerCardPicturePosition.BACKGROUND,
+      info_alignment: MediaPlayerCardAlignment.LEFT,
+      feature_position: CardFeaturePosition.INLINE,
+      color_mode: MediaPlayerCardColorMode.AMBIENT_SOLID,
       color: "primary",
       show_title_bar: true,
       grid_options: {
         rows: 7,
         columns: 12,
       },
-      features: [positionPlusButtons],
+      features: [
+        controlsRow([
+          {
+            type: ControlType.MEDIA_TOGGLE,
+            kind: MediaToggleKind.ON_OFF,
+          },
+          {
+            type: ControlType.MEDIA_TOGGLE,
+            kind: MediaToggleKind.PLAY_PAUSE,
+          },
+        ]),
+        positionPlusButtons,
+      ],
     },
   },
   {
     name: "Vertical Full",
     config: {
-      controls: [],
-      content_layout: MediaPlayerCardContentLayout.VERTICAL,
+      picture_position: MediaPlayerCardPicturePosition.TOP_CENTER,
+      info_alignment: MediaPlayerCardAlignment.CENTER,
+      feature_position: CardFeaturePosition.BOTTOM,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
       show_title_bar: true,
@@ -198,33 +229,13 @@ export const presets: {
   {
     name: "Vertical Full Artwork Background",
     config: {
-      controls: [],
-      content_layout: MediaPlayerCardContentLayout.VERTICAL,
-      color_mode: MediaPlayerCardColorMode.PICTURE,
+      picture_position: MediaPlayerCardPicturePosition.BACKGROUND,
+      info_alignment: MediaPlayerCardAlignment.CENTER,
+      feature_position: CardFeaturePosition.BOTTOM,
+      color_mode: MediaPlayerCardColorMode.AMBIENT_SOLID,
       color: "primary",
       show_title_bar: true,
       grid_options: {
-        columns: 12,
-      },
-      features: [
-        positionOnly,
-        BoldMediaPlayerControlRowFeature.getStubConfig(),
-        {
-          type: "media-player-volume-slider",
-        },
-      ],
-    },
-  },
-  {
-    name: "Horizontal Full Artwork Background",
-    config: {
-      controls: [],
-      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
-      color_mode: MediaPlayerCardColorMode.PICTURE,
-      color: "primary",
-      show_title_bar: true,
-      grid_options: {
-        rows: 9,
         columns: 12,
       },
       features: [
@@ -239,24 +250,23 @@ export const presets: {
   {
     name: "Simple Play/Pause",
     config: {
-      controls: [
-        {
-          type: ControlType.MEDIA_TOGGLE,
-          kind: MediaToggleKind.ON_OFF,
-        },
-        {
-          type: ControlType.MEDIA_TOGGLE,
-          kind: MediaToggleKind.PLAY_PAUSE,
-        },
-      ],
-      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
+      picture_position: MediaPlayerCardPicturePosition.INLINE,
+      info_alignment: MediaPlayerCardAlignment.LEFT,
+      feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
       show_title_bar: true,
       grid_options: {
         columns: 12,
       },
-      features: [],
+      features: [
+        controlsRow([
+          {
+            type: ControlType.MEDIA_TOGGLE,
+            kind: MediaToggleKind.PLAY_PAUSE,
+          },
+        ]),
+      ],
     },
   },
 ];

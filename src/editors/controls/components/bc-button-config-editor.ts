@@ -69,7 +69,7 @@ export class ButtonConfigEditor extends LitElement {
             select: {
               mode: "dropdown",
               options: enumToOptions(ButtonSize, {
-                scope: "common.button.size",
+                labelScope: "common.button.size",
               }),
             },
           }}
@@ -86,7 +86,7 @@ export class ButtonConfigEditor extends LitElement {
             select: {
               mode: "dropdown",
               options: enumToOptions(ButtonVariant, {
-                scope: "common.button.variant",
+                labelScope: "common.button.variant",
               }),
             },
           }}
@@ -103,7 +103,7 @@ export class ButtonConfigEditor extends LitElement {
             select: {
               mode: "dropdown",
               options: enumToOptions(ButtonShape, {
-                scope: "common.button.shape",
+                labelScope: "common.button.shape",
               }),
             },
           }}

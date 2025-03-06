@@ -2,8 +2,9 @@ import { html, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
 import { fireEvent } from "custom-card-helpers";
 import {
+  MediaPlayerCardAlignment,
   MediaPlayerCardColorMode,
-  MediaPlayerCardContentLayout,
+  MediaPlayerCardPicturePosition,
   MediaPlayerTileConfig,
 } from "./types";
 import {
@@ -16,18 +17,16 @@ import { extractColors } from "../../helpers/extract-color";
 import { styleMap } from "lit-html/directives/style-map";
 import { getMediaDescription } from "../../helpers/media-player";
 import { classMap } from "lit-html/directives/class-map";
-import { BoldCardWithFeatures } from "../base";
+import { BoldCardWithInlineFeatures } from "../base";
 import { MediaPlayerEntity } from "../../types/ha/entity";
-import { BoldMediaPlayerControlRowFeature } from "../../features/media-player-control-row-feature/bold-media-player-control-row-feature";
 import { mediaPlayerCardStyles } from "./style";
-import { translateControls } from "../../lib/controls/helpers";
 import { isMediaPlayerEntity, isStateActive } from "../../helpers/states";
 import { randomFrom } from "../../lib/helpers";
 import { presets } from "../../editors/cards/media-player-card/constants";
-import { mediaButtonControlDefaultMaps } from "../../lib/controls/constants";
+import { CardFeaturePosition } from "../types";
 
 @customElement("bold-media-player-card")
-export class BoldMediaPlayerCard extends BoldCardWithFeatures<
+export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
   MediaPlayerTileConfig,
   MediaPlayerEntity
 > {
@@ -44,38 +43,22 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
     const entity = getStubEntity(hass);
 
     return {
-      color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
-      content_layout: MediaPlayerCardContentLayout.HORIZONTAL,
-      ...presets[0].config,
       type: "custom:bold-media-player-card",
       entity: entity?.entity_id ?? "",
+      picture_position: MediaPlayerCardPicturePosition.BACKGROUND,
+      info_alignment: MediaPlayerCardAlignment.LEFT,
+      feature_position: CardFeaturePosition.INLINE,
+      color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
+      ...presets[0].config,
     };
   }
 
-  public setConfig(originalConfig: MediaPlayerTileConfig) {
-    // set default values for undefined properties
-    const config = { show_title_bar: true, ...originalConfig };
-
-    if (
-      config.content_layout === MediaPlayerCardContentLayout.VERTICAL &&
-      config.controls?.length
-    ) {
-      // move controls to feature row because its easier to measure the height there
-      super.setConfig({
-        ...config,
-        controls: [],
-        features: [
-          {
-            ...BoldMediaPlayerControlRowFeature.getStubConfig(),
-            controls: config.controls,
-          },
-          ...(config.features ?? []),
-        ],
-      });
-      return;
-    }
-
-    super.setConfig(config);
+  public setConfig(config: MediaPlayerTileConfig) {
+    super.setConfig({
+      color: "primary",
+      show_title_bar: true,
+      ...config,
+    });
   }
 
   @state() private _foregroundColor?: string;
@@ -84,9 +67,13 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
 
   @state() private _hasLoadedImage = false;
 
+  protected _getShouldRenderInlineFeature(): boolean {
+    return this._config?.feature_position === CardFeaturePosition.INLINE;
+  }
+
   protected _getSizeWithoutFeatures() {
-    return this._config?.content_layout ===
-      MediaPlayerCardContentLayout.VERTICAL
+    return this._config?.picture_position ===
+      MediaPlayerCardPicturePosition.TOP_CENTER
       ? 5
       : 2;
   }
@@ -94,9 +81,10 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
   public getGridOptions(): LovelaceGridOptions {
     return {
       columns: 12,
-      rows: this._getSizeWithoutFeatures() + this._getTotalFeatureSize(),
+      rows: this._getSizeWithoutFeatures() + this._getTotalBottomFeatureSize(),
       min_columns: 6,
-      min_rows: this._getSizeWithoutFeatures() + this._getTotalFeatureSize(),
+      min_rows:
+        this._getSizeWithoutFeatures() + this._getTotalBottomFeatureSize(),
     };
   }
 
@@ -109,29 +97,22 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
   }
 
   private get _foregroundColorCSS() {
-    switch (
-      (this._foregroundColor ? this._config?.color_mode : undefined) ??
-      MediaPlayerCardColorMode.MANUAL
-    ) {
+    switch (this._foregroundColor ? this._config?.color_mode : undefined) {
       case MediaPlayerCardColorMode.AMBIENT:
       case MediaPlayerCardColorMode.AMBIENT_VIBRANT:
-        return this._foregroundColor;
-      case MediaPlayerCardColorMode.PICTURE:
+      case MediaPlayerCardColorMode.AMBIENT_SOLID:
         return this._foregroundColor;
       default:
-        return `var(--${this._config!.color}-color)`;
+        return `var(--${this._config?.color}-color)`;
     }
   }
 
   private get _backgroundColorCSS() {
-    switch (
-      (this._backgroundColor ? this._config?.color_mode : undefined) ??
-      MediaPlayerCardColorMode.MANUAL
-    ) {
+    switch (this._backgroundColor ? this._config?.color_mode : undefined) {
       case MediaPlayerCardColorMode.AMBIENT:
       case MediaPlayerCardColorMode.AMBIENT_VIBRANT:
         return `color-mix(in srgb, ${this._backgroundColor}, var(--card-background-color) 95%)`;
-      case MediaPlayerCardColorMode.PICTURE:
+      case MediaPlayerCardColorMode.AMBIENT_SOLID:
         return this._backgroundColor;
       default:
         return "var(--card-background-color)";
@@ -139,12 +120,7 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
   }
 
   private get _textColorCSS() {
-    switch (
-      (this._foregroundColor ? this._config?.color_mode : undefined) ??
-      MediaPlayerCardColorMode.MANUAL
-    ) {
-      case MediaPlayerCardColorMode.PICTURE:
-        return "color-mix(in srgb, white, var(--tile-color) 20%)";
+    switch (this._foregroundColor ? this._config?.color_mode : undefined) {
       case MediaPlayerCardColorMode.AMBIENT:
       case MediaPlayerCardColorMode.AMBIENT_VIBRANT:
         return "color-mix(in srgb, var(--primary-text-color), var(--tile-color) 20%)";
@@ -173,18 +149,17 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
       ? getMediaDescription(stateObj)
       : stateObj.state;
 
-    const controls = translateControls({
-      controls: this._config.controls,
-      stateObj,
-      mediaButtonDefaultMap: mediaButtonControlDefaultMaps.header,
-    });
-
     const renderBackgroundImage =
-      this._config?.color_mode === MediaPlayerCardColorMode.PICTURE;
+      this._config?.picture_position ===
+      MediaPlayerCardPicturePosition.BACKGROUND;
 
-    const renderCoverImage = !renderBackgroundImage && this._hasLoadedImage;
+    const renderCoverImage =
+      !renderBackgroundImage &&
+      this._config?.picture_position !== MediaPlayerCardPicturePosition.HIDE &&
+      this._hasLoadedImage;
 
-    const renderingFeatures = this._renderingFeatures;
+    const inlineFeatures = this._getRenderingInlineFeatures();
+    const bottomFeatures = this._getRenderingBottomFeatures();
 
     return html`
       <ha-card
@@ -195,8 +170,8 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
         })}
         class=${classMap({
           vertical:
-            this._config.content_layout ===
-            MediaPlayerCardContentLayout.VERTICAL,
+            this._config.picture_position ===
+            MediaPlayerCardPicturePosition.TOP_CENTER,
         })}
       >
         <div
@@ -233,7 +208,7 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
               : nothing}
             <div class="header">
               ${renderCoverImage
-                ? html`<div class="image"><img src=${imageUrl}></img></div>`
+                ? html`<div class="image"><img src=${imageUrl} alt="" /></div>`
                 : nothing}
               <div class="media-info" id="info">
                 <span class="primary">${mediaTitle || mediaDescription}</span>
@@ -241,20 +216,25 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
                   ? html`<span class="secondary">${mediaDescription}</span>`
                   : nothing}
               </div>
-              ${controls.length > 0
-                ? html`<bc-control-row
+              ${inlineFeatures.length > 0
+                ? html`<hui-card-features
                     .hass=${this.hass}
                     .stateObj=${stateObj}
-                    .controls=${controls}
-                  ></bc-control-row>`
+                    .features=${inlineFeatures}
+                    style=${styleMap({
+                      padding: "0px",
+                      gap: "0px",
+                      width: "min-content",
+                    })}
+                  ></hui-card-features>`
                 : nothing}
             </div>
           </div>
-          ${renderingFeatures.length > 0
+          ${bottomFeatures.length > 0
             ? html`<hui-card-features
                 .hass=${this.hass}
                 .stateObj=${stateObj}
-                .features=${renderingFeatures}
+                .features=${bottomFeatures}
                 style=${styleMap({
                   "--feature-height":
                     "calc(var(--row-height) + var(--row-gap) - var(--card-padding))",
@@ -305,7 +285,7 @@ export class BoldMediaPlayerCard extends BoldCardWithFeatures<
           ? swatches.Vibrant?.hex
           : swatches.LightVibrant?.hex;
         break;
-      case MediaPlayerCardColorMode.PICTURE:
+      case MediaPlayerCardColorMode.AMBIENT_SOLID:
         this._foregroundColor = swatches.LightVibrant?.hex;
         this._backgroundColor = swatches.DarkMuted?.hex;
         break;

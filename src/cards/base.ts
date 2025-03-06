@@ -72,55 +72,174 @@ export abstract class BoldCardWithFeatures<
         ...feature,
         __custom_internals: {
           parent_card_type: config.type,
+          is_inlined: false,
         },
       })),
     });
   }
 
-  protected get _renderingFeatures(): FeatureConfigWithMaybeInternals[] {
-    if (!this._config?.features) {
+  protected get _features(): FeatureConfigWithMaybeInternals[] {
+    return this._config?.features ?? [];
+  }
+
+  protected _getRenderingFeatures(): FeatureConfigWithMaybeInternals[] {
+    const features = this._features;
+    const stateObj = this._stateObj;
+
+    if (!features.length || !stateObj) {
       return [];
     }
-    if (!this._stateObj) {
-      return [];
-    }
-    return this._config.features.filter((feature) => {
-      return getFeatureDoesRender(feature, this._stateObj!);
+
+    return features.filter((feature) => {
+      return getFeatureDoesRender(feature, stateObj);
     });
   }
 
-  protected abstract _getSizeWithoutFeatures(): number;
-
   // get the size of all features combined **including** features that do not render
   protected _getTotalFeatureSize() {
-    if (!this._stateObj) {
+    const features = this._features;
+    const stateObj = this._stateObj;
+
+    if (!features.length || !stateObj) {
       return 0;
     }
-    if (!this._config?.features) {
-      return 0;
-    }
-    const size = this._config.features?.reduce((totalSize, feature) => {
-      const featureSize = getFeatureSize(feature, this._stateObj!);
+
+    const size = features.reduce((totalSize, feature) => {
+      const featureSize = getFeatureSize(feature, stateObj);
       return totalSize + featureSize;
     }, 0);
+
     return size || 0;
   }
 
   // get the size of all features that render combined
   protected _getRenderedFeatureSize() {
-    if (!this._stateObj) {
+    const stateObj = this._stateObj;
+    if (!stateObj) {
       return 0;
     }
-    if (!this._renderingFeatures) {
+
+    const renderingFeatures = this._getRenderingFeatures();
+    if (!renderingFeatures.length) {
       return 0;
     }
-    return this._renderingFeatures.reduce((totalSize, feature) => {
+
+    return renderingFeatures.reduce((totalSize, feature) => {
       const featureSize = getFeatureSize(feature, this._stateObj!);
       return totalSize + featureSize;
     }, 0);
   }
 
+  protected abstract _getSizeWithoutFeatures(): number;
+
   public getCardSize(): number | Promise<number> {
     return this._getSizeWithoutFeatures() + this._getRenderedFeatureSize();
+  }
+}
+
+export abstract class BoldCardWithInlineFeatures<
+  TConfig extends LovelaceCardConfigWithFeatures,
+  TStateObj extends HassEntityBase = HassEntityBase,
+> extends BoldCardWithFeatures<TConfig, TStateObj> {
+  public setConfig(config: TConfig): void {
+    if (!config) {
+      throw new Error("Invalid configuration");
+    }
+
+    super.setConfig({
+      ...config,
+      // inject custom internals into features config
+      //  this is the only way to pass information and allows features to be more flexible
+      features: config.features?.map((feature, index) => ({
+        ...feature,
+        __custom_internals: {
+          parent_card_type: config.type,
+          is_inlined: index === 0 && this._getShouldRenderInlineFeature(),
+        },
+      })),
+    });
+  }
+
+  protected abstract _getShouldRenderInlineFeature(): boolean;
+
+  protected get _inlineFeature(): FeatureConfigWithMaybeInternals | undefined {
+    return this._getShouldRenderInlineFeature() ? this._features[0] : undefined;
+  }
+
+  protected get _bottomFeatures(): FeatureConfigWithMaybeInternals[] {
+    return this._getShouldRenderInlineFeature()
+      ? // first feature is rendered inline, so skip it
+        this._features.slice(1)
+      : // no inline feature, so render all
+        this._features;
+  }
+
+  protected _getRenderingInlineFeatures(): FeatureConfigWithMaybeInternals[] {
+    const feature = this._inlineFeature;
+    const stateObj = this._stateObj;
+
+    if (!feature || !stateObj) {
+      return [];
+    }
+
+    if (!getFeatureDoesRender(feature, stateObj)) {
+      return [];
+    }
+
+    return [feature];
+  }
+
+  protected _getRenderingBottomFeatures(): FeatureConfigWithMaybeInternals[] {
+    const features = this._bottomFeatures;
+    const stateObj = this._stateObj;
+
+    if (!features.length || !stateObj) {
+      return [];
+    }
+
+    return features.filter((feature) => {
+      return getFeatureDoesRender(feature, stateObj);
+    });
+  }
+
+  // get the size of all features combined **including** features that do not render
+  protected _getTotalBottomFeatureSize() {
+    const features = this._bottomFeatures;
+    const stateObj = this._stateObj;
+
+    if (!features.length || !stateObj) {
+      return 0;
+    }
+
+    const size = features.reduce((totalSize, feature) => {
+      const featureSize = getFeatureSize(feature, this._stateObj!);
+      return totalSize + featureSize;
+    }, 0);
+
+    return size || 0;
+  }
+
+  // get the size of all features that render combined
+  protected _getRenderedBottomFeatureSize() {
+    const stateObj = this._stateObj;
+    if (!stateObj) {
+      return 0;
+    }
+
+    const features = this._getRenderingBottomFeatures();
+    if (!features.length) {
+      return 0;
+    }
+
+    return features.reduce((totalSize, feature) => {
+      const featureSize = getFeatureSize(feature, stateObj);
+      return totalSize + featureSize;
+    }, 0);
+  }
+
+  public getCardSize(): number | Promise<number> {
+    return (
+      this._getSizeWithoutFeatures() + this._getRenderedBottomFeatureSize()
+    );
   }
 }

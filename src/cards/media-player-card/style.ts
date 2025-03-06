@@ -216,7 +216,7 @@ export const mediaPlayerCardStyles = css`
     font-weight: 400;
   }
 
-  bc-control-row {
+  hui-card-features {
     pointer-events: all;
   }
 `;

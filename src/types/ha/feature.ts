@@ -12,6 +12,7 @@ export type LovelaceCardFeatureConfig =
 
 export interface FeatureInternals {
   parent_card_type: string;
+  is_inlined: boolean;
 }
 
 export interface FeatureConfigInternals {
