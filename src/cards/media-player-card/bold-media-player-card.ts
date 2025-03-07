@@ -143,6 +143,8 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
       case MediaPlayerCardColorMode.AMBIENT:
       case MediaPlayerCardColorMode.AMBIENT_VIBRANT:
         return "color-mix(in srgb, var(--primary-text-color), var(--tile-color) 20%)";
+      case MediaPlayerCardColorMode.AMBIENT_SOLID:
+        return "color-mix(in srgb, white, var(--tile-color) 20%)";
       default:
         return "inherit";
     }
