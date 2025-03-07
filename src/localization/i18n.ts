@@ -18,6 +18,10 @@ import {
 } from "../cards/media-player-card/types";
 import { CardFeaturePosition } from "../cards/types";
 
+type EnumTranslations<T extends string> = {
+  [key in T]: string;
+};
+
 const i18n = new I18n(
   {
     en: {
@@ -25,12 +29,13 @@ const i18n = new I18n(
         card_feature_position: {
           [CardFeaturePosition.BOTTOM]: "Bottom",
           [CardFeaturePosition.INLINE]: "Inline",
-        },
+        } satisfies EnumTranslations<CardFeaturePosition>,
         control_type: {
           [ControlType.MEDIA_BUTTON]: "Media Button",
           [ControlType.MEDIA_POSITION]: "Media Position",
           [ControlType.MEDIA_TOGGLE]: "Media Toggle Button",
-        },
+          [ControlType.CUSTOM]: "Custom",
+        } satisfies EnumTranslations<ControlType>,
         media_button_action: {
           [MediaButtonAction.TURN_ON]: "Turn On",
           [MediaButtonAction.TURN_OFF]: "Turn Off",
@@ -40,49 +45,51 @@ const i18n = new I18n(
           [MediaButtonAction.MEDIA_PAUSE]: "Pause",
           [MediaButtonAction.MEDIA_NEXT_TRACK]: "Next Track",
           [MediaButtonAction.REPEAT_SET]: "Set Repeat",
-        },
+        } satisfies EnumTranslations<MediaButtonAction>,
         media_toggle_kind: {
           [MediaToggleKind.ON_OFF]: "On/Off",
           [MediaToggleKind.PLAY_PAUSE]: "Play/Pause",
-        },
+        } satisfies EnumTranslations<MediaToggleKind>,
         element_when_unavailable: {
           [ElementWhenUnavailable.HIDE]: "Hide",
           [ElementWhenUnavailable.DISABLE]: "Disable",
-        },
+        } satisfies EnumTranslations<ElementWhenUnavailable>,
         timestamp_position: {
           [MediaPositionTimestampPosition.HIDDEN]: "Hidden",
-          [MediaPositionTimestampPosition.BOTTOM]: "Bottom",
           [MediaPositionTimestampPosition.INLINE]: "Inline",
-        },
+          [MediaPositionTimestampPosition.BOTTOM]: "Bottom",
+          [MediaPositionTimestampPosition.BOTTOM_LEFT]: "Bottom Left",
+          [MediaPositionTimestampPosition.BOTTOM_RIGHT]: "Bottom Right",
+        } satisfies EnumTranslations<MediaPositionTimestampPosition>,
         media_player_card_picture_position: {
           [MediaPlayerCardPicturePosition.INLINE]: "Inline",
           [MediaPlayerCardPicturePosition.TOP_CENTER]: "Top Center",
           [MediaPlayerCardPicturePosition.BACKGROUND]: "Background",
           [MediaPlayerCardPicturePosition.HIDE]: "Hide",
-        },
+        } satisfies EnumTranslations<MediaPlayerCardPicturePosition>,
         media_player_card_alignment: {
           [MediaPlayerCardAlignment.LEFT]: "Left",
           [MediaPlayerCardAlignment.CENTER]: "Center",
           [MediaPlayerCardAlignment.RIGHT]: "Right",
-        },
+        } satisfies EnumTranslations<MediaPlayerCardAlignment>,
         media_player_card_color_mode: {
           [MediaPlayerCardColorMode.AMBIENT]: "Ambient",
           [MediaPlayerCardColorMode.AMBIENT_VIBRANT]: "Ambient Vibrant",
           [MediaPlayerCardColorMode.AMBIENT_SOLID]: "Ambient Solid",
           [MediaPlayerCardColorMode.MANUAL]: "Manual",
-        },
+        } satisfies EnumTranslations<MediaPlayerCardColorMode>,
         button: {
           size: {
             [ButtonSize.SM]: "Small",
             [ButtonSize.MD]: "Medium",
             [ButtonSize.LG]: "Large",
             [ButtonSize.XL]: "Extra Large",
-          },
+          } satisfies EnumTranslations<ButtonSize>,
           variant: {
             [ButtonVariant.FILLED]: "Filled",
             [ButtonVariant.TONAL]: "Tonal",
             [ButtonVariant.PLAIN]: "Plain",
-          },
+          } satisfies EnumTranslations<ButtonVariant>,
           shape: {
             [ButtonShape.ROUND]: "Round",
             [ButtonShape.ROUND_WIDE]: "Pill",
@@ -90,7 +97,7 @@ const i18n = new I18n(
             [ButtonShape.SQUARE]: "Square",
             [ButtonShape.SQUARE_WIDE]: "Square Wide",
             [ButtonShape.SQUARE_FILL]: "Square Fill",
-          },
+          } satisfies EnumTranslations<ButtonShape>,
         },
       },
       card: {
