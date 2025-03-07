@@ -7,7 +7,7 @@ import {
   MediaPlayerTileConfig,
 } from "../../../cards/media-player-card/types";
 import { customElement } from "lit/decorators";
-import { mdiStar, mdiTextShort } from "@mdi/js";
+import { mdiCursorMove, mdiPalette, mdiStar, mdiTextShort } from "@mdi/js";
 import { t } from "../../../localization/i18n";
 import { MediaButtonControlConfig } from "../../../lib/controls/types";
 import { editorBaseStyles } from "../../styles";
@@ -46,10 +46,10 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
         selector: { entity: { domain: "media_player" } },
       },
       {
-        name: "content",
+        name: "layout",
         flatten: true,
         type: "expandable",
-        iconPath: mdiTextShort,
+        iconPath: mdiCursorMove,
         schema: [
           {
             name: "picture_position",
@@ -92,6 +92,14 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
               },
             },
           },
+        ],
+      },
+      {
+        name: "appearance",
+        flatten: true,
+        type: "expandable",
+        iconPath: mdiPalette,
+        schema: [
           {
             name: "color_mode",
             required: true,
@@ -113,6 +121,14 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
               },
             },
           },
+        ],
+      },
+      {
+        name: "content",
+        flatten: true,
+        type: "expandable",
+        iconPath: mdiTextShort,
+        schema: [
           {
             name: "show_title_bar",
             selector: {

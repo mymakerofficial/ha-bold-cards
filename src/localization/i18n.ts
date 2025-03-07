@@ -62,9 +62,14 @@ const i18n = new I18n(
           [MediaPositionTimestampPosition.BOTTOM_RIGHT]: "Bottom Right",
         } satisfies EnumTranslations<MediaPositionTimestampPosition>,
         media_player_card_picture_position: {
-          [MediaPlayerCardPicturePosition.INLINE]: "Inline",
-          [MediaPlayerCardPicturePosition.TOP_CENTER]: "Top Center",
           [MediaPlayerCardPicturePosition.BACKGROUND]: "Background",
+          [MediaPlayerCardPicturePosition.INLINE_LEFT]: "Inline Left",
+          [MediaPlayerCardPicturePosition.INLINE_RIGHT]: "Inline Right",
+          [MediaPlayerCardPicturePosition.TOP_LEFT]: "Top Left",
+          [MediaPlayerCardPicturePosition.TOP_CENTER]: "Top Center",
+          [MediaPlayerCardPicturePosition.TOP_RIGHT]: "Top Right",
+          [MediaPlayerCardPicturePosition.LARGE_LEFT]: "Left",
+          [MediaPlayerCardPicturePosition.LARGE_RIGHT]: "Right",
           [MediaPlayerCardPicturePosition.HIDE]: "Hide",
         } satisfies EnumTranslations<MediaPlayerCardPicturePosition>,
         media_player_card_alignment: {
@@ -152,6 +157,8 @@ const i18n = new I18n(
           media_player: {
             label: {
               entity: "Entity",
+              layout: "Layout",
+              appearance: "Appearance",
               content: "Content",
               color_mode: "Color Mode",
               color: "Fallback Color",

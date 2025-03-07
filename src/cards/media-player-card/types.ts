@@ -1,5 +1,4 @@
 import { LovelaceCardConfigWithFeatures } from "../../types/card";
-import { ControlConfig } from "../../lib/controls/types";
 import { CardFeaturePosition } from "../types";
 
 export const MediaPlayerCardColorMode = {
@@ -13,8 +12,13 @@ export type MediaPlayerCardColorMode =
 
 export const MediaPlayerCardPicturePosition = {
   BACKGROUND: "background",
-  INLINE: "inline",
+  INLINE_LEFT: "inline_left",
+  INLINE_RIGHT: "inline_right",
+  TOP_LEFT: "top_left",
   TOP_CENTER: "top_center",
+  TOP_RIGHT: "top_right",
+  LARGE_LEFT: "large_left",
+  LARGE_RIGHT: "large_right",
   HIDE: "hide",
 } as const;
 export type MediaPlayerCardPicturePosition =

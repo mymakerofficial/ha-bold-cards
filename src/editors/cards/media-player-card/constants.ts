@@ -100,7 +100,7 @@ export const presets: {
   {
     name: "Horizontal Vibrant",
     config: {
-      picture_position: MediaPlayerCardPicturePosition.INLINE,
+      picture_position: MediaPlayerCardPicturePosition.INLINE_LEFT,
       info_alignment: MediaPlayerCardAlignment.LEFT,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
@@ -250,7 +250,7 @@ export const presets: {
   {
     name: "Simple Play/Pause",
     config: {
-      picture_position: MediaPlayerCardPicturePosition.INLINE,
+      picture_position: MediaPlayerCardPicturePosition.INLINE_LEFT,
       info_alignment: MediaPlayerCardAlignment.LEFT,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
