@@ -119,7 +119,7 @@ export abstract class BoldCardWithFeatures<
       return totalSize + featureSize;
     }, 0);
 
-    return size || 0;
+    return Math.ceil(size);
   }
 
   // get the size of all features that render combined
@@ -134,10 +134,12 @@ export abstract class BoldCardWithFeatures<
       return 0;
     }
 
-    return renderingFeatures.reduce((totalSize, feature) => {
+    const size = renderingFeatures.reduce((totalSize, feature) => {
       const featureSize = getFeatureSize(feature, this._stateObj!);
       return totalSize + featureSize;
     }, 0);
+
+    return Math.ceil(size);
   }
 
   protected abstract _getSizeWithoutFeatures(): number;
@@ -219,7 +221,7 @@ export abstract class BoldCardWithInlineFeatures<
       return totalSize + featureSize;
     }, 0);
 
-    return size || 0;
+    return Math.ceil(size);
   }
 
   // get the size of all features that render combined
@@ -234,10 +236,12 @@ export abstract class BoldCardWithInlineFeatures<
       return 0;
     }
 
-    return features.reduce((totalSize, feature) => {
+    const size = features.reduce((totalSize, feature) => {
       const featureSize = getFeatureSize(feature, stateObj);
       return totalSize + featureSize;
     }, 0);
+
+    return Math.ceil(size);
   }
 
   public getCardSize(): number | Promise<number> {

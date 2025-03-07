@@ -65,7 +65,7 @@ function getFeatureSize(
     return false;
   });
 
-  return hasLargeButtons ? 2 : 1;
+  return hasLargeButtons ? 1.5 : 1;
 }
 
 @customElement("bold-media-player-control-row")
@@ -131,10 +131,12 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
         class="container ${classMap({
           "inset-left":
             firstControl?.type === ControlType.MEDIA_BUTTON &&
-            firstControl.variant === ButtonVariant.PLAIN,
+            firstControl.variant === ButtonVariant.PLAIN &&
+            firstControl.size === ButtonSize.SM,
           "inset-right":
             lastControl?.type === ControlType.MEDIA_BUTTON &&
-            lastControl.variant === ButtonVariant.PLAIN,
+            lastControl.variant === ButtonVariant.PLAIN &&
+            lastControl.size === ButtonSize.SM,
         })}"
         style=${styleMap({
           "--feature-size": this._featureSize,
