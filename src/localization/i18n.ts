@@ -1,5 +1,4 @@
 import { I18n } from "i18n-js";
-
 import {
   ControlType,
   ElementWhenUnavailable,
@@ -85,9 +84,12 @@ const i18n = new I18n(
             [ButtonVariant.PLAIN]: "Plain",
           },
           shape: {
-            [ButtonShape.ROUNDED]: "Rounded",
+            [ButtonShape.ROUND]: "Round",
+            [ButtonShape.ROUND_WIDE]: "Pill",
+            [ButtonShape.ROUND_FILL]: "Pill Fill",
             [ButtonShape.SQUARE]: "Square",
-            [ButtonShape.WIDE]: "Wide",
+            [ButtonShape.SQUARE_WIDE]: "Square Wide",
+            [ButtonShape.SQUARE_FILL]: "Square Fill",
           },
         },
       },

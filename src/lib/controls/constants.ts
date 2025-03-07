@@ -44,13 +44,13 @@ const mediaButtonControlDefaultMapDefault: MediaButtonControlDefaultMap = {
   },
   [MediaButtonAction.MEDIA_PLAY]: {
     size: ButtonSize.XL,
-    shape: ButtonShape.ROUNDED,
+    shape: ButtonShape.ROUND,
     variant: ButtonVariant.FILLED,
     when_unavailable: ElementWhenUnavailable.DISABLE,
   },
   [MediaButtonAction.MEDIA_PAUSE]: {
     size: ButtonSize.XL,
-    shape: ButtonShape.WIDE,
+    shape: ButtonShape.SQUARE_WIDE,
     variant: ButtonVariant.FILLED,
     when_unavailable: ElementWhenUnavailable.DISABLE,
   },
@@ -75,7 +75,7 @@ export const mediaButtonControlDefaultMaps: DefaultConfigMap<MediaButtonControlD
       ...mediaButtonControlDefaultMapDefault,
       [MediaButtonAction.MEDIA_PLAY]: {
         size: ButtonSize.MD,
-        shape: ButtonShape.ROUNDED,
+        shape: ButtonShape.ROUND,
         variant: ButtonVariant.FILLED,
         when_unavailable: ElementWhenUnavailable.DISABLE,
       },

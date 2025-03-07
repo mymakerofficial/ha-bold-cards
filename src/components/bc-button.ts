@@ -1,5 +1,5 @@
 import { customElement, property } from "lit/decorators";
-import { css, html, nothing } from "lit";
+import { css, html, nothing, unsafeCSS } from "lit";
 import { ControlSurface } from "./bc-contol-surface";
 
 export const ButtonVariant = {
@@ -10,9 +10,12 @@ export const ButtonVariant = {
 export type ButtonVariant = (typeof ButtonVariant)[keyof typeof ButtonVariant];
 
 export const ButtonShape = {
-  ROUNDED: "rounded",
+  ROUND: "round",
+  ROUND_WIDE: "round_wide",
+  ROUND_FILL: "round_fill",
   SQUARE: "square",
-  WIDE: "wide",
+  SQUARE_WIDE: "square_wide",
+  SQUARE_FILL: "square_fill",
 } as const;
 export type ButtonShape = (typeof ButtonShape)[keyof typeof ButtonShape];
 
@@ -78,38 +81,52 @@ export class Button extends ControlSurface {
       --control-surface-background-color: var(--button-background-color);
     }
 
-    :host([size="sm"]) {
+    :host([size="${unsafeCSS(ButtonSize.SM)}"]) {
       --button-height: 42px;
       --icon-size: 20px;
     }
 
-    :host([size="lg"]) {
+    :host([size="${unsafeCSS(ButtonSize.LG)}"]) {
       --button-height: 58px;
       --icon-size: 24px;
     }
 
-    :host([size="xl"]) {
+    :host([size="${unsafeCSS(ButtonSize.XL)}"]) {
       --button-height: 64px;
       --icon-size: 26px;
     }
 
-    :host([shape="rounded"]) {
+    :host([shape="${unsafeCSS(ButtonShape.ROUND)}"]) {
       --button-border-radius: calc(var(--button-height) / 2);
     }
 
-    :host([shape="wide"]) {
+    :host([shape="${unsafeCSS(ButtonShape.ROUND_WIDE)}"]) {
+      --button-border-radius: calc(var(--button-height) / 2);
       --button-width: calc(var(--button-height) * 2);
     }
 
-    :host([variant="plain"]) {
+    :host([shape="${unsafeCSS(ButtonShape.ROUND_FILL)}"]) {
+      --button-border-radius: calc(var(--button-height) / 2);
+      flex: 1;
+    }
+
+    :host([shape="${unsafeCSS(ButtonShape.SQUARE_WIDE)}"]) {
+      --button-width: calc(var(--button-height) * 2);
+    }
+
+    :host([shape="${unsafeCSS(ButtonShape.SQUARE_FILL)}"]) {
+      flex: 1;
+    }
+
+    :host([variant="${unsafeCSS(ButtonVariant.PLAIN)}"]) {
       --button-background-color: transparent;
     }
 
-    :host([variant="tonal"]) {
+    :host([variant="${unsafeCSS(ButtonVariant.TONAL)}"]) {
       --button-background-color: rgb(from var(--tile-color) r g b / 20%);
     }
 
-    :host([variant="filled"]) {
+    :host([variant="${unsafeCSS(ButtonVariant.FILLED)}"]) {
       --button-background-color: var(--tile-color);
       --button-color: var(--ha-card-background);
     }
