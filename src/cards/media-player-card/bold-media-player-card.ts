@@ -246,7 +246,6 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
                     .stateObj=${stateObj}
                     .features=${inlineFeatures}
                     style=${styleMap({
-                      padding: "0px",
                       gap: "0px",
                       width: "min-content",
                     })}
@@ -263,7 +262,6 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
                   "--feature-height":
                     "calc(var(--row-height) + var(--row-gap) - var(--card-padding))",
                   "--feature-gap": "var(--card-padding)",
-                  padding: "0px var(--card-padding) var(--card-padding)",
                   gap: "var(--feature-gap)",
                 })}
               ></hui-card-features>`

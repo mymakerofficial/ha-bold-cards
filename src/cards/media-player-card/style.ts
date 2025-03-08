@@ -27,8 +27,7 @@ export const mediaPlayerCardStyles = css`
 
   ha-card {
     height: 100%;
-    display: flex;
-    flex-direction: column;
+    padding: var(--card-padding);
     transition:
       box-shadow 180ms ease-in-out,
       border-color 180ms ease-in-out,
@@ -98,6 +97,7 @@ export const mediaPlayerCardStyles = css`
     height: 100%;
     display: flex;
     flex-direction: column;
+    gap: var(--card-padding);
     margin: calc(-1 * var(--ha-card-border-width, 1px));
   }
 
@@ -107,7 +107,6 @@ export const mediaPlayerCardStyles = css`
     display: flex;
     flex-direction: column;
     gap: var(--card-padding);
-    padding: var(--card-padding);
     overflow: hidden;
     /* allow interaction with .background */
     pointer-events: none;
