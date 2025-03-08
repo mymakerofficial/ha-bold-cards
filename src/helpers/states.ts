@@ -1,5 +1,5 @@
 import {
-  BaseState,
+  EntityState,
   MediaPlayerEntity,
   MediaPlayerState,
 } from "../types/ha/entity";
@@ -8,12 +8,12 @@ import { computeDomain } from "./entity";
 
 export function isStateOff(state: string) {
   return (
-    [BaseState.OFF, BaseState.UNAVAILABLE, BaseState.UNKNOWN] as string[]
+    [EntityState.OFF, EntityState.UNAVAILABLE, EntityState.UNKNOWN] as string[]
   ).includes(state);
 }
 
 export function isStateUnavailable(state: string) {
-  return ([BaseState.UNAVAILABLE, BaseState.UNKNOWN] as string[]).includes(
+  return ([EntityState.UNAVAILABLE, EntityState.UNKNOWN] as string[]).includes(
     state,
   );
 }

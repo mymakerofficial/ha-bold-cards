@@ -3,16 +3,16 @@ import {
   HassEntityBase,
 } from "home-assistant-js-websocket";
 
-export const BaseState = {
+export const EntityState = {
   UNAVAILABLE: "unavailable",
   UNKNOWN: "unknown",
   ON: "on",
   OFF: "off",
 } as const;
-export type BaseState = (typeof BaseState)[keyof typeof BaseState];
+export type EntityState = (typeof EntityState)[keyof typeof EntityState];
 
 export const MediaPlayerState = {
-  ...BaseState,
+  ...EntityState,
   PLAYING: "playing",
   PAUSED: "paused",
   IDLE: "idle",
