@@ -1,33 +1,33 @@
 import { t } from "../localization/i18n";
 import { SelectBoxOptionImage, SelectOption } from "../types/ha/selector";
 
-interface ToOptionsOptions<T extends { [key: string]: string }> {
+interface ToOptionsOptions<T extends string | number | symbol> {
   labelScope?: string;
   descriptionScope?: string;
   image?:
-    | Partial<{ [key in T[keyof T]]: string | SelectBoxOptionImage }>
-    | ((value: T[keyof T]) => string | SelectBoxOptionImage);
-  disabled?:
-    | Partial<{ [key in T[keyof T]]: boolean }>
-    | ((value: T[keyof T]) => boolean);
+    | Partial<{ [key in T]: string | SelectBoxOptionImage }>
+    | ((value: T) => string | SelectBoxOptionImage);
+  disabled?: Partial<{ [key in T]: boolean }> | ((value: T) => boolean);
 }
 
-export function enumToOptions<T extends { [key: string]: string }>(
-  obj: T,
+export function enumToOptions<T extends string | number | symbol>(
+  obj: { [key in T]: string },
   options?: ToOptionsOptions<T>,
 ): SelectOption[] {
-  return arrayToOptions(Object.values(obj), options as any);
+  return arrayToOptions<T>(Object.values(obj), options);
 }
 
-export function arrayToOptions(
-  arr: string[],
-  options?: ToOptionsOptions<{ [key: string]: string }>,
+export function arrayToOptions<T extends string | number | symbol>(
+  arr: T[],
+  options?: ToOptionsOptions<T>,
 ): SelectOption[] {
-  return (arr as string[]).map((item) => ({
+  return arr.map((item) => ({
     value: item,
-    label: options?.labelScope ? t(item, { scope: options?.labelScope }) : item,
+    label: options?.labelScope
+      ? t(String(item), { scope: options?.labelScope })
+      : item,
     description: options?.descriptionScope
-      ? t(item, { scope: options?.descriptionScope, defaultValue: "" })
+      ? t(String(item), { scope: options?.descriptionScope, defaultValue: "" })
       : undefined,
     image: !!options?.image
       ? typeof options?.image === "function"
