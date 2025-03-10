@@ -1,32 +1,25 @@
 import { html, nothing } from "lit";
-import { customElement, state } from "lit/decorators";
-import { fireEvent } from "custom-card-helpers";
+import { customElement } from "lit/decorators";
 import {
-  MediaPlayerCardHorizontalAlignment,
   MediaPlayerCardColorMode,
+  MediaPlayerCardHorizontalAlignment,
   MediaPlayerCardPicturePosition,
-  MediaPlayerTileConfig,
   MediaPlayerCardVerticalAlignment,
+  MediaPlayerTileConfig,
 } from "./types";
 import {
   HomeAssistant,
   LovelaceCardEditor,
   LovelaceGridOptions,
 } from "../../types/ha/lovelace";
-import { PropertyValues } from "lit-element";
-import { extractColors } from "../../helpers/extract-color";
 import { styleMap } from "lit-html/directives/style-map";
-import { getMediaDescription } from "../../helpers/media-player";
 import { classMap } from "lit-html/directives/class-map";
-import { BoldCardWithInlineFeatures } from "../base";
-import { MediaPlayerEntity } from "../../types/ha/entity";
 import { mediaPlayerCardStyles } from "./style";
-import { isMediaPlayerEntity, isStateActive } from "../../helpers/states";
-import { randomFrom } from "../../lib/helpers";
 import { presets } from "../../editors/cards/media-player-card/constants";
 import { CardFeaturePosition } from "../types";
 import { GetFeatureInternalsContext } from "../../types/card";
 import { FeatureInternals } from "../../types/ha/feature";
+import { BoldMediaPlayerCardBase, getStubMediaPlayerEntity } from "./base";
 
 function getFeatureInternals(
   context: GetFeatureInternalsContext,
@@ -40,10 +33,7 @@ function getFeatureInternals(
 }
 
 @customElement("bold-media-player-card")
-export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
-  MediaPlayerTileConfig,
-  MediaPlayerEntity
-> {
+export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<MediaPlayerTileConfig> {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import(
       "../../editors/cards/media-player-card/bold-media-player-card-editor"
@@ -54,7 +44,7 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
   }
 
   public static getStubConfig(hass: HomeAssistant): MediaPlayerTileConfig {
-    const entity = getStubEntity(hass);
+    const entity = getStubMediaPlayerEntity(hass);
 
     return {
       type: "custom:bold-media-player-card",
@@ -75,12 +65,6 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
       ...config,
     });
   }
-
-  @state() private _foregroundColor?: string;
-
-  @state() private _backgroundColor?: string;
-
-  @state() private _hasLoadedImage = false;
 
   protected _getFeatureInternals(
     context: GetFeatureInternalsContext,
@@ -106,47 +90,12 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
     };
   }
 
-  private get _imageUrl() {
+  protected get _imageUrl() {
     const stateObj = this._stateObj;
     return (
       stateObj?.attributes.entity_picture_local ??
       stateObj?.attributes.entity_picture
     );
-  }
-
-  private get _foregroundColorCSS() {
-    switch (this._foregroundColor ? this._config?.color_mode : undefined) {
-      case MediaPlayerCardColorMode.AMBIENT:
-      case MediaPlayerCardColorMode.AMBIENT_VIBRANT:
-      case MediaPlayerCardColorMode.AMBIENT_SOLID:
-        return this._foregroundColor;
-      default:
-        return `var(--${this._config?.color}-color)`;
-    }
-  }
-
-  private get _backgroundColorCSS() {
-    switch (this._backgroundColor ? this._config?.color_mode : undefined) {
-      case MediaPlayerCardColorMode.AMBIENT:
-      case MediaPlayerCardColorMode.AMBIENT_VIBRANT:
-        return `color-mix(in srgb, ${this._backgroundColor}, var(--card-background-color) 95%)`;
-      case MediaPlayerCardColorMode.AMBIENT_SOLID:
-        return this._backgroundColor;
-      default:
-        return "var(--card-background-color)";
-    }
-  }
-
-  private get _textColorCSS() {
-    switch (this._foregroundColor ? this._config?.color_mode : undefined) {
-      case MediaPlayerCardColorMode.AMBIENT:
-      case MediaPlayerCardColorMode.AMBIENT_VIBRANT:
-        return "color-mix(in srgb, var(--primary-text-color), var(--tile-color) 20%)";
-      case MediaPlayerCardColorMode.AMBIENT_SOLID:
-        return "color-mix(in srgb, white, var(--tile-color) 20%)";
-      default:
-        return "inherit";
-    }
   }
 
   private get _contentSize() {
@@ -211,12 +160,8 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
       return nothing;
     }
 
-    const mediaTitle = stateObj.attributes.media_title
-      ? stateObj.attributes.media_title
-      : getMediaDescription(stateObj);
-    const mediaDescription = stateObj.attributes.media_title
-      ? getMediaDescription(stateObj)
-      : stateObj.state;
+    const mediaTitle = this._mediaTitle;
+    const mediaDescription = this._mediaDescription;
 
     const renderBackgroundImage =
       this._config?.picture_position ===
@@ -335,57 +280,6 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
     `;
   }
 
-  public willUpdate(changedProps: PropertyValues) {
-    super.willUpdate(changedProps);
-
-    this._updateColors().then();
-  }
-
-  private async _updateColors() {
-    if (!this._imageUrl) {
-      this._foregroundColor = undefined;
-      this._backgroundColor = undefined;
-      this._hasLoadedImage = false;
-      return;
-    }
-
-    const swatches = await extractColors(this.hass!.hassUrl(this._imageUrl));
-    const darkMode =
-      this.hass?.selectedTheme?.dark ??
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-    switch (this._config?.color_mode) {
-      case MediaPlayerCardColorMode.AMBIENT:
-        this._foregroundColor = darkMode
-          ? swatches.LightVibrant?.hex
-          : swatches.DarkMuted?.hex;
-        this._backgroundColor = darkMode
-          ? swatches.DarkMuted?.hex
-          : swatches.LightVibrant?.hex;
-        break;
-      case MediaPlayerCardColorMode.AMBIENT_VIBRANT:
-        this._foregroundColor = darkMode
-          ? swatches.LightVibrant?.hex
-          : swatches.DarkVibrant?.hex;
-        this._backgroundColor = darkMode
-          ? swatches.Vibrant?.hex
-          : swatches.LightVibrant?.hex;
-        break;
-      case MediaPlayerCardColorMode.AMBIENT_SOLID:
-        this._foregroundColor = swatches.LightVibrant?.hex;
-        this._backgroundColor = swatches.DarkMuted?.hex;
-        break;
-    }
-
-    this._hasLoadedImage = true;
-  }
-
-  private _handleMoreInfo() {
-    fireEvent(this, "hass-more-info", {
-      entityId: this._config!.entity,
-    });
-  }
-
   static get styles() {
     return mediaPlayerCardStyles;
   }
@@ -398,17 +292,3 @@ BoldMediaPlayerCard.registerCustomCard({
   preview: true,
   getFeatureInternals,
 });
-
-function getStubEntity(hass: HomeAssistant) {
-  const entities = Object.values(hass.states).filter(isMediaPlayerEntity);
-
-  if (entities.length === 0) {
-    return undefined;
-  }
-
-  const activeEntities = entities.filter(isStateActive);
-
-  return activeEntities.length > 0
-    ? randomFrom(activeEntities)
-    : randomFrom(entities);
-}
