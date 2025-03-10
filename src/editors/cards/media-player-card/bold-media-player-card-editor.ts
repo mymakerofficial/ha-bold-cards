@@ -65,7 +65,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
             },
           },
           {
-            name: "info_alignment",
+            name: "horizontal_alignment",
             required: true,
             selector: {
               select: {
@@ -77,7 +77,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
             },
           },
           {
-            name: "content_alignment",
+            name: "vertical_alignment",
             required: true,
             selector: {
               select: {

@@ -25,8 +25,10 @@ export const mediaPlayerCardConfigStruct = assign(
     color_mode: enums(Object.values(MediaPlayerCardColorMode)),
     color: optional(string()),
     picture_position: enums(Object.values(MediaPlayerCardPicturePosition)),
-    info_alignment: enums(Object.values(MediaPlayerCardHorizontalAlignment)),
-    content_alignment: enums(Object.values(MediaPlayerCardVerticalAlignment)),
+    horizontal_alignment: enums(
+      Object.values(MediaPlayerCardHorizontalAlignment),
+    ),
+    vertical_alignment: enums(Object.values(MediaPlayerCardVerticalAlignment)),
     feature_position: enums(Object.values(CardFeaturePosition)),
     show_title_bar: optional(boolean()),
     features: optional(array(any())),

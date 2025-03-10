@@ -43,8 +43,8 @@ export interface MediaPlayerTileConfig extends LovelaceCardConfigWithFeatures {
   color_mode: MediaPlayerCardColorMode;
   color?: string;
   picture_position: MediaPlayerCardPicturePosition;
-  info_alignment: MediaPlayerCardHorizontalAlignment;
-  content_alignment: MediaPlayerCardVerticalAlignment;
+  horizontal_alignment: MediaPlayerCardHorizontalAlignment;
+  vertical_alignment: MediaPlayerCardVerticalAlignment;
   feature_position: CardFeaturePosition;
   show_title_bar?: boolean;
 }

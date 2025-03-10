@@ -60,8 +60,8 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
       type: "custom:bold-media-player-card",
       entity: entity?.entity_id ?? "",
       picture_position: MediaPlayerCardPicturePosition.BACKGROUND,
-      info_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
-      content_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
+      horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
+      vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       ...presets[0].config,
@@ -190,12 +190,12 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
     }
   }
 
-  private get _mediaInfoHorizontalAlign() {
-    return this._config?.info_alignment;
+  private get _horizontalAlign() {
+    return this._config?.horizontal_alignment;
   }
 
-  private get _contentVerticalAlign() {
-    return this._config?.content_alignment;
+  private get _verticalAlign() {
+    return this._config?.vertical_alignment;
   }
 
   protected render() {
@@ -232,8 +232,8 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
 
     const heroLayout = this._heroLayout;
     const imageContainerLayout = this._imageContainerLayout;
-    const mediaInfoHorizontalAlign = this._mediaInfoHorizontalAlign;
-    const contentVerticalAlign = this._contentVerticalAlign;
+    const horizontalAlign = this._horizontalAlign;
+    const verticalAlign = this._verticalAlign;
 
     return html`
       <ha-card
@@ -280,7 +280,7 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
             <div
               class="hero"
               data-layout=${heroLayout}
-              data-vertical-align=${contentVerticalAlign}
+              data-vertical-align=${verticalAlign}
             >
               ${renderHeroImage
                 ? html`
@@ -296,7 +296,7 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
                 <div
                   class="media-info"
                   id="info"
-                  data-horizontal-align=${mediaInfoHorizontalAlign}
+                  data-horizontal-align=${horizontalAlign}
                 >
                   <span class="primary">${mediaTitle || mediaDescription}</span>
                   ${mediaTitle
