@@ -242,14 +242,17 @@ export const mediaPlayerCardStyles = css`
 
   .hero[data-vertical-align="top"] .media-info-container {
     align-items: start;
+    margin-bottom: auto;
   }
 
   .hero[data-vertical-align="center"] .media-info-container {
     align-items: center;
+    margin: auto 0;
   }
 
   .hero[data-vertical-align="bottom"] .media-info-container {
     align-items: end;
+    margin-top: auto;
   }
 
   .media-info {
