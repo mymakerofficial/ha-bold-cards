@@ -133,7 +133,7 @@ export class BoldAirQualityCard extends BoldCardWithEntity<
     return html`
       <ha-card
         style=${styleMap({
-          "--ha-card-background": `color-mix(in srgb, ${color}, var(--card-background-color) 98%)`,
+          "--ha-card-background": `color-mix(in srgb, ${color}, var(--card-background-color) 99.5%)`,
           "--text-color": `color-mix(in srgb, var(--primary-text-color), ${color} 30%)`,
           color: "var(--text-color)",
         })}
