@@ -92,7 +92,7 @@ export const mediaPlayerCardStyles = css`
 
   .container {
     /* container is the only element (that's not the background) 
-        flex 1 means it will take up all the space */
+            flex 1 means it will take up all the space */
     flex: 1;
     height: 100%;
     display: flex;
@@ -111,13 +111,8 @@ export const mediaPlayerCardStyles = css`
     /* allow interaction with .background */
     pointer-events: none;
     min-height: calc(
-      var(--row-height) * 2 + var(--row-gap) - var(--card-padding) * 2
-    );
-  }
-
-  .content[data-layout="vertical"] {
-    min-height: calc(
-      var(--row-height) * 5 + var(--row-gap) * 4 - var(--card-padding) * 2
+      var(--row-height) * var(--content-size) + var(--row-gap) *
+        (var(--content-size) - 1) - var(--card-padding) * 2
     );
   }
 
@@ -136,11 +131,9 @@ export const mediaPlayerCardStyles = css`
     font-weight: 500;
   }
 
-  .header {
+  .hero {
     flex: 1;
     display: flex;
-    flex-direction: row;
-    align-items: end;
     gap: var(--card-padding);
     min-height: 0;
     min-width: 0;
@@ -148,27 +141,80 @@ export const mediaPlayerCardStyles = css`
     pointer-events: none;
   }
 
-  .header[data-align="center"] {
-    justify-content: center;
+  .hero[data-layout="left"] {
+    flex-direction: row;
   }
 
-  .header[data-align="right"] {
+  .hero[data-layout="right"] {
     flex-direction: row-reverse;
   }
 
-  .content[data-layout="vertical"] .header {
-    padding-top: var(--card-padding);
+  .hero[data-layout="vertical"] {
     flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
     width: 100%;
-    gap: 24px;
+  }
+
+  .hero[data-vertical-align="top"] {
+    height: fit-content;
+    margin-bottom: auto;
+    flex: unset;
+  }
+
+  .hero[data-vertical-align="center"] {
+    height: fit-content;
+    margin: auto 0;
+    flex: unset;
+  }
+
+  .hero[data-vertical-align="bottom"] {
+    margin-top: auto;
+  }
+
+  .image-container {
+    min-height: 0;
+    height: 100%;
+    max-height: fit-content;
+    display: flex;
+    align-items: inherit;
+  }
+
+  .hero[data-layout="vertical"] .image-container {
+    flex: 1;
+    width: 100%;
+    align-items: center;
+    max-height: unset;
+  }
+
+  .hero[data-layout="vertical"] .image-container[data-layout="left"] {
+    flex-direction: row;
+  }
+
+  .hero[data-layout="vertical"] .image-container[data-layout="center"] {
+    justify-content: center;
+  }
+
+  .hero[data-layout="vertical"] .image-container[data-layout="right"] {
+    flex-direction: row-reverse;
+  }
+
+  .hero[data-vertical-align="top"] .image-container {
+    align-items: start;
+  }
+
+  .hero[data-vertical-align="center"] .image-container {
+    align-items: center;
+  }
+
+  .hero[data-vertical-align="bottom"] .image-container {
+    flex: unset;
+    align-self: end;
   }
 
   .image {
     height: 100%;
     max-height: calc(
-      var(--row-height) * 3 + var(--row-gap) * 2 - var(--card-padding) * 2
+      var(--row-height) * var(--max-image-size) + var(--row-gap) *
+        (var(--max-image-size) - 1) - var(--card-padding) * 2
     );
   }
 
@@ -178,20 +224,57 @@ export const mediaPlayerCardStyles = css`
     border-radius: calc(var(--ha-card-border-radius, 12px) / 2);
   }
 
+  .media-info-container {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero[data-layout="vertical"] .media-info-container {
+    flex: unset;
+    flex-grow: 0.1;
+    width: 100%;
+    min-height: max-content;
+  }
+
+  .hero[data-vertical-align="top"] .media-info-container {
+    align-items: start;
+  }
+
+  .hero[data-vertical-align="center"] .media-info-container {
+    align-items: center;
+  }
+
+  .hero[data-vertical-align="bottom"] .media-info-container {
+    align-items: end;
+  }
+
   .media-info {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     overflow: hidden;
-    margin-top: auto;
     min-height: 52px;
   }
 
-  .content[data-layout="vertical"] .media-info {
-    flex: 0;
-    width: 100%;
-    gap: 8px;
+  .hero[data-layout="vertical"] .media-info {
+    min-height: 0;
+  }
+
+  .media-info[data-horizontal-align="left"] {
+    text-align: left;
+  }
+
+  .media-info[data-horizontal-align="center"] {
+    align-items: center;
+  }
+
+  .media-info[data-horizontal-align="right"] {
+    text-align: right;
   }
 
   .media-info * {
@@ -210,24 +293,6 @@ export const mediaPlayerCardStyles = css`
     font-size: 0.8rem;
     font-weight: 400;
     opacity: 0.9;
-  }
-
-  .header[data-align="center"] .media-info {
-    align-items: center;
-  }
-
-  .header[data-align="right"] .media-info {
-    text-align: right;
-  }
-
-  .content[data-layout="vertical"] .media-info .primary {
-    font-size: 1.4rem;
-    font-weight: 400;
-  }
-
-  .content[data-layout="vertical"] .media-info .secondary {
-    font-size: 0.9rem;
-    font-weight: 400;
   }
 
   hui-card-features {

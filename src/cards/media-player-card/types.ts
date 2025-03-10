@@ -17,27 +17,34 @@ export const MediaPlayerCardPicturePosition = {
   TOP_LEFT: "top_left",
   TOP_CENTER: "top_center",
   TOP_RIGHT: "top_right",
-  LARGE_LEFT: "large_left",
-  LARGE_RIGHT: "large_right",
   HIDE: "hide",
 } as const;
 export type MediaPlayerCardPicturePosition =
   (typeof MediaPlayerCardPicturePosition)[keyof typeof MediaPlayerCardPicturePosition];
 
-export const MediaPlayerCardAlignment = {
+export const MediaPlayerCardHorizontalAlignment = {
   LEFT: "left",
   CENTER: "center",
   RIGHT: "right",
 } as const;
-export type MediaPlayerCardAlignment =
-  (typeof MediaPlayerCardAlignment)[keyof typeof MediaPlayerCardAlignment];
+export type MediaPlayerCardHorizontalAlignment =
+  (typeof MediaPlayerCardHorizontalAlignment)[keyof typeof MediaPlayerCardHorizontalAlignment];
+
+export const MediaPlayerCardVerticalAlignment = {
+  BOTTOM: "bottom",
+  CENTER: "center",
+  TOP: "top",
+} as const;
+export type MediaPlayerCardVerticalAlignment =
+  (typeof MediaPlayerCardVerticalAlignment)[keyof typeof MediaPlayerCardVerticalAlignment];
 
 export interface MediaPlayerTileConfig extends LovelaceCardConfigWithFeatures {
   entity: string;
   color_mode: MediaPlayerCardColorMode;
   color?: string;
   picture_position: MediaPlayerCardPicturePosition;
-  info_alignment: MediaPlayerCardAlignment;
+  info_alignment: MediaPlayerCardHorizontalAlignment;
+  content_alignment: MediaPlayerCardVerticalAlignment;
   feature_position: CardFeaturePosition;
   show_title_bar?: boolean;
 }

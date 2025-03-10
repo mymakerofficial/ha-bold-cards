@@ -2,10 +2,11 @@ import { html, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
 import { fireEvent } from "custom-card-helpers";
 import {
-  MediaPlayerCardAlignment,
+  MediaPlayerCardHorizontalAlignment,
   MediaPlayerCardColorMode,
   MediaPlayerCardPicturePosition,
   MediaPlayerTileConfig,
+  MediaPlayerCardVerticalAlignment,
 } from "./types";
 import {
   HomeAssistant,
@@ -59,7 +60,8 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
       type: "custom:bold-media-player-card",
       entity: entity?.entity_id ?? "",
       picture_position: MediaPlayerCardPicturePosition.BACKGROUND,
-      info_alignment: MediaPlayerCardAlignment.LEFT,
+      info_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
+      content_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       ...presets[0].config,
@@ -91,10 +93,7 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
   }
 
   protected _getSizeWithoutFeatures() {
-    return this._config?.picture_position ===
-      MediaPlayerCardPicturePosition.TOP_CENTER
-      ? 5
-      : 2;
+    return this._contentSize;
   }
 
   public getGridOptions(): LovelaceGridOptions {
@@ -150,6 +149,55 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
     }
   }
 
+  private get _contentSize() {
+    switch (this._config?.picture_position) {
+      case MediaPlayerCardPicturePosition.TOP_LEFT:
+      case MediaPlayerCardPicturePosition.TOP_CENTER:
+      case MediaPlayerCardPicturePosition.TOP_RIGHT:
+        return 4;
+      default:
+        return 2;
+    }
+  }
+
+  private get _maxImageSize() {
+    return this._contentSize + 1;
+  }
+
+  private get _heroLayout() {
+    switch (this._config?.picture_position) {
+      case MediaPlayerCardPicturePosition.INLINE_LEFT:
+        return "left";
+      case MediaPlayerCardPicturePosition.INLINE_RIGHT:
+        return "right";
+      case MediaPlayerCardPicturePosition.TOP_LEFT:
+      case MediaPlayerCardPicturePosition.TOP_CENTER:
+      case MediaPlayerCardPicturePosition.TOP_RIGHT:
+        return "vertical";
+      default:
+        return "";
+    }
+  }
+
+  private get _imageContainerLayout() {
+    switch (this._config?.picture_position) {
+      case MediaPlayerCardPicturePosition.TOP_LEFT:
+        return "left";
+      case MediaPlayerCardPicturePosition.TOP_RIGHT:
+        return "right";
+      default:
+        return "center";
+    }
+  }
+
+  private get _mediaInfoHorizontalAlign() {
+    return this._config?.info_alignment;
+  }
+
+  private get _contentVerticalAlign() {
+    return this._config?.content_alignment;
+  }
+
   protected render() {
     if (!this._config || !this.hass) {
       return nothing;
@@ -174,7 +222,7 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
       this._config?.picture_position ===
       MediaPlayerCardPicturePosition.BACKGROUND;
 
-    const renderCoverImage =
+    const renderHeroImage =
       !renderBackgroundImage &&
       this._config?.picture_position !== MediaPlayerCardPicturePosition.HIDE &&
       this._hasLoadedImage;
@@ -182,7 +230,10 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
     const inlineFeatures = this._getRenderingInlineFeatures();
     const bottomFeatures = this._getRenderingBottomFeatures();
 
-    // TODO inline feature moves below media info when photo position is top_center
+    const heroLayout = this._heroLayout;
+    const imageContainerLayout = this._imageContainerLayout;
+    const mediaInfoHorizontalAlign = this._mediaInfoHorizontalAlign;
+    const contentVerticalAlign = this._contentVerticalAlign;
 
     return html`
       <ha-card
@@ -190,6 +241,8 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
           "--tile-color": this._foregroundColorCSS,
           "--ha-card-background": this._backgroundColorCSS,
           color: this._textColorCSS,
+          "--content-size": this._contentSize,
+          "--max-image-size": this._maxImageSize,
         })}
       >
         <div
@@ -212,13 +265,7 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
           <ha-ripple></ha-ripple>
         </div>
         <div class="container">
-          <div
-            class="content"
-            data-layout=${this._config.picture_position ===
-            MediaPlayerCardPicturePosition.TOP_CENTER
-              ? "vertical"
-              : "horizontal"}
-          >
+          <div class="content">
             ${this._config.show_title_bar
               ? html`<div class="title-bar">
                   <div class="player-title">
@@ -230,27 +277,44 @@ export class BoldMediaPlayerCard extends BoldCardWithInlineFeatures<
                   </div>
                 </div>`
               : nothing}
-            <div class="header" data-align=${this._config.info_alignment}>
-              ${renderCoverImage
-                ? html`<div class="image"><img src=${imageUrl} alt="" /></div>`
+            <div
+              class="hero"
+              data-layout=${heroLayout}
+              data-vertical-align=${contentVerticalAlign}
+            >
+              ${renderHeroImage
+                ? html`
+                    <div
+                      class="image-container"
+                      data-layout=${imageContainerLayout}
+                    >
+                      <div class="image"><img src=${imageUrl} alt="" /></div>
+                    </div>
+                  `
                 : nothing}
-              <div class="media-info" id="info">
-                <span class="primary">${mediaTitle || mediaDescription}</span>
-                ${mediaTitle
-                  ? html`<span class="secondary">${mediaDescription}</span>`
+              <div class="media-info-container">
+                <div
+                  class="media-info"
+                  id="info"
+                  data-horizontal-align=${mediaInfoHorizontalAlign}
+                >
+                  <span class="primary">${mediaTitle || mediaDescription}</span>
+                  ${mediaTitle
+                    ? html`<span class="secondary">${mediaDescription}</span>`
+                    : nothing}
+                </div>
+                ${inlineFeatures.length > 0
+                  ? html`<hui-card-features
+                      .hass=${this.hass}
+                      .stateObj=${stateObj}
+                      .features=${inlineFeatures}
+                      style=${styleMap({
+                        gap: "0px",
+                        width: "min-content",
+                      })}
+                    ></hui-card-features>`
                   : nothing}
               </div>
-              ${inlineFeatures.length > 0
-                ? html`<hui-card-features
-                    .hass=${this.hass}
-                    .stateObj=${stateObj}
-                    .features=${inlineFeatures}
-                    style=${styleMap({
-                      gap: "0px",
-                      width: "min-content",
-                    })}
-                  ></hui-card-features>`
-                : nothing}
             </div>
           </div>
           ${bottomFeatures.length > 0

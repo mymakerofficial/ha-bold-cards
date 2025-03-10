@@ -12,9 +12,10 @@ import {
 } from "../components/bc-button";
 import { MediaPositionTimestampPosition } from "../components/bc-media-position-control";
 import {
-  MediaPlayerCardAlignment,
+  MediaPlayerCardHorizontalAlignment,
   MediaPlayerCardColorMode,
   MediaPlayerCardPicturePosition,
+  MediaPlayerCardVerticalAlignment,
 } from "../cards/media-player-card/types";
 import { CardFeaturePosition } from "../cards/types";
 
@@ -68,15 +69,18 @@ const i18n = new I18n(
           [MediaPlayerCardPicturePosition.TOP_LEFT]: "Top Left",
           [MediaPlayerCardPicturePosition.TOP_CENTER]: "Top Center",
           [MediaPlayerCardPicturePosition.TOP_RIGHT]: "Top Right",
-          [MediaPlayerCardPicturePosition.LARGE_LEFT]: "Left",
-          [MediaPlayerCardPicturePosition.LARGE_RIGHT]: "Right",
           [MediaPlayerCardPicturePosition.HIDE]: "Hide",
         } satisfies EnumTranslations<MediaPlayerCardPicturePosition>,
-        media_player_card_alignment: {
-          [MediaPlayerCardAlignment.LEFT]: "Left",
-          [MediaPlayerCardAlignment.CENTER]: "Center",
-          [MediaPlayerCardAlignment.RIGHT]: "Right",
-        } satisfies EnumTranslations<MediaPlayerCardAlignment>,
+        media_player_card_horizontal_alignment: {
+          [MediaPlayerCardHorizontalAlignment.LEFT]: "Left",
+          [MediaPlayerCardHorizontalAlignment.CENTER]: "Center",
+          [MediaPlayerCardHorizontalAlignment.RIGHT]: "Right",
+        } satisfies EnumTranslations<MediaPlayerCardHorizontalAlignment>,
+        media_player_card_vertical_alignment: {
+          [MediaPlayerCardVerticalAlignment.TOP]: "Top",
+          [MediaPlayerCardVerticalAlignment.CENTER]: "Center",
+          [MediaPlayerCardVerticalAlignment.BOTTOM]: "Bottom",
+        } satisfies EnumTranslations<MediaPlayerCardVerticalAlignment>,
         media_player_card_color_mode: {
           [MediaPlayerCardColorMode.AMBIENT]: "Ambient",
           [MediaPlayerCardColorMode.AMBIENT_VIBRANT]: "Ambient Vibrant",
@@ -164,6 +168,7 @@ const i18n = new I18n(
               color: "Fallback Color",
               picture_position: "Artwork Position",
               info_alignment: "Info Alignment",
+              content_alignment: "Content Alignment",
               feature_position: "First Feature Position",
               show_title_bar: "Show Title Bar",
               additional_controls: `Controls (%{count})`,

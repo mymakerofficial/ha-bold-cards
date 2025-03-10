@@ -1,10 +1,11 @@
 import { css, CSSResultGroup, html, nothing } from "lit";
 import { fireEvent } from "custom-card-helpers";
 import {
-  MediaPlayerCardAlignment,
+  MediaPlayerCardHorizontalAlignment,
   MediaPlayerCardColorMode,
   MediaPlayerCardPicturePosition,
   MediaPlayerTileConfig,
+  MediaPlayerCardVerticalAlignment,
 } from "../../../cards/media-player-card/types";
 import { customElement } from "lit/decorators";
 import { mdiCursorMove, mdiPalette, mdiStar, mdiTextShort } from "@mdi/js";
@@ -69,8 +70,20 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
             selector: {
               select: {
                 mode: "box",
-                options: enumToOptions(MediaPlayerCardAlignment, {
-                  labelScope: "common.media_player_card_alignment",
+                options: enumToOptions(MediaPlayerCardHorizontalAlignment, {
+                  labelScope: "common.media_player_card_horizontal_alignment",
+                }),
+              },
+            },
+          },
+          {
+            name: "content_alignment",
+            required: true,
+            selector: {
+              select: {
+                mode: "box",
+                options: enumToOptions(MediaPlayerCardVerticalAlignment, {
+                  labelScope: "common.media_player_card_vertical_alignment",
                 }),
               },
             },
