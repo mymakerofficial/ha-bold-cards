@@ -1,4 +1,4 @@
-import { HomeAssistant } from "./lovelace";
+import { HomeAssistant, LovelaceCardFeatureEditor } from "./lovelace";
 import { HassEntity } from "home-assistant-js-websocket";
 import { BoldMediaPlayerControlRowFeatureConfig } from "../../features/media-player-control-row-feature/types";
 
@@ -35,6 +35,18 @@ export interface LovelaceCardFeature<
   stateObj?: TStateObj;
   setConfig(config: FeatureConfigWithMaybeInternals<TConfig>): void;
   color?: string;
+}
+
+export type Constructor<T = any> = new (...args: any[]) => T;
+
+export interface LovelaceCardFeatureConstructor
+  extends Constructor<LovelaceCardFeature> {
+  getStubConfig?: (
+    hass: HomeAssistant,
+    stateObj?: HassEntity,
+  ) => LovelaceCardFeatureConfig;
+  getConfigElement?: () => LovelaceCardFeatureEditor;
+  isSupported?: (stateObj?: HassEntity) => boolean;
 }
 
 export interface CustomCardFeatureEntry {

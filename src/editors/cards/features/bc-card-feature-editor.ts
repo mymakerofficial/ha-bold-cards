@@ -1,31 +1,25 @@
-import { css, html, LitElement } from "lit";
+import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import {
   HomeAssistant,
   LovelaceCardFeatureEditorContext,
-} from "../../types/ha/lovelace";
+} from "../../../types/ha/lovelace";
 import { HassEntity } from "home-assistant-js-websocket";
-import {
-  CustomCardFeatureEntry,
-  LovelaceCardFeatureConfig,
-} from "../../types/ha/feature";
+import { LovelaceCardFeatureConfig } from "../../../types/ha/feature";
 import { repeat } from "lit-html/directives/repeat";
-import { mdiDelete, mdiDrag, mdiPencil } from "@mdi/js";
-import { editorBaseStyles } from "../styles";
+import { mdiDelete, mdiDrag, mdiPencil, mdiPlus } from "@mdi/js";
+import { editorBaseStyles } from "../../styles";
 import { fireEvent } from "custom-card-helpers";
-import { getCardFeatureInternals } from "../../cards/features";
-import { LovelaceCardConfigWithFeatures } from "../../types/card";
-
-function getCustomFeatureEntries() {
-  return (
-    ((window as any).customCardFeatures as
-      | CustomCardFeatureEntry[]
-      | undefined) ?? []
-  ).reduce((acc, entry) => {
-    acc[entry.type] = entry;
-    return acc;
-  }, {}) as Record<string, CustomCardFeatureEntry>;
-}
+import { getCardFeatureInternals } from "../../../cards/features";
+import { LovelaceCardConfigWithFeatures } from "../../../types/card";
+import {
+  getFeatureStubConfig,
+  getFeatureTypeLabel,
+  getFeatureTypes,
+  getIsFeatureTypeEditable,
+} from "./helpers";
+import { stopPropagation } from "../../helpers";
+import { t } from "../../../localization/i18n";
 
 @customElement("bc-card-features-editor")
 export class BoldCardFeatureEditor extends LitElement {
@@ -40,20 +34,13 @@ export class BoldCardFeatureEditor extends LitElement {
     return this.config?.features ?? [];
   }
 
-  private _getFeatureTypeLabel(type: string) {
-    if (isCustomType(type)) {
-      const customType = stripCustomPrefix(type);
-      const customFeatureEntry = getCustomFeatureEntries()[customType];
-      return customFeatureEntry?.name || type;
-    }
-    return (
-      this.hass!.localize(
-        `ui.panel.lovelace.editor.features.types.${type}.label`,
-      ) || type
-    );
+  protected _getAvailableFeatures() {
+    return getFeatureTypes();
   }
 
   protected render() {
+    const availableFeatures = this._getAvailableFeatures();
+
     return html`
       <div class="container">
         <ha-sortable
@@ -71,17 +58,23 @@ export class BoldCardFeatureEditor extends LitElement {
                   </div>
                   <div class="content">
                     <div>
-                      <span>${this._getFeatureTypeLabel(feature.type)}</span>
+                      <span
+                        >${getFeatureTypeLabel(feature.type, this.hass)}</span
+                      >
                     </div>
                   </div>
-                  <ha-icon-button
-                    .label=${this.hass!.localize(
-                      `ui.panel.lovelace.editor.features.edit`,
-                    )}
-                    .path=${mdiPencil}
-                    class="edit-icon"
-                    @click=${() => this._editFeature(index)}
-                  ></ha-icon-button>
+                  ${getIsFeatureTypeEditable(feature.type)
+                    ? html`
+                        <ha-icon-button
+                          .label=${this.hass!.localize(
+                            `ui.panel.lovelace.editor.features.edit`,
+                          )}
+                          .path=${mdiPencil}
+                          class="edit-icon"
+                          @click=${() => this._editFeature(index)}
+                        ></ha-icon-button>
+                      `
+                    : nothing}
                   <ha-icon-button
                     .label=${this.hass!.localize(
                       `ui.panel.lovelace.editor.features.remove`,
@@ -89,14 +82,62 @@ export class BoldCardFeatureEditor extends LitElement {
                     .path=${mdiDelete}
                     class="remove-icon"
                     .index=${index}
-                    @click=${() => {}}
+                    @click=${() => this._handleFeatureRemoved(index)}
                   ></ha-icon-button>
                 </div>`,
             )}
           </div>
         </ha-sortable>
+        <ha-button-menu
+          fixed
+          @action=${this._handleAddFeature}
+          @closed=${stopPropagation}
+        >
+          <ha-button slot="trigger" outlined .label=${t("editor.features.add")}>
+            <ha-svg-icon .path=${mdiPlus} slot="icon"></ha-svg-icon>
+          </ha-button>
+          ${availableFeatures.map((feature) => {
+            return html`<ha-list-item .value=${feature}>
+              ${getFeatureTypeLabel(feature, this.hass)}
+            </ha-list-item>`;
+          })}
+        </ha-button-menu>
       </div>
     `;
+  }
+
+  private _handleAddFeature(ev: CustomEvent) {
+    if (!this.config || !this.hass) {
+      return;
+    }
+
+    const index = ev.detail.index as number;
+
+    if (!index) {
+      return;
+    }
+
+    const feature = this._getAvailableFeatures()[index];
+
+    if (!feature) {
+      return;
+    }
+
+    const newFeatureConfig = getFeatureStubConfig(
+      feature,
+      this.hass,
+      this.stateObj,
+    );
+
+    const features = [...this._features, newFeatureConfig];
+
+    this.dispatchEvent(
+      new CustomEvent("value-changed", {
+        detail: {
+          value: features,
+        },
+      }),
+    );
   }
 
   private _editFeature(index: number) {
@@ -135,6 +176,19 @@ export class BoldCardFeatureEditor extends LitElement {
   ) {
     const features = [...this._features];
     features[index] = newConfig;
+
+    this.dispatchEvent(
+      new CustomEvent("value-changed", {
+        detail: {
+          value: features,
+        },
+      }),
+    );
+  }
+
+  private _handleFeatureRemoved(index: number) {
+    const features = [...this._features];
+    features.splice(index, 1);
 
     this.dispatchEvent(
       new CustomEvent("value-changed", {
@@ -204,7 +258,3 @@ export class BoldCardFeatureEditor extends LitElement {
     `,
   ];
 }
-
-export const isCustomType = (type: string) => type.startsWith("custom:");
-
-export const stripCustomPrefix = (type: string) => type.slice("custom:".length);

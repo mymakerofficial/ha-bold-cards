@@ -1,14 +1,14 @@
 import { customElement, property } from "lit/decorators";
 import { css, html, LitElement, nothing } from "lit";
-import { HomeAssistant } from "../../types/ha/lovelace";
+import { HomeAssistant } from "../../../types/ha/lovelace";
 import { HassEntity } from "home-assistant-js-websocket";
-import { LovelaceCardFeatureConfig } from "../../types/ha/feature";
+import { LovelaceCardFeatureConfig } from "../../../types/ha/feature";
 import { repeat } from "lit-html/directives/repeat";
 import { mdiButtonPointer } from "@mdi/js";
-import { editorBaseStyles } from "../styles";
-import { t } from "../../localization/i18n";
-import { LovelaceCardConfigWithFeatures } from "../../types/card";
-import { getCardFeatureInternals } from "../../cards/features";
+import { editorBaseStyles } from "../../styles";
+import { t } from "../../../localization/i18n";
+import { LovelaceCardConfigWithFeatures } from "../../../types/card";
+import { getCardFeatureInternals } from "../../../cards/features";
 
 @customElement("bc-card-control-features-editor")
 export class BoldCardControlFeaturesEditor extends LitElement {

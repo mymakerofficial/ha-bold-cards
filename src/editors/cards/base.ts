@@ -37,8 +37,8 @@ export abstract class BoldLovelaceCardEditorWithFeatures<
 > extends BoldLovelaceCardEditorWithEntity<TConfig, TStateObj> {
   protected constructor() {
     super();
-    import("./bc-card-feature-editor");
-    import("./bc-card-control-features-editor");
+    import("./features/bc-card-feature-editor");
+    import("./features/bc-card-control-features-editor");
   }
 
   protected _featureEditorTemplate() {
