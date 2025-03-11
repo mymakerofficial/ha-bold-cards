@@ -1,52 +1,27 @@
-import { css, html, LitElement, nothing } from "lit";
-import { customElement, property } from "lit/decorators";
-import { HomeAssistant } from "../../types/ha/lovelace";
-import { t } from "../../localization/i18n";
+import { css, html, nothing } from "lit";
+import { customElement } from "lit/decorators";
+import { t } from "../../../localization/i18n";
 import {
   ControlType,
   ElementWhenUnavailable,
   MediaButtonAction,
   MediaButtonControlConfig,
-} from "../../lib/controls/types";
-import { editorBaseStyles } from "../styles";
-import { MediaPlayerEntity } from "../../types/ha/entity";
+} from "../../../lib/controls/types";
+import { editorBaseStyles } from "../../styles";
 import {
   getControlIcon,
   getMediaButtonControlDefaultConfig,
-} from "../../lib/controls/helpers";
-import { enumToOptions } from "../helpers";
-import { FeatureInternals } from "../../types/ha/feature";
-import { getDefaultConfigTypeFromFeatureInternals } from "../../lib/features/helpers";
+} from "../../../lib/controls/helpers";
+import { enumToOptions } from "../../helpers";
+import { getDefaultConfigTypeFromFeatureInternals } from "../../../lib/features/helpers";
+import { ControlEditorBase } from "./base";
+import { MediaPlayerEntity } from "../../../types/ha/entity";
 
 @customElement("bc-media-button-control-editor")
-export class MediaButtonControlEditor extends LitElement {
-  @property({ attribute: false }) public control?: MediaButtonControlConfig;
-  @property({ attribute: false }) public hass?: HomeAssistant;
-  @property({ attribute: false }) public stateObj?: MediaPlayerEntity;
-
-  @property({ attribute: false })
-  public internals?: FeatureInternals;
-
-  protected _handleValueChanged(
-    field: keyof MediaButtonControlConfig,
-    ev: CustomEvent,
-  ) {
-    ev.stopPropagation();
-
-    const newValue = {
-      ...this.control!,
-      [field]: ev.detail.value === "" ? undefined : ev.detail.value,
-    };
-
-    this.dispatchEvent(
-      new CustomEvent("value-changed", {
-        detail: {
-          value: newValue,
-        },
-      }),
-    );
-  }
-
+export class MediaButtonControlEditor extends ControlEditorBase<
+  MediaButtonControlConfig,
+  MediaPlayerEntity
+> {
   protected render() {
     if (
       !this.control ||

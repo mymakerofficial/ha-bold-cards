@@ -1,49 +1,22 @@
-import { css, html, LitElement, nothing } from "lit";
-import { customElement, property } from "lit/decorators";
-import { HomeAssistant } from "../../types/ha/lovelace";
-import { t } from "../../localization/i18n";
+import { css, html, nothing } from "lit";
+import { customElement } from "lit/decorators";
+import { t } from "../../../localization/i18n";
 import {
   ControlType,
   ElementWhenUnavailable,
-  MediaButtonAction,
-  MediaButtonControlConfig,
   MediaPositionControlConfig,
-} from "../../lib/controls/types";
-import { editorBaseStyles } from "../styles";
-import { MediaPlayerEntity } from "../../types/ha/entity";
-import {
-  getControlIcon,
-  getMediaButtonControlDefaultConfig,
-} from "../../lib/controls/helpers";
-import { enumToOptions } from "../helpers";
-import { MediaPositionTimestampPosition } from "../../components/bc-media-position-control";
+} from "../../../lib/controls/types";
+import { editorBaseStyles } from "../../styles";
+import { enumToOptions } from "../../helpers";
+import { MediaPositionTimestampPosition } from "../../../components/bc-media-position-control";
+import { ControlEditorBase } from "./base";
+import { MediaPlayerEntity } from "../../../types/ha/entity";
 
 @customElement("bc-media-position-control-editor")
-export class MediaPositionControlEditor extends LitElement {
-  @property({ attribute: false }) public control?: MediaPositionControlConfig;
-  @property({ attribute: false }) public hass?: HomeAssistant;
-  @property({ attribute: false }) public stateObj?: MediaPlayerEntity;
-
-  protected _handleValueChanged(
-    field: keyof MediaPositionControlConfig,
-    ev: CustomEvent,
-  ) {
-    ev.stopPropagation();
-
-    const newValue = {
-      ...this.control!,
-      [field]: ev.detail.value === "" ? undefined : ev.detail.value,
-    };
-
-    this.dispatchEvent(
-      new CustomEvent("value-changed", {
-        detail: {
-          value: newValue,
-        },
-      }),
-    );
-  }
-
+export class MediaPositionControlEditor extends ControlEditorBase<
+  MediaPositionControlConfig,
+  MediaPlayerEntity
+> {
   protected render() {
     if (
       !this.control ||

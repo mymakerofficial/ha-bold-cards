@@ -19,6 +19,7 @@ import { HassEntityBase } from "home-assistant-js-websocket";
 import { editorBaseStyles } from "../styles";
 import { stopPropagation } from "../helpers";
 import { FeatureInternals } from "../../types/ha/feature";
+import { getControlEditorElement } from "./elements/helpers";
 
 const seperator = Symbol("seperator");
 
@@ -35,9 +36,9 @@ export class ControlsEditor extends LitElement {
   constructor() {
     super();
     import("./components/bc-button-config-editor");
-    import("./bc-media-button-control-editor");
-    import("./bc-media-toggle-control-editor");
-    import("./bc-media-position-control-editor");
+    import("./elements/bc-media-button-control-editor");
+    import("./elements/bc-media-toggle-control-editor");
+    import("./elements/bc-media-position-control-editor");
   }
 
   private get _availableControls(): (ControlConfig | typeof seperator)[] {
@@ -122,35 +123,18 @@ export class ControlsEditor extends LitElement {
   }
 
   protected _editorTemplate(control: ControlConfig, index: number) {
-    switch (control.type) {
-      case ControlType.MEDIA_BUTTON:
-        return html`<bc-media-button-control-editor
-          .control=${control}
-          .hass=${this.hass}
-          .stateObj=${this.stateObj}
-          .internals=${this.internals}
-          @value-changed=${(ev) => this._handleValueChanged(index, ev)}
-        />`;
-      case ControlType.MEDIA_TOGGLE:
-        return html`<bc-media-toggle-control-editor
-          .control=${control}
-          .hass=${this.hass}
-          .stateObj=${this.stateObj}
-          .internals=${this.internals}
-          @value-changed=${(ev) => this._handleValueChanged(index, ev)}
-        />`;
-      case ControlType.MEDIA_POSITION:
-        return html`<bc-media-position-control-editor
-          .control=${control}
-          .hass=${this.hass}
-          .stateObj=${this.stateObj}
-          @value-changed=${(ev) => this._handleValueChanged(index, ev)}
-        />`;
-      default:
-        return html`<div class="placeholder">
-          ${t("editor.controls.no_settings")}
-        </div>`;
-    }
+    const el = getControlEditorElement({
+      control,
+      hass: this.hass,
+      stateObj: this.stateObj,
+      internals: this.internals,
+      onValueChanged: (ev) => this._handleValueChanged(index, ev),
+    });
+
+    return (
+      el ??
+      html`<div class="placeholder">${t("editor.controls.no_settings")}</div>`
+    );
   }
 
   protected render() {

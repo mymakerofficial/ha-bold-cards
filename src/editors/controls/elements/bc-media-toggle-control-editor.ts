@@ -1,56 +1,31 @@
-import { css, html, LitElement, nothing } from "lit";
-import { customElement, property } from "lit/decorators";
-import { HomeAssistant } from "../../types/ha/lovelace";
+import { css, html, nothing } from "lit";
+import { customElement } from "lit/decorators";
 import {
   ControlType,
   ElementWhenUnavailable,
   MediaToggleControlConfig,
-} from "../../lib/controls/types";
-import { editorBaseStyles } from "../styles";
-import { MediaPlayerEntity } from "../../types/ha/entity";
+} from "../../../lib/controls/types";
+import { editorBaseStyles } from "../../styles";
 import {
   getControlIcon,
   getControlLabel,
   getMediaButtonControlDefaultConfig,
   getMediaToggleControlDefaultConfig,
   mediaToggleActionToMediaButtonControlConfig,
-} from "../../lib/controls/helpers";
+} from "../../../lib/controls/helpers";
 import { repeat } from "lit-html/directives/repeat";
-import { mediaToggleKindActionMap } from "../../lib/controls/constants";
-import { enumToOptions } from "../helpers";
-import { t } from "../../localization/i18n";
-import { FeatureInternals } from "../../types/ha/feature";
-import { getDefaultConfigTypeFromFeatureInternals } from "../../lib/features/helpers";
+import { mediaToggleKindActionMap } from "../../../lib/controls/constants";
+import { enumToOptions } from "../../helpers";
+import { t } from "../../../localization/i18n";
+import { getDefaultConfigTypeFromFeatureInternals } from "../../../lib/features/helpers";
+import { ControlEditorBase } from "./base";
+import { MediaPlayerEntity } from "../../../types/ha/entity";
 
 @customElement("bc-media-toggle-control-editor")
-export class MediaToggleControlEditor extends LitElement {
-  @property({ attribute: false }) public control?: MediaToggleControlConfig;
-  @property({ attribute: false }) public hass?: HomeAssistant;
-  @property({ attribute: false }) public stateObj?: MediaPlayerEntity;
-
-  @property({ attribute: false })
-  public internals?: FeatureInternals;
-
-  protected _handleValueChanged(
-    field: keyof MediaToggleControlConfig,
-    ev: CustomEvent,
-  ) {
-    ev.stopPropagation();
-
-    const newValue = {
-      ...this.control!,
-      [field]: ev.detail.value,
-    };
-
-    this.dispatchEvent(
-      new CustomEvent("value-changed", {
-        detail: {
-          value: newValue,
-        },
-      }),
-    );
-  }
-
+export class MediaToggleControlEditor extends ControlEditorBase<
+  MediaToggleControlConfig,
+  MediaPlayerEntity
+> {
   protected render() {
     if (
       !this.control ||

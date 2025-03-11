@@ -50,9 +50,3 @@ export abstract class CustomLovelaceCardFeature<
     });
   }
 }
-
-export function isCustomFeatureElement(
-  el: any,
-): el is CustomLovelaceCardFeature {
-  return el.isCustomFeature?.();
-}
