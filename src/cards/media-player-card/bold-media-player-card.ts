@@ -54,6 +54,7 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<MediaPlayerTile
       vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
+      hide_media_info: false,
       ...presets[0].config,
     };
   }
@@ -239,7 +240,9 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<MediaPlayerTile
                 : nothing}
               <div class="media-info-container">
                 <div
-                  class="media-info"
+                  class="media-info ${classMap({
+                    "visually-hidden": !!this._config.hide_media_info,
+                  })}"
                   id="info"
                   data-horizontal-align=${horizontalAlign}
                 >

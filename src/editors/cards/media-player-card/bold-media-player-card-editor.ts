@@ -148,6 +148,12 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
               boolean: {},
             },
           },
+          {
+            name: "hide_media_info",
+            selector: {
+              boolean: {},
+            },
+          },
         ],
       },
     ];

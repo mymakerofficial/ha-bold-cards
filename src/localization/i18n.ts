@@ -177,6 +177,7 @@ const i18n = new I18n(
               vertical_alignment: "Vertical Alignment",
               feature_position: "First Feature Position",
               show_title_bar: "Show Title Bar",
+              hide_media_info: "Hide Media Info",
               additional_controls: `Controls (%{count})`,
             },
             helper_text: {

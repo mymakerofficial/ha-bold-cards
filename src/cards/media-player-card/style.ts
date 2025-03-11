@@ -301,4 +301,8 @@ export const mediaPlayerCardStyles = css`
   hui-card-features {
     pointer-events: all;
   }
+
+  .visually-hidden {
+    display: none;
+  }
 `;

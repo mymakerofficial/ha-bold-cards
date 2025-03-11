@@ -47,4 +47,5 @@ export interface MediaPlayerTileConfig extends LovelaceCardConfigWithFeatures {
   vertical_alignment: MediaPlayerCardVerticalAlignment;
   feature_position: CardFeaturePosition;
   show_title_bar?: boolean;
+  hide_media_info?: boolean;
 }
