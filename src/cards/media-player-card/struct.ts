@@ -32,6 +32,7 @@ export const mediaPlayerCardConfigStruct = assign(
     feature_position: enums(Object.values(CardFeaturePosition)),
     show_title_bar: optional(boolean()),
     hide_media_info: optional(boolean()),
+    placeholder_when_off: optional(boolean()),
     features: optional(array(any())),
   }),
 );

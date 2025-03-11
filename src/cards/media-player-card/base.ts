@@ -10,6 +10,7 @@ import { extractColors } from "../../helpers/extract-color";
 import { fireEvent } from "custom-card-helpers";
 import { isMediaPlayerEntity, isStateActive } from "../../helpers/states";
 import { randomFrom } from "../../lib/helpers";
+import { t } from "../../localization/i18n";
 
 export interface BoldMediaPlayerCardBaseConfig
   extends LovelaceCardConfigWithFeatures {
@@ -91,7 +92,10 @@ export abstract class BoldMediaPlayerCardBase<
 
     return stateObj.attributes.media_title
       ? getMediaDescription(stateObj)
-      : stateObj.state;
+      : t(stateObj.state, {
+          scope: "common.entity_state",
+          defaultValue: stateObj.state,
+        });
   }
 
   public willUpdate(changedProps: PropertyValues) {

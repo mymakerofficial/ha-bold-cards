@@ -116,6 +116,24 @@ export const mediaPlayerCardStyles = css`
     );
   }
 
+  .no-media-content {
+    height: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+    color: var(--primary-text-color);
+  }
+
+  .no-media-info {
+    font-size: 0.8rem;
+    font-weight: 400;
+    opacity: 0.9;
+  }
+
   .title-bar {
     display: flex;
     align-items: start;

@@ -18,6 +18,7 @@ import {
   MediaPlayerCardVerticalAlignment,
 } from "../cards/media-player-card/types";
 import { CardFeaturePosition } from "../cards/types";
+import { MediaPlayerState } from "../types/ha/entity";
 
 type EnumTranslations<T extends string> = {
   [key in T]: string;
@@ -27,6 +28,17 @@ const i18n = new I18n(
   {
     en: {
       common: {
+        entity_state: {
+          [MediaPlayerState.IDLE]: "Idle",
+          [MediaPlayerState.OFF]: "Off",
+          [MediaPlayerState.ON]: "On",
+          [MediaPlayerState.PLAYING]: "Playing",
+          [MediaPlayerState.PAUSED]: "Paused",
+          [MediaPlayerState.BUFFERING]: "Buffering",
+          [MediaPlayerState.UNAVAILABLE]: "Unavailable",
+          [MediaPlayerState.UNKNOWN]: "Unknown",
+          [MediaPlayerState.STANDBY]: "Standby",
+        } satisfies EnumTranslations<MediaPlayerState>,
         card_feature_position: {
           [CardFeaturePosition.BOTTOM]: "Bottom",
           [CardFeaturePosition.INLINE]: "Inline",
@@ -110,6 +122,11 @@ const i18n = new I18n(
         },
       },
       card: {
+        media_player: {
+          label: {
+            no_media: "%{entity} is currently %{state}.",
+          },
+        },
         air_quality: {
           label: {
             air_quality: "Air Quality",
@@ -178,6 +195,7 @@ const i18n = new I18n(
               feature_position: "First Feature Position",
               show_title_bar: "Show Title Bar",
               hide_media_info: "Hide Media Info",
+              placeholder_when_off: "Replace with Placeholder When Off",
               additional_controls: `Controls (%{count})`,
             },
             helper_text: {

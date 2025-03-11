@@ -154,6 +154,12 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
               boolean: {},
             },
           },
+          {
+            name: "placeholder_when_off",
+            selector: {
+              boolean: {},
+            },
+          },
         ],
       },
     ];

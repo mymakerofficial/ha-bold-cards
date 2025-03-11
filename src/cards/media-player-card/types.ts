@@ -48,4 +48,5 @@ export interface MediaPlayerTileConfig extends LovelaceCardConfigWithFeatures {
   feature_position: CardFeaturePosition;
   show_title_bar?: boolean;
   hide_media_info?: boolean;
+  placeholder_when_off?: boolean;
 }

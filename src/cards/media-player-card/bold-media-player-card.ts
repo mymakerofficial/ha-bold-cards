@@ -20,6 +20,8 @@ import { CardFeaturePosition } from "../types";
 import { GetFeatureInternalsContext } from "../../types/card";
 import { FeatureInternals } from "../../types/ha/feature";
 import { BoldMediaPlayerCardBase, getStubMediaPlayerEntity } from "./base";
+import { t } from "../../localization/i18n";
+import { isMediaPlayerStateActive } from "../../helpers/states";
 
 function getFeatureInternals(
   context: GetFeatureInternalsContext,
@@ -55,6 +57,7 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<MediaPlayerTile
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       hide_media_info: false,
+      placeholder_when_off: true,
       ...presets[0].config,
     };
   }
@@ -180,6 +183,48 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<MediaPlayerTile
     const imageContainerLayout = this._imageContainerLayout;
     const horizontalAlign = this._horizontalAlign;
     const verticalAlign = this._verticalAlign;
+
+    const showNoMedia = this._config?.placeholder_when_off
+      ? !isMediaPlayerStateActive(stateObj.state)
+      : false;
+
+    if (showNoMedia) {
+      return html` <ha-card
+        style=${styleMap({
+          "--tile-color": this._foregroundColorCSS,
+          "--ha-card-background": this._backgroundColorCSS,
+        })}
+      >
+        <div
+          class="background"
+          @click=${this._handleMoreInfo}
+          role="button"
+          tabindex="0"
+          aria-labelledby="info"
+        >
+          <ha-ripple></ha-ripple>
+        </div>
+        <div class="no-media-content">
+          <div class="title-bar">
+            <div class="player-title">
+              <ha-state-icon
+                .stateObj=${stateObj}
+                .hass=${this.hass}
+              ></ha-state-icon>
+              <span>${this._stateObj?.attributes.friendly_name}</span>
+            </div>
+          </div>
+          <div class="no-media-info" id="info">
+            ${t("card.media_player.label.no_media", {
+              state: t(stateObj.state, {
+                scope: "common.entity_state",
+              }).toLowerCase(),
+              entity: stateObj.attributes.friendly_name,
+            })}
+          </div>
+        </div>
+      </ha-card>`;
+    }
 
     return html`
       <ha-card
