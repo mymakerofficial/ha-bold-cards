@@ -26,6 +26,7 @@ import {
 } from "../../helpers/media-player";
 import { supportsFeature } from "../../helpers/supports-feature";
 import { DefaultConfigType } from "../types";
+import { isMediaPlayerStateActive } from "../../helpers/states";
 
 export function getControlIcon(
   control: ControlConfig,
@@ -106,6 +107,11 @@ function translateMediaButtonControl({
 }: ControlSingleTranslationProps<MediaButtonControlConfig>):
   | ConcreteMediaButtonControl
   | undefined {
+  const config = {
+    ...getMediaButtonControlDefaultConfig(control.action, defaultType),
+    ...control,
+  };
+
   const mediaButtonActionAvailability = getMediaButtonActionAvailability(
     stateObj as MediaPlayerEntity,
   );
@@ -113,17 +119,19 @@ function translateMediaButtonControl({
   const { supported, applicable } =
     mediaButtonActionAvailability[control.action];
 
-  if (!applicable && !control.always_show) {
+  const playerIsActive = isMediaPlayerStateActive(stateObj?.state ?? "");
+
+  const unavailableBecauseInactive =
+    (!playerIsActive && config.unavailable_when_off) ?? false;
+
+  if (!applicable && !config.always_show) {
     // the action is available but should not be shown because of the state
     return undefined;
   }
 
-  const config = {
-    ...getMediaButtonControlDefaultConfig(control.action, defaultType),
-    ...control,
-  };
+  const unavailable = !supported || unavailableBecauseInactive;
 
-  if (!supported && config.when_unavailable === ElementWhenUnavailable.HIDE) {
+  if (unavailable && config.when_unavailable === ElementWhenUnavailable.HIDE) {
     // the action is unavailable and the user has requested to hide it
     return undefined;
   }
@@ -136,7 +144,7 @@ function translateMediaButtonControl({
     size: config.size,
     shape: config.shape,
     variant: config.variant,
-    disabled: !supported,
+    disabled: unavailable,
   } as ConcreteMediaButtonControl;
 }
 
@@ -157,6 +165,7 @@ function translateMediaToggleControl({
         ...buttonConfig,
         when_unavailable:
           control.when_unavailable ?? defaultConfig.when_unavailable,
+        unavailable_when_off: control.unavailable_when_off,
       },
       ...props,
     });
@@ -206,9 +215,17 @@ export function translateControls({
               )
             : false;
 
+          const playerIsActive = isMediaPlayerStateActive(
+            stateObj?.state ?? "",
+          );
+          const unavailableBecauseInactive =
+            (!playerIsActive && control.unavailable_when_off) ?? false;
+
+          const unsupported = !supportsSeek || unavailableBecauseInactive;
+
           if (
-            control.when_unavailable === ElementWhenUnavailable.HIDE &&
-            !supportsSeek
+            unsupported &&
+            control.when_unavailable === ElementWhenUnavailable.HIDE
           ) {
             return undefined;
           }
@@ -216,7 +233,7 @@ export function translateControls({
           return {
             type: ControlType.MEDIA_POSITION,
             timestamp_position: control.timestamp_position,
-            disabled: !supportsSeek,
+            disabled: unsupported,
           };
         default:
           return undefined;

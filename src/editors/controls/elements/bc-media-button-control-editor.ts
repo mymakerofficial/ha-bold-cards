@@ -94,6 +94,17 @@ export class MediaButtonControlEditor extends ControlEditorBase<
                 this._handleValueChanged("always_show", ev)}
             ></ha-selector-boolean>`
           : nothing}
+        <ha-selector-boolean
+          .label=${t(
+            "editor.controls.media_button_control.label.unavailable_when_off",
+          )}
+          .helper=${t(
+            "editor.controls.media_button_control.helper.unavailable_when_off",
+          )}
+          .value=${this.control?.unavailable_when_off ?? false}
+          @value-changed=${(ev) =>
+            this._handleValueChanged("unavailable_when_off", ev)}
+        ></ha-selector-boolean>
       </div>
     `;
   }

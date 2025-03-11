@@ -31,6 +31,7 @@ const positionOnly = {
     {
       type: ControlType.MEDIA_POSITION,
       timestamp_position: MediaPositionTimestampPosition.BOTTOM,
+      unavailable_when_off: true,
     },
   ],
   when_unavailable: ElementWhenUnavailable.HIDE,
@@ -43,24 +44,29 @@ const positionPlusButtons = {
       type: ControlType.MEDIA_BUTTON,
       action: MediaButtonAction.SHUFFLE_SET,
       size: ButtonSize.SM,
+      unavailable_when_off: true,
     },
     {
       type: ControlType.MEDIA_BUTTON,
       action: MediaButtonAction.MEDIA_PREVIOUS_TRACK,
       size: ButtonSize.SM,
+      unavailable_when_off: true,
     },
     {
       type: ControlType.MEDIA_POSITION,
+      unavailable_when_off: true,
     },
     {
       type: ControlType.MEDIA_BUTTON,
       action: MediaButtonAction.MEDIA_NEXT_TRACK,
       size: ButtonSize.SM,
+      unavailable_when_off: true,
     },
     {
       type: ControlType.MEDIA_BUTTON,
       action: MediaButtonAction.REPEAT_SET,
       size: ButtonSize.SM,
+      unavailable_when_off: true,
     },
   ],
   when_unavailable: ElementWhenUnavailable.HIDE,

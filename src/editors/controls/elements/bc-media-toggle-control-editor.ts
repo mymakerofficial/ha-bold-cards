@@ -3,7 +3,9 @@ import { customElement } from "lit/decorators";
 import {
   ControlType,
   ElementWhenUnavailable,
+  MediaButtonAction,
   MediaToggleControlConfig,
+  MediaToggleKind,
 } from "../../../lib/controls/types";
 import { editorBaseStyles } from "../../styles";
 import {
@@ -60,6 +62,17 @@ export class MediaToggleControlEditor extends ControlEditorBase<
             },
           }}
         ></bc-selector-select>
+        <ha-selector-boolean
+          .label=${t(
+            "editor.controls.media_button_control.label.unavailable_when_off",
+          )}
+          .helper=${t(
+            "editor.controls.media_button_control.helper.unavailable_when_off",
+          )}
+          .value=${this.control?.unavailable_when_off ?? false}
+          @value-changed=${(ev) =>
+            this._handleValueChanged("unavailable_when_off", ev)}
+        ></ha-selector-boolean>
         ${repeat(mediaToggleKindActionMap[this.control.kind], (action) => {
           const buttonConfig = mediaToggleActionToMediaButtonControlConfig(
             this.control!,

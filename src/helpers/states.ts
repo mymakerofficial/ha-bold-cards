@@ -18,6 +18,15 @@ export function isStateUnavailable(state: string) {
   );
 }
 
+export function isMediaPlayerStateActive(state: string) {
+  return (
+    !isStateOff(state) &&
+    !([MediaPlayerState.IDLE, MediaPlayerState.STANDBY] as string[]).includes(
+      state,
+    )
+  );
+}
+
 export function isStateActive(stateObj: HassEntity) {
   const domain = computeDomain(stateObj.entity_id);
 
@@ -27,9 +36,7 @@ export function isStateActive(stateObj: HassEntity) {
 
   switch (domain) {
     case "media_player":
-      return !(
-        [MediaPlayerState.IDLE, MediaPlayerState.STANDBY] as string[]
-      ).includes(stateObj.state);
+      return isMediaPlayerStateActive(stateObj.state);
     default:
       return false;
   }

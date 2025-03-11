@@ -89,6 +89,7 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.SHUFFLE_SET,
+          unavailable_when_off: true,
         },
         {
           type: ControlType.MEDIA_BUTTON,
@@ -105,6 +106,7 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
         {
           type: ControlType.MEDIA_BUTTON,
           action: MediaButtonAction.REPEAT_SET,
+          unavailable_when_off: true,
         },
       ],
     };

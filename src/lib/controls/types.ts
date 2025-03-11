@@ -60,16 +60,19 @@ export interface MediaButtonControlConfig
   type: "media_button";
   action: MediaButtonAction;
   always_show?: boolean;
+  unavailable_when_off?: boolean;
 }
 
 export interface MediaPositionControlConfig {
   type: "media_position";
   timestamp_position?: MediaPositionTimestampPosition;
   when_unavailable?: ElementWhenUnavailable;
+  unavailable_when_off?: boolean;
 }
 
 export interface MediaToggleControlBaseConfig {
   when_unavailable: ElementWhenUnavailable;
+  unavailable_when_off?: boolean;
 }
 
 export type MediaToggleControlConfig = {

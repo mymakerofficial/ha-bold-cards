@@ -141,12 +141,15 @@ const i18n = new I18n(
               shape: "Shape",
               when_unavailable: "When Unavailable",
               always_show: "Always Show",
+              unavailable_when_off: "Unavailable When Off",
             },
             helper: {
               when_unavailable:
                 "What to do when this feature is not supported by the entity.",
               always_show:
                 "Show this control even when it might not make sense (e.g. play button when already playing). The control might still be hidden or disabled depending on the 'When Unavailable' setting.",
+              unavailable_when_off:
+                "Make this control behave as if it were unsupported (unavailable) when the entity is off, idle, unavailable or in standby.",
             },
           },
           media_position_control: {

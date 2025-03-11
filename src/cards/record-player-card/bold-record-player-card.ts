@@ -68,6 +68,7 @@ export class BoldRecordPlayerCard extends BoldMediaPlayerCardBase {
                 size: ButtonSize.MD,
               },
               when_unavailable: ElementWhenUnavailable.HIDE,
+              unavailable_when_off: true,
             },
           ],
         },
