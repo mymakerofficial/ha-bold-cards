@@ -160,10 +160,11 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
         display: flex;
         align-items: center;
         justify-content: center;
-        height: calc(
-          var(--feature-height) * var(--feature-size) + var(--feature-gap) *
-            (var(--feature-size) - 1)
-        );
+        /* don't actually set the height to fit the grid, this way the gaps are consistent */
+        /* height: calc(
+            var(--feature-height) * var(--feature-size) + var(--feature-gap) *
+              (var(--feature-size) - 1)
+           ); */
       }
 
       bc-control-row {
