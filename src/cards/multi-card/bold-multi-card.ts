@@ -94,6 +94,25 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
           `,
         )}
       </div>
+      <div class="stepper-container">
+        <div class="stepper">
+          ${repeat(
+            cards,
+            (_, index) => html`
+              <div
+                class="step"
+                data-active=${index === Math.round(this._scrollIndex)}
+                @click=${() => {
+                  this._containerRef.value?.scrollTo({
+                    left: this._containerWidth * index,
+                    behavior: "smooth",
+                  });
+                }}
+              ></div>
+            `,
+          )}
+        </div>
+      </div>
     `;
   }
 
@@ -177,6 +196,34 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
 
       .item[data-direction="right"] hui-card {
         right: calc(100% * var(--snap-distance) / 2);
+      }
+
+      .stepper-container {
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 8px;
+      }
+
+      .stepper {
+        display: flex;
+        gap: 8px;
+      }
+
+      .step {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--primary-text-color);
+        opacity: 0.5;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+
+      .step[data-active="true"] {
+        opacity: 1;
       }
     `;
   }
