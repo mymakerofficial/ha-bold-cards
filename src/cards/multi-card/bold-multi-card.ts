@@ -2,11 +2,18 @@ import { BoldLovelaceCard } from "../base";
 import { MultiCardConfig } from "./types";
 import { css, html, nothing } from "lit";
 import { repeat } from "lit-html/directives/repeat";
-import { customElement } from "lit/decorators";
+import { customElement, state } from "lit/decorators";
 import { LovelaceCardEditor } from "../../types/ha/lovelace";
+import { styleMap } from "lit-html/directives/style-map";
+import { createRef, ref } from "lit-html/directives/ref";
+import { classMap } from "lit-html/directives/class-map";
 
 @customElement("bold-multi-card")
 export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
+  private _containerRef = createRef();
+  @state() private _containerWidth: number = 0;
+  @state() private _containerScrollLeft: number = 0;
+
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("../../editors/cards/multi-card/bold-multi-card-editor");
     return document.createElement(
@@ -16,6 +23,30 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
 
   public getCardSize(): number {
     return 1;
+  }
+
+  protected firstUpdated() {
+    this._containerRef.value?.addEventListener(
+      "scroll",
+      this._onScroll.bind(this),
+    );
+    this._containerRef.value?.addEventListener(
+      "resize",
+      this._updateContainerWidth.bind(this),
+    );
+    this._updateContainerWidth();
+  }
+
+  private _onScroll() {
+    this._containerScrollLeft = this._containerRef.value?.scrollLeft || 0;
+  }
+
+  private _updateContainerWidth() {
+    this._containerWidth = this._containerRef.value?.clientWidth || 0;
+  }
+
+  private get _scrollIndex() {
+    return this._containerScrollLeft / this._containerWidth;
   }
 
   protected render() {
@@ -29,11 +60,40 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
     }));
 
     return html`
-      ${repeat(
-        cards,
-        (card) =>
-          html`<hui-card .config=${card} .hass=${this.hass}></hui-card>`,
-      )}
+      <div
+        class="container"
+        style="${styleMap({
+          "--left-snap-distance": Math.min(
+            Math.abs(this._scrollIndex - Math.floor(this._scrollIndex)),
+            1,
+          ),
+          "--right-snap-distance": Math.min(
+            Math.abs(this._scrollIndex - Math.ceil(this._scrollIndex)),
+            1,
+          ),
+        })}}"
+        ${ref(this._containerRef)}
+      >
+        ${repeat(
+          cards,
+          (card, index) => html`
+            <div
+              class="item"
+              data-direction=${index <= this._scrollIndex ? "left" : "right"}
+              style=${styleMap({
+                "--snap-distance": Math.min(
+                  Math.abs(this._scrollIndex - index),
+                  1,
+                ),
+              })}
+            >
+              <div class="inner">
+                <hui-card .config=${card} .hass=${this.hass}></hui-card>
+              </div>
+            </div>
+          `,
+        )}
+      </div>
     `;
   }
 
@@ -43,20 +103,80 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
         position: relative;
         width: 100%;
         height: 100%;
+      }
+
+      .container {
+        position: relative;
+        width: 100%;
+        height: 100%;
         display: flex;
         overflow-x: auto;
         overflow-y: hidden;
         scroll-snap-type: x mandatory;
         scroll-snap-points-x: repeat(100%);
         scroll-padding-block: 8px;
-        border-radius: var(--ha-card-border-radius, 4px);
+        --left-border-radius: calc(
+          var(--border-radius, 4px) * (1 - var(--left-snap-distance) / 2)
+        );
+        --right-border-radius: calc(
+          var(--border-radius, 4px) * (1 - var(--right-snap-distance) / 2)
+        );
+        border-radius: var(--left-border-radius) var(--right-border-radius)
+          var(--right-border-radius) var(--left-border-radius);
+      }
+
+      /* disable scrollbar */
+      .container::-webkit-scrollbar {
+        display: none;
+      }
+
+      .container::-webkit-scrollbar-thumb {
+        display: none;
+      }
+
+      .container::-webkit-scrollbar-track {
+        display: none;
+      }
+
+      .item {
+        scroll-snap-align: start;
+        display: flex;
+        align-items: center;
+        justify-content: inherit;
+        overflow: hidden;
+        height: 100%;
+        min-width: 100%;
+      }
+
+      .inner {
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+        min-width: 100%;
+        --ha-card-border-radius: calc(
+          var(--border-radius, 4px) * (1 - var(--snap-distance) / 2)
+        );
+        border-radius: var(--ha-card-border-radius);
+        background: var(
+          --card-background-color,
+          var(--paper-card-background-color)
+        );
+        opacity: calc(1 - pow(var(--snap-distance), 3));
       }
 
       hui-card {
-        scroll-snap-align: start;
-        min-width: 100%;
         height: 100%;
-        overflow: hidden;
+        min-width: 100%;
+        position: absolute;
+        opacity: calc(1 - var(--snap-distance));
+      }
+
+      .item[data-direction="left"] hui-card {
+        left: calc(100% * var(--snap-distance) / 2);
+      }
+
+      .item[data-direction="right"] hui-card {
+        right: calc(100% * var(--snap-distance) / 2);
       }
     `;
   }
