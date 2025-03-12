@@ -20,6 +20,7 @@ import { editorBaseStyles } from "../styles";
 import { stopPropagation } from "../helpers";
 import { FeatureInternals } from "../../types/ha/feature";
 import { getControlEditorElement } from "./elements/helpers";
+import { PropertyValues } from "lit-element";
 
 const seperator = Symbol("seperator");
 
@@ -190,7 +191,7 @@ export class ControlsEditor extends LitElement {
               return html`<li divider role="separator"></li>`;
             }
             return html`<ha-list-item .value=${control}>
-              <ha-icon icon=${getControlIcon(control)}></ha-icon>
+              <ha-icon icon=${getControlIcon(control, this.stateObj)}></ha-icon>
               ${getControlLabel(control)}
             </ha-list-item>`;
           })}
