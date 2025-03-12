@@ -1,8 +1,6 @@
-import {
-  CustomCardFeatureSizeEntry,
-  FeatureConfigWithMaybeInternals,
-} from "../types/ha/feature";
+import { CustomCardFeatureSizeEntry } from "../types/ha/feature";
 import { HassEntity } from "home-assistant-js-websocket";
+import { FeatureConfigWithMaybeInternals } from "../lib/internals/types";
 
 export function getFeatureSize(
   config: FeatureConfigWithMaybeInternals,

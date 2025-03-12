@@ -2,7 +2,8 @@ import {
   HomeAssistant as HomeAssistantBase,
   LovelaceConfig,
 } from "custom-card-helpers";
-import { FeatureInternals, LovelaceCardFeatureConfig } from "./feature";
+import { LovelaceCardFeatureConfig } from "./feature";
+import { CardInternals, FeatureInternals } from "../../lib/internals/types";
 
 type EntityCategory = "config" | "diagnostic";
 
@@ -107,10 +108,8 @@ export interface LovelaceCard<TConfig = LovelaceCardConfig>
   setConfig(config: TConfig): void;
 }
 
-export interface LovelaceGenericElementEditor<
-  TConfig = any,
-  TContext = LovelaceCardFeatureEditorContext,
-> extends HTMLElement {
+export interface LovelaceGenericElementEditor<TConfig = any, TContext = any>
+  extends HTMLElement {
   hass?: HomeAssistant;
   lovelace?: LovelaceConfig;
   context?: TContext;
@@ -120,7 +119,7 @@ export interface LovelaceGenericElementEditor<
 
 export interface LovelaceCardEditor<
   TConfig = LovelaceCardConfig,
-  TContext = any,
+  TContext = LovelaceCardEditorContext,
 > extends LovelaceGenericElementEditor<TConfig, TContext> {}
 
 export interface LovelaceCardFeatureEditor<
@@ -132,4 +131,8 @@ export interface LovelaceCardFeatureEditorContext {
   // TODO what if we want to pass more than just the entity?
   entity_id?: string;
   internals?: FeatureInternals;
+}
+
+export interface LovelaceCardEditorContext {
+  internals?: CardInternals;
 }

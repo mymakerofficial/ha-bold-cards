@@ -1,9 +1,8 @@
 import { ControlConfig, ControlType } from "../../../lib/controls/types";
 import { HassEntityBase } from "home-assistant-js-websocket";
-import { FeatureInternals } from "../../../types/ha/feature";
 import { HomeAssistant } from "../../../types/ha/lovelace";
-import { nothing } from "lit";
 import { ControlEditorBase } from "./base";
+import { FeatureInternals } from "../../../lib/internals/types";
 
 const controlEditorMap = {
   [ControlType.MEDIA_BUTTON]: "bc-media-button-control-editor",
@@ -43,6 +42,7 @@ export function getControlEditorElement({
     return undefined;
   }
 
+  // TODO handle loading
   importElements[key]().then();
 
   const element = document.createElement(key) as ControlEditorBase;

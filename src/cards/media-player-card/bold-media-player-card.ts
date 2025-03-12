@@ -18,10 +18,10 @@ import { mediaPlayerCardStyles } from "./style";
 import { presets } from "../../editors/cards/media-player-card/constants";
 import { CardFeaturePosition } from "../types";
 import { GetFeatureInternalsContext } from "../../types/card";
-import { FeatureInternals } from "../../types/ha/feature";
 import { BoldMediaPlayerCardBase, getStubMediaPlayerEntity } from "./base";
 import { t } from "../../localization/i18n";
 import { isMediaPlayerStateActive } from "../../helpers/states";
+import { FeatureInternals } from "../../lib/internals/types";
 
 function getFeatureInternals(
   context: GetFeatureInternalsContext,

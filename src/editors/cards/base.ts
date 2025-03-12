@@ -1,6 +1,7 @@
 import {
   LovelaceCardConfig,
   LovelaceCardEditor,
+  LovelaceCardEditorContext,
 } from "../../types/ha/lovelace";
 import { BoldLovelaceEditor } from "../base";
 import { html, nothing } from "lit";
@@ -11,12 +12,20 @@ import {
   LovelaceCardConfigWithFeatures,
 } from "../../types/card";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
-import { FeatureConfigWithMaybeInternals } from "../../types/ha/feature";
 import { fireEvent } from "custom-card-helpers";
+import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
 
 export abstract class BoldLovelaceCardEditor<TConfig extends LovelaceCardConfig>
-  extends BoldLovelaceEditor<TConfig>
-  implements LovelaceCardEditor {}
+  extends BoldLovelaceEditor<TConfig, LovelaceCardEditorContext>
+  implements LovelaceCardEditor
+{
+  protected get _internals() {
+    if (!this.context || typeof this.context !== "object") {
+      return undefined;
+    }
+    return "internals" in this.context ? this.context.internals : undefined;
+  }
+}
 
 export abstract class BoldLovelaceCardEditorWithEntity<
   TConfig extends LovelaceCardConfigWithEntity,

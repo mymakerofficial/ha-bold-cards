@@ -1,9 +1,9 @@
 import { LovelaceCardConfig } from "./ha/lovelace";
+import { LovelaceCardFeatureConfig } from "./ha/feature";
 import {
   FeatureConfigWithMaybeInternals,
   FeatureInternals,
-  LovelaceCardFeatureConfig,
-} from "./ha/feature";
+} from "../lib/internals/types";
 
 export interface CustomCardEntry {
   type: string;

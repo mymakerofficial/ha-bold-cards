@@ -1,8 +1,8 @@
-import { FeatureInternals } from "../types/ha/feature";
 import {
   CustomCardInternalsEntry,
   GetFeatureInternalsContext,
 } from "../types/card";
+import { FeatureInternals } from "../lib/internals/types";
 
 function getFallbackFeatureInternals(
   context: GetFeatureInternalsContext,

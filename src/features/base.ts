@@ -1,13 +1,13 @@
 import { LitElement } from "lit";
 import {
   CustomCardFeatureEntryWithSize,
-  FeatureConfigWithMaybeInternals,
   LovelaceCardFeature,
   LovelaceCardFeatureConfig,
 } from "../types/ha/feature";
 import { property, state } from "lit/decorators";
 import { HomeAssistant } from "../types/ha/lovelace";
 import { HassEntity } from "home-assistant-js-websocket";
+import { FeatureConfigWithMaybeInternals } from "../lib/internals/types";
 
 export abstract class CustomLovelaceCardFeature<
     TStateObj extends HassEntity = HassEntity,
@@ -27,7 +27,7 @@ export abstract class CustomLovelaceCardFeature<
   }
 
   protected get _isInCustomCard() {
-    return this._config?.__custom_internals !== undefined;
+    return this._config?.__bold_custom_internals !== undefined;
   }
 
   static registerCustomFeature<

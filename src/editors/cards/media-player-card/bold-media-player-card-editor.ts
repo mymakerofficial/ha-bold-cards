@@ -42,10 +42,14 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
     const stateObj = entityId ? this.hass?.states[entityId] : undefined;
 
     const schema = [
-      {
-        name: "entity",
-        selector: { entity: { domain: "media_player" } },
-      },
+      ...(!this._internals
+        ? [
+            {
+              name: "entity",
+              selector: { entity: { domain: "media_player" } },
+            },
+          ]
+        : []),
       {
         name: "layout",
         flatten: true,

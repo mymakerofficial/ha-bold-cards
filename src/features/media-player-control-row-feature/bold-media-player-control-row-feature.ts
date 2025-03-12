@@ -6,7 +6,6 @@ import { ButtonSize, ButtonVariant } from "../../components/bc-button";
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
 import { styleMap } from "lit-html/directives/style-map";
-import { FeatureConfigWithMaybeInternals } from "../../types/ha/feature";
 
 import {
   ControlType,
@@ -19,6 +18,7 @@ import { LovelaceCardFeatureEditor } from "../../types/ha/lovelace";
 import { classMap } from "lit-html/directives/class-map";
 import { firstOf, lastOf } from "../../lib/helpers";
 import { getDefaultConfigTypeFromFeatureInternals } from "../../lib/features/helpers";
+import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
 
 function getControls(
   config: FeatureConfigWithMaybeInternals<BoldMediaPlayerControlRowFeatureConfig>,
@@ -28,13 +28,13 @@ function getControls(
     controls: config.controls,
     stateObj,
     defaultType: getDefaultConfigTypeFromFeatureInternals(
-      config.__custom_internals,
+      config.__bold_custom_internals,
     ),
   }).map((control) => {
     if (control.type === ControlType.MEDIA_BUTTON) {
       return {
         ...control,
-        size: config.__custom_internals ? control.size : ButtonSize.SM,
+        size: config.__bold_custom_internals ? control.size : ButtonSize.SM,
       };
     }
     return control;

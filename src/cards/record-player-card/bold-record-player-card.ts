@@ -5,7 +5,6 @@ import {
   BoldMediaPlayerCardBase,
   getStubMediaPlayerEntity,
 } from "../media-player-card/base";
-import { FeatureInternals } from "../../types/ha/feature";
 import { HomeAssistant, LovelaceGridOptions } from "../../types/ha/lovelace";
 import { MediaPlayerState } from "../../types/ha/entity";
 import { BoldMediaPlayerControlRowFeature } from "../../features/media-player-control-row-feature/bold-media-player-control-row-feature";
@@ -24,6 +23,7 @@ import {
   ButtonSize,
   ButtonVariant,
 } from "../../components/bc-button";
+import { FeatureInternals } from "../../lib/internals/types";
 
 function getFeatureInternals(
   context: GetFeatureInternalsContext,

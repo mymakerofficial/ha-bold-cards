@@ -18,7 +18,7 @@ interface TypedUnionOptions<
   TAssignObject = object,
   TDefault = undefined,
 > {
-  name: string;
+  name?: string;
   key: TField;
   assign?: Struct<TAssignObject, unknown>;
   structs: { [key in keyof TMap]: Struct<TMap[key], unknown> };
@@ -34,7 +34,7 @@ export function typedUnion<
 >(options: TypedUnionOptions<TField, TMap, TDefault>) {
   return define<
     TDefault extends undefined ? TMap[keyof TMap] : TMap[keyof TMap] | TDefault
-  >(options.name, (value) => {
+  >(options.name ?? "typedUnion", (value) => {
     if (!value || typeof value !== "object" || !(options.key in value)) {
       return `Expected an object containing at least a "${String(options.key)}" key, but received "${value}"`;
     }

@@ -2,8 +2,8 @@ import { LitElement } from "lit";
 import { property } from "lit/decorators";
 import { ControlConfig } from "../../../lib/controls/types";
 import { HomeAssistant } from "../../../types/ha/lovelace";
-import { FeatureInternals } from "../../../types/ha/feature";
 import { HassEntityBase } from "home-assistant-js-websocket";
+import { FeatureInternals } from "../../../lib/internals/types";
 
 export class ControlEditorBase<
   TConfig = ControlConfig,

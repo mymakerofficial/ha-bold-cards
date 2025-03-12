@@ -1,6 +1,7 @@
 import { HomeAssistant, LovelaceCardFeatureEditor } from "./lovelace";
 import { HassEntity } from "home-assistant-js-websocket";
 import { BoldMediaPlayerControlRowFeatureConfig } from "../../features/media-player-control-row-feature/types";
+import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
 
 export interface MediaPlayerVolumeSliderCardFeatureConfig {
   type: "media-player-volume-slider";
@@ -9,23 +10,6 @@ export interface MediaPlayerVolumeSliderCardFeatureConfig {
 export type LovelaceCardFeatureConfig =
   | MediaPlayerVolumeSliderCardFeatureConfig
   | BoldMediaPlayerControlRowFeatureConfig;
-
-export interface FeatureInternals {
-  parent_card_type: string;
-  is_inlined: boolean;
-}
-
-export interface FeatureConfigInternals {
-  __custom_internals: FeatureInternals;
-}
-
-export type FeatureConfigWithInternals<
-  TConfig extends LovelaceCardFeatureConfig = LovelaceCardFeatureConfig,
-> = TConfig & FeatureConfigInternals;
-
-export type FeatureConfigWithMaybeInternals<
-  TConfig extends LovelaceCardFeatureConfig = LovelaceCardFeatureConfig,
-> = TConfig & Partial<FeatureConfigInternals>;
 
 export interface LovelaceCardFeature<
   TStateObj extends HassEntity = HassEntity,

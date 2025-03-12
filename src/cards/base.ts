@@ -14,10 +14,11 @@ import {
 } from "../types/card";
 import { getFeatureDoesRender, getFeatureSize } from "../features/size";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
+
 import {
   FeatureConfigWithMaybeInternals,
   FeatureInternals,
-} from "../types/ha/feature";
+} from "../lib/internals/types";
 
 export abstract class BoldLovelaceCard<TConfig extends LovelaceCardConfig>
   extends LitElement
@@ -79,7 +80,7 @@ export abstract class BoldCardWithFeatures<
       //  this is the only way to pass information and allows features to be more flexible
       features: config.features?.map((feature, featureIndex) => ({
         ...feature,
-        __custom_internals: this._getFeatureInternals({
+        __bold_custom_internals: this._getFeatureInternals({
           config,
           feature,
           featureIndex,

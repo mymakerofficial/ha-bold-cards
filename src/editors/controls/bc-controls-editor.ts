@@ -18,9 +18,8 @@ import {
 import { HassEntityBase } from "home-assistant-js-websocket";
 import { editorBaseStyles } from "../styles";
 import { stopPropagation } from "../helpers";
-import { FeatureInternals } from "../../types/ha/feature";
 import { getControlEditorElement } from "./elements/helpers";
-import { PropertyValues } from "lit-element";
+import { FeatureInternals } from "../../lib/internals/types";
 
 const seperator = Symbol("seperator");
 

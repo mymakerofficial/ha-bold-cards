@@ -1,5 +1,5 @@
-import { FeatureInternals } from "../../types/ha/feature";
 import { DefaultConfigType } from "../types";
+import { FeatureInternals } from "../internals/types";
 
 export function getDefaultConfigTypeFromFeatureInternals(
   internals?: FeatureInternals,
