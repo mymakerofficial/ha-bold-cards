@@ -130,9 +130,7 @@ export const mediaToggleKindIconMap: {
   [MediaToggleKind.ON_OFF]: "mdi:power",
 };
 
-export const mediaToggleKindActionMap: {
-  [kind in MediaToggleKind]: MediaButtonAction[];
-} = {
+export const mediaToggleKindActionMap = {
   [MediaToggleKind.PLAY_PAUSE]: [
     MediaButtonAction.MEDIA_PLAY,
     MediaButtonAction.MEDIA_PAUSE,
@@ -141,6 +139,8 @@ export const mediaToggleKindActionMap: {
     MediaButtonAction.TURN_ON,
     MediaButtonAction.TURN_OFF,
   ],
+} as const satisfies {
+  [kind in MediaToggleKind]: MediaButtonAction[];
 };
 
 export const mediaToggleDefaultMap: {

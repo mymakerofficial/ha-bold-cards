@@ -4,6 +4,7 @@ import {
   ButtonVariant,
 } from "../../components/bc-button";
 import { MediaPositionTimestampPosition } from "../../components/bc-media-position-control";
+import { mediaToggleKindActionMap } from "./constants";
 
 export const ControlType = {
   MEDIA_BUTTON: "media_button",
@@ -75,12 +76,21 @@ export interface MediaToggleControlBaseConfig {
   unavailable_when_off?: boolean;
 }
 
-export type MediaToggleControlConfig = {
+export type MediaToggleControlKindConfig<
+  TKind extends MediaToggleKind = MediaToggleKind,
+> = {
+  kind: TKind;
+} & {
+  [key in (typeof mediaToggleKindActionMap)[TKind][number]]?: Partial<ButtonBaseConfig>;
+};
+
+export type MediaToggleControlConfig<
+  TKind extends MediaToggleKind = MediaToggleKind,
+> = {
   type: "media_toggle";
   kind: MediaToggleKind;
-} & Partial<MediaToggleControlBaseConfig> & {
-    [key in MediaButtonAction]?: Partial<ButtonBaseConfig>;
-  };
+} & Partial<MediaToggleControlBaseConfig> &
+  MediaToggleControlKindConfig<TKind>;
 
 export interface CustomControlConfig {
   type: "custom";

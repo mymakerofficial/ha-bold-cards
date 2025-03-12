@@ -1,21 +1,13 @@
-import {
-  any,
-  array,
-  assign,
-  boolean,
-  enums,
-  object,
-  optional,
-  string,
-} from "superstruct";
+import { assign, boolean, enums, object, optional, string } from "superstruct";
 import { baseLovelaceCardConfig } from "../../helpers/ha/base-card-struct";
 import {
-  MediaPlayerCardHorizontalAlignment,
   MediaPlayerCardColorMode,
+  MediaPlayerCardHorizontalAlignment,
   MediaPlayerCardPicturePosition,
   MediaPlayerCardVerticalAlignment,
 } from "./types";
 import { CardFeaturePosition } from "../types";
+import { featuresStruct } from "../../lib/features/structs";
 
 export const mediaPlayerCardConfigStruct = assign(
   baseLovelaceCardConfig,
@@ -33,6 +25,6 @@ export const mediaPlayerCardConfigStruct = assign(
     show_title_bar: optional(boolean()),
     hide_media_info: optional(boolean()),
     placeholder_when_off: optional(boolean()),
-    features: optional(array(any())),
+    features: featuresStruct,
   }),
 );

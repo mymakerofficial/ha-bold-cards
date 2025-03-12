@@ -1,14 +1,4 @@
-import {
-  any,
-  assert,
-  assign,
-  boolean,
-  define,
-  enums,
-  object,
-  optional,
-  string,
-} from "superstruct";
+import { assign, boolean, enums, object, optional, string } from "superstruct";
 import {
   ControlType,
   ElementWhenUnavailable,
@@ -20,9 +10,9 @@ import {
   ButtonSize,
   ButtonVariant,
 } from "../../components/bc-button";
-import { StructError } from "superstruct/dist/error";
-import { exactMatch } from "../struct";
+import { exactMatch, typedUnion } from "../struct";
 import { MediaPositionTimestampPosition } from "../../components/bc-media-position-control";
+import { mediaToggleKindActionMap } from "./constants";
 
 const buttonBaseConfigStruct = object({
   icon: optional(string()),
@@ -38,6 +28,7 @@ export const mediaButtonControlConfigStruct = assign(
     action: enums(Object.values(MediaButtonAction)),
     when_unavailable: optional(enums(Object.values(ElementWhenUnavailable))),
     always_show: optional(boolean()),
+    unavailable_when_off: optional(boolean()),
   }),
 );
 
@@ -46,17 +37,38 @@ export const mediaProgressControlConfigStruct = object({
   timestamp_position: optional(
     enums(Object.values(MediaPositionTimestampPosition)),
   ),
+  when_unavailable: optional(enums(Object.values(ElementWhenUnavailable))),
+  unavailable_when_off: optional(boolean()),
 });
 
-export const mediaToggleControlConfigStruct = object({
+const mediaToggleControlBaseConfigStruct = object({
   type: exactMatch(ControlType.MEDIA_TOGGLE),
-  kind: enums(Object.values(MediaToggleKind)),
   when_unavailable: optional(enums(Object.values(ElementWhenUnavailable))),
-  // TODO only allow actions that are used in the media toggle type
-  ...Object.fromEntries(
-    Object.values(MediaButtonAction).map((action) => [
-      action,
-      optional(buttonBaseConfigStruct),
+  unavailable_when_off: optional(boolean()),
+});
+
+function getMediaToggleControlKindConfigStruct<
+  T extends MediaToggleKind,
+  K extends MediaButtonAction,
+>(kind: T, actions: K[]) {
+  return object({
+    kind: exactMatch(kind),
+    ...Object.fromEntries(
+      actions.map((action) => [action, optional(buttonBaseConfigStruct)]),
+    ),
+  });
+}
+
+export const mediaToggleControlConfigStruct = typedUnion({
+  name: "mediaToggleKind",
+  key: "kind",
+  structs: Object.fromEntries(
+    Object.entries(mediaToggleKindActionMap).map(([kind, actions]) => [
+      kind,
+      assign(
+        mediaToggleControlBaseConfigStruct,
+        getMediaToggleControlKindConfigStruct(kind as MediaToggleKind, actions),
+      ),
     ]),
   ),
 });
@@ -65,43 +77,13 @@ export const customControlConfigStruct = object({
   type: exactMatch(ControlType.CUSTOM),
 });
 
-export const controlConfigStruct = define("controlConfig", (value) => {
-  if (!value || typeof value !== "object" || !("type" in value)) {
-    return `Expected an object containing at least a "type" key, but received "${value}"`;
-  }
-
-  switch (value.type) {
-    case ControlType.MEDIA_BUTTON:
-      try {
-        assert(value, mediaButtonControlConfigStruct);
-      } catch (e) {
-        return (e as StructError).message;
-      }
-      return true;
-    case ControlType.MEDIA_POSITION:
-      try {
-        assert(value, mediaProgressControlConfigStruct);
-      } catch (e) {
-        return (e as StructError).message;
-      }
-      return true;
-    case ControlType.MEDIA_TOGGLE:
-      try {
-        assert(value, mediaToggleControlConfigStruct);
-      } catch (e) {
-        return (e as StructError).message;
-      }
-      return true;
-    case ControlType.CUSTOM:
-      try {
-        assert(value, customControlConfigStruct);
-      } catch (e) {
-        return (e as StructError).message;
-      }
-      return true;
-    default:
-      return `Expected "type" to be one of \`${Object.values(ControlType)
-        .map((it) => '"' + it + '"')
-        .join(", ")}\`, but received "${value.type}"`;
-  }
+export const controlConfigStruct = typedUnion({
+  name: "controlConfig",
+  key: "type",
+  structs: {
+    [ControlType.MEDIA_BUTTON]: mediaButtonControlConfigStruct,
+    [ControlType.MEDIA_POSITION]: mediaProgressControlConfigStruct,
+    [ControlType.MEDIA_TOGGLE]: mediaToggleControlConfigStruct,
+    [ControlType.CUSTOM]: customControlConfigStruct,
+  },
 });
