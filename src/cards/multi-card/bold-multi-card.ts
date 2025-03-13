@@ -7,6 +7,7 @@ import { LovelaceCardEditor } from "../../types/ha/lovelace";
 import { createRef, ref } from "lit-html/directives/ref";
 import { isStateActive } from "../../helpers/states";
 import { getStateObj } from "../../lib/entities/helpers";
+import { dedupeMediaPlayerEntities } from "./helpers";
 
 @customElement("bold-multi-card")
 export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
@@ -89,11 +90,11 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
   }
 
   protected render() {
-    if (!this._config) {
+    if (!this._config || !this.hass) {
       return nothing;
     }
 
-    const cards = this._config.entities
+    const cards = dedupeMediaPlayerEntities(this._config.entities, this.hass)
       .filter(
         (entityId, index) =>
           index === 0 || isStateActive(getStateObj(entityId, this.hass)),
@@ -128,27 +129,34 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
           `,
         )}
       </div>
-      <div class="stepper-container">
-        <div
-          class="stepper"
-          tabindex="0"
-          role="tablist"
-          @keydown=${this._handleStepperKeyDown}
-        >
-          ${repeat(
-            cards,
-            (_, index) => html`
-              <div
-                class="step"
-                role="tab"
-                aria-selected=${index === this._activeIndex}
-                @click=${() => this._handleClickStep(index)}
-              >
-                <div class="step-inner" />
+      ${
+        cards.length > 1
+          ? html`
+              <div class="stepper-container">
+                <div
+                  class="stepper"
+                  tabindex="0"
+                  role="tablist"
+                  @keydown=${this._handleStepperKeyDown}
+                >
+                  ${repeat(
+                    cards,
+                    (_, index) => html`
+                      <div
+                        class="step"
+                        role="tab"
+                        aria-selected=${index === this._activeIndex}
+                        @click=${() => this._handleClickStep(index)}
+                      >
+                        <div class="step-inner" />
+                      </div>
+                    `,
+                  )}
+                </div>
               </div>
-            `,
-          )}
-        </div>
+            `
+          : nothing
+      }
       </div>
     `;
   }
