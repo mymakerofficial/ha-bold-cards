@@ -5,8 +5,9 @@ import { MediaPlayerEntity } from "../../types/ha/entity";
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
 import { styleMap } from "lit-html/directives/style-map";
-import { getMediaPlayerChildEntityRecursively } from "../../lib/entities/universal-media-player";
+import { getMediaPlayerChildEntityRecursively } from "../../lib/media-player/universal-media-player";
 import { getEntityEntryFromEntityId } from "../../lib/entities/helpers";
+import { getMediaPlayerSourceIcon } from "../../lib/media-player/source";
 
 @customElement("bold-media-player-source-select")
 export class BoldMediaPlayerSourceSelectFeature extends CustomLovelaceCardFeature<
@@ -17,42 +18,6 @@ export class BoldMediaPlayerSourceSelectFeature extends CustomLovelaceCardFeatur
     return {
       type: "custom:bold-media-player-source-select",
     };
-  }
-
-  protected getIcon(source?: string) {
-    if (!source) {
-      return "mdi:import";
-    }
-
-    const checks = new Map([
-      [/home assistant/i, "mdi:home-assistant"],
-      [/spotify/i, "mdi:spotify"],
-      [/youtube/i, "mdi:youtube"],
-      [/netflix/i, "mdi:netflix"],
-      [/hdmi/i, "mdi:hdmi-port"],
-      [/ext|analogue|comp/i, "mdi:composite"],
-      [/bluetooth/i, "mdi:bluetooth"],
-      [/line|aux/i, "mdi:rca"],
-      [/wifi|wireless|cast/i, "mdi:wifi"],
-      [/optical|toslink/i, "mdi:optical-audio"],
-      [/cd|dvd|disc/i, "mdi:disc-player"],
-      [/airplay/i, "mdi:airplay"],
-      [/tv|fehrnsehr|display/i, "mdi:tv"],
-      [/speaker?s/i, "mdi:speaker"],
-      [/stereo|audio|wiim/i, "mdi:audio-video"],
-      [/linux/i, "mdi:linux"],
-      [/desktop/i, "mdi:desktop-classic"],
-      [/macbook|dell|hp|lenovo/i, "mdi:laptop"],
-      [/pixel|samsung|i?phone/i, "mdi:cellphone"],
-      [/home/i, "mdi:home-outline"],
-      [/group|all|room|zimmer|haus/i, "mdi:speaker-multiple"],
-      [/off/i, "mdi:power"],
-    ]);
-
-    return (
-      Array.from(checks.entries()).find(([regex]) => regex.test(source))?.[1] ??
-      "mdi:import"
-    );
   }
 
   render() {
@@ -78,7 +43,7 @@ export class BoldMediaPlayerSourceSelectFeature extends CustomLovelaceCardFeatur
       title = "Playing Spotify on";
     }
 
-    const icon = this.getIcon(this.stateObj.attributes.source);
+    const icon = getMediaPlayerSourceIcon(this.stateObj);
 
     return html`
       <div

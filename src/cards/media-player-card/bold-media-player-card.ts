@@ -22,7 +22,7 @@ import { BoldMediaPlayerCardBase, getStubMediaPlayerEntity } from "./base";
 import { t } from "../../localization/i18n";
 import { isMediaPlayerStateActive } from "../../helpers/states";
 import { FeatureInternals } from "../../lib/internals/types";
-import { getMediaPlayerChildEntityRecursively } from "../../lib/entities/universal-media-player";
+import { getMediaPlayerChildEntityRecursively } from "../../lib/media-player/universal-media-player";
 
 function getFeatureInternals(
   context: GetFeatureInternalsContext,
