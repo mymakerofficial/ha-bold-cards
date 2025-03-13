@@ -7,6 +7,7 @@ import { CustomLovelaceCardFeature } from "../base";
 import { getMediaPlayerChildEntityRecursively } from "../../lib/media-player/universal-media-player";
 import { getEntityEntryFromEntityId } from "../../lib/entities/helpers";
 import { getMediaPlayerSourceIcon } from "../../lib/media-player/source";
+import { stopPropagation } from "../../editors/helpers";
 
 @customElement("bold-media-player-source-select")
 export class BoldMediaPlayerSourceSelectFeature extends CustomLovelaceCardFeature<
@@ -17,6 +18,29 @@ export class BoldMediaPlayerSourceSelectFeature extends CustomLovelaceCardFeatur
     return {
       type: "custom:bold-media-player-source-select",
     };
+  }
+
+  protected _handleSelected(ev: CustomEvent) {
+    stopPropagation(ev);
+
+    if (!this.hass || !this.stateObj) {
+      return;
+    }
+
+    const index = ev.detail.index;
+    const source = this.stateObj.attributes.source_list?.[index];
+    const oldSource = this.stateObj?.attributes.source;
+
+    if (source === undefined || source === oldSource) {
+      return;
+    }
+
+    this.hass
+      .callService("media_player", "select_source", {
+        entity_id: this.stateObj.entity_id,
+        source,
+      })
+      .then();
   }
 
   render() {
@@ -44,8 +68,10 @@ export class BoldMediaPlayerSourceSelectFeature extends CustomLovelaceCardFeatur
 
     return html`
       <bc-large-select-menu
-        .value=${this.stateObj.attributes.source}
         .label=${label}
+        .value=${this.stateObj.attributes.source}
+        @selected=${this._handleSelected}
+        @closed=${stopPropagation}
       >
         ${this.stateObj.attributes.source_list?.map(
           (source) => html`
