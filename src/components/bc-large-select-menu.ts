@@ -79,9 +79,6 @@ export class BcLargeSelectMenu extends HaControlSelectMenu {
     const defaultIcon = this.querySelector("[slot='icon']");
     const icon = item?.querySelector("[slot='graphic']") ?? null;
 
-    // @ts-ignore
-    console.log(icon?.icon);
-
     if (!defaultIcon && !icon) {
       return null;
     }
