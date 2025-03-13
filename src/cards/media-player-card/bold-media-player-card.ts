@@ -22,6 +22,7 @@ import { BoldMediaPlayerCardBase, getStubMediaPlayerEntity } from "./base";
 import { t } from "../../localization/i18n";
 import { isMediaPlayerStateActive } from "../../helpers/states";
 import { FeatureInternals } from "../../lib/internals/types";
+import { getMediaPlayerChildEntityRecursively } from "../../lib/entities/universal-media-player";
 
 function getFeatureInternals(
   context: GetFeatureInternalsContext,
@@ -188,43 +189,11 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<MediaPlayerTile
       ? !isMediaPlayerStateActive(stateObj.state)
       : false;
 
-    if (showNoMedia) {
-      return html` <ha-card
-        style=${styleMap({
-          "--tile-color": this._foregroundColorCSS,
-          "--ha-card-background": this._backgroundColorCSS,
-        })}
-      >
-        <div
-          class="background"
-          @click=${this._handleMoreInfo}
-          role="button"
-          tabindex="0"
-          aria-labelledby="info"
-        >
-          <ha-ripple></ha-ripple>
-        </div>
-        <div class="no-media-content">
-          <div class="title-bar">
-            <div class="player-title">
-              <ha-state-icon
-                .stateObj=${stateObj}
-                .hass=${this.hass}
-              ></ha-state-icon>
-              <span>${this._stateObj?.attributes.friendly_name}</span>
-            </div>
-          </div>
-          <div class="no-media-info" id="info">
-            ${t("card.media_player.label.no_media", {
-              state: t(stateObj.state, {
-                scope: "common.entity_state",
-              }).toLowerCase(),
-              entity: stateObj.attributes.friendly_name,
-            })}
-          </div>
-        </div>
-      </ha-card>`;
-    }
+    const childStateObj = getMediaPlayerChildEntityRecursively(
+      stateObj,
+      (entity) => !!entity.attributes.active_child,
+      this.hass,
+    );
 
     return html`
       <ha-card
@@ -256,60 +225,86 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<MediaPlayerTile
           <ha-ripple></ha-ripple>
         </div>
         <div class="container">
-          <div class="content">
-            ${this._config.show_title_bar
-              ? html`<div class="title-bar">
+          ${!showNoMedia
+            ? html` <div class="content">
+                ${this._config.show_title_bar
+                  ? html`<div class="title-bar">
+                      <div class="player-title">
+                        <ha-state-icon
+                          .stateObj=${childStateObj}
+                          .hass=${this.hass}
+                        ></ha-state-icon>
+                        <span>${childStateObj.attributes.friendly_name}</span>
+                      </div>
+                    </div>`
+                  : nothing}
+                <div
+                  class="hero"
+                  data-layout=${heroLayout}
+                  data-vertical-align=${verticalAlign}
+                >
+                  ${renderHeroImage
+                    ? html`
+                        <div
+                          class="image-container"
+                          data-layout=${imageContainerLayout}
+                        >
+                          <div class="image">
+                            <img src=${imageUrl} alt="" />
+                          </div>
+                        </div>
+                      `
+                    : nothing}
+                  <div class="media-info-container">
+                    <div
+                      class="media-info ${classMap({
+                        "visually-hidden": !!this._config.hide_media_info,
+                      })}"
+                      id="info"
+                      data-horizontal-align=${horizontalAlign}
+                    >
+                      <span class="primary"
+                        >${mediaTitle || mediaDescription}</span
+                      >
+                      ${mediaTitle
+                        ? html`<span class="secondary"
+                            >${mediaDescription}</span
+                          >`
+                        : nothing}
+                    </div>
+                    ${inlineFeatures.length > 0
+                      ? html`<hui-card-features
+                          .hass=${this.hass}
+                          .stateObj=${stateObj}
+                          .features=${inlineFeatures}
+                          style=${styleMap({
+                            gap: "0px",
+                            width: "min-content",
+                          })}
+                        ></hui-card-features>`
+                      : nothing}
+                  </div>
+                </div>
+              </div>`
+            : html`<div class="no-media-content">
+                <div class="title-bar">
                   <div class="player-title">
                     <ha-state-icon
-                      .stateObj=${stateObj}
+                      .stateObj=${childStateObj}
                       .hass=${this.hass}
                     ></ha-state-icon>
-                    <span>${this._stateObj?.attributes.friendly_name}</span>
+                    <span>${childStateObj.attributes.friendly_name}</span>
                   </div>
-                </div>`
-              : nothing}
-            <div
-              class="hero"
-              data-layout=${heroLayout}
-              data-vertical-align=${verticalAlign}
-            >
-              ${renderHeroImage
-                ? html`
-                    <div
-                      class="image-container"
-                      data-layout=${imageContainerLayout}
-                    >
-                      <div class="image"><img src=${imageUrl} alt="" /></div>
-                    </div>
-                  `
-                : nothing}
-              <div class="media-info-container">
-                <div
-                  class="media-info ${classMap({
-                    "visually-hidden": !!this._config.hide_media_info,
-                  })}"
-                  id="info"
-                  data-horizontal-align=${horizontalAlign}
-                >
-                  <span class="primary">${mediaTitle || mediaDescription}</span>
-                  ${mediaTitle
-                    ? html`<span class="secondary">${mediaDescription}</span>`
-                    : nothing}
                 </div>
-                ${inlineFeatures.length > 0
-                  ? html`<hui-card-features
-                      .hass=${this.hass}
-                      .stateObj=${stateObj}
-                      .features=${inlineFeatures}
-                      style=${styleMap({
-                        gap: "0px",
-                        width: "min-content",
-                      })}
-                    ></hui-card-features>`
-                  : nothing}
-              </div>
-            </div>
-          </div>
+                <div class="no-media-info" id="info">
+                  ${t("card.media_player.label.no_media", {
+                    state: t(stateObj.state, {
+                      scope: "common.entity_state",
+                    }).toLowerCase(),
+                    entity: stateObj.attributes.friendly_name,
+                  })}
+                </div>
+              </div> `}
           ${bottomFeatures.length > 0
             ? html`<hui-card-features
                 .hass=${this.hass}
