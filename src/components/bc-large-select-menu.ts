@@ -105,10 +105,15 @@ export class BcLargeSelectMenu extends HaControlSelectMenu {
           var(--ha-card-background),
           var(--lovelace-background) 80%
         );
+        --mdc-theme-primary: var(--tile-color, var(--primary-color));
       }
 
       * {
         box-sizing: border-box;
+      }
+
+      *:focus {
+        outline: none;
       }
 
       p {
@@ -136,6 +141,11 @@ export class BcLargeSelectMenu extends HaControlSelectMenu {
         );
         padding: 16px;
         overflow: hidden;
+        transition: box-shadow 180ms ease-in-out;
+      }
+
+      .select:has(:focus-visible) .container {
+        box-shadow: 0 0 0 2px var(--tile-color);
       }
 
       .label {
