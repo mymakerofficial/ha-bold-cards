@@ -100,8 +100,8 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
           index === 0 || isStateActive(getStateObj(entityId, this.hass)),
       )
       .map((entity) => ({
-        entity,
         ...this._config!.card,
+        entity,
       }));
 
     if (this._activeIndex >= cards.length) {
