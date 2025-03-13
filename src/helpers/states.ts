@@ -27,7 +27,11 @@ export function isMediaPlayerStateActive(state: string) {
   );
 }
 
-export function isStateActive(stateObj: HassEntity) {
+export function isStateActive(stateObj?: HassEntity) {
+  if (!stateObj) {
+    return false;
+  }
+
   const domain = computeDomain(stateObj.entity_id);
 
   if (isStateOff(stateObj.state)) {
@@ -38,7 +42,7 @@ export function isStateActive(stateObj: HassEntity) {
     case "media_player":
       return isMediaPlayerStateActive(stateObj.state);
     default:
-      return false;
+      return true;
   }
 }
 

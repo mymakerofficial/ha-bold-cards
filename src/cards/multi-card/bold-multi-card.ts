@@ -5,6 +5,8 @@ import { repeat } from "lit-html/directives/repeat";
 import { customElement, state } from "lit/decorators";
 import { LovelaceCardEditor } from "../../types/ha/lovelace";
 import { createRef, ref } from "lit-html/directives/ref";
+import { isStateActive } from "../../helpers/states";
+import { getStateObj } from "../../lib/entities/helpers";
 
 @customElement("bold-multi-card")
 export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
@@ -91,10 +93,19 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
       return nothing;
     }
 
-    const cards = this._config.entities.map((entity) => ({
-      entity,
-      ...this._config!.card,
-    }));
+    const cards = this._config.entities
+      .filter(
+        (entityId, index) =>
+          index === 0 || isStateActive(getStateObj(entityId, this.hass)),
+      )
+      .map((entity) => ({
+        entity,
+        ...this._config!.card,
+      }));
+
+    if (this._activeIndex >= cards.length) {
+      this._handleClickStep(0, true);
+    }
 
     return html`
       <div class="container" ${ref(this._containerRef)}>

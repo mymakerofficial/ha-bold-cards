@@ -1,5 +1,12 @@
 import { HomeAssistant } from "../../types/ha/lovelace";
 
+export function getStateObj(entityId?: string, hass?: HomeAssistant) {
+  if (!entityId) {
+    return undefined;
+  }
+  return hass?.states[entityId];
+}
+
 export function getEntityEntryFromEntityId(
   entityId?: string,
   hass?: HomeAssistant,
