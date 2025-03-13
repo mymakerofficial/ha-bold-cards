@@ -63,6 +63,29 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
     this._onScroll();
   }
 
+  private _handleClickStep(index: number, instant: boolean = false) {
+    this._containerRef.value?.scrollTo({
+      left: this._containerWidth * index,
+      behavior: instant ? "auto" : "smooth",
+    });
+  }
+
+  private _handleStepperKeyDown(ev: KeyboardEvent) {
+    ev.stopPropagation();
+
+    const length = this._config!.entities.length;
+
+    if (ev.key === "ArrowRight") {
+      const nextIndex = (this._activeIndex + 1) % length;
+      const distance = Math.abs(nextIndex - this._activeIndex);
+      this._handleClickStep(nextIndex, distance > 1);
+    } else if (ev.key === "ArrowLeft") {
+      const nextIndex = (this._activeIndex - 1 + length) % length;
+      const distance = Math.abs(nextIndex - this._activeIndex);
+      this._handleClickStep(nextIndex, distance > 1);
+    }
+  }
+
   protected render() {
     if (!this._config) {
       return nothing;
@@ -95,20 +118,23 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
         )}
       </div>
       <div class="stepper-container">
-        <div class="stepper">
+        <div
+          class="stepper"
+          tabindex="0"
+          role="tablist"
+          @keydown=${this._handleStepperKeyDown}
+        >
           ${repeat(
             cards,
             (_, index) => html`
               <div
                 class="step"
-                data-active=${index === this._activeIndex}
-                @click=${() => {
-                  this._containerRef.value?.scrollTo({
-                    left: this._containerWidth * index,
-                    behavior: "smooth",
-                  });
-                }}
-              ></div>
+                role="tab"
+                aria-selected=${index === this._activeIndex}
+                @click=${() => this._handleClickStep(index)}
+              >
+                <div class="step-inner" />
+              </div>
             `,
           )}
         </div>
@@ -194,18 +220,41 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
         gap: 8px;
       }
 
+      .stepper:focus-visible {
+        outline: none;
+      }
+
       .step {
+        cursor: pointer;
+        margin: -4px;
+        padding: 4px;
+        transition: scale 180ms linear;
+      }
+
+      .step[aria-selected="true"] {
+        scale: 1.1;
+      }
+
+      .step:hover {
+        scale: 1.2;
+      }
+
+      .step-inner {
         width: 6px;
         height: 6px;
         border-radius: 6px;
         background: var(--primary-text-color);
         opacity: 0.5;
-        cursor: pointer;
         transition: opacity 180ms linear;
       }
 
-      .step[data-active="true"] {
+      .step[aria-selected="true"] .step-inner {
         opacity: 1;
+      }
+
+      .stepper:focus-visible .step[aria-selected="true"] .step-inner {
+        outline: 2px solid var(--primary-text-color);
+        outline-offset: 2px;
       }
     `;
   }
