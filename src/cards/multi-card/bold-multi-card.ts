@@ -4,14 +4,14 @@ import { css, html, nothing } from "lit";
 import { repeat } from "lit-html/directives/repeat";
 import { customElement, state } from "lit/decorators";
 import { LovelaceCardEditor } from "../../types/ha/lovelace";
-import { styleMap } from "lit-html/directives/style-map";
 import { createRef, ref } from "lit-html/directives/ref";
 
 @customElement("bold-multi-card")
 export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
   private _containerRef = createRef();
   @state() private _containerWidth: number = 0;
-  @state() private _containerScrollLeft: number = 0;
+  @state() private _activeIndex: number = 0;
+  @state() private _nextIndex: number = 0;
 
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("../../editors/cards/multi-card/bold-multi-card-editor");
@@ -37,15 +37,30 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
   }
 
   private _onScroll() {
-    this._containerScrollLeft = this._containerRef.value?.scrollLeft || 0;
+    const scrollLeft = this._containerRef.value?.scrollLeft || 0;
+    const scrollProgress =
+      Math.round((scrollLeft / this._containerWidth) * 10) / 10;
+
+    const newIndex = Math.round(scrollProgress);
+    if (this._activeIndex !== newIndex) {
+      this._activeIndex = newIndex;
+    }
+
+    const newNextIndex =
+      scrollProgress > newIndex
+        ? newIndex + 1
+        : scrollProgress < newIndex
+          ? newIndex - 1
+          : newIndex;
+
+    if (this._nextIndex !== newNextIndex) {
+      this._nextIndex = newNextIndex;
+    }
   }
 
   private _updateContainerWidth() {
     this._containerWidth = this._containerRef.value?.clientWidth || 0;
-  }
-
-  private get _scrollIndex() {
-    return this._containerScrollLeft / this._containerWidth;
+    this._onScroll();
   }
 
   protected render() {
@@ -62,10 +77,18 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
       <div class="container" ${ref(this._containerRef)}>
         ${repeat(
           cards,
-          (card) => html`
+          (card, index) => html`
             <div class="item">
               <div class="inner">
-                <hui-card .config=${card} .hass=${this.hass}></hui-card>
+                ${index === this._activeIndex || index === this._nextIndex
+                  ? html`
+                      <hui-card
+                        aria-disabled=${index !== this._activeIndex}
+                        .config=${card}
+                        .hass=${this.hass}
+                      ></hui-card>
+                    `
+                  : nothing}
               </div>
             </div>
           `,
@@ -78,7 +101,7 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
             (_, index) => html`
               <div
                 class="step"
-                data-active=${index === Math.round(this._scrollIndex)}
+                data-active=${index === this._activeIndex}
                 @click=${() => {
                   this._containerRef.value?.scrollTo({
                     left: this._containerWidth * index,
@@ -174,11 +197,11 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
       .step {
         width: 6px;
         height: 6px;
-        border-radius: 50%;
+        border-radius: 6px;
         background: var(--primary-text-color);
         opacity: 0.5;
         cursor: pointer;
-        transition: opacity 0.2s;
+        transition: opacity 180ms linear;
       }
 
       .step[data-active="true"] {
