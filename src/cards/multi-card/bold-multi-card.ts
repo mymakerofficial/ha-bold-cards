@@ -8,6 +8,7 @@ import { createRef, ref } from "lit-html/directives/ref";
 import { isStateActive } from "../../helpers/states";
 import { getStateObj } from "../../lib/entities/helpers";
 import { dedupeMediaPlayerEntities } from "./helpers";
+import { firstOf } from "../../lib/helpers";
 
 @customElement("bold-multi-card")
 export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
@@ -89,24 +90,36 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
     }
   }
 
+  protected toCardWithEntity(entity: string) {
+    return {
+      ...this._config!.card,
+      entity,
+    };
+  }
+
+  protected getCards() {
+    const entities = this._config?.entities;
+    if (!this.hass || !entities || entities.length === 0) {
+      return [];
+    }
+
+    const cards = dedupeMediaPlayerEntities(entities, this.hass)
+      .filter((entityId) => isStateActive(getStateObj(entityId, this.hass)))
+      .map(this.toCardWithEntity.bind(this));
+
+    if (cards.length >= 1) {
+      return cards;
+    }
+
+    return [this.toCardWithEntity(firstOf(entities)!)];
+  }
+
   protected render() {
     if (!this._config || !this.hass) {
       return nothing;
     }
 
-    const cards = dedupeMediaPlayerEntities(this._config.entities, this.hass)
-      .filter(
-        (entityId, index) =>
-          index === 0 || isStateActive(getStateObj(entityId, this.hass)),
-      )
-      .map((entity) => ({
-        ...this._config!.card,
-        entity,
-      }));
-
-    if (this._activeIndex >= cards.length) {
-      this._handleClickStep(0, true);
-    }
+    const cards = this.getCards();
 
     return html`
       <div class="container" ${ref(this._containerRef)}>
