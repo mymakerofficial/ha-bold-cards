@@ -1,5 +1,6 @@
 import "./components/bc-contol-surface";
 import "./components/bc-cover-image";
+import "./components/bc-large-select-menu";
 import "./components/bc-button";
 import "./components/bc-selector-select";
 import "./components/bc-media-position-control";
