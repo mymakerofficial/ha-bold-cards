@@ -2,6 +2,7 @@ import { HomeAssistant, LovelaceCardFeatureEditor } from "./lovelace";
 import { HassEntity } from "home-assistant-js-websocket";
 import { BoldMediaPlayerControlRowFeatureConfig } from "../../features/media-player-control-row-feature/types";
 import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
+import { BoldMediaPlayerSourceSelectFeatureConfig } from "../../features/media-player-source-select-feature/types";
 
 export interface MediaPlayerVolumeSliderCardFeatureConfig {
   type: "media-player-volume-slider";
@@ -9,7 +10,8 @@ export interface MediaPlayerVolumeSliderCardFeatureConfig {
 
 export type LovelaceCardFeatureConfig =
   | MediaPlayerVolumeSliderCardFeatureConfig
-  | BoldMediaPlayerControlRowFeatureConfig;
+  | BoldMediaPlayerControlRowFeatureConfig
+  | BoldMediaPlayerSourceSelectFeatureConfig;
 
 export interface LovelaceCardFeature<
   TStateObj extends HassEntity = HassEntity,

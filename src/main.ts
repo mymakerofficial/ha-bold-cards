@@ -5,6 +5,7 @@ import "./components/bc-selector-select";
 import "./components/bc-media-position-control";
 import "./components/bc-control-row";
 import "./features/media-player-control-row-feature/bold-media-player-control-row-feature";
+import "./features/media-player-source-select-feature/bold-media-player-source-select-feature";
 import "./cards/media-player-card/bold-media-player-card";
 import "./cards/air-quality-card/bold-air-quality-card";
 import "./cards/battery-card/bold-battery-card";
