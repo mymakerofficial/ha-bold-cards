@@ -79,18 +79,21 @@ export class BoldMediaPlayerMediaBrowserFeature extends CustomLovelaceCardFeatur
     });
   }
 
-  protected _handleClickItem(item: MediaPlayerItem) {
+  protected async _handleClickItem(item: MediaPlayerItem) {
     if (!this.hass || !this.stateObj) {
       return;
     }
 
-    this.hass
-      .callService("media_player", "play_media", {
-        entity_id: this.stateObj.entity_id,
-        media_content_id: item.media_content_id,
-        media_content_type: item.media_content_type,
-      })
-      .then();
+    await this.hass.callService("media_player", "shuffle_set", {
+      entity_id: this.stateObj.entity_id,
+      shuffle: false,
+    });
+
+    await this.hass.callService("media_player", "play_media", {
+      entity_id: this.stateObj.entity_id,
+      media_content_id: item.media_content_id,
+      media_content_type: item.media_content_type,
+    });
   }
 
   render() {
@@ -98,7 +101,7 @@ export class BoldMediaPlayerMediaBrowserFeature extends CustomLovelaceCardFeatur
       return nothing;
     }
 
-    const items = (this._currentItem?.children ?? []).slice(0, 4);
+    const items = (this._currentItem?.children ?? []).slice(0, 5);
 
     return html`
       <div
@@ -137,7 +140,6 @@ export class BoldMediaPlayerMediaBrowserFeature extends CustomLovelaceCardFeatur
         );
         --ha-ripple-hover-opacity: 0.1;
         --ha-ripple-pressed-opacity: 0.12;
-        position: relative;
       }
 
       * {
@@ -149,23 +151,21 @@ export class BoldMediaPlayerMediaBrowserFeature extends CustomLovelaceCardFeatur
       }
 
       .container {
-        position: relative;
         height: calc(
           var(--feature-height) * var(--feature-size) + var(--feature-gap) *
             (var(--feature-size) - 1)
         );
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-        justify-content: space-between;
-        justify-items: center;
-        align-items: center;
-        gap: var(--feature-gap);
         background: var(--feature-background);
         border-radius: calc(
           var(--ha-card-border-radius, 12px) - var(--feature-gap) / 2
         );
         overflow: hidden;
-        padding: 0 var(--feature-gap);
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
       }
 
       .placeholder {
@@ -179,7 +179,9 @@ export class BoldMediaPlayerMediaBrowserFeature extends CustomLovelaceCardFeatur
       }
 
       .item {
-        width: min-content;
+        max-height: 100%;
+        flex: 1;
+        width: fit-content;
         position: relative;
         border-radius: calc(var(--ha-card-border-radius, 12px) / 3);
         overflow: hidden;
@@ -191,9 +193,7 @@ export class BoldMediaPlayerMediaBrowserFeature extends CustomLovelaceCardFeatur
       }
 
       .thumbnail {
-        height: calc(
-          var(--feature-height) * var(--feature-size) - var(--feature-gap)
-        );
+        height: 100%;
         aspect-ratio: 1 / 1;
       }
 
