@@ -4,6 +4,7 @@ import { BoldMediaPlayerControlRowFeatureConfig } from "../../features/media-pla
 import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
 import { BoldMediaPlayerSourceSelectFeatureConfig } from "../../features/media-player-source-select-feature/types";
 import { BoldMediaPlayerMediaBrowserFeatureConfig } from "../../features/media-player-media-browser-feature/types";
+import { BoldFeatureStackFeatureConfig } from "../../features/feature-stack-feature/types";
 
 export interface MediaPlayerVolumeSliderCardFeatureConfig {
   type: "media-player-volume-slider";
@@ -13,7 +14,8 @@ export type LovelaceCardFeatureConfig =
   | MediaPlayerVolumeSliderCardFeatureConfig
   | BoldMediaPlayerControlRowFeatureConfig
   | BoldMediaPlayerSourceSelectFeatureConfig
-  | BoldMediaPlayerMediaBrowserFeatureConfig;
+  | BoldMediaPlayerMediaBrowserFeatureConfig
+  | BoldFeatureStackFeatureConfig;
 
 export interface LovelaceCardFeature<
   TStateObj extends HassEntity = HassEntity,
