@@ -1,9 +1,5 @@
-import {
-  HomeAssistant,
-  LovelaceCard,
-  LovelaceCardConfig,
-} from "../types/ha/lovelace";
-import { property, state } from "lit/decorators";
+import { LovelaceCard, LovelaceCardConfig } from "../types/ha/lovelace";
+import { state } from "lit/decorators";
 import {
   CustomCardEntry,
   CustomCardEntryWithInternals,

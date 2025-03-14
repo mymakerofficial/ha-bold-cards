@@ -8,13 +8,13 @@ import {
 } from "../lib/entities/helpers";
 import { getFeatureTypeLabel } from "../editors/cards/features/helpers";
 import {
-  getMediaPlayerChildEntityRecursively,
   getUniversalMediaPlayerChildStateObj,
   UniversalMediaPlayerEnhancements,
 } from "../lib/media-player/universal-media-player";
 import { MediaPlayerEntity } from "../types/ha/entity";
 import { isStateActive } from "../helpers/states";
 import { dedupeMediaPlayerEntities } from "../lib/media-player/helpers";
+import { browseMediaPlayer } from "../lib/media-player/media-browser";
 
 export class BoldHassElement extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
@@ -53,5 +53,21 @@ export class BoldHassElement extends LitElement {
 
   protected dedupeMediaPlayerEntities(entityIds: string[]) {
     return dedupeMediaPlayerEntities(entityIds, this.hass);
+  }
+
+  protected async browseMediaPlayer(
+    entityId: string,
+    mediaContentId?: string,
+    mediaContentType?: string,
+  ) {
+    if (!this.hass) {
+      return Promise.reject(new Error("No Home Assistant instance available"));
+    }
+    return browseMediaPlayer(
+      this.hass,
+      entityId,
+      mediaContentId,
+      mediaContentType,
+    );
   }
 }
