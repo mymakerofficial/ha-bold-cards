@@ -14,8 +14,6 @@ export function dedupeMediaPlayerEntities(
 
   return entities
     .filter((entity) => {
-      console.log(entity);
-
       if (!isMediaPlayerEntity(entity)) {
         return true;
       }
