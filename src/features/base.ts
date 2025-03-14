@@ -26,8 +26,8 @@ export abstract class CustomLovelaceCardFeature<
     this._config = config;
   }
 
-  protected get _isInCustomCard() {
-    return this._config?.__bold_custom_internals !== undefined;
+  protected get _internals() {
+    return this._config?.__bold_custom_internals;
   }
 
   static registerCustomFeature<

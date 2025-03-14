@@ -1,7 +1,9 @@
-import { LovelaceCardConfigWithFeatures } from "../../types/card";
 import { state } from "lit/decorators";
 import { BoldCardWithInlineFeatures } from "../base";
-import { MediaPlayerCardColorMode } from "./types";
+import {
+  BoldMediaPlayerCardBaseConfig,
+  MediaPlayerCardColorMode,
+} from "./types";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { HomeAssistant } from "../../types/ha/lovelace";
 import { getMediaDescription } from "../../helpers/media-player";
@@ -11,22 +13,24 @@ import { fireEvent } from "custom-card-helpers";
 import { isMediaPlayerEntity, isStateActive } from "../../helpers/states";
 import { randomFrom } from "../../lib/helpers";
 import { t } from "../../localization/i18n";
-
-export interface BoldMediaPlayerCardBaseConfig
-  extends LovelaceCardConfigWithFeatures {
-  color_mode: MediaPlayerCardColorMode;
-  color?: string;
-}
+import { getUniversalMediaPlayerChildStateObj } from "../../lib/media-player/universal-media-player";
 
 export abstract class BoldMediaPlayerCardBase<
-  TConfig extends
-    LovelaceCardConfigWithFeatures = BoldMediaPlayerCardBaseConfig,
+  TConfig extends BoldMediaPlayerCardBaseConfig = BoldMediaPlayerCardBaseConfig,
 > extends BoldCardWithInlineFeatures<TConfig, MediaPlayerEntity> {
   @state() private _foregroundColor?: string;
 
   @state() private _backgroundColor?: string;
 
   @state() protected _hasLoadedImage = false;
+
+  protected get _childStateObj() {
+    return getUniversalMediaPlayerChildStateObj(
+      this._stateObj,
+      this._config?.universal_media_player_enhancements,
+      this.hass,
+    );
+  }
 
   protected get _imageUrl() {
     const stateObj = this._stateObj;

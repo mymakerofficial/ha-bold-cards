@@ -8,14 +8,24 @@ import {
 } from "./types";
 import { CardFeaturePosition } from "../types";
 import { featuresStruct } from "../../lib/features/structs";
+import { universalMediaPlayerEnhancementsStruct } from "../../lib/media-player/universal-media-player";
 
-export const mediaPlayerCardConfigStruct = assign(
+export const mediaPlayerCardBaseConfigStruct = assign(
   baseLovelaceCardConfig,
   object({
     // not optional but needs to be marked as such to ensure the editor stays available when the entity is missing
     entity: optional(string()),
     color_mode: enums(Object.values(MediaPlayerCardColorMode)),
     color: optional(string()),
+    universal_media_player_enhancements: optional(
+      universalMediaPlayerEnhancementsStruct,
+    ),
+  }),
+);
+
+export const mediaPlayerCardConfigStruct = assign(
+  mediaPlayerCardBaseConfigStruct,
+  object({
     picture_position: enums(Object.values(MediaPlayerCardPicturePosition)),
     horizontal_alignment: enums(
       Object.values(MediaPlayerCardHorizontalAlignment),

@@ -16,7 +16,7 @@ import {
 import { styleMap } from "lit-html/directives/style-map";
 import {
   MediaPlayerCardColorMode,
-  MediaPlayerTileConfig,
+  BoldMediaPlayerCardConfig,
 } from "../media-player-card/types";
 import {
   ButtonShape,
@@ -45,7 +45,7 @@ export class BoldRecordPlayerCard extends BoldMediaPlayerCardBase {
     };
   }
 
-  public setConfig(config: MediaPlayerTileConfig) {
+  public setConfig(config: BoldMediaPlayerCardConfig) {
     super.setConfig({
       ...config,
       color_mode: MediaPlayerCardColorMode.AMBIENT,

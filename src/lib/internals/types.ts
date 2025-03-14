@@ -1,9 +1,12 @@
 import { LovelaceCardFeatureConfig } from "../../types/ha/feature";
 import { LovelaceCardConfig } from "../../types/ha/lovelace";
 
+import { UniversalMediaPlayerEnhancements } from "../media-player/universal-media-player";
+
 export interface FeatureInternals {
   parent_card_type: string;
   is_inlined: boolean;
+  universal_media_player_enhancements?: UniversalMediaPlayerEnhancements;
 }
 
 export interface FeatureConfigInternals {

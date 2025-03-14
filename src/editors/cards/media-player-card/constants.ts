@@ -10,7 +10,7 @@ import {
   MediaPlayerCardHorizontalAlignment,
   MediaPlayerCardColorMode,
   MediaPlayerCardPicturePosition,
-  MediaPlayerTileConfig,
+  BoldMediaPlayerCardConfig,
   MediaPlayerCardVerticalAlignment,
 } from "../../../cards/media-player-card/types";
 import { BoldMediaPlayerControlRowFeature } from "../../../features/media-player-control-row-feature/bold-media-player-control-row-feature";
@@ -74,7 +74,7 @@ const positionPlusButtons = {
 
 export const presets: {
   name: string;
-  config: Partial<MediaPlayerTileConfig>;
+  config: Partial<BoldMediaPlayerCardConfig>;
 }[] = [
   {
     name: "Default",

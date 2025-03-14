@@ -7,21 +7,15 @@ export function getStateObj(entityId?: string, hass?: HomeAssistant) {
   return hass?.states[entityId];
 }
 
-export function getEntityEntryFromEntityId(
-  entityId?: string,
-  hass?: HomeAssistant,
-) {
+export function getEntityByEntityId(entityId?: string, hass?: HomeAssistant) {
   if (!entityId) {
     return undefined;
   }
   return hass?.entities[entityId];
 }
 
-export function getDeviceEntryFromEntityId(
-  entityId?: string,
-  hass?: HomeAssistant,
-) {
-  const entity = getEntityEntryFromEntityId(entityId, hass);
+export function getDeviceByEntityId(entityId?: string, hass?: HomeAssistant) {
+  const entity = getEntityByEntityId(entityId, hass);
   if (!entity || !entity.device_id) {
     return undefined;
   }

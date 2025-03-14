@@ -1,5 +1,3 @@
-import { MediaPlayerEntity } from "../../types/ha/entity";
-
 const appChecks: [RegExp, string][] = [
   [/home assistant/i, "mdi:home-assistant"],
   [/spotify/i, "mdi:spotify"],

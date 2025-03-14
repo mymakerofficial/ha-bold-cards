@@ -1,11 +1,11 @@
 import { html, nothing } from "lit";
 import { customElement } from "lit/decorators";
 import {
+  BoldMediaPlayerCardConfig,
   MediaPlayerCardColorMode,
   MediaPlayerCardHorizontalAlignment,
   MediaPlayerCardPicturePosition,
   MediaPlayerCardVerticalAlignment,
-  MediaPlayerTileConfig,
 } from "./types";
 import {
   HomeAssistant,
@@ -22,21 +22,22 @@ import { BoldMediaPlayerCardBase, getStubMediaPlayerEntity } from "./base";
 import { t } from "../../localization/i18n";
 import { isMediaPlayerStateActive } from "../../helpers/states";
 import { FeatureInternals } from "../../lib/internals/types";
-import { getMediaPlayerChildEntityRecursively } from "../../lib/media-player/universal-media-player";
 
 function getFeatureInternals(
-  context: GetFeatureInternalsContext,
+  context: GetFeatureInternalsContext<BoldMediaPlayerCardConfig>,
 ): FeatureInternals {
   return {
     parent_card_type: context.config?.type ?? "",
     is_inlined:
       context.featureIndex === 0 &&
       context.config?.feature_position === CardFeaturePosition.INLINE,
+    universal_media_player_enhancements:
+      context.config?.universal_media_player_enhancements,
   };
 }
 
 @customElement("bold-media-player-card")
-export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<MediaPlayerTileConfig> {
+export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayerCardConfig> {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import(
       "../../editors/cards/media-player-card/bold-media-player-card-editor"
@@ -46,7 +47,7 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<MediaPlayerTile
     ) as LovelaceCardEditor;
   }
 
-  public static getStubConfig(hass: HomeAssistant): MediaPlayerTileConfig {
+  public static getStubConfig(hass: HomeAssistant): BoldMediaPlayerCardConfig {
     const entity = getStubMediaPlayerEntity(hass);
 
     return {
@@ -63,7 +64,7 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<MediaPlayerTile
     };
   }
 
-  public setConfig(config: MediaPlayerTileConfig) {
+  public setConfig(config: BoldMediaPlayerCardConfig) {
     super.setConfig({
       color: "primary",
       show_title_bar: true,
@@ -72,7 +73,7 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<MediaPlayerTile
   }
 
   protected _getFeatureInternals(
-    context: GetFeatureInternalsContext,
+    context: GetFeatureInternalsContext<BoldMediaPlayerCardConfig>,
   ): FeatureInternals {
     return getFeatureInternals(context);
   }
@@ -158,9 +159,10 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<MediaPlayerTile
     }
 
     const stateObj = this._stateObj;
+    const childStateObj = this._childStateObj;
     const imageUrl = this._imageUrl;
 
-    if (!stateObj) {
+    if (!stateObj || !childStateObj) {
       // TODO show error or something
       return nothing;
     }
@@ -188,12 +190,6 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<MediaPlayerTile
     const showNoMedia = this._config?.placeholder_when_off
       ? !isMediaPlayerStateActive(stateObj.state)
       : false;
-
-    const childStateObj = getMediaPlayerChildEntityRecursively(
-      stateObj,
-      (entity) => !!entity.attributes.active_child,
-      this.hass,
-    );
 
     return html`
       <ha-card

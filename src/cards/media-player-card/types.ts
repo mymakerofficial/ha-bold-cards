@@ -1,5 +1,6 @@
 import { LovelaceCardConfigWithFeatures } from "../../types/card";
 import { CardFeaturePosition } from "../types";
+import { UniversalMediaPlayerEnhancements } from "../../lib/media-player/universal-media-player";
 
 export const MediaPlayerCardColorMode = {
   AMBIENT: "ambient",
@@ -38,10 +39,15 @@ export const MediaPlayerCardVerticalAlignment = {
 export type MediaPlayerCardVerticalAlignment =
   (typeof MediaPlayerCardVerticalAlignment)[keyof typeof MediaPlayerCardVerticalAlignment];
 
-export interface MediaPlayerTileConfig extends LovelaceCardConfigWithFeatures {
-  entity: string;
+export interface BoldMediaPlayerCardBaseConfig
+  extends LovelaceCardConfigWithFeatures {
   color_mode: MediaPlayerCardColorMode;
   color?: string;
+  universal_media_player_enhancements?: UniversalMediaPlayerEnhancements;
+}
+
+export interface BoldMediaPlayerCardConfig
+  extends BoldMediaPlayerCardBaseConfig {
   picture_position: MediaPlayerCardPicturePosition;
   horizontal_alignment: MediaPlayerCardHorizontalAlignment;
   vertical_alignment: MediaPlayerCardVerticalAlignment;

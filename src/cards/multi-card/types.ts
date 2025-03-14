@@ -1,7 +1,7 @@
 import { LovelaceCardConfig } from "../../types/ha/lovelace";
-import { MediaPlayerTileConfig } from "../media-player-card/types";
+import { BoldMediaPlayerCardConfig } from "../media-player-card/types";
 
-type CardConfigs = MediaPlayerTileConfig;
+type CardConfigs = BoldMediaPlayerCardConfig;
 
 export type MultiCardConfig = LovelaceCardConfig & {
   entities: string[];

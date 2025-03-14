@@ -4,7 +4,7 @@ import {
   MediaPlayerCardHorizontalAlignment,
   MediaPlayerCardColorMode,
   MediaPlayerCardPicturePosition,
-  MediaPlayerTileConfig,
+  BoldMediaPlayerCardConfig,
   MediaPlayerCardVerticalAlignment,
 } from "../../../cards/media-player-card/types";
 import { customElement } from "lit/decorators";
@@ -21,7 +21,7 @@ import { CardFeaturePosition } from "../../../cards/types";
 
 @customElement("bold-media-player-card-editor")
 export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeatures<
-  MediaPlayerTileConfig,
+  BoldMediaPlayerCardConfig,
   MediaPlayerEntity
 > {
   constructor() {
@@ -199,7 +199,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
     `;
   }
 
-  private _setPreset(partialConfig: Partial<MediaPlayerTileConfig>) {
+  private _setPreset(partialConfig: Partial<BoldMediaPlayerCardConfig>) {
     fireEvent(this, "config-changed", {
       config: { ...this._config, ...partialConfig },
     });
@@ -211,9 +211,9 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
       return;
     }
 
-    const newConfig = ev.detail.value as MediaPlayerTileConfig;
+    const newConfig = ev.detail.value as BoldMediaPlayerCardConfig;
 
-    const config: MediaPlayerTileConfig = {
+    const config: BoldMediaPlayerCardConfig = {
       features: this._config.features,
       ...newConfig,
     };
@@ -229,7 +229,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
 
     const newControls = ev.detail.value as MediaButtonControlConfig[];
 
-    const config: MediaPlayerTileConfig = {
+    const config: BoldMediaPlayerCardConfig = {
       ...this._config,
       controls: newControls,
     };

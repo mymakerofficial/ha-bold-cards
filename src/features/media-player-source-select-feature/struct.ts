@@ -1,11 +1,11 @@
-import { array, enums, object, optional } from "superstruct";
-import { controlConfigStruct } from "../../lib/controls/structs";
+import { object, optional } from "superstruct";
 import { exactMatch } from "../../lib/struct";
 import { BoldMediaPlayerSourceSelectFeature } from "./bold-media-player-source-select-feature";
-import { ElementWhenUnavailable } from "../../lib/controls/types";
+import { universalMediaPlayerEnhancementsStruct } from "../../lib/media-player/universal-media-player";
 
-export const mediaPlayerControlRowFeatureStruct = object({
+export const mediaPlayerSourceSelectFeatureStruct = object({
   type: exactMatch(BoldMediaPlayerSourceSelectFeature.getStubConfig().type),
-  controls: optional(array(controlConfigStruct)),
-  when_unavailable: optional(enums(Object.values(ElementWhenUnavailable))),
+  universal_media_player_enhancements: optional(
+    universalMediaPlayerEnhancementsStruct,
+  ),
 });

@@ -1,11 +1,11 @@
 import { customElement } from "lit/decorators";
-import { css, html, nothing } from "lit";
+import { html, nothing } from "lit";
 import { BoldMediaPlayerSourceSelectFeatureConfig } from "./types";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
-import { getMediaPlayerChildEntityRecursively } from "../../lib/media-player/universal-media-player";
-import { getEntityEntryFromEntityId } from "../../lib/entities/helpers";
+import { getUniversalMediaPlayerChildStateObj } from "../../lib/media-player/universal-media-player";
+import { getEntityByEntityId } from "../../lib/entities/helpers";
 import { getMediaPlayerSourceIcon } from "../../lib/media-player/source";
 import { stopPropagation } from "../../editors/helpers";
 
@@ -18,6 +18,21 @@ export class BoldMediaPlayerSourceSelectFeature extends CustomLovelaceCardFeatur
     return {
       type: "custom:bold-media-player-source-select",
     };
+  }
+
+  protected get _childStateObj() {
+    const config =
+      this._config?.universal_media_player_enhancements ??
+      this._internals?.universal_media_player_enhancements;
+    return getUniversalMediaPlayerChildStateObj(
+      this.stateObj,
+      config,
+      this.hass,
+    );
+  }
+
+  protected get _childEntity() {
+    return getEntityByEntityId(this._childStateObj?.entity_id, this.hass);
   }
 
   protected _handleSelected(ev: CustomEvent) {
@@ -48,17 +63,7 @@ export class BoldMediaPlayerSourceSelectFeature extends CustomLovelaceCardFeatur
       return nothing;
     }
 
-    const childStateObj = getMediaPlayerChildEntityRecursively(
-      this.stateObj,
-      (entity) =>
-        !!entity.attributes.device_class || !!entity.attributes.active_child,
-      this.hass,
-    );
-
-    const childEntity = getEntityEntryFromEntityId(
-      childStateObj.entity_id,
-      this.hass,
-    );
+    const childEntity = this._childEntity;
 
     let label = "Source";
 
