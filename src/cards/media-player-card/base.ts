@@ -13,7 +13,6 @@ import { fireEvent } from "custom-card-helpers";
 import { isMediaPlayerEntity, isStateActive } from "../../helpers/states";
 import { randomFrom } from "../../lib/helpers";
 import { t } from "../../localization/i18n";
-import { getUniversalMediaPlayerChildStateObj } from "../../lib/media-player/universal-media-player";
 
 export abstract class BoldMediaPlayerCardBase<
   TConfig extends BoldMediaPlayerCardBaseConfig = BoldMediaPlayerCardBaseConfig,
@@ -25,10 +24,9 @@ export abstract class BoldMediaPlayerCardBase<
   @state() protected _hasLoadedImage = false;
 
   protected get _childStateObj() {
-    return getUniversalMediaPlayerChildStateObj(
+    return this.getUniversalMediaPlayerChildStateObj(
       this._stateObj,
       this._config?.universal_media_player_enhancements,
-      this.hass,
     );
   }
 

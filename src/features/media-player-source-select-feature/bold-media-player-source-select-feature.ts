@@ -4,7 +4,6 @@ import { BoldMediaPlayerSourceSelectFeatureConfig } from "./types";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
-import { getUniversalMediaPlayerChildStateObj } from "../../lib/media-player/universal-media-player";
 import { getEntityByEntityId } from "../../lib/entities/helpers";
 import { getMediaPlayerSourceIcon } from "../../lib/media-player/source";
 import { stopPropagation } from "../../editors/helpers";
@@ -24,11 +23,7 @@ export class BoldMediaPlayerSourceSelectFeature extends CustomLovelaceCardFeatur
     const config =
       this._config?.universal_media_player_enhancements ??
       this._internals?.universal_media_player_enhancements;
-    return getUniversalMediaPlayerChildStateObj(
-      this.stateObj,
-      config,
-      this.hass,
-    );
+    return this.getUniversalMediaPlayerChildStateObj(this.stateObj, config);
   }
 
   protected get _childEntity() {

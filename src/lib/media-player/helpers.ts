@@ -1,11 +1,15 @@
 import { HomeAssistant } from "../../types/ha/lovelace";
-import { getStateObj } from "../../lib/entities/helpers";
+import { getStateObj } from "../entities/helpers";
 import { isMediaPlayerEntity } from "../../helpers/states";
 
 export function dedupeMediaPlayerEntities(
   entityIds: string[],
-  hass: HomeAssistant,
+  hass?: HomeAssistant,
 ) {
+  if (!hass) {
+    return entityIds;
+  }
+
   const entities = entityIds
     .map((entityId) => getStateObj(entityId, hass))
     .filter((entity) => !!entity);

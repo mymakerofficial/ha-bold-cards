@@ -1,23 +1,20 @@
-import { LitElement } from "lit";
 import {
   CustomCardFeatureEntryWithSize,
   LovelaceCardFeature,
   LovelaceCardFeatureConfig,
 } from "../types/ha/feature";
 import { property, state } from "lit/decorators";
-import { HomeAssistant } from "../types/ha/lovelace";
 import { HassEntity } from "home-assistant-js-websocket";
 import { FeatureConfigWithMaybeInternals } from "../lib/internals/types";
+import { BoldHassElement } from "../components/hass-element";
 
 export abstract class CustomLovelaceCardFeature<
     TStateObj extends HassEntity = HassEntity,
     TConfig extends LovelaceCardFeatureConfig = LovelaceCardFeatureConfig,
   >
-  extends LitElement
+  extends BoldHassElement
   implements LovelaceCardFeature<TStateObj, TConfig>
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
-
   @property({ attribute: false }) public stateObj?: TStateObj;
 
   @state() protected _config?: FeatureConfigWithMaybeInternals<TConfig>;

@@ -5,9 +5,6 @@ import { repeat } from "lit-html/directives/repeat";
 import { customElement, state } from "lit/decorators";
 import { LovelaceCardEditor } from "../../types/ha/lovelace";
 import { createRef, ref } from "lit-html/directives/ref";
-import { isStateActive } from "../../helpers/states";
-import { getStateObj } from "../../lib/entities/helpers";
-import { dedupeMediaPlayerEntities } from "./helpers";
 import { firstOf } from "../../lib/helpers";
 
 @customElement("bold-multi-card")
@@ -103,9 +100,9 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
       return [];
     }
 
-    const cards = dedupeMediaPlayerEntities(entities, this.hass)
-      .filter((entityId) => isStateActive(getStateObj(entityId, this.hass)))
-      .map(this.toCardWithEntity.bind(this));
+    const cards = this.dedupeMediaPlayerEntities(entities)
+      .filter((entityId) => this.isStateActiveByEntityId(entityId))
+      .map((entityId) => this.toCardWithEntity(entityId));
 
     if (cards.length >= 1) {
       return cards;

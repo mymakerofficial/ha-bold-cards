@@ -7,12 +7,12 @@ import { property, state } from "lit/decorators";
 import { assert, Struct } from "superstruct";
 import { editorBaseStyles } from "./styles";
 import { LovelaceConfig } from "custom-card-helpers";
+import { BoldHassElement } from "../components/hass-element";
 
 export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
-  extends LitElement
+  extends BoldHassElement
   implements LovelaceGenericElementEditor<TConfig, TContext>
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
   @property({ attribute: false }) public lovelace?: LovelaceConfig;
 
   @property({ attribute: false }) public context?: TContext;

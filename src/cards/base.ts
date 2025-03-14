@@ -1,4 +1,3 @@
-import { LitElement } from "lit";
 import {
   HomeAssistant,
   LovelaceCard,
@@ -19,13 +18,12 @@ import {
   FeatureConfigWithMaybeInternals,
   FeatureInternals,
 } from "../lib/internals/types";
+import { BoldHassElement } from "../components/hass-element";
 
 export abstract class BoldLovelaceCard<TConfig extends LovelaceCardConfig>
-  extends LitElement
+  extends BoldHassElement
   implements LovelaceCard<TConfig>
 {
-  @property({ attribute: false }) public hass?: HomeAssistant;
-
   @state() protected _config?: TConfig;
 
   public setConfig(config: TConfig): void {
