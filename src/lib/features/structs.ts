@@ -17,6 +17,9 @@ export const featureConfigStruct = typedUnion({
       mediaPlayerSourceSelectFeatureStruct,
     [BoldMediaPlayerMediaBrowserFeature.getStubConfig().type]:
       mediaPlayerMediaBrowserFeatureStruct,
+    // TODO recursion???
+    // [BoldFeatureStackFeature.getStubConfig().type]:
+    //   featureStackFeatureStruct as Struct<any>,
   },
   default: any(),
 });

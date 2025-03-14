@@ -6,6 +6,7 @@ import { HassEntity } from "home-assistant-js-websocket";
 import { styleMap } from "lit-html/directives/style-map";
 import { getFeatureDoesRender, getFeatureSize } from "../size";
 import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
+import { LovelaceCardFeatureEditor } from "../../types/ha/lovelace";
 
 // TODO duplication from base card with features, should be shared
 function getFeatureHeight(
@@ -37,6 +38,15 @@ export class BoldFeatureStackFeature extends CustomLovelaceCardFeature<
   HassEntity,
   BoldFeatureStackFeatureConfig
 > {
+  public static async getConfigElement(): Promise<LovelaceCardFeatureEditor> {
+    await import(
+      "../../editors/features/feature-stack-feature/bold-feature-stack-feature-editor"
+    );
+    return document.createElement(
+      "bold-feature-stack-feature-editor",
+    ) as LovelaceCardFeatureEditor;
+  }
+
   static getStubConfig(): BoldFeatureStackFeatureConfig {
     return {
       type: "custom:bold-feature-stack",
@@ -95,5 +105,5 @@ BoldFeatureStackFeature.registerCustomFeature<
   type: "bold-feature-stack",
   name: "Feature Stack",
   getSize: getFeatureHeight,
-  configurable: false,
+  configurable: true,
 });
