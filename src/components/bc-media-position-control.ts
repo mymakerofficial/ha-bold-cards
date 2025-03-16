@@ -1,6 +1,7 @@
 import { customElement, property } from "lit/decorators";
 import { css, html, LitElement, nothing, unsafeCSS } from "lit";
-import { MediaPlayerEntity } from "../types/ha/entity";
+import { MediaPlayerEntity, MediaPlayerState } from "../types/ha/entity";
+import { PropertyValues } from "lit-element";
 
 export const MediaPositionTimestampPosition = {
   HIDDEN: "hidden",
@@ -19,12 +20,31 @@ export class MediaPositionControl extends LitElement {
   @property({ type: Boolean }) public disabled = false;
   @property() public timestampPosition?: MediaPositionTimestampPosition;
 
+  private _interval: number | null = null;
+
+  protected willUpdate(changedProperties: PropertyValues) {
+    super.willUpdate(changedProperties);
+
+    if (this.stateObj?.state === MediaPlayerState.PLAYING) {
+      if (this._interval === null) {
+        this._interval = window.setInterval(() => {
+          this.requestUpdate();
+        }, 1000);
+      }
+    } else {
+      if (this._interval !== null) {
+        clearInterval(this._interval);
+        this._interval = null;
+      }
+    }
+  }
+
   render() {
     if (!this.stateObj) {
       return nothing;
     }
 
-    const mediaPosition = this.stateObj!.attributes.media_position;
+    const mediaPosition = getMediaPosition(this.stateObj);
     const mediaDuration = this.stateObj!.attributes.media_duration;
 
     const mediaPositionLabel = formatDuration(mediaPosition);
@@ -141,6 +161,24 @@ export class MediaPositionControl extends LitElement {
         right: 2px;
     `;
   }
+}
+
+function getMediaPosition(stateObj: MediaPlayerEntity) {
+  if (!stateObj.attributes.media_position) {
+    return 0;
+  }
+
+  if (!stateObj.attributes.media_position_updated_at) {
+    return stateObj.attributes.media_position;
+  }
+
+  const now = Date.now();
+  const updatedAt = new Date(
+    stateObj.attributes.media_position_updated_at,
+  ).getTime();
+  const diff = now - updatedAt;
+
+  return stateObj.attributes.media_position + diff / 1000;
 }
 
 export function formatDuration(durationSeconds: number | undefined) {
