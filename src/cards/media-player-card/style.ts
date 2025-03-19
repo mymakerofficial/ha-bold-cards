@@ -107,6 +107,7 @@ export const mediaPlayerCardStyles = css`
     display: flex;
     flex-direction: column;
     gap: var(--card-padding);
+    overflow: hidden;
     /* allow interaction with .background */
     pointer-events: none;
     min-height: calc(
@@ -243,6 +244,7 @@ export const mediaPlayerCardStyles = css`
 
   .media-info-container {
     flex: 1;
+    overflow: hidden;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -276,6 +278,7 @@ export const mediaPlayerCardStyles = css`
     display: flex;
     flex-direction: column;
     justify-content: center;
+    overflow: hidden;
     min-height: 52px;
   }
 
