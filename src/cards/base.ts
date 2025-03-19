@@ -15,6 +15,7 @@ import {
   FeatureInternals,
 } from "../lib/internals/types";
 import { BoldHassElement } from "../components/hass-element";
+import { stripCustomPrefix } from "../editors/cards/features/helpers";
 
 export abstract class BoldLovelaceCard<TConfig extends LovelaceCardConfig>
   extends BoldHassElement
@@ -41,7 +42,7 @@ export abstract class BoldLovelaceCard<TConfig extends LovelaceCardConfig>
     (window as any).customCards.push({
       preview: true,
       documentationURL: "https://github.com/mymakerofficial/ha-bold-cards",
-      type: this.cardType,
+      type: stripCustomPrefix(this.cardType),
       ...entry,
     });
   }
