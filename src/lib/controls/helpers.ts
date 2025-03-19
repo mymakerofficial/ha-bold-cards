@@ -42,6 +42,8 @@ export function getControlIcon(
       return "mdi:ray-vertex";
     case ControlType.MEDIA_TOGGLE:
       return mediaToggleKindIconMap[control.kind];
+    case ControlType.SPACER:
+      return "mdi:keyboard-space";
     default:
       return "";
   }
@@ -234,6 +236,10 @@ export function translateControls({
             type: ControlType.MEDIA_POSITION,
             timestamp_position: control.timestamp_position,
             disabled: unsupported,
+          };
+        case ControlType.SPACER:
+          return {
+            type: ControlType.SPACER,
           };
         default:
           return undefined;

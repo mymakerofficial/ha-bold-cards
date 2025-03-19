@@ -65,6 +65,10 @@ export class ControlRow extends LitElement {
             `;
           }
 
+          if (control.type === ControlType.SPACER) {
+            return html`<div style="flex: 1"></div>`;
+          }
+
           return nothing;
         })}
       </div>

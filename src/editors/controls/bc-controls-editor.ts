@@ -56,6 +56,10 @@ export class ControlsEditor extends LitElement {
       {
         type: ControlType.MEDIA_POSITION,
       },
+      seperator,
+      {
+        type: ControlType.SPACER,
+      },
     ];
   }
 

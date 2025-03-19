@@ -56,7 +56,9 @@ function getFeatureSize(
 
   if (
     config.when_unavailable === ElementWhenUnavailable.HIDE &&
-    controls.every((it) => it.disabled)
+    controls
+      .filter((it) => it.type !== ControlType.SPACER)
+      .every((it) => it.disabled)
   ) {
     return 0;
   }

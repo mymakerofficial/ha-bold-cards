@@ -47,6 +47,7 @@ const i18n = new I18n(
           [ControlType.MEDIA_BUTTON]: "Media Button",
           [ControlType.MEDIA_POSITION]: "Media Position",
           [ControlType.MEDIA_TOGGLE]: "Media Toggle Button",
+          [ControlType.SPACER]: "Spacer",
           [ControlType.CUSTOM]: "Custom",
         } satisfies EnumTranslations<ControlType>,
         media_button_action: {

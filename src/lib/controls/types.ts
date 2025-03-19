@@ -10,6 +10,7 @@ const _ControlType = {
   MEDIA_BUTTON: "media_button",
   MEDIA_POSITION: "media_position",
   MEDIA_TOGGLE: "media_toggle",
+  SPACER: "spacer",
   CUSTOM: "custom",
 } as const;
 export const ControlType = _ControlType;
@@ -94,6 +95,10 @@ export type MediaToggleControlConfig<
 } & Partial<MediaToggleControlBaseConfig> &
   MediaToggleControlKindConfig<TKind>;
 
+export interface SpacerControlConfig {
+  type: ControlTypes["SPACER"];
+}
+
 export interface CustomControlConfig {
   type: ControlTypes["CUSTOM"];
 }
@@ -102,6 +107,7 @@ export type ControlConfig =
   | MediaButtonControlConfig
   | MediaPositionControlConfig
   | MediaToggleControlConfig
+  | SpacerControlConfig
   | CustomControlConfig;
 
 export interface ConcreteMediaButtonControl {
@@ -121,6 +127,11 @@ export interface ConcreteMediaPositionControl {
   disabled: boolean;
 }
 
+export interface ConcreteSpacerControl {
+  type: ControlTypes["SPACER"];
+}
+
 export type ConcreteControl =
   | ConcreteMediaButtonControl
-  | ConcreteMediaPositionControl;
+  | ConcreteMediaPositionControl
+  | ConcreteSpacerControl;

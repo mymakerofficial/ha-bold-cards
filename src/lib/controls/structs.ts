@@ -47,6 +47,10 @@ const mediaToggleControlBaseConfigStruct = object({
   unavailable_when_off: optional(boolean()),
 });
 
+const spacerControlConfigStruct = object({
+  type: exactMatch(ControlType.SPACER),
+});
+
 function getMediaToggleControlKindConfigStruct<
   T extends MediaToggleKind,
   K extends MediaButtonAction,
@@ -84,6 +88,7 @@ export const controlConfigStruct = typedUnion({
     [ControlType.MEDIA_BUTTON]: mediaButtonControlConfigStruct,
     [ControlType.MEDIA_POSITION]: mediaProgressControlConfigStruct,
     [ControlType.MEDIA_TOGGLE]: mediaToggleControlConfigStruct,
+    [ControlType.SPACER]: spacerControlConfigStruct,
     [ControlType.CUSTOM]: customControlConfigStruct,
   },
 });
