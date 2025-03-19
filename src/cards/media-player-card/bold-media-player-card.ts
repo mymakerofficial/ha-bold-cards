@@ -335,7 +335,6 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
 }
 
 BoldMediaPlayerCard.registerCustomCard({
-  type: "bold-media-player-card",
   name: "Bold Media Player",
   description: "A media player card that's bold and beautiful.",
   preview: true,
