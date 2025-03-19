@@ -1,9 +1,6 @@
-import { css, html, LitElement, nothing } from "lit";
+import { css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
-import {
-  HomeAssistant,
-  LovelaceCardFeatureEditorContext,
-} from "../../../types/ha/lovelace";
+import { LovelaceCardFeatureEditorContext } from "../../../types/ha/lovelace";
 import { HassEntity } from "home-assistant-js-websocket";
 import { LovelaceCardFeatureConfig } from "../../../types/ha/feature";
 import { repeat } from "lit-html/directives/repeat";
@@ -14,17 +11,15 @@ import { getCardFeatureInternals } from "../../../cards/features";
 import { LovelaceCardConfigWithFeatures } from "../../../types/card";
 import {
   getFeatureStubConfig,
-  getFeatureTypeLabel,
   getFeatureTypes,
   getIsFeatureTypeEditable,
 } from "./helpers";
 import { stopPropagation } from "../../helpers";
 import { t } from "../../../localization/i18n";
+import { BoldHassElement } from "../../../components/hass-element";
 
 @customElement("bc-card-features-editor")
-export class BoldCardFeatureEditor extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
-
+export class BoldCardFeatureEditor extends BoldHassElement {
   @property({ attribute: false }) public stateObj?: HassEntity;
 
   @property({ attribute: false })
@@ -58,9 +53,7 @@ export class BoldCardFeatureEditor extends LitElement {
                   </div>
                   <div class="content">
                     <div>
-                      <span
-                        >${getFeatureTypeLabel(feature.type, this.hass)}</span
-                      >
+                      <span>${this.getFeatureTypeLabel(feature.type)}</span>
                     </div>
                   </div>
                   ${getIsFeatureTypeEditable(feature.type)
@@ -98,7 +91,7 @@ export class BoldCardFeatureEditor extends LitElement {
           </ha-button>
           ${availableFeatures.map((feature) => {
             return html`<ha-list-item .value=${feature}>
-              ${getFeatureTypeLabel(feature, this.hass)}
+              ${this.getFeatureTypeLabel(feature)}
             </ha-list-item>`;
           })}
         </ha-button-menu>
