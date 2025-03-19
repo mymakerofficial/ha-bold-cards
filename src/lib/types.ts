@@ -9,3 +9,13 @@ export type DefaultConfigType =
 export type DefaultConfigMap<T> = {
   [K in DefaultConfigType]: T;
 };
+
+export type Optional<T> = T | undefined;
+
+export type Pair<T, G> = [T, G];
+
+export type MaybeFunction<T> = T | (() => T);
+
+export type GetterOrMap<T extends string | number | symbol, R> =
+  | ((value: T) => R)
+  | Partial<{ [key in T]: R }>;

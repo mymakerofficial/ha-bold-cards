@@ -1,13 +1,13 @@
 import { t } from "../localization/i18n";
 import { SelectBoxOptionImage, SelectOption } from "../types/ha/selector";
+import { resolveGetterOrMap } from "../lib/helpers";
+import { GetterOrMap } from "../lib/types";
 
 interface ToOptionsOptions<T extends string | number | symbol> {
   labelScope?: string;
   descriptionScope?: string;
-  image?:
-    | Partial<{ [key in T]: string | SelectBoxOptionImage }>
-    | ((value: T) => string | SelectBoxOptionImage);
-  disabled?: Partial<{ [key in T]: boolean }> | ((value: T) => boolean);
+  image?: GetterOrMap<T, string | SelectBoxOptionImage>;
+  disabled?: GetterOrMap<T, boolean>;
 }
 
 export function enumToOptions<T extends string | number | symbol>(
@@ -29,16 +29,8 @@ export function arrayToOptions<T extends string | number | symbol>(
     description: options?.descriptionScope
       ? t(String(item), { scope: options?.descriptionScope, defaultValue: "" })
       : undefined,
-    image: !!options?.image
-      ? typeof options?.image === "function"
-        ? options.image(item)
-        : options?.image?.[item]
-      : undefined,
-    disabled: !!options?.disabled
-      ? typeof options?.disabled === "function"
-        ? options.disabled(item)
-        : options?.disabled?.[item]
-      : false,
+    image: resolveGetterOrMap(item, options?.image),
+    disabled: resolveGetterOrMap(item, options?.disabled, false),
   })) as SelectOption[];
 }
 
