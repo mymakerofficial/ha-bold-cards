@@ -7,6 +7,8 @@ import { styleMap } from "lit-html/directives/style-map";
 import { getFeatureDoesRender, getFeatureSize } from "../size";
 import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
 import { LovelaceCardFeatureEditor } from "../../types/ha/lovelace";
+import { BoldFeatureType } from "../../lib/features/types";
+import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 
 // TODO duplication from base card with features, should be shared
 function getFeatureHeight(
@@ -33,7 +35,9 @@ function getFeatureHeight(
   return Math.ceil(size);
 }
 
-@customElement("bold-feature-stack")
+const featureType = BoldFeatureType.FEATURE_STACK;
+
+@customElement(stripCustomPrefix(featureType))
 export class BoldFeatureStackFeature extends CustomLovelaceCardFeature<
   HassEntity,
   BoldFeatureStackFeatureConfig
@@ -47,9 +51,13 @@ export class BoldFeatureStackFeature extends CustomLovelaceCardFeature<
     ) as LovelaceCardFeatureEditor;
   }
 
+  static get featureType() {
+    return featureType;
+  }
+
   static getStubConfig(): BoldFeatureStackFeatureConfig {
     return {
-      type: "custom:bold-feature-stack",
+      type: this.featureType,
     };
   }
 
@@ -102,7 +110,6 @@ BoldFeatureStackFeature.registerCustomFeature<
   HassEntity,
   BoldFeatureStackFeatureConfig
 >({
-  type: "bold-feature-stack",
   name: "Feature Stack",
   getSize: getFeatureHeight,
   configurable: true,

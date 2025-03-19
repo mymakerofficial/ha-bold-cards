@@ -2,9 +2,10 @@ import {
   ControlConfig,
   ElementWhenUnavailable,
 } from "../../lib/controls/types";
+import { BoldFeatureTypes } from "../../lib/features/types";
 
 export interface BoldMediaPlayerControlRowFeatureConfig {
-  type: "custom:bold-media-player-control-row";
+  type: BoldFeatureTypes["MEDIA_PLAYER_CONTROL_ROW"];
   controls?: ControlConfig[];
   when_unavailable?: ElementWhenUnavailable;
 }

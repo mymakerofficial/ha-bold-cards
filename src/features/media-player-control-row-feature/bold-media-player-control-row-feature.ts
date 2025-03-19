@@ -19,6 +19,8 @@ import { classMap } from "lit-html/directives/class-map";
 import { firstOf, lastOf } from "../../lib/helpers";
 import { getDefaultConfigTypeFromFeatureInternals } from "../../lib/features/helpers";
 import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
+import { BoldFeatureType } from "../../lib/features/types";
+import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 
 function getControls(
   config: FeatureConfigWithMaybeInternals<BoldMediaPlayerControlRowFeatureConfig>,
@@ -68,7 +70,9 @@ function getFeatureSize(
   return hasLargeButtons ? 1.5 : 1;
 }
 
-@customElement("bold-media-player-control-row")
+const featureType = BoldFeatureType.MEDIA_PLAYER_CONTROL_ROW;
+
+@customElement(stripCustomPrefix(featureType))
 export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
   MediaPlayerEntity,
   BoldMediaPlayerControlRowFeatureConfig
@@ -82,9 +86,13 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
     ) as LovelaceCardFeatureEditor;
   }
 
+  static get featureType() {
+    return featureType;
+  }
+
   static getStubConfig(): BoldMediaPlayerControlRowFeatureConfig {
     return {
-      type: "custom:bold-media-player-control-row",
+      type: this.featureType,
       controls: [
         {
           type: ControlType.MEDIA_BUTTON,
@@ -189,7 +197,6 @@ BoldMediaPlayerControlRowFeature.registerCustomFeature<
   MediaPlayerEntity,
   BoldMediaPlayerControlRowFeatureConfig
 >({
-  type: "bold-media-player-control-row",
   name: "Media Player Control Row",
   supported: (stateObj) => computeDomain(stateObj.entity_id) === "media_player",
   getSize: (config, stateObj) => getFeatureSize(config, stateObj),

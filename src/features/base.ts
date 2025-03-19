@@ -7,6 +7,7 @@ import { property, state } from "lit/decorators";
 import { HassEntity } from "home-assistant-js-websocket";
 import { FeatureConfigWithMaybeInternals } from "../lib/internals/types";
 import { BoldHassElement } from "../components/hass-element";
+import { stripCustomPrefix } from "../editors/cards/features/helpers";
 
 export abstract class CustomLovelaceCardFeature<
     TStateObj extends HassEntity = HassEntity,
@@ -23,6 +24,10 @@ export abstract class CustomLovelaceCardFeature<
     this._config = config;
   }
 
+  static get featureType() {
+    return "";
+  }
+
   protected get _internals() {
     return this._config?.__bold_custom_internals;
   }
@@ -34,14 +39,17 @@ export abstract class CustomLovelaceCardFeature<
     getSize,
     doesRender,
     ...entry
-  }: CustomCardFeatureEntryWithSize<TStateObj, TConfig>) {
+  }: Omit<CustomCardFeatureEntryWithSize<TStateObj, TConfig>, "type">) {
     (window as any).customCardFeatures =
       (window as any).customCardFeatures || [];
-    (window as any).customCardFeatures.push(entry);
+    (window as any).customCardFeatures.push({
+      entry,
+      type: stripCustomPrefix(this.featureType),
+    });
 
     (window as any).__customCardFeaturesSizeMap =
       (window as any).__customCardFeaturesSizeMap || new Map();
-    (window as any).__customCardFeaturesSizeMap.set(`custom:${entry.type}`, {
+    (window as any).__customCardFeaturesSizeMap.set(this.featureType, {
       getSize,
       doesRender,
     });

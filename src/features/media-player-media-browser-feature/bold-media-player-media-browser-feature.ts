@@ -8,17 +8,25 @@ import { PropertyValues } from "lit-element";
 import { MediaPlayerItem } from "../../lib/media-player/media-browser";
 import { repeat } from "lit-html/directives/repeat";
 import { styleMap } from "lit-html/directives/style-map";
+import { BoldFeatureType } from "../../lib/features/types";
+import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 
-@customElement("bold-media-player-media-browser")
+const featureType = BoldFeatureType.MEDIA_PLAYER_MEDIA_BROWSER;
+
+@customElement(stripCustomPrefix(featureType))
 export class BoldMediaPlayerMediaBrowserFeature extends CustomLovelaceCardFeature<
   MediaPlayerEntity,
   BoldMediaPlayerMediaBrowserFeatureConfig
 > {
   @state() private _currentItem?: MediaPlayerItem;
 
+  static get featureType() {
+    return featureType;
+  }
+
   static getStubConfig(): BoldMediaPlayerMediaBrowserFeatureConfig {
     return {
-      type: "custom:bold-media-player-media-browser",
+      type: this.featureType,
     };
   }
 
@@ -224,7 +232,6 @@ BoldMediaPlayerMediaBrowserFeature.registerCustomFeature<
   MediaPlayerEntity,
   BoldMediaPlayerMediaBrowserFeatureConfig
 >({
-  type: "bold-media-player-media-browser",
   name: "Media Player Media Browser",
   supported: (stateObj) => computeDomain(stateObj.entity_id) === "media_player",
   getSize: (_config, _stateObj) => 2,

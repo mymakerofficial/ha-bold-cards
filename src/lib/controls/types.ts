@@ -6,13 +6,15 @@ import {
 import { MediaPositionTimestampPosition } from "../../components/bc-media-position-control";
 import { mediaToggleKindActionMap } from "./constants";
 
-export const ControlType = {
+const _ControlType = {
   MEDIA_BUTTON: "media_button",
   MEDIA_POSITION: "media_position",
   MEDIA_TOGGLE: "media_toggle",
   CUSTOM: "custom",
 } as const;
-export type ControlType = (typeof ControlType)[keyof typeof ControlType];
+export const ControlType = _ControlType;
+export type ControlType = (typeof _ControlType)[keyof typeof _ControlType];
+export type ControlTypes = typeof _ControlType;
 
 export const MediaButtonAction = {
   MEDIA_PREVIOUS_TRACK: "media_previous_track",
@@ -58,14 +60,14 @@ export interface MediaButtonControlBaseConfig {
 
 export interface MediaButtonControlConfig
   extends Partial<MediaButtonControlBaseConfig> {
-  type: "media_button";
+  type: ControlTypes["MEDIA_BUTTON"];
   action: MediaButtonAction;
   always_show?: boolean;
   unavailable_when_off?: boolean;
 }
 
 export interface MediaPositionControlConfig {
-  type: "media_position";
+  type: ControlTypes["MEDIA_POSITION"];
   timestamp_position?: MediaPositionTimestampPosition;
   when_unavailable?: ElementWhenUnavailable;
   unavailable_when_off?: boolean;
@@ -87,13 +89,13 @@ export type MediaToggleControlKindConfig<
 export type MediaToggleControlConfig<
   TKind extends MediaToggleKind = MediaToggleKind,
 > = {
-  type: "media_toggle";
+  type: ControlTypes["MEDIA_TOGGLE"];
   kind: MediaToggleKind;
 } & Partial<MediaToggleControlBaseConfig> &
   MediaToggleControlKindConfig<TKind>;
 
 export interface CustomControlConfig {
-  type: "custom";
+  type: ControlTypes["CUSTOM"];
 }
 
 export type ControlConfig =
@@ -103,7 +105,7 @@ export type ControlConfig =
   | CustomControlConfig;
 
 export interface ConcreteMediaButtonControl {
-  type: "media_button";
+  type: ControlTypes["MEDIA_BUTTON"];
   action: MediaButtonAction;
   icon: string;
   label: string;
@@ -114,7 +116,7 @@ export interface ConcreteMediaButtonControl {
 }
 
 export interface ConcreteMediaPositionControl {
-  type: "media_position";
+  type: ControlTypes["MEDIA_POSITION"];
   timestamp_position: MediaPositionTimestampPosition;
   disabled: boolean;
 }

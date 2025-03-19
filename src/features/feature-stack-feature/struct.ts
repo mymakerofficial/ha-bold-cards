@@ -1,9 +1,9 @@
 import { object } from "superstruct";
 import { exactMatch } from "../../lib/struct";
-import { BoldFeatureStackFeature } from "./bold-feature-stack-feature";
 import { featuresStruct } from "../../lib/features/structs";
+import { BoldFeatureType } from "../../lib/features/types";
 
 export const featureStackFeatureStruct = object({
-  type: exactMatch(BoldFeatureStackFeature.getStubConfig().type),
+  type: exactMatch(BoldFeatureType.FEATURE_STACK),
   features: featuresStruct,
 });

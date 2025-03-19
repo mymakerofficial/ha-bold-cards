@@ -7,15 +7,23 @@ import { CustomLovelaceCardFeature } from "../base";
 import { getEntityByEntityId } from "../../lib/entities/helpers";
 import { getMediaPlayerSourceIcon } from "../../lib/media-player/source";
 import { stopPropagation } from "../../editors/helpers";
+import { BoldFeatureType } from "../../lib/features/types";
+import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 
-@customElement("bold-media-player-source-select")
+const featureType = BoldFeatureType.MEDIA_PLAYER_SOURCE_SELECT;
+
+@customElement(stripCustomPrefix(featureType))
 export class BoldMediaPlayerSourceSelectFeature extends CustomLovelaceCardFeature<
   MediaPlayerEntity,
   BoldMediaPlayerSourceSelectFeatureConfig
 > {
+  static get featureType() {
+    return featureType;
+  }
+
   static getStubConfig(): BoldMediaPlayerSourceSelectFeatureConfig {
     return {
-      type: "custom:bold-media-player-source-select",
+      type: this.featureType,
     };
   }
 
@@ -93,7 +101,6 @@ BoldMediaPlayerSourceSelectFeature.registerCustomFeature<
   MediaPlayerEntity,
   BoldMediaPlayerSourceSelectFeatureConfig
 >({
-  type: "bold-media-player-source-select",
   name: "Media Player Source Select",
   supported: (stateObj) => computeDomain(stateObj.entity_id) === "media_player",
   getSize: (_config, _stateObj) => 1.5,
