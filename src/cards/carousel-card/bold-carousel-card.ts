@@ -1,5 +1,5 @@
 import { BoldLovelaceCard } from "../base";
-import { MultiCardConfig } from "./types";
+import { CarouselCardConfig } from "./types";
 import { css, html, nothing } from "lit";
 import { repeat } from "lit-html/directives/repeat";
 import { customElement, state } from "lit/decorators";
@@ -8,22 +8,21 @@ import { createRef, ref } from "lit-html/directives/ref";
 import { firstOf } from "../../lib/helpers";
 import { BoldCardType } from "../../lib/cards/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
-import { getStubMediaPlayerEntity } from "../media-player-card/base";
 import { BoldMediaPlayerCard } from "../media-player-card/bold-media-player-card";
 
-const cardType = BoldCardType.MULTI;
+const cardType = BoldCardType.CAROUSEL;
 
 @customElement(stripCustomPrefix(cardType))
-export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
+export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
   private _containerRef = createRef();
   @state() private _containerWidth: number = 0;
   @state() private _activeIndex: number = 0;
   @state() private _nextIndex: number = 0;
 
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
-    await import("../../editors/cards/multi-card/bold-multi-card-editor");
+    await import("../../editors/cards/carousel-card/bold-carousel-card-editor");
     return document.createElement(
-      "bold-multi-card-editor",
+      "bold-carousel-card-editor",
     ) as LovelaceCardEditor;
   }
 
@@ -31,7 +30,7 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
     return cardType;
   }
 
-  static getStubConfig(hass: HomeAssistant): MultiCardConfig {
+  static getStubConfig(hass: HomeAssistant): CarouselCardConfig {
     const { entity, ...stubCard } = BoldMediaPlayerCard.getStubConfig(hass);
     return {
       type: this.cardType,
@@ -308,8 +307,8 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
   }
 }
 
-BoldMultiCard.registerCustomCard({
-  name: "Bold Multi Card",
-  description: "A card that allows you to display multiple cards in one.",
+BoldCarouselCard.registerCustomCard({
+  name: "Bold Carousel",
+  description: "Turn any card into a carousel with multiple entities.",
   preview: true,
 });

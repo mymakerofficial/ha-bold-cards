@@ -4,8 +4,8 @@ import { BoldCardTypes } from "../../lib/cards/types";
 
 type CardConfigs = BoldMediaPlayerCardConfig;
 
-export type MultiCardConfig = LovelaceCardConfig & {
-  type: BoldCardTypes["MULTI"];
+export type CarouselCardConfig = LovelaceCardConfig & {
+  type: BoldCardTypes["CAROUSEL"];
   entities: string[];
   card: Omit<
     CardConfigs,

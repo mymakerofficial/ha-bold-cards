@@ -13,4 +13,4 @@ import "./cards/media-player-card/bold-media-player-card";
 import "./cards/air-quality-card/bold-air-quality-card";
 import "./cards/battery-card/bold-battery-card";
 import "./cards/record-player-card/bold-record-player-card";
-import "./cards/multi-card/bold-multi-card";
+import "./cards/carousel-card/bold-carousel-card";

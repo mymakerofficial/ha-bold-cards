@@ -3,7 +3,7 @@ const _BoldCardType = {
   RECORD_PLAYER: "custom:bold-record-player-card",
   AIR_QUALITY: "custom:bold-air-quality-card",
   BATTERY: "custom:bold-battery-card",
-  MULTI: "custom:bold-multi-card",
+  CAROUSEL: "custom:bold-carousel-card",
 } as const;
 export const BoldCardType = _BoldCardType;
 export type BoldCardType = (typeof _BoldCardType)[keyof typeof _BoldCardType];
