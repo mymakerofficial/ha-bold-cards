@@ -137,6 +137,32 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
     const cards = this.getCards();
 
     return html`
+      ${cards.length > 1
+        ? html`
+            <div class="stepper-container">
+              <div
+                class="stepper"
+                tabindex="0"
+                role="tablist"
+                @keydown=${this._handleStepperKeyDown}
+              >
+                ${repeat(
+                  cards,
+                  (_, index) => html`
+                    <div
+                      class="step"
+                      role="tab"
+                      aria-selected=${index === this._activeIndex}
+                      @click=${() => this._handleClickStep(index)}
+                    >
+                      <div class="step-inner" />
+                    </div>
+                  `,
+                )}
+              </div>
+            </div>
+          `
+        : nothing}
       <div class="container" ${ref(this._containerRef)}>
         ${repeat(
           cards,
@@ -156,35 +182,6 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
             </div>
           `,
         )}
-      </div>
-      ${
-        cards.length > 1
-          ? html`
-              <div class="stepper-container">
-                <div
-                  class="stepper"
-                  tabindex="0"
-                  role="tablist"
-                  @keydown=${this._handleStepperKeyDown}
-                >
-                  ${repeat(
-                    cards,
-                    (_, index) => html`
-                      <div
-                        class="step"
-                        role="tab"
-                        aria-selected=${index === this._activeIndex}
-                        @click=${() => this._handleClickStep(index)}
-                      >
-                        <div class="step-inner" />
-                      </div>
-                    `,
-                  )}
-                </div>
-              </div>
-            `
-          : nothing
-      }
       </div>
     `;
   }
@@ -260,6 +257,7 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
         transform: translateX(-50%);
         display: flex;
         gap: 8px;
+        z-index: 100;
       }
 
       .stepper {
