@@ -52,7 +52,7 @@ export abstract class CustomLovelaceCardFeature<
     (window as any).customCardFeatures =
       (window as any).customCardFeatures || [];
     (window as any).customCardFeatures.push({
-      entry,
+      ...entry,
       type: stripCustomPrefix(this.featureType),
     });
 
