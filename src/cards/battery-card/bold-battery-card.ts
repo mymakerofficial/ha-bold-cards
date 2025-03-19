@@ -1,19 +1,25 @@
 import { css, html, nothing } from "lit";
 import { customElement } from "lit/decorators";
-import {
-  LovelaceCardConfig,
-  LovelaceGridOptions,
-} from "../../types/ha/lovelace";
+import { LovelaceGridOptions } from "../../types/ha/lovelace";
 import { BoldLovelaceCard } from "../base";
 import { repeat } from "lit-html/directives/repeat";
 import { styleMap } from "lit-html/directives/style-map";
 import { EntityState } from "../../types/ha/entity";
+import { BoldCardType } from "../../lib/cards/types";
+import { stripCustomPrefix } from "../../editors/cards/features/helpers";
+import { BatteryCardConfig } from "./types";
 
-@customElement("bold-battery-card")
-export class BoldBatteryCard extends BoldLovelaceCard<LovelaceCardConfig> {
-  public static getStubConfig(): LovelaceCardConfig {
+const cardType = BoldCardType.BATTERY;
+
+@customElement(stripCustomPrefix(cardType))
+export class BoldBatteryCard extends BoldLovelaceCard<BatteryCardConfig> {
+  static get cardType() {
+    return cardType;
+  }
+
+  public static getStubConfig(): BatteryCardConfig {
     return {
-      type: "custom:bold-battery-card",
+      type: this.cardType,
       grid_options: {
         rows: 4,
       },
@@ -156,7 +162,6 @@ export class BoldBatteryCard extends BoldLovelaceCard<LovelaceCardConfig> {
 }
 
 BoldBatteryCard.registerCustomCard({
-  type: "bold-battery-card",
   name: "Bold Battery Card",
   description:
     "A custom card for displaying all battery entities in one place.",

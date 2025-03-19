@@ -5,6 +5,7 @@ import { html, nothing } from "lit";
 import { customElement } from "lit/decorators";
 import { LovelaceCardEditorContext } from "../../../types/ha/lovelace";
 import { fireEvent } from "custom-card-helpers";
+import { BoldCardType } from "../../../lib/cards/types";
 
 @customElement("bold-multi-card-editor")
 export class BoldMultiCardEditor extends BoldLovelaceCardEditor<MultiCardConfig> {
@@ -24,7 +25,7 @@ export class BoldMultiCardEditor extends BoldLovelaceCardEditor<MultiCardConfig>
 
     const context: LovelaceCardEditorContext = {
       internals: {
-        parent_card_type: "custom:bold-multi-card",
+        parent_card_type: BoldCardType.MULTI,
       },
     };
 

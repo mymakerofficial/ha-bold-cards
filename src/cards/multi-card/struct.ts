@@ -8,17 +8,19 @@ import {
   string,
 } from "superstruct";
 import { baseLovelaceCardConfig } from "../../helpers/ha/base-card-struct";
-import { typedUnion } from "../../lib/struct";
+import { exactMatch, typedUnion } from "../../lib/struct";
 import { mediaPlayerCardConfigStruct } from "../media-player-card/struct";
+import { BoldCardType } from "../../lib/cards/types";
 
 export const multiCardConfigStruct = assign(
   baseLovelaceCardConfig,
   object({
+    type: exactMatch(BoldCardType.MULTI),
     entities: optional(array(string())),
     card: typedUnion({
       key: "type",
       structs: {
-        ["custom:bold-media-player-card"]: omit(mediaPlayerCardConfigStruct, [
+        [BoldCardType.MEDIA_PLAYER]: omit(mediaPlayerCardConfigStruct, [
           "entity",
           "view_layout",
           "layout_options",

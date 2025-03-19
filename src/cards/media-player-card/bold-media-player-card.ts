@@ -22,6 +22,8 @@ import { BoldMediaPlayerCardBase, getStubMediaPlayerEntity } from "./base";
 import { t } from "../../localization/i18n";
 import { isMediaPlayerStateActive } from "../../helpers/states";
 import { FeatureInternals } from "../../lib/internals/types";
+import { BoldCardType } from "../../lib/cards/types";
+import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 
 function getFeatureInternals(
   context: GetFeatureInternalsContext<BoldMediaPlayerCardConfig>,
@@ -38,7 +40,9 @@ function getFeatureInternals(
   };
 }
 
-@customElement("bold-media-player-card")
+const cardType = BoldCardType.MEDIA_PLAYER;
+
+@customElement(stripCustomPrefix(cardType))
 export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayerCardConfig> {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import(
@@ -49,11 +53,15 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
     ) as LovelaceCardEditor;
   }
 
+  static get cardType() {
+    return cardType;
+  }
+
   public static getStubConfig(hass: HomeAssistant): BoldMediaPlayerCardConfig {
     const entity = getStubMediaPlayerEntity(hass);
 
     return {
-      type: "custom:bold-media-player-card",
+      type: this.cardType,
       entity: entity?.entity_id ?? "",
       picture_position: MediaPlayerCardPicturePosition.BACKGROUND,
       horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,

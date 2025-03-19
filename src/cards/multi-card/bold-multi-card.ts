@@ -3,11 +3,17 @@ import { MultiCardConfig } from "./types";
 import { css, html, nothing } from "lit";
 import { repeat } from "lit-html/directives/repeat";
 import { customElement, state } from "lit/decorators";
-import { LovelaceCardEditor } from "../../types/ha/lovelace";
+import { HomeAssistant, LovelaceCardEditor } from "../../types/ha/lovelace";
 import { createRef, ref } from "lit-html/directives/ref";
 import { firstOf } from "../../lib/helpers";
+import { BoldCardType } from "../../lib/cards/types";
+import { stripCustomPrefix } from "../../editors/cards/features/helpers";
+import { getStubMediaPlayerEntity } from "../media-player-card/base";
+import { BoldMediaPlayerCard } from "../media-player-card/bold-media-player-card";
 
-@customElement("bold-multi-card")
+const cardType = BoldCardType.MULTI;
+
+@customElement(stripCustomPrefix(cardType))
 export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
   private _containerRef = createRef();
   @state() private _containerWidth: number = 0;
@@ -19,6 +25,19 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
     return document.createElement(
       "bold-multi-card-editor",
     ) as LovelaceCardEditor;
+  }
+
+  static get cardType() {
+    return cardType;
+  }
+
+  static getStubConfig(hass: HomeAssistant): MultiCardConfig {
+    const { entity, ...stubCard } = BoldMediaPlayerCard.getStubConfig(hass);
+    return {
+      type: this.cardType,
+      entities: [entity],
+      card: stubCard,
+    };
   }
 
   public getCardSize(): number {
@@ -290,7 +309,6 @@ export class BoldMultiCard extends BoldLovelaceCard<MultiCardConfig> {
 }
 
 BoldMultiCard.registerCustomCard({
-  type: "bold-multi-card",
   name: "Bold Multi Card",
   description: "A card that allows you to display multiple cards in one.",
   preview: true,

@@ -8,6 +8,8 @@ import { t } from "../../localization/i18n";
 import { mdiWaves } from "@mdi/js";
 import { styleMap } from "lit-html/directives/style-map";
 import { repeat } from "lit-html/directives/repeat";
+import { BoldCardType } from "../../lib/cards/types";
+import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 
 function pm25toAQI(pm25: number): number {
   // TODO Implement AQI calculation
@@ -95,14 +97,20 @@ function getAQIColor(level: AQILevel): string {
   return AQIColors[level];
 }
 
-@customElement("bold-air-quality-card")
+const cardType = BoldCardType.AIR_QUALITY;
+
+@customElement(stripCustomPrefix(cardType))
 export class BoldAirQualityCard extends BoldCardWithEntity<
   AirQualityCardConfig,
   HassEntity
 > {
+  static get cardType() {
+    return cardType;
+  }
+
   public static getStubConfig(): AirQualityCardConfig {
     return {
-      type: "custom:bold-air-quality-card",
+      type: this.cardType,
       entity: "",
     };
   }
@@ -275,7 +283,6 @@ export class BoldAirQualityCard extends BoldCardWithEntity<
 }
 
 BoldAirQualityCard.registerCustomCard({
-  type: "bold-air-quality-card",
   name: "Bold Air Quality Card",
   description: "A custom card for displaying air quality information.",
   preview: true,

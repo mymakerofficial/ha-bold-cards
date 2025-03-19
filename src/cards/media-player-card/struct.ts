@@ -9,6 +9,8 @@ import {
 import { CardFeaturePosition } from "../types";
 import { featuresStruct } from "../../lib/features/structs";
 import { universalMediaPlayerEnhancementsStruct } from "../../lib/media-player/universal-media-player";
+import { exactMatch } from "../../lib/struct";
+import { BoldCardType } from "../../lib/cards/types";
 
 export const mediaPlayerCardBaseConfigStruct = assign(
   baseLovelaceCardConfig,
@@ -26,6 +28,7 @@ export const mediaPlayerCardBaseConfigStruct = assign(
 export const mediaPlayerCardConfigStruct = assign(
   mediaPlayerCardBaseConfigStruct,
   object({
+    type: exactMatch(BoldCardType.MEDIA_PLAYER),
     picture_position: enums(Object.values(MediaPlayerCardPicturePosition)),
     horizontal_alignment: enums(
       Object.values(MediaPlayerCardHorizontalAlignment),

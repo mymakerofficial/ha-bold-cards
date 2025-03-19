@@ -14,17 +14,20 @@ import {
   MediaToggleKind,
 } from "../../lib/controls/types";
 import { styleMap } from "lit-html/directives/style-map";
-import {
-  MediaPlayerCardColorMode,
-  BoldMediaPlayerCardConfig,
-} from "../media-player-card/types";
+import { MediaPlayerCardColorMode } from "../media-player-card/types";
 import {
   ButtonShape,
   ButtonSize,
   ButtonVariant,
 } from "../../components/bc-button";
-import { FeatureInternals } from "../../lib/internals/types";
+import {
+  FeatureConfigWithMaybeInternals,
+  FeatureInternals,
+} from "../../lib/internals/types";
 import { getFallbackFeatureInternals } from "../features";
+import { BoldCardType } from "../../lib/cards/types";
+import { stripCustomPrefix } from "../../editors/cards/features/helpers";
+import { BoldRecordPlayerCardConfig } from "./types";
 
 function getFeatureInternals(
   context: GetFeatureInternalsContext,
@@ -35,46 +38,56 @@ function getFeatureInternals(
   };
 }
 
-@customElement("bold-record-player-card")
-export class BoldRecordPlayerCard extends BoldMediaPlayerCardBase {
-  public static getStubConfig(hass: HomeAssistant) {
+const cardType = BoldCardType.RECORD_PLAYER;
+
+@customElement(stripCustomPrefix(cardType))
+export class BoldRecordPlayerCard extends BoldMediaPlayerCardBase<BoldRecordPlayerCardConfig> {
+  static get cardType() {
+    return cardType;
+  }
+
+  public static getStubConfig(hass: HomeAssistant): BoldRecordPlayerCardConfig {
     const entity = getStubMediaPlayerEntity(hass);
 
     return {
-      type: "custom:bold-record-player-card",
+      type: this.cardType,
       entity: entity?.entity_id ?? "",
+      color_mode: MediaPlayerCardColorMode.AMBIENT,
     };
   }
 
-  public setConfig(config: BoldMediaPlayerCardConfig) {
+  public setConfig(config: BoldRecordPlayerCardConfig) {
     super.setConfig({
       ...config,
       color_mode: MediaPlayerCardColorMode.AMBIENT,
-      features: [
-        {
-          ...BoldMediaPlayerControlRowFeature.getStubConfig(),
-          when_unavailable: ElementWhenUnavailable.HIDE,
-          controls: [
-            {
-              type: ControlType.MEDIA_TOGGLE,
-              kind: MediaToggleKind.PLAY_PAUSE,
-              media_pause: {
-                variant: ButtonVariant.FILLED,
-                shape: ButtonShape.SQUARE,
-                size: ButtonSize.MD,
-              },
-              media_play: {
-                variant: ButtonVariant.FILLED,
-                shape: ButtonShape.ROUND,
-                size: ButtonSize.MD,
-              },
-              when_unavailable: ElementWhenUnavailable.HIDE,
-              unavailable_when_off: true,
-            },
-          ],
-        },
-      ],
     });
+  }
+
+  protected get _features(): FeatureConfigWithMaybeInternals[] {
+    return [
+      {
+        ...BoldMediaPlayerControlRowFeature.getStubConfig(),
+        when_unavailable: ElementWhenUnavailable.HIDE,
+        controls: [
+          {
+            type: ControlType.MEDIA_TOGGLE,
+            kind: MediaToggleKind.PLAY_PAUSE,
+            media_pause: {
+              variant: ButtonVariant.FILLED,
+              shape: ButtonShape.SQUARE,
+              size: ButtonSize.MD,
+            },
+            media_play: {
+              variant: ButtonVariant.FILLED,
+              shape: ButtonShape.ROUND,
+              size: ButtonSize.MD,
+            },
+            when_unavailable: ElementWhenUnavailable.HIDE,
+            unavailable_when_off: true,
+          },
+        ],
+      },
+    ];
   }
 
   protected _getFeatureInternals(
@@ -306,7 +319,6 @@ export class BoldRecordPlayerCard extends BoldMediaPlayerCardBase {
 }
 
 BoldRecordPlayerCard.registerCustomCard({
-  type: "bold-record-player-card",
   name: "Bold Record Player",
   description: "A media player with flair.",
   preview: true,

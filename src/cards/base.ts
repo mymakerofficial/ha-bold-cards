@@ -30,13 +30,18 @@ export abstract class BoldLovelaceCard<TConfig extends LovelaceCardConfig>
     this._config = config;
   }
 
+  static get cardType() {
+    return "";
+  }
+
   abstract getCardSize(): number | Promise<number>;
 
-  static registerCustomCard(entry: CustomCardEntry) {
+  static registerCustomCard(entry: Omit<CustomCardEntry, "type">) {
     (window as any).customCards = (window as any).customCards || [];
     (window as any).customCards.push({
       preview: true,
       documentationURL: "https://github.com/mymakerofficial/ha-bold-cards",
+      type: this.cardType,
       ...entry,
     });
   }
@@ -145,13 +150,13 @@ export abstract class BoldCardWithFeatures<
   }
 
   static registerCustomCard<TConfig = LovelaceCardConfig>(
-    entry: CustomCardEntryWithInternals<TConfig>,
+    entry: Omit<CustomCardEntryWithInternals<TConfig>, "type">,
   ) {
     super.registerCustomCard(entry);
 
     (window as any).__customCardInternalsMap =
       (window as any).__customCardInternalsMap || new Map();
-    (window as any).__customCardInternalsMap.set(`custom:${entry.type}`, {
+    (window as any).__customCardInternalsMap.set(this.cardType, {
       getFeatureInternals: entry.getFeatureInternals,
     });
   }
