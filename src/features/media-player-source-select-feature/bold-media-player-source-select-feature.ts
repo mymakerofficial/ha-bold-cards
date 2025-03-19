@@ -38,6 +38,19 @@ export class BoldMediaPlayerSourceSelectFeature extends CustomLovelaceCardFeatur
     return getEntityByEntityId(this._childStateObj?.entity_id, this.hass);
   }
 
+  protected get _sourceList() {
+    const sourceList = this.stateObj?.attributes.source_list ?? [];
+
+    if (
+      this.stateObj?.attributes.source &&
+      !sourceList.includes(this.stateObj?.attributes.source)
+    ) {
+      sourceList.unshift(this.stateObj?.attributes.source);
+    }
+
+    return sourceList.filter((source) => source !== "");
+  }
+
   protected _handleSelected(ev: CustomEvent) {
     stopPropagation(ev);
 
@@ -78,6 +91,8 @@ export class BoldMediaPlayerSourceSelectFeature extends CustomLovelaceCardFeatur
       label = "Playing Spotify on";
     }
 
+    const sourceList = this._sourceList;
+
     return html`
       <bc-large-select-menu
         .label=${label}
@@ -85,7 +100,7 @@ export class BoldMediaPlayerSourceSelectFeature extends CustomLovelaceCardFeatur
         @selected=${this._handleSelected}
         @closed=${stopPropagation}
       >
-        ${this.stateObj.attributes.source_list?.map(
+        ${sourceList.map(
           (source) => html`
             <ha-list-item .value=${source} graphic="icon">
               <ha-icon
