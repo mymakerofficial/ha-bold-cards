@@ -109,6 +109,7 @@ export class MediaPositionControl extends LitElement {
         justify-content: center;
         height: var(--feature-height, 42px);
         border-radius: var(--feature-border-radius, 12px);
+        margin: 0 -10px;
       }
         
       .slider-placeholder {
