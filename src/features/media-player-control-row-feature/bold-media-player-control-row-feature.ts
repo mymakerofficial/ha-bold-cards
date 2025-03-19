@@ -154,8 +154,10 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
       false;
     const insetBottom =
       (size === 1 &&
-        this.boldInternals?.parent_card_type === BoldCardType.MEDIA_PLAYER,
-      !this.boldInternals?.is_inlined && this.boldInternals?.is_last) ?? false;
+        this.boldInternals?.parent_card_type === BoldCardType.MEDIA_PLAYER &&
+        !this.boldInternals?.is_inlined &&
+        this.boldInternals?.is_last) ??
+      false;
 
     return html`
       <div
