@@ -12,6 +12,8 @@ export type DefaultConfigMap<T> = {
 
 export type Optional<T> = T | undefined;
 
+export type Nullable<T> = T | null;
+
 export type Pair<T, G> = [T, G];
 
 export type MaybeFunction<T> = T | (() => T);

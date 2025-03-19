@@ -15,6 +15,10 @@ import { MediaPlayerEntity } from "../types/ha/entity";
 import { isStateActive } from "../helpers/states";
 import { dedupeMediaPlayerEntities } from "../lib/media-player/helpers";
 import { browseMediaPlayer } from "../lib/media-player/media-browser";
+import {
+  RenderTemplateParams,
+  subscribeToRenderTemplate,
+} from "../lib/templates/helpers";
 
 export class BoldHassElement extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
@@ -69,5 +73,9 @@ export class BoldHassElement extends LitElement {
       mediaContentId,
       mediaContentType,
     );
+  }
+
+  protected async subscribeToRenderTemplate(params: RenderTemplateParams) {
+    return subscribeToRenderTemplate(this.hass!.connection, params);
   }
 }

@@ -4,6 +4,7 @@ import {
 } from "custom-card-helpers";
 import { LovelaceCardFeatureConfig } from "./feature";
 import { CardInternals, FeatureInternals } from "../../lib/internals/types";
+import { Connection } from "home-assistant-js-websocket";
 
 type EntityCategory = "config" | "diagnostic";
 
@@ -57,11 +58,12 @@ export interface ThemeSettings {
 }
 
 export interface HomeAssistant
-  extends Omit<HomeAssistantBase, "selectedTheme"> {
+  extends Omit<HomeAssistantBase, "selectedTheme" | "connection"> {
   entities: Record<string, EntityRegistryDisplayEntry>;
   devices: Record<string, DeviceRegistryEntry>;
   hassUrl(path?): string;
   selectedTheme: ThemeSettings | null;
+  connection: Connection;
 }
 
 export interface LovelaceCardConfig {

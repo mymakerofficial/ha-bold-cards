@@ -22,6 +22,18 @@ export function isUndefined(value: unknown): value is undefined {
   return value === undefined;
 }
 
+export function isDefined<T>(value: T | undefined): value is T {
+  return value !== undefined;
+}
+
+export function isNull(value: unknown): value is null {
+  return value === null;
+}
+
+export function isNotNull<T>(value: T | null): value is T {
+  return value !== null;
+}
+
 export function isFunction(value: unknown): value is Function {
   return typeof value === "function";
 }

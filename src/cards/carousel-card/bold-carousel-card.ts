@@ -308,5 +308,5 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
 BoldCarouselCard.registerCustomCard({
   name: "Bold Carousel",
   description: "Turn any card into a carousel with multiple entities.",
-  preview: true,
+  preview: false,
 });
