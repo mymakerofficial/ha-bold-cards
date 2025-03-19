@@ -9,6 +9,8 @@ import { getMediaPlayerSourceIcon } from "../../lib/media-player/source";
 import { stopPropagation } from "../../editors/helpers";
 import { BoldFeatureType } from "../../lib/features/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
+import { t } from "../../localization/i18n";
+import { matchRegex, pair } from "../../lib/helpers";
 
 const featureType = BoldFeatureType.MEDIA_PLAYER_SOURCE_SELECT;
 
@@ -84,14 +86,16 @@ export class BoldMediaPlayerSourceSelectFeature extends CustomLovelaceCardFeatur
     }
 
     const childEntity = this._childEntity;
-
-    let label = "Source";
-
-    if (childEntity?.platform === "spotify") {
-      label = "Playing Spotify on";
-    }
-
     const sourceList = this._sourceList;
+
+    const labelType = matchRegex(
+      childEntity?.platform,
+      [pair(/spotify/i, "spotify")],
+      "generic",
+    );
+    const label = t(labelType, {
+      scope: "feature.media_player_source_select.label.source",
+    });
 
     return html`
       <bc-large-select-menu

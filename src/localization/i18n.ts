@@ -133,6 +133,16 @@ const i18n = new I18n(
           },
         },
       },
+      feature: {
+        media_player_source_select: {
+          label: {
+            source: {
+              generic: "Source",
+              spotify: "Playing Spotify on",
+            },
+          },
+        },
+      },
       editor: {
         common: {
           default_with_value: "Default (%{value})",
