@@ -21,6 +21,7 @@ import { getDefaultConfigTypeFromFeatureInternals } from "../../lib/features/hel
 import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
 import { BoldFeatureType } from "../../lib/features/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
+import { BoldCardType } from "../../lib/cards/types";
 
 function getControls(
   config: FeatureConfigWithMaybeInternals<BoldMediaPlayerControlRowFeatureConfig>,
@@ -137,20 +138,33 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
     const firstControl = firstOf(controls);
     const lastControl = lastOf(controls);
 
+    const size = this.getSize();
+
+    const insetLeft =
+      (firstControl?.type === ControlType.MEDIA_BUTTON &&
+        firstControl.variant === ButtonVariant.PLAIN &&
+        firstControl.size === ButtonSize.SM) ??
+      false;
+    const insetRight =
+      (lastControl?.type === ControlType.MEDIA_BUTTON &&
+        lastControl.variant === ButtonVariant.PLAIN &&
+        lastControl.size === ButtonSize.SM) ??
+      false;
+    const insetBottom =
+      (size === 1 &&
+        this.boldInternals?.parent_card_type === BoldCardType.MEDIA_PLAYER,
+      !this.boldInternals?.is_inlined && this.boldInternals?.is_last) ?? false;
+
     return html`
       <div
-        class="container ${classMap({
-          "inset-left":
-            firstControl?.type === ControlType.MEDIA_BUTTON &&
-            firstControl.variant === ButtonVariant.PLAIN &&
-            firstControl.size === ButtonSize.SM,
-          "inset-right":
-            lastControl?.type === ControlType.MEDIA_BUTTON &&
-            lastControl.variant === ButtonVariant.PLAIN &&
-            lastControl.size === ButtonSize.SM,
-        })}"
+        class=${classMap({
+          container: true,
+          "inset-left": insetLeft,
+          "inset-right": insetRight,
+          "inset-bottom": insetBottom,
+        })}
         style=${styleMap({
-          "--feature-size": this.getSize(),
+          "--feature-size": size,
         })}
       >
         <bc-control-row
@@ -189,6 +203,11 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
       .inset-right {
         /* make the icon align and not the border of the button */
         margin-right: calc(-1 * var(--card-padding, 10px) + 6px);
+      }
+
+      .inset-bottom {
+        margin-bottom: calc(-1 * var(--card-padding, 10px) / 2);
+        height: calc(var(--feature-height) - var(--card-padding, 10px) / 2);
       }
     `;
   }
