@@ -159,6 +159,7 @@ export class BoldCardFeatureEditor extends LitElement {
         config: this.config,
         featureIndex: index,
         feature: config,
+        features,
       }),
     };
 

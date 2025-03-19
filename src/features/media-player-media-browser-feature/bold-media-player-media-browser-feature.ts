@@ -33,7 +33,7 @@ export class BoldMediaPlayerMediaBrowserFeature extends CustomLovelaceCardFeatur
   protected get _childStateObj() {
     const config =
       this._config?.universal_media_player_enhancements ??
-      this._internals?.universal_media_player_enhancements;
+      this.boldInternals?.universal_media_player_enhancements;
     return this.getUniversalMediaPlayerChildStateObj(this.stateObj, config);
   }
 
@@ -106,6 +106,10 @@ export class BoldMediaPlayerMediaBrowserFeature extends CustomLovelaceCardFeatur
 
   render() {
     if (!this._config || !this.hass || !this.stateObj) {
+      return nothing;
+    }
+
+    if (!this.getDoesRender()) {
       return nothing;
     }
 

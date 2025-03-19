@@ -55,6 +55,7 @@ export class BoldCardControlFeaturesEditor extends LitElement {
               config: this.config,
               feature,
               featureIndex: index,
+              features: this.config?.features ?? [],
             });
 
             return html` <div class="item">

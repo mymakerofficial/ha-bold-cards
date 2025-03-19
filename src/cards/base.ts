@@ -78,6 +78,7 @@ export abstract class BoldCardWithFeatures<
           config,
           feature,
           featureIndex,
+          features: config.features ?? [],
         }),
       })),
     });

@@ -120,12 +120,8 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
     };
   }
 
-  private get _controls() {
+  protected _getControls() {
     return getControls(this._config!, this.stateObj!);
-  }
-
-  private get _featureSize() {
-    return getFeatureSize(this._config!, this.stateObj!);
   }
 
   render() {
@@ -133,8 +129,13 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
       return nothing;
     }
 
-    const firstControl = firstOf(this._controls);
-    const lastControl = lastOf(this._controls);
+    if (!this.getDoesRender()) {
+      return nothing;
+    }
+
+    const controls = this._getControls();
+    const firstControl = firstOf(controls);
+    const lastControl = lastOf(controls);
 
     return html`
       <div
@@ -149,14 +150,14 @@ export class BoldMediaPlayerControlRowFeature extends CustomLovelaceCardFeature<
             lastControl.size === ButtonSize.SM,
         })}"
         style=${styleMap({
-          "--feature-size": this._featureSize,
+          "--feature-size": this.getSize(),
         })}
       >
         <bc-control-row
           center=${true}
           .hass=${this.hass}
           .stateObj=${this.stateObj}
-          .controls=${this._controls}
+          .controls=${controls}
         ></bc-control-row>
       </div>
     `;

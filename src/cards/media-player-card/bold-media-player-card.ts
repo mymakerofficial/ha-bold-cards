@@ -31,6 +31,8 @@ function getFeatureInternals(
     is_inlined:
       context.featureIndex === 0 &&
       context.config?.feature_position === CardFeaturePosition.INLINE,
+    is_first: context.featureIndex === 0,
+    is_last: context.featureIndex === context.features.length - 1,
     universal_media_player_enhancements:
       context.config?.universal_media_player_enhancements,
   };

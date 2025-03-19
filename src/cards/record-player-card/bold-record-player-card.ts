@@ -24,13 +24,14 @@ import {
   ButtonVariant,
 } from "../../components/bc-button";
 import { FeatureInternals } from "../../lib/internals/types";
+import { getFallbackFeatureInternals } from "../features";
 
 function getFeatureInternals(
   context: GetFeatureInternalsContext,
 ): FeatureInternals {
   return {
-    parent_card_type: context.config?.type ?? "",
-    is_inlined: true,
+    ...getFallbackFeatureInternals(context),
+    is_inlined: false,
   };
 }
 

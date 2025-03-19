@@ -5,10 +5,30 @@ import { CustomLovelaceCardFeature } from "../base";
 import { HassEntity } from "home-assistant-js-websocket";
 import { styleMap } from "lit-html/directives/style-map";
 import { getFeatureDoesRender, getFeatureSize } from "../size";
-import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
+import {
+  FeatureConfigWithMaybeInternals,
+  FeatureInternals,
+} from "../../lib/internals/types";
 import { LovelaceCardFeatureEditor } from "../../types/ha/lovelace";
 import { BoldFeatureType } from "../../lib/features/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
+import { GetFeatureInternalsContext } from "../../types/card";
+
+const featureType = BoldFeatureType.FEATURE_STACK;
+
+function getFeatureInternals(
+  context: GetFeatureInternalsContext<
+    FeatureConfigWithMaybeInternals<BoldFeatureStackFeatureConfig>
+  >,
+): FeatureInternals {
+  return {
+    ...(context.config?.__bold_custom_internals ?? {}),
+    parent_feature_type: featureType,
+    is_inlined: false,
+    is_first: context.featureIndex === 0,
+    is_last: context.featureIndex === context.features.length - 1,
+  };
+}
 
 // TODO duplication from base card with features, should be shared
 function getFeatureHeight(
@@ -20,9 +40,14 @@ function getFeatureHeight(
   }
 
   const size = config.features
-    .map((feature) => ({
+    .map((feature, index) => ({
       ...feature,
-      __bold_custom_internals: config.__bold_custom_internals,
+      __bold_custom_internals: getFeatureInternals({
+        config,
+        feature,
+        featureIndex: index,
+        features: config.features ?? [],
+      }),
     }))
     .filter((feature) => {
       return getFeatureDoesRender(feature, stateObj);
@@ -34,8 +59,6 @@ function getFeatureHeight(
 
   return Math.ceil(size);
 }
-
-const featureType = BoldFeatureType.FEATURE_STACK;
 
 @customElement(stripCustomPrefix(featureType))
 export class BoldFeatureStackFeature extends CustomLovelaceCardFeature<
@@ -63,21 +86,35 @@ export class BoldFeatureStackFeature extends CustomLovelaceCardFeature<
 
   render() {
     const config = this._config;
+    const stateObj = this.stateObj;
 
-    if (!config || !config.features || !this.hass || !this.stateObj) {
+    if (!config || !config.features || !this.hass || !stateObj) {
       return nothing;
     }
 
-    const features = config.features.map((feature) => ({
-      ...feature,
-      // TODO how to tell the feature that it is inside a stack?
-      __bold_custom_internals: config.__bold_custom_internals,
-    }));
+    if (!this.getDoesRender()) {
+      return nothing;
+    }
+
+    const features = config.features
+      .map((feature, index) => ({
+        ...feature,
+        // TODO how to tell the feature that it is inside a stack?
+        __bold_custom_internals: getFeatureInternals({
+          config,
+          feature,
+          featureIndex: index,
+          features: config.features ?? [],
+        }),
+      }))
+      .filter((feature) => {
+        return getFeatureDoesRender(feature, stateObj);
+      });
 
     return html`
       <hui-card-features
         .hass=${this.hass}
-        .stateObj=${this.stateObj}
+        .stateObj=${stateObj}
         .features=${features}
         style=${styleMap({
           "--feature-height":

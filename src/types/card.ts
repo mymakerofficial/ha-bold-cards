@@ -17,6 +17,7 @@ export interface GetFeatureInternalsContext<TConfig = LovelaceCardConfig> {
   config?: TConfig;
   feature: LovelaceCardFeatureConfig;
   featureIndex: number;
+  features: LovelaceCardFeatureConfig[];
 }
 
 export interface CustomCardInternalsEntry<TConfig = LovelaceCardConfig> {
