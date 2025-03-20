@@ -3,7 +3,7 @@ import { customElement, state } from "lit/decorators";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { BoldLovelaceCard } from "../base";
 import { BoldAtAGlanceCardConfig } from "./types";
-import { html, nothing } from "lit";
+import { css, html, nothing } from "lit";
 import {
   RenderTemplateError,
   RenderTemplateResult,
@@ -12,6 +12,7 @@ import { UnsubscribeFunc } from "home-assistant-js-websocket";
 import { isDefined, isNotNull } from "../../lib/helpers";
 import { Nullable } from "../../lib/types";
 import { isTemplateError } from "../../lib/templates/helpers";
+import { CarouselStepperPosition } from "../../components/bc-carousel";
 
 const cardType = BoldCardType.AT_A_GLANCE;
 
@@ -25,6 +26,11 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
   private _unsubTitleRenderTemplate: Nullable<Promise<UnsubscribeFunc>> = null;
   private _unsubContentRenderTemplate: Nullable<Promise<UnsubscribeFunc>> =
     null;
+
+  constructor() {
+    super();
+    import("../../components/glance");
+  }
 
   static get cardType() {
     return cardType;
@@ -118,11 +124,24 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
     }
 
     return html`
-      <div class="content">
-        <h1>${this._titleTemplateResult?.result}</h1>
-        <div>${this._contentTemplateResult?.result}</div>
+      <bc-carousel
+        .length=${4}
+        .getElement=${() => html`
+          <div>
+            <h1>${this._titleTemplateResult?.result}</h1>
+            <bc-glance-page-item
+              .icon=${html`<ha-icon icon="mdi:weather-sunny"></ha-icon>`}
+              .label=${this._contentTemplateResult?.result}
+            ></bc-glance-page-item>
+          </div>
+        `}
+        position=${CarouselStepperPosition.LEFT}
       </div>
     `;
+  }
+
+  static get styles() {
+    return css``;
   }
 }
 
