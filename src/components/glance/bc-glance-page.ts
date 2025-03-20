@@ -33,6 +33,11 @@ export class BcGlancePage extends BoldHassElement {
     });
   }
 
+  public disconnectedCallback() {
+    super.disconnectedCallback();
+    this.itemsRenderer?.destroy();
+  }
+
   public willUpdate(changedProps: PropertyValues) {
     super.willUpdate(changedProps);
 
