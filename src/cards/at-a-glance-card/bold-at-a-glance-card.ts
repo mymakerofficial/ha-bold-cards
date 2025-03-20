@@ -11,6 +11,7 @@ import {
   GlancePageConfig,
 } from "../../lib/at-a-glance/types";
 import { PropertyValues } from "@lit/reactive-element";
+import { styleMap } from "lit-html/directives/style-map";
 
 const cardType = BoldCardType.AT_A_GLANCE;
 
@@ -81,20 +82,15 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
 
     return html`
       <bc-carousel
+        style=${styleMap({
+          "--ha-card-border-radius": 0,
+        })}
         .length=${this._pages.length}
         .getElement=${(index: number) => html`
-          <div>
-            <h1>
-              ${
-                // @ts-ignore
-                this._pages[index].title
-              }
-            </h1>
-            <bc-glance-page-item
-              .icon=${html`<ha-icon icon="mdi:weather-sunny"></ha-icon>`}
-              .label=${"the cheese"}
-            ></bc-glance-page-item>
-          </div>
+          <bc-glance-page
+            .page=${this._pages[index]}
+            .hass=${this.hass}
+          ></bc-glance-page>
         `}
         position=${CarouselStepperPosition.LEFT}
       </div>

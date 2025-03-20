@@ -2,7 +2,13 @@ import {
   TemplatedConfigListRenderer,
   TemplatedConfigRendererKey,
 } from "../templates/templated-config-renderer";
-import { ConcreteGlancePage, GlancePageConfig, GlancePageType } from "./types";
+import {
+  ConcreteCustomGlanceItem,
+  ConcreteGlancePage,
+  CustomGlanceItemConfig,
+  GlancePageConfig,
+  GlancePageType,
+} from "./types";
 import { HomeAssistant } from "../../types/ha/lovelace";
 
 export function getGlancePagesRenderer(
@@ -41,5 +47,38 @@ export function getGlancePagesRenderer(
       }
       return value;
     },
+  );
+}
+
+export function getCustomGlanceItemsRenderer(
+  hass?: HomeAssistant,
+): TemplatedConfigListRenderer<
+  CustomGlanceItemConfig,
+  ConcreteCustomGlanceItem
+> {
+  return new TemplatedConfigListRenderer<
+    CustomGlanceItemConfig,
+    ConcreteCustomGlanceItem
+  >(
+    hass,
+    () =>
+      [
+        {
+          templateKey: "icon_template",
+          resultKey: "icon",
+        },
+        {
+          templateKey: "content_template",
+          resultKey: "content",
+        },
+      ] as unknown as TemplatedConfigRendererKey<
+        CustomGlanceItemConfig,
+        ConcreteCustomGlanceItem
+      >[],
+    undefined,
+    (value) => ({
+      icon: value.icon,
+      content: value.content,
+    }),
   );
 }

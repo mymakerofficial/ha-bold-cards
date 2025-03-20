@@ -1,6 +1,9 @@
 import { HomeAssistant } from "../types/ha/lovelace";
 
-import { getGlancePagesRenderer } from "./at-a-glance/helpers";
+import {
+  getCustomGlanceItemsRenderer,
+  getGlancePagesRenderer,
+} from "./at-a-glance/helpers";
 import {
   BaseHassObject,
   BasicHassObjectMixin,
@@ -16,6 +19,13 @@ export function HassObjectMixin<TBase extends HassObjectConstructor>(
         throw new Error("hass is not set");
       }
       return getGlancePagesRenderer(this.hass);
+    }
+
+    protected getCustomGlanceItemsRenderer() {
+      if (!this.hass) {
+        throw new Error("hass is not set");
+      }
+      return getCustomGlanceItemsRenderer(this.hass);
     }
   };
 }

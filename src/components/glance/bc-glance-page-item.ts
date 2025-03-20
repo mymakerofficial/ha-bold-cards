@@ -31,8 +31,6 @@ export class BcGlancePageItem extends BoldHassElement {
         width: 24px;
         height: 24px;
         --mdc-icon-size: 24px;
-        /* just for testing */
-        --icon-primary-color: var(--weather-icon-sun-color, #fdd93c);
       }
 
       span {
