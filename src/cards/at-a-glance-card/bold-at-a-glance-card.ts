@@ -13,6 +13,8 @@ import { isDefined, isNotNull } from "../../lib/helpers";
 import { Nullable } from "../../lib/types";
 import { isTemplateError } from "../../lib/templates/helpers";
 import { CarouselStepperPosition } from "../../components/bc-carousel";
+import { TemplatedConfigRenderer } from "../../lib/templates/templated-config-renderer";
+import { CustomGlancePageConfig } from "../../lib/at-a-glance/types";
 
 const cardType = BoldCardType.AT_A_GLANCE;
 
@@ -26,6 +28,8 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
   private _unsubTitleRenderTemplate: Nullable<Promise<UnsubscribeFunc>> = null;
   private _unsubContentRenderTemplate: Nullable<Promise<UnsubscribeFunc>> =
     null;
+
+  private renderer?: TemplatedConfigRenderer<CustomGlancePageConfig>;
 
   constructor() {
     super();
@@ -68,6 +72,25 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
     const contentTemplate = this._config?.content_template;
 
     const variables = this._getTemplateVariables();
+
+    this.renderer = new TemplatedConfigRenderer<CustomGlancePageConfig>(
+      [
+        {
+          templateKey: "title_template",
+          resultKey: "title",
+        },
+        {
+          templateKey: "visibility_template",
+          resultKey: "visible",
+          transform: (result) => Boolean(result) || result === "on",
+        },
+      ],
+      this.hass,
+    );
+
+    this.renderer.subscribe((value) => {
+      console.log(value);
+    });
 
     if (isDefined(titleTemplate)) {
       this._unsubTitleRenderTemplate = this.subscribeToRenderTemplate({
@@ -122,6 +145,9 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
         <ha-alert alertType="error">${this._templateError.error}</ha-alert>
       `;
     }
+
+    // @ts-ignore
+    this.renderer.setValue(this._config.pages[0]);
 
     return html`
       <bc-carousel
