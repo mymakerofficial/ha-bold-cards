@@ -3,12 +3,9 @@ import { HomeAssistant } from "../../types/ha/lovelace";
 import { isTemplateError } from "./helpers";
 import { isDefined } from "../helpers";
 
-export interface TemplatedConfigRendererKey<
-  TObj extends object,
-  TResObj extends TObj = TObj & { [key: string]: unknown },
-> {
-  templateKey: keyof TObj;
-  resultKey: keyof TResObj;
+export interface TemplatedConfigRendererKey {
+  templateKey: string;
+  resultKey: string;
   transform?: (result: string) => unknown;
 }
 
@@ -17,21 +14,22 @@ export class TemplatedConfigRenderer<
   TResObj extends TObj = TObj & { [key: string]: unknown },
 > extends HassObject {
   protected _value?: TObj & TResObj;
-  protected _keyMap: TemplatedConfigRendererKey<TObj, TResObj>[] = [];
+  protected _keyMap: TemplatedConfigRendererKey[] = [];
 
   private _unsubFuncs: Array<() => void> = [];
   private _listeners: Array<(value?: TObj & TResObj) => void> = [];
 
-  constructor(
-    keyMap: TemplatedConfigRendererKey<TObj, TResObj>[],
-    hass?: HomeAssistant,
-  ) {
+  constructor(keyMap: TemplatedConfigRendererKey[], hass?: HomeAssistant) {
     super(hass);
     this._keyMap = keyMap ?? [];
   }
 
+  public get value(): (TObj & TResObj) | undefined {
+    return this._value;
+  }
+
   protected _notify() {
-    this._listeners.forEach((listener) => listener(this._value));
+    this._listeners.forEach((listener) => listener(this.value));
   }
 
   protected _unsubscribeRenderTemplates() {
@@ -58,6 +56,7 @@ export class TemplatedConfigRenderer<
           },
           onChange: (res) => {
             if (isTemplateError(res) || !this._value) {
+              console.error(res);
               return;
             }
 
@@ -89,5 +88,75 @@ export class TemplatedConfigRenderer<
     if (this._listeners.length === 0) {
       this._unsubscribeRenderTemplates();
     }
+  }
+
+  public destroy() {
+    this._unsubscribeRenderTemplates();
+  }
+}
+
+export class TemplatedConfigListRenderer<
+  TObj extends object,
+  TResObj extends TObj = TObj & { [key: string]: unknown },
+> extends HassObject {
+  protected _getKeyMap: (
+    value: TObj,
+  ) => TemplatedConfigRendererKey[] | undefined = () => [];
+
+  private _renderers: TemplatedConfigRenderer<TObj, TResObj>[] = [];
+  private _listeners: Array<(value?: (TObj & TResObj)[]) => void> = [];
+
+  constructor(
+    getKeyMap: (value: TObj) => TemplatedConfigRendererKey[] | undefined,
+    hass?: HomeAssistant,
+  ) {
+    super(hass);
+    this._getKeyMap = getKeyMap;
+  }
+
+  public get list(): (TObj & TResObj)[] {
+    return this._renderers.map((r) => r.value) as (TObj & TResObj)[];
+  }
+
+  protected _notify() {
+    const list = this.list;
+    this._listeners.forEach((listener) => listener(list));
+  }
+
+  public setList(list?: TObj[]): void {
+    this.destroy();
+
+    if (!list) {
+      return;
+    }
+
+    this._renderers = list.map((value) => {
+      const renderer = new TemplatedConfigRenderer<TObj, TResObj>(
+        this._getKeyMap(value) ?? [],
+        this.hass,
+      );
+      renderer.setValue(value);
+      renderer.subscribe(() => this._notify());
+      return renderer;
+    });
+  }
+
+  public subscribe(listener: (value?: (TObj & TResObj)[]) => void): void {
+    this._listeners.push(listener);
+  }
+
+  public unsubscribe(listener: () => void): void {
+    const index = this._listeners.indexOf(listener);
+    if (index !== -1) {
+      this._listeners.splice(index, 1);
+    }
+    if (this._listeners.length === 0) {
+      this.destroy();
+    }
+  }
+
+  public destroy() {
+    this._renderers.forEach((renderer) => renderer.destroy());
+    this._renderers = [];
   }
 }

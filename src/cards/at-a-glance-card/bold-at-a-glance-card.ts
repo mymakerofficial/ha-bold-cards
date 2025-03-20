@@ -13,8 +13,9 @@ import { isDefined, isNotNull } from "../../lib/helpers";
 import { Nullable } from "../../lib/types";
 import { isTemplateError } from "../../lib/templates/helpers";
 import { CarouselStepperPosition } from "../../components/bc-carousel";
-import { TemplatedConfigRenderer } from "../../lib/templates/templated-config-renderer";
-import { CustomGlancePageConfig } from "../../lib/at-a-glance/types";
+import { TemplatedConfigListRenderer } from "../../lib/templates/templated-config-renderer";
+import { GlancePageConfig, GlancePageType } from "../../lib/at-a-glance/types";
+import { PropertyValues } from "@lit/reactive-element";
 
 const cardType = BoldCardType.AT_A_GLANCE;
 
@@ -29,7 +30,7 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
   private _unsubContentRenderTemplate: Nullable<Promise<UnsubscribeFunc>> =
     null;
 
-  private renderer?: TemplatedConfigRenderer<CustomGlancePageConfig>;
+  private renderer?: TemplatedConfigListRenderer<GlancePageConfig>;
 
   constructor() {
     super();
@@ -73,18 +74,23 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
 
     const variables = this._getTemplateVariables();
 
-    this.renderer = new TemplatedConfigRenderer<CustomGlancePageConfig>(
-      [
-        {
-          templateKey: "title_template",
-          resultKey: "title",
-        },
-        {
-          templateKey: "visibility_template",
-          resultKey: "visible",
-          transform: (result) => Boolean(result) || result === "on",
-        },
-      ],
+    this.renderer = new TemplatedConfigListRenderer<GlancePageConfig>(
+      (value) => {
+        if (value.type === GlancePageType.CUSTOM) {
+          return [
+            {
+              templateKey: "title_template",
+              resultKey: "title",
+            },
+            {
+              templateKey: "visibility_template",
+              resultKey: "visible",
+              transform: (result) => Boolean(result) || result === "on",
+            },
+          ];
+        }
+        return undefined;
+      },
       this.hass,
     );
 
@@ -135,6 +141,16 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
     }
   }
 
+  public willUpdate(changedProps: PropertyValues) {
+    super.willUpdate(changedProps);
+
+    if (changedProps.has("_config")) {
+      if (this.renderer) {
+        this.renderer.setList(this._config?.pages);
+      }
+    }
+  }
+
   protected render() {
     if (!this._config || !this.hass) {
       return nothing;
@@ -145,9 +161,6 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
         <ha-alert alertType="error">${this._templateError.error}</ha-alert>
       `;
     }
-
-    // @ts-ignore
-    this.renderer.setValue(this._config.pages[0]);
 
     return html`
       <bc-carousel
