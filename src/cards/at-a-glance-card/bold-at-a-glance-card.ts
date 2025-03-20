@@ -21,16 +21,9 @@ const cardType = BoldCardType.AT_A_GLANCE;
 
 @customElement(stripCustomPrefix(cardType))
 export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig> {
-  @state() private _templateError?: RenderTemplateError;
+  @state() private _pages: GlancePageConfig[] = [];
 
-  @state() private _titleTemplateResult?: RenderTemplateResult;
-  @state() private _contentTemplateResult?: RenderTemplateResult;
-
-  private _unsubTitleRenderTemplate: Nullable<Promise<UnsubscribeFunc>> = null;
-  private _unsubContentRenderTemplate: Nullable<Promise<UnsubscribeFunc>> =
-    null;
-
-  private renderer?: TemplatedConfigListRenderer<GlancePageConfig>;
+  private pagesRenderer?: TemplatedConfigListRenderer<GlancePageConfig>;
 
   constructor() {
     super();
@@ -60,21 +53,10 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
     };
   }
 
-  protected _getTemplateVariables() {
-    return {
-      user: this.hass?.user?.name,
-    };
-  }
-
   public connectedCallback() {
     super.connectedCallback();
 
-    const titleTemplate = this._config?.title_template;
-    const contentTemplate = this._config?.content_template;
-
-    const variables = this._getTemplateVariables();
-
-    this.renderer = new TemplatedConfigListRenderer<GlancePageConfig>(
+    this.pagesRenderer = new TemplatedConfigListRenderer<GlancePageConfig>(
       (value) => {
         if (value.type === GlancePageType.CUSTOM) {
           return [
@@ -94,60 +76,21 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
       this.hass,
     );
 
-    this.renderer.subscribe((value) => {
-      console.log(value);
+    this.pagesRenderer.subscribe((value) => {
+      this._pages = value ?? [];
     });
-
-    if (isDefined(titleTemplate)) {
-      this._unsubTitleRenderTemplate = this.subscribeToRenderTemplate({
-        onChange: (result) => {
-          if (isTemplateError(result)) {
-            this._templateError = result;
-            return;
-          }
-          this._titleTemplateResult = result;
-        },
-        template: titleTemplate,
-        variables,
-      });
-    }
-
-    if (isDefined(contentTemplate)) {
-      this._unsubTitleRenderTemplate = this.subscribeToRenderTemplate({
-        onChange: (result) => {
-          if (isTemplateError(result)) {
-            this._templateError = result;
-            return;
-          }
-          this._contentTemplateResult = result;
-        },
-        template: contentTemplate,
-        variables,
-      });
-    }
   }
 
   public disconnectedCallback() {
     super.disconnectedCallback();
-
-    if (isNotNull(this._unsubTitleRenderTemplate)) {
-      this._unsubTitleRenderTemplate.then((unsub) => unsub());
-      this._unsubTitleRenderTemplate = null;
-    }
-
-    if (isNotNull(this._unsubContentRenderTemplate)) {
-      this._unsubContentRenderTemplate.then((unsub) => unsub());
-      this._unsubContentRenderTemplate = null;
-    }
+    this.pagesRenderer?.destroy();
   }
 
   public willUpdate(changedProps: PropertyValues) {
     super.willUpdate(changedProps);
 
-    if (changedProps.has("_config")) {
-      if (this.renderer) {
-        this.renderer.setList(this._config?.pages);
-      }
+    if (changedProps.has("_config") && this.pagesRenderer) {
+      this.pagesRenderer.setList(this._config?.pages);
     }
   }
 
@@ -156,21 +99,20 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
       return nothing;
     }
 
-    if (this._templateError) {
-      return html`
-        <ha-alert alertType="error">${this._templateError.error}</ha-alert>
-      `;
-    }
-
     return html`
       <bc-carousel
-        .length=${4}
-        .getElement=${() => html`
+        .length=${this._pages.length}
+        .getElement=${(index: number) => html`
           <div>
-            <h1>${this._titleTemplateResult?.result}</h1>
+            <h1>
+              ${
+                // @ts-ignore
+                this._pages[index].title
+              }
+            </h1>
             <bc-glance-page-item
               .icon=${html`<ha-icon icon="mdi:weather-sunny"></ha-icon>`}
-              .label=${this._contentTemplateResult?.result}
+              .label=${"the cheese"}
             ></bc-glance-page-item>
           </div>
         `}
