@@ -34,7 +34,8 @@ export interface ConcreteGlanceItem {
 export interface ConcreteCustomGlancePage {
   type: GlancePageTypes["CUSTOM"];
   title: string;
-  items: ConcreteGlanceItem[];
+  visible: boolean;
+  items: GlanceItemConfig[];
 }
 
 export interface ConcreteWeatherGlancePage {

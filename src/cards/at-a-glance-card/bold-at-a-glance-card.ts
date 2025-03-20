@@ -4,26 +4,24 @@ import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { BoldLovelaceCard } from "../base";
 import { BoldAtAGlanceCardConfig } from "./types";
 import { css, html, nothing } from "lit";
-import {
-  RenderTemplateError,
-  RenderTemplateResult,
-} from "../../lib/templates/types";
-import { UnsubscribeFunc } from "home-assistant-js-websocket";
-import { isDefined, isNotNull } from "../../lib/helpers";
-import { Nullable } from "../../lib/types";
-import { isTemplateError } from "../../lib/templates/helpers";
 import { CarouselStepperPosition } from "../../components/bc-carousel";
 import { TemplatedConfigListRenderer } from "../../lib/templates/templated-config-renderer";
-import { GlancePageConfig, GlancePageType } from "../../lib/at-a-glance/types";
+import {
+  ConcreteGlancePage,
+  GlancePageConfig,
+} from "../../lib/at-a-glance/types";
 import { PropertyValues } from "@lit/reactive-element";
 
 const cardType = BoldCardType.AT_A_GLANCE;
 
 @customElement(stripCustomPrefix(cardType))
 export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig> {
-  @state() private _pages: GlancePageConfig[] = [];
+  @state() private _pages: ConcreteGlancePage[] = [];
 
-  private pagesRenderer?: TemplatedConfigListRenderer<GlancePageConfig>;
+  private pagesRenderer?: TemplatedConfigListRenderer<
+    GlancePageConfig,
+    ConcreteGlancePage
+  >;
 
   constructor() {
     super();
@@ -56,28 +54,10 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
   public connectedCallback() {
     super.connectedCallback();
 
-    this.pagesRenderer = new TemplatedConfigListRenderer<GlancePageConfig>(
-      (value) => {
-        if (value.type === GlancePageType.CUSTOM) {
-          return [
-            {
-              templateKey: "title_template",
-              resultKey: "title",
-            },
-            {
-              templateKey: "visibility_template",
-              resultKey: "visible",
-              transform: (result) => Boolean(result) || result === "on",
-            },
-          ];
-        }
-        return undefined;
-      },
-      this.hass,
-    );
+    this.pagesRenderer = this.getGlancePagesRenderer();
 
-    this.pagesRenderer.subscribe((value) => {
-      this._pages = value ?? [];
+    this.pagesRenderer.subscribe((list) => {
+      this._pages = list ?? [];
     });
   }
 

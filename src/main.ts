@@ -1,3 +1,4 @@
+import "./lib/basic-hass-object";
 import "./components/bc-contol-surface";
 import "./components/bc-carousel";
 import "./components/bc-cover-image";

@@ -1,31 +1,50 @@
-import { HassObject } from "../hass-object";
 import { HomeAssistant } from "../../types/ha/lovelace";
 import { isTemplateError } from "./helpers";
 import { isDefined } from "../helpers";
+import { BasicHassObject } from "../basic-hass-object";
 
-export interface TemplatedConfigRendererKey {
-  templateKey: string;
-  resultKey: string;
+export interface TemplatedConfigRendererKey<
+  TObj extends object,
+  TResObj extends object = { [key: string]: unknown },
+> {
+  templateKey: keyof TObj;
+  resultKey: keyof TResObj;
   transform?: (result: string) => unknown;
 }
 
 export class TemplatedConfigRenderer<
   TObj extends object,
-  TResObj extends TObj = TObj & { [key: string]: unknown },
-> extends HassObject {
+  TResObj extends object = { [key: string]: unknown },
+> extends BasicHassObject {
   protected _value?: TObj & TResObj;
-  protected _keyMap: TemplatedConfigRendererKey[] = [];
+  protected _keyMap: TemplatedConfigRendererKey<TObj, TResObj>[] = [];
+  protected _getVariables: () => Record<string, unknown>;
+  protected _transform: (value: TObj & TResObj) => TResObj;
 
   private _unsubFuncs: Array<() => void> = [];
-  private _listeners: Array<(value?: TObj & TResObj) => void> = [];
+  private _listeners: Array<(value?: TResObj) => void> = [];
 
-  constructor(keyMap: TemplatedConfigRendererKey[], hass?: HomeAssistant) {
+  constructor(
+    hass: HomeAssistant | undefined,
+    keyMap: TemplatedConfigRendererKey<TObj, TResObj>[],
+    getVariables?: () => Record<string, unknown>,
+    transform?: (value: TObj & TResObj) => TResObj,
+  ) {
     super(hass);
     this._keyMap = keyMap ?? [];
+    this._getVariables =
+      getVariables ??
+      (() => ({
+        user: this.hass?.user?.name,
+      }));
+    this._transform = transform ?? ((value) => value);
   }
 
-  public get value(): (TObj & TResObj) | undefined {
-    return this._value;
+  public get value(): TResObj | undefined {
+    if (!this._value) {
+      return undefined;
+    }
+    return this._transform(this._value);
   }
 
   protected _notify() {
@@ -51,9 +70,7 @@ export class TemplatedConfigRenderer<
       .map(({ templateKey, resultKey, transform }) =>
         this.subscribeToRenderTemplate({
           template: value[templateKey] as string,
-          variables: {
-            user: this.hass?.user?.name,
-          },
+          variables: this._getVariables(),
           onChange: (res) => {
             if (isTemplateError(res) || !this._value) {
               console.error(res);
@@ -76,7 +93,7 @@ export class TemplatedConfigRenderer<
     });
   }
 
-  public subscribe(listener: (value?: TObj & TResObj) => void): void {
+  public subscribe(listener: (value?: TResObj) => void): void {
     this._listeners.push(listener);
   }
 
@@ -97,25 +114,33 @@ export class TemplatedConfigRenderer<
 
 export class TemplatedConfigListRenderer<
   TObj extends object,
-  TResObj extends TObj = TObj & { [key: string]: unknown },
-> extends HassObject {
+  TResObj extends object = { [key: string]: unknown },
+> extends BasicHassObject {
   protected _getKeyMap: (
     value: TObj,
-  ) => TemplatedConfigRendererKey[] | undefined = () => [];
+  ) => TemplatedConfigRendererKey<TObj, TResObj>[] | undefined = () => [];
+  protected _getVariables?: () => Record<string, unknown>;
+  protected _transform?: (value: TObj & TResObj) => TResObj;
 
   private _renderers: TemplatedConfigRenderer<TObj, TResObj>[] = [];
-  private _listeners: Array<(value?: (TObj & TResObj)[]) => void> = [];
+  private _listeners: Array<(value: TResObj[]) => void> = [];
 
   constructor(
-    getKeyMap: (value: TObj) => TemplatedConfigRendererKey[] | undefined,
-    hass?: HomeAssistant,
+    hass: HomeAssistant | undefined,
+    getKeyMap: (
+      value: TObj,
+    ) => TemplatedConfigRendererKey<TObj, TResObj>[] | undefined,
+    getVariables?: () => Record<string, unknown>,
+    transform?: (value: TObj & TResObj) => TResObj,
   ) {
     super(hass);
     this._getKeyMap = getKeyMap;
+    this._getVariables = getVariables;
+    this._transform = transform;
   }
 
-  public get list(): (TObj & TResObj)[] {
-    return this._renderers.map((r) => r.value) as (TObj & TResObj)[];
+  public get list(): TResObj[] {
+    return this._renderers.map((r) => r.value).filter(isDefined);
   }
 
   protected _notify() {
@@ -132,8 +157,10 @@ export class TemplatedConfigListRenderer<
 
     this._renderers = list.map((value) => {
       const renderer = new TemplatedConfigRenderer<TObj, TResObj>(
-        this._getKeyMap(value) ?? [],
         this.hass,
+        this._getKeyMap(value) ?? [],
+        this._getVariables,
+        this._transform,
       );
       renderer.setValue(value);
       renderer.subscribe(() => this._notify());
@@ -141,7 +168,7 @@ export class TemplatedConfigListRenderer<
     });
   }
 
-  public subscribe(listener: (value?: (TObj & TResObj)[]) => void): void {
+  public subscribe(listener: (value: TResObj[]) => void): void {
     this._listeners.push(listener);
   }
 
