@@ -1,7 +1,16 @@
-import { css, html, LitElement, nothing, TemplateResult } from "lit-element";
+import { html, nothing, TemplateResult } from "lit-element";
 import { createRef, ref } from "lit-html/directives/ref";
 import { repeat } from "lit-html/directives/repeat";
 import { customElement, property, state } from "lit/decorators";
+import { LitElement, css, unsafeCSS } from "lit";
+
+export const CarouselStepperPosition = {
+  LEFT: "left",
+  CENTER: "center",
+  RIGHT: "right",
+} as const;
+export type CarouselStepperPosition =
+  (typeof CarouselStepperPosition)[keyof typeof CarouselStepperPosition];
 
 @customElement("bc-carousel")
 export class BcCarousel extends LitElement {
@@ -12,6 +21,8 @@ export class BcCarousel extends LitElement {
     index,
   ) => index.toString();
   @property({ attribute: false }) public length: number = 0;
+  @property() public position: CarouselStepperPosition =
+    CarouselStepperPosition.CENTER;
 
   private _containerRef = createRef();
 
@@ -91,7 +102,7 @@ export class BcCarousel extends LitElement {
     return html`
       ${this.length > 1
         ? html`
-            <div class="stepper-container">
+            <div class="stepper-container" data-position=${this.position}>
               <div
                 class="stepper"
                 tabindex="0"
@@ -184,21 +195,34 @@ export class BcCarousel extends LitElement {
         overflow: hidden;
         height: 100%;
         min-width: 100%;
-        border-radius: var(--ha-card-border-radius);
-        background: var(
-          --card-background-color,
-          var(--paper-card-background-color)
-        );
       }
 
       .stepper-container {
         position: absolute;
         bottom: 8px;
-        left: 50%;
-        transform: translateX(-50%);
         display: flex;
         gap: 8px;
-        z-index: 100;
+        z-index: 1;
+      }
+
+      .stepper-container[data-position="${unsafeCSS(
+          CarouselStepperPosition.LEFT,
+        )}"] {
+        left: 8px;
+      }
+
+      .stepper-container[data-position="${unsafeCSS(
+          CarouselStepperPosition.CENTER,
+        )}"] {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .stepper-container[data-position="${unsafeCSS(
+          CarouselStepperPosition.RIGHT,
+        )}"] {
+        left: auto;
+        right: 8px;
       }
 
       .stepper {
