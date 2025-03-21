@@ -8,14 +8,6 @@ import { mdiCircle } from "@mdi/js";
 export class BcGlancePageItem extends BoldHassElement {
   @property({ attribute: false }) public item?: ConcreteCustomGlanceItem;
 
-  protected _getIcon() {
-    if (!this.item) {
-      return nothing;
-    }
-
-    return html`<ha-icon icon=${this.item.icon}></ha-icon>`;
-  }
-
   render() {
     const item = this.item;
 
@@ -25,7 +17,9 @@ export class BcGlancePageItem extends BoldHassElement {
 
     return html`
       ${item.icon
-        ? html`<div class="icon">${this._getIcon()}</div>`
+        ? html`<div class="icon">
+            <bc-icon icon=${item.icon}></bc-icon>
+          </div>`
         : html`<ha-svg-icon
             class="spacer-dot"
             .path=${mdiCircle}
