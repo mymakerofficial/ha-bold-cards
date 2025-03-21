@@ -196,7 +196,8 @@ export class BcCarousel extends LitElement {
         width: 100%;
         height: 100%;
         --carousel-overflow-space: 8px;
-        --stepper-offset: 4px;
+        --stepper-y-offset: 4px;
+        --stepper-x-offset: 4px;
       }
 
       .carousel {
@@ -261,7 +262,7 @@ export class BcCarousel extends LitElement {
 
       .stepper-container {
         position: absolute;
-        bottom: var(--stepper-offset);
+        bottom: var(--stepper-y-offset);
         display: flex;
         gap: 8px;
         z-index: 1;
@@ -270,7 +271,7 @@ export class BcCarousel extends LitElement {
       .stepper-container[data-position="${unsafeCSS(
           CarouselStepperPosition.LEFT,
         )}"] {
-        left: 8px;
+        left: var(--stepper-x-offset);
       }
 
       .stepper-container[data-position="${unsafeCSS(
@@ -284,7 +285,7 @@ export class BcCarousel extends LitElement {
           CarouselStepperPosition.RIGHT,
         )}"] {
         left: auto;
-        right: 8px;
+        right: var(--stepper-x-offset);
       }
 
       .stepper {

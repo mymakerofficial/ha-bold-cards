@@ -109,6 +109,7 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
       bc-carousel {
         margin: 0 16px;
         flex: 1;
+        --stepper-y-offset: 24px;
       }
     `;
   }
