@@ -63,9 +63,9 @@ export class BoldWeatherCard extends BoldCardWithEntity<
 
   public getGridOptions(): LovelaceGridOptions {
     return {
-      columns: 4,
+      columns: 3,
       rows: 2,
-      min_columns: 4,
+      min_columns: 3,
       min_rows: 2,
     };
   }
@@ -140,6 +140,7 @@ export class BoldWeatherCard extends BoldCardWithEntity<
 
       .content {
         height: 100%;
+        max-width: 100%;
         aspect-ratio: 1 / 1;
         position: relative;
       }
