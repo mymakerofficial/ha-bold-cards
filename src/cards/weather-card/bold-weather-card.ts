@@ -9,7 +9,10 @@ import { WeatherEntity } from "../../lib/weather/types";
 import { isMediaPlayerEntity, isStateActive } from "../../helpers/states";
 import { randomFrom } from "../../lib/helpers";
 import { isWeatherEntity } from "../../lib/weather/guards";
-import { getStubWeatherEntity } from "../../lib/weather/helpers";
+import {
+  getStubWeatherEntity,
+  getWeatherIcon,
+} from "../../lib/weather/helpers";
 
 const MASK_IMAGE = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`
       <svg width="100%" height="100%" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -59,9 +62,10 @@ export class BoldWeatherCard extends BoldCardWithEntity<
     }
 
     const temperature = Math.round(stateObj.attributes.temperature || 0);
+    const icon = getWeatherIcon(stateObj.state);
 
     return html`<div class="content">
-      <bc-icon class="icon" icon="bold:sun"></bc-icon>
+      <bc-icon class="icon" icon=${icon}></bc-icon>
       <div class="label">${temperature}˚</div>
     </div>`;
   }
