@@ -86,13 +86,15 @@ export class BoldWeatherCard extends BoldCardWithEntity<
     }
 
     const temperatureStateObj = this._temperatureEntityStateObj;
-
     const temperature = Math.round(
       Number(
         temperatureStateObj?.state ?? stateObj.attributes.temperature ?? 0,
       ),
     );
-    const icon = getWeatherIcon(stateObj.state);
+
+    const time = new Date(stateObj.last_changed).getHours();
+    const isNight = time < 6 || time > 18;
+    const icon = getWeatherIcon(stateObj.state, isNight);
 
     return html`<div class="content">
       <button

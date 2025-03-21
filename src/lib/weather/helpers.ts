@@ -23,24 +23,48 @@ export function getStubWeatherEntity(hass?: HomeAssistant) {
     : randomFrom(entities);
 }
 
-const weatherIcons: Partial<{ [key in WeatherState]: BoldIcon | undefined }> = {
-  [WeatherState.CLEAR_NIGHT]: "bold:moon",
-  [WeatherState.CLOUDY]: "bold:cloudy",
-  [WeatherState.FOG]: "bold:cloudy",
+const dayWeatherIcons: Partial<{
+  [key in WeatherState]: BoldIcon | undefined;
+}> = {
+  [WeatherState.CLEAR_NIGHT]: "bold:weather-clear-night",
+  [WeatherState.CLOUDY]: "bold:weather-mostly-cloudy-day",
+  [WeatherState.FOG]: "bold:weather-cloudy",
   [WeatherState.HAIL]: undefined,
   [WeatherState.LIGHTNING]: undefined,
   [WeatherState.LIGHTNING_RAINY]: undefined,
-  [WeatherState.PARTLYCLOUDY]: "bold:partly-cloudy",
+  [WeatherState.PARTLYCLOUDY]: "bold:weather-partly-cloudy-day",
   [WeatherState.POURING]: undefined,
   [WeatherState.RAINY]: undefined,
   [WeatherState.SNOWY]: undefined,
   [WeatherState.SNOWY_RAINY]: undefined,
-  [WeatherState.SUNNY]: "bold:sun",
+  [WeatherState.SUNNY]: "bold:weather-clear-day",
   [WeatherState.WINDY]: undefined,
   [WeatherState.WINDY_VARIANT]: undefined,
-  [WeatherState.EXCEPTIONAL]: "bold:sun",
+  [WeatherState.EXCEPTIONAL]: "bold:weather-clear-day",
 };
 
-export function getWeatherIcon(state: WeatherState) {
-  return weatherIcons[state] ?? "mdi:help-circle";
+const nightWeatherIcons: Partial<{
+  [key in WeatherState]: BoldIcon | undefined;
+}> = {
+  [WeatherState.CLEAR_NIGHT]: "bold:weather-clear-night",
+  [WeatherState.CLOUDY]: "bold:weather-mostly-cloudy-night",
+  [WeatherState.FOG]: "bold:weather-cloudy",
+  [WeatherState.HAIL]: undefined,
+  [WeatherState.LIGHTNING]: undefined,
+  [WeatherState.LIGHTNING_RAINY]: undefined,
+  [WeatherState.PARTLYCLOUDY]: "bold:weather-partly-cloudy-night",
+  [WeatherState.POURING]: undefined,
+  [WeatherState.RAINY]: undefined,
+  [WeatherState.SNOWY]: undefined,
+  [WeatherState.SNOWY_RAINY]: undefined,
+  [WeatherState.SUNNY]: "bold:weather-clear-day",
+  [WeatherState.WINDY]: undefined,
+  [WeatherState.WINDY_VARIANT]: undefined,
+  [WeatherState.EXCEPTIONAL]: "bold:weather-starry-night",
+};
+
+export function getWeatherIcon(state: WeatherState, isNight = false) {
+  return (
+    (isNight ? nightWeatherIcons[state] : dayWeatherIcons[state]) ?? "bold:sun"
+  );
 }
