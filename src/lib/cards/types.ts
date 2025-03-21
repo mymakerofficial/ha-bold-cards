@@ -5,6 +5,7 @@ const _BoldCardType = {
   BATTERY: "custom:bold-battery-card",
   CAROUSEL: "custom:bold-carousel-card",
   AT_A_GLANCE: "custom:bold-at-a-glance-card",
+  WEATHER: "custom:bold-weather-card",
 } as const;
 export const BoldCardType = _BoldCardType;
 export type BoldCardType = (typeof _BoldCardType)[keyof typeof _BoldCardType];
