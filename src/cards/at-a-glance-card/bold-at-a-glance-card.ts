@@ -99,8 +99,16 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
 
   static get styles() {
     return css`
+      :host {
+        position: relative;
+        height: 100%;
+        width: 100%;
+        display: flex;
+      }
+
       bc-carousel {
         margin: 0 16px;
+        flex: 1;
       }
     `;
   }

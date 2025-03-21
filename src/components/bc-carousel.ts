@@ -3,6 +3,7 @@ import { createRef, ref } from "lit-html/directives/ref";
 import { repeat } from "lit-html/directives/repeat";
 import { customElement, property, state } from "lit/decorators";
 import { LitElement, css, unsafeCSS } from "lit";
+import { PropertyValues } from "@lit/reactive-element";
 
 export const CarouselStepperPosition = {
   LEFT: "left",
@@ -29,6 +30,11 @@ export class BcCarousel extends LitElement {
   @state() private _containerWidth: number = 0;
   @state() private _activeIndex: number = 0;
   @state() private _nextIndex: number = 0;
+  @state() private _isScrolling: boolean = false;
+
+  private _scrollProgress: number = 0;
+
+  private _scrollTimeout?: number;
 
   public connectedCallback() {
     super.connectedCallback();
@@ -52,8 +58,25 @@ export class BcCarousel extends LitElement {
   }
 
   private _onScroll() {
+    const gap = 16;
+
+    this._isScrolling = true;
+    this._scrollTimeout && clearTimeout(this._scrollTimeout);
+    this._scrollTimeout = setTimeout(() => {
+      const percentDiff = Math.abs(
+        Math.round(this._scrollProgress) - this._scrollProgress,
+      );
+      const onePixelInPercent =
+        1 / ((this._containerWidth + gap) * this.length);
+      if (percentDiff > onePixelInPercent * gap) {
+        return;
+      }
+      this._isScrolling = false;
+    }, 100) as unknown as number;
+
     const scrollLeft = this._containerRef.value?.scrollLeft || 0;
-    const scrollProgress = scrollLeft / this._containerWidth;
+    const scrollProgress = scrollLeft / (this._containerWidth + gap);
+    this._scrollProgress = scrollProgress;
 
     const newIndex = Math.round(scrollProgress);
     if (this._activeIndex !== newIndex) {
@@ -73,8 +96,26 @@ export class BcCarousel extends LitElement {
   }
 
   private _updateContainerWidth() {
-    this._containerWidth = this._containerRef.value?.clientWidth || 0;
+    const newContainerWidth =
+      this._containerRef.value?.children[0]?.getBoundingClientRect().width ||
+      this._containerRef.value?.clientWidth ||
+      0;
+    if (this._containerWidth === newContainerWidth) {
+      return;
+    }
+    this._containerWidth = newContainerWidth;
+    console.log(this, this._containerWidth);
     this._onScroll();
+  }
+
+  public willUpdate(changedProperties: PropertyValues) {
+    super.willUpdate(changedProperties);
+    if (
+      changedProperties.has("_isScrolling") ||
+      changedProperties.has("_activeIndex")
+    ) {
+      this._updateContainerWidth();
+    }
   }
 
   private _handleClickStep(index: number, instant: boolean = false) {
@@ -100,47 +141,50 @@ export class BcCarousel extends LitElement {
 
   protected render() {
     return html`
-      ${this.length > 1
-        ? html`
-            <div class="stepper-container" data-position=${this.position}>
-              <div
-                class="stepper"
-                tabindex="0"
-                role="tablist"
-                @keydown=${this._handleStepperKeyDown}
-              >
-                ${repeat(
-                  Array.from({ length: this.length }),
-                  (_, index) => this.getKey(index),
-                  (_, index) => html`
-                    <div
-                      class="step"
-                      role="tab"
-                      aria-selected=${index === this._activeIndex}
-                      @click=${() => this._handleClickStep(index)}
-                    >
-                      <div class="step-inner" />
-                    </div>
-                  `,
-                )}
+      <div class="carousel" data-is-scrolling=${this._isScrolling}>
+        ${this.length > 1
+          ? html`
+              <div class="stepper-container" data-position=${this.position}>
+                <div
+                  class="stepper"
+                  tabindex="0"
+                  role="tablist"
+                  @keydown=${this._handleStepperKeyDown}
+                >
+                  ${repeat(
+                    Array.from({ length: this.length }),
+                    (_, index) => this.getKey(index),
+                    (_, index) => html`
+                      <div
+                        class="step"
+                        role="tab"
+                        aria-selected=${index === this._activeIndex}
+                        @click=${() => this._handleClickStep(index)}
+                      >
+                        <div class="step-inner" />
+                      </div>
+                    `,
+                  )}
+                </div>
               </div>
-            </div>
-          `
-        : nothing}
-      <div class="container" ${ref(this._containerRef)}>
-        ${repeat(
-          Array.from({ length: this.length }),
-          (_, index) => this.getKey(index),
-          (_, index) => html`
-            <div class="item">
-              <div class="inner">
-                ${index === this._activeIndex || index === this._nextIndex
-                  ? this.getElement?.(index)
-                  : nothing}
+            `
+          : nothing}
+        <div class="scroll-container" ${ref(this._containerRef)}>
+          ${repeat(
+            Array.from({ length: this.length }),
+            (_, index) => this.getKey(index),
+            (_, index) => html`
+              <div class="item">
+                <div class="inner">
+                  ${index === this._activeIndex ||
+                  (index === this._nextIndex && this._isScrolling)
+                    ? this.getElement?.(index)
+                    : nothing}
+                </div>
               </div>
-            </div>
-          `,
-        )}
+            `,
+          )}
+        </div>
       </div>
     `;
   }
@@ -149,58 +193,75 @@ export class BcCarousel extends LitElement {
     return css`
       :host {
         display: block;
-        position: relative;
         width: 100%;
         height: 100%;
+        --carousel-overflow-space: 8px;
+        --stepper-offset: 4px;
       }
 
-      .container {
+      .carousel {
         position: relative;
         width: 100%;
         height: 100%;
+        box-sizing: border-box;
+      }
+
+      .carousel[data-is-scrolling="true"] {
+        --carousel-overflow-space: 0px;
+      }
+
+      .scroll-container {
+        position: relative;
+        width: calc(100% + var(--carousel-overflow-space) * 2);
+        height: calc(100% + var(--carousel-overflow-space) * 2);
         display: flex;
-        gap: 16px;
+        gap: calc(16px - var(--carousel-overflow-space) * 2);
         overflow-x: auto;
         overflow-y: hidden;
         scroll-snap-type: x mandatory;
-        scroll-snap-points-x: repeat(100%);
-        scroll-padding-block: 8px;
+        scroll-snap-align: center;
+        scroll-padding: 8px 0;
+        left: calc(var(--carousel-overflow-space) * -1);
+        top: calc(var(--carousel-overflow-space) * -1);
+      }
+
+      .carousel[data-is-scrolling="true"] .scroll-container {
         border-radius: var(--ha-card-border-radius);
       }
 
       /* disable scrollbar */
-      .container::-webkit-scrollbar {
+      .scroll-container::-webkit-scrollbar {
         display: none;
       }
 
-      .container::-webkit-scrollbar-thumb {
+      .scroll-container::-webkit-scrollbar-thumb {
         display: none;
       }
 
-      .container::-webkit-scrollbar-track {
+      .scroll-container::-webkit-scrollbar-track {
         display: none;
       }
 
       .item {
-        scroll-snap-align: start;
+        scroll-snap-align: center;
         display: flex;
         align-items: center;
         justify-content: inherit;
-        overflow: hidden;
-        height: 100%;
-        min-width: 100%;
+        height: calc(100% - var(--carousel-overflow-space) * 2);
+        min-width: calc(100% - var(--carousel-overflow-space) * 2);
+        padding: var(--carousel-overflow-space);
       }
 
       .inner {
         position: relative;
-        overflow: hidden;
         height: 100%;
         min-width: 100%;
+        display: block;
       }
 
       .stepper-container {
         position: absolute;
-        bottom: 8px;
+        bottom: var(--stepper-offset);
         display: flex;
         gap: 8px;
         z-index: 1;
