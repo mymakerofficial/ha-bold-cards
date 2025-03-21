@@ -192,6 +192,16 @@ const i18n = new I18n(
           },
         },
         card: {
+          weather: {
+            label: {
+              entity: "Entity",
+              temperature_entity: "Temperature Entity",
+            },
+            helper_text: {
+              temperature_entity:
+                "Optionally replace the displayed temperature with the value of any sensor entity.",
+            },
+          },
           media_player: {
             label: {
               entity: "Entity",

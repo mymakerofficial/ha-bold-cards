@@ -1,18 +1,20 @@
-import { HomeAssistant, LovelaceGridOptions } from "../../types/ha/lovelace";
+import {
+  HomeAssistant,
+  LovelaceCardEditor,
+  LovelaceGridOptions,
+} from "../../types/ha/lovelace";
 import { BoldCardType } from "../../lib/cards/types";
 import { customElement } from "lit/decorators";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { BoldCardWithEntity } from "../base";
 import { WeatherCardConfig } from "./types";
-import { unsafeCSS, css, html, nothing } from "lit";
+import { css, html, nothing, unsafeCSS } from "lit";
 import { WeatherEntity } from "../../lib/weather/types";
-import { isMediaPlayerEntity, isStateActive } from "../../helpers/states";
-import { randomFrom } from "../../lib/helpers";
-import { isWeatherEntity } from "../../lib/weather/guards";
 import {
   getStubWeatherEntity,
   getWeatherIcon,
 } from "../../lib/weather/helpers";
+import { HassEntity } from "home-assistant-js-websocket";
 
 const MASK_IMAGE = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`
       <svg width="100%" height="100%" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -29,6 +31,13 @@ export class BoldWeatherCard extends BoldCardWithEntity<
   WeatherCardConfig,
   WeatherEntity
 > {
+  public static async getConfigElement(): Promise<LovelaceCardEditor> {
+    await import("../../editors/cards/weather-card/bold-weather-card-editor");
+    return document.createElement(
+      "bold-weather-card-editor",
+    ) as LovelaceCardEditor;
+  }
+
   static get cardType() {
     return cardType;
   }
@@ -54,6 +63,14 @@ export class BoldWeatherCard extends BoldCardWithEntity<
     };
   }
 
+  protected get _temperatureEntityStateObj() {
+    if (!this._config?.temperature_entity) {
+      return undefined;
+    }
+    const entityId = this._config.temperature_entity;
+    return this.hass?.states[entityId] as HassEntity | undefined;
+  }
+
   protected render() {
     const stateObj = this._stateObj;
 
@@ -61,7 +78,13 @@ export class BoldWeatherCard extends BoldCardWithEntity<
       return nothing;
     }
 
-    const temperature = Math.round(stateObj.attributes.temperature || 0);
+    const temperatureStateObj = this._temperatureEntityStateObj;
+
+    const temperature = Math.round(
+      Number(
+        temperatureStateObj?.state ?? stateObj.attributes.temperature ?? 0,
+      ),
+    );
     const icon = getWeatherIcon(stateObj.state);
 
     return html`<div class="content">
