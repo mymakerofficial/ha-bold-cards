@@ -67,10 +67,7 @@ export class BcGlancePage extends BoldHassElement {
         ${repeat(
           this._items,
           (item) => html`
-            <bc-glance-page-item
-              .icon=${html`<ha-icon icon=${item.icon}></ha-icon>`}
-              .label=${item.content}
-            ></bc-glance-page-item>
+            <bc-glance-page-item .item=${item}></bc-glance-page-item>
           `,
         )}
       </div>
@@ -80,14 +77,16 @@ export class BcGlancePage extends BoldHassElement {
   static get styles() {
     return css`
       :host {
+        margin-top: 16px;
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
       }
 
       .label {
         font-size: 1.5rem;
         font-weight: 400;
+        margin: 0;
       }
 
       .items {

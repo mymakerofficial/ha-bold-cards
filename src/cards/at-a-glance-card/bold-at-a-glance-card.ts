@@ -98,7 +98,11 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
   }
 
   static get styles() {
-    return css``;
+    return css`
+      bc-carousel {
+        margin: 0 16px;
+      }
+    `;
   }
 }
 
