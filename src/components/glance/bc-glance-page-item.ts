@@ -1,31 +1,82 @@
 import { BoldHassElement } from "../hass-element";
-import { customElement, property } from "lit/decorators";
+import { customElement, property, state } from "lit/decorators";
 import { css, html, nothing } from "lit";
-import { ConcreteCustomGlanceItem } from "../../lib/at-a-glance/types";
+import { GlanceItemConfig, GlanceItemType } from "../../lib/at-a-glance/types";
 import { mdiCircle } from "@mdi/js";
+import { TemplatedConfigRenderer } from "../../lib/templates/templated-config-renderer";
+import { PropertyValues } from "@lit/reactive-element";
 
 @customElement("bc-glance-page-item")
 export class BcGlancePageItem extends BoldHassElement {
-  @property({ attribute: false }) public item?: ConcreteCustomGlanceItem;
+  @property({ attribute: false }) public config?: GlanceItemConfig;
+
+  @state() protected _item: GlanceItemConfig | undefined;
+
+  private itemRenderer?: TemplatedConfigRenderer<GlanceItemConfig>;
+
+  public connectedCallback() {
+    super.connectedCallback();
+
+    if (!this.config) {
+      return;
+    }
+
+    this.itemRenderer = this.getGlanceItemRenderer(this.config?.type);
+
+    this.itemRenderer.subscribe((item) => {
+      this._item = item;
+    });
+  }
+
+  public disconnectedCallback() {
+    super.disconnectedCallback();
+    this.itemRenderer?.destroy();
+  }
+
+  public willUpdate(changedProps: PropertyValues) {
+    super.willUpdate(changedProps);
+
+    if (changedProps.has("config") && this.itemRenderer) {
+      this.itemRenderer.setValue(this.config);
+    }
+  }
 
   render() {
-    const item = this.item;
+    const item = this._item;
 
     if (!item) {
       return nothing;
     }
 
-    return html`
-      ${item.icon
-        ? html`<div class="icon">
-            <bc-icon icon=${item.icon}></bc-icon>
-          </div>`
-        : html`<ha-svg-icon
-            class="spacer-dot"
-            .path=${mdiCircle}
-          ></ha-svg-icon>`}
-      <span>${item.content}</span>
-    `;
+    if (item.type === GlanceItemType.CUSTOM) {
+      return html`
+        ${item.icon
+          ? html` <div class="icon">
+              <bc-icon icon=${item.icon}></bc-icon>
+            </div>`
+          : html` <ha-svg-icon
+              class="spacer-dot"
+              .path=${mdiCircle}
+            ></ha-svg-icon>`}
+        <span>${item.content}</span>
+      `;
+    }
+
+    if (item.type === GlanceItemType.WEATHER) {
+      return html`
+        ${item.icon
+          ? html` <div class="icon">
+              <bc-icon icon=${item.icon}></bc-icon>
+            </div>`
+          : html` <ha-svg-icon
+              class="spacer-dot"
+              .path=${mdiCircle}
+            ></ha-svg-icon>`}
+        <span>${item.content}</span>
+      `;
+    }
+
+    return nothing;
   }
 
   static get styles() {

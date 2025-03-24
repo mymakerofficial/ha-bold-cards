@@ -1,73 +1,113 @@
 import { customElement, property, state } from "lit/decorators";
 import { BoldHassElement } from "../hass-element";
 import {
-  ConcreteCustomGlanceItem,
-  ConcreteGlancePage,
-  CustomGlanceItemConfig,
+  GlanceItemConfig,
+  GlanceItemType,
+  GlancePageConfig,
   GlancePageType,
 } from "../../lib/at-a-glance/types";
 import { css, html, nothing } from "lit";
-import { TemplatedConfigListRenderer } from "../../lib/templates/templated-config-renderer";
+import {
+  TemplatedConfigListRenderer,
+  TemplatedConfigRenderer,
+} from "../../lib/templates/templated-config-renderer";
 import { PropertyValues } from "@lit/reactive-element";
 import { repeat } from "lit-html/directives/repeat";
 
 @customElement("bc-glance-page")
 export class BcGlancePage extends BoldHassElement {
-  @property({ attribute: false }) public page?: ConcreteGlancePage;
+  @property({ attribute: false }) public config?: GlancePageConfig;
 
-  @state() private _items: ConcreteCustomGlanceItem[] = [];
+  @state() protected _page: GlancePageConfig | undefined;
 
-  private itemsRenderer?: TemplatedConfigListRenderer<CustomGlanceItemConfig>;
+  private pageRenderer?: TemplatedConfigRenderer<GlancePageConfig>;
+  private itemsRenderer?: TemplatedConfigListRenderer<GlanceItemConfig>;
 
   public connectedCallback() {
     super.connectedCallback();
 
-    this.itemsRenderer = this.getCustomGlanceItemsRenderer();
+    if (!this.config) {
+      return;
+    }
+
+    this.pageRenderer = this.getGlancePageRenderer(this.config?.type);
+
+    this.pageRenderer.subscribe((page) => {
+      if (!page) {
+        this._page = undefined;
+        return;
+      }
+      this._page = { ...page, items: this._page?.items };
+    });
+
+    this.itemsRenderer = this.getGlanceItemsRenderer(true);
 
     this.itemsRenderer.subscribe((list) => {
-      this._items = list;
+      if (!this._page) {
+        return;
+      }
+      this._page.items = list.filter((it) => {
+        if (it.type !== GlanceItemType.CUSTOM) {
+          return true;
+        }
+        return it.visibility ?? true;
+      });
     });
   }
 
   public disconnectedCallback() {
     super.disconnectedCallback();
+    this.pageRenderer?.destroy();
     this.itemsRenderer?.destroy();
   }
 
   public willUpdate(changedProps: PropertyValues) {
     super.willUpdate(changedProps);
 
-    if (
-      changedProps.has("page") &&
-      this.itemsRenderer &&
-      this.page &&
-      this.page.type === GlancePageType.CUSTOM
-    ) {
-      this.itemsRenderer.setList(this.page.items);
+    if (changedProps.has("config") && this.pageRenderer && this.itemsRenderer) {
+      this._page = this.config;
+      this.pageRenderer.setValue(this.config);
+      this.itemsRenderer.setList(this.config?.items);
     }
   }
 
   render() {
-    if (!this.page) {
+    if (!this._page) {
       return nothing;
     }
 
-    // TODO support other types
-    if (this.page.type !== GlancePageType.CUSTOM) {
-      return nothing;
+    if (this._page.type === GlancePageType.CUSTOM) {
+      return html`
+        <h1 class="label">${this._page.title}</h1>
+        <div class="items">
+          ${repeat(
+            this._page.items ?? [],
+            (item) => html`
+              <bc-glance-page-item
+                .hass=${this.hass}
+                .config=${item}
+              ></bc-glance-page-item>
+            `,
+          )}
+        </div>
+      `;
     }
 
-    return html`
-      <h1 class="label">${this.page.title}</h1>
-      <div class="items">
-        ${repeat(
-          this._items,
-          (item) => html`
-            <bc-glance-page-item .item=${item}></bc-glance-page-item>
-          `,
-        )}
-      </div>
-    `;
+    if (this._page.type === GlancePageType.DATE_TIME) {
+      return html`
+        <h1 class="label">TODO</h1>
+        <div class="items">
+          ${repeat(
+            this._page.items ?? [],
+            (item) => html`
+              <bc-glance-page-item .item=${item}></bc-glance-page-item>
+            `,
+          )}
+        </div>
+      `;
+    }
+
+    return nothing;
   }
 
   static get styles() {

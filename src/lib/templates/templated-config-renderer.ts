@@ -4,6 +4,14 @@ import { isDefined, isUndefined } from "../helpers";
 import { BasicHassObject } from "../basic-hass-object";
 import { Optional } from "../types";
 
+export const TemplateRendererState = {
+  PENDING: "pending",
+  ERROR: "error",
+  SUCCESS: "success",
+} as const;
+export type TemplateRendererState =
+  (typeof TemplateRendererState)[keyof typeof TemplateRendererState];
+
 export interface TemplatedConfigRendererKey<TObj extends object> {
   templateKey: keyof TObj;
   resultKey: keyof TObj;
@@ -16,6 +24,8 @@ export class TemplatedConfigRenderer<
   protected _value?: TObj;
   protected _keyMap: TemplatedConfigRendererKey<TObj>[] = [];
   protected _getVariables: () => Record<string, unknown>;
+
+  protected _stateMap: Map<keyof TObj, TemplateRendererState> = new Map();
 
   private _unsubFuncs: Array<() => void> = [];
   private _listeners: Array<(value?: TObj) => void> = [];
@@ -41,11 +51,16 @@ export class TemplatedConfigRenderer<
     return this._value;
   }
 
+  public get state(): Map<keyof TObj, TemplateRendererState> {
+    return this._stateMap;
+  }
+
   protected _notify() {
     this._listeners.forEach((listener) => listener(this.value));
   }
 
   protected _unsubscribeRenderTemplates() {
+    this._stateMap.clear();
     this._unsubFuncs.forEach((unsubFunc) => unsubFunc());
     this._unsubFuncs = [];
   }
@@ -61,13 +76,15 @@ export class TemplatedConfigRenderer<
 
     const promises = this._keyMap
       .filter(({ templateKey }) => isDefined(value[templateKey]))
-      .map(({ templateKey, resultKey, transform }) =>
-        this.subscribeToRenderTemplate({
+      .map(({ templateKey, resultKey, transform }) => {
+        this._stateMap.set(resultKey, TemplateRendererState.PENDING);
+        return this.subscribeToRenderTemplate({
           template: value[templateKey] as string,
           variables: this._getVariables(),
           onChange: (res) => {
             if (isTemplateError(res) || !this._value) {
               console.error(res);
+              this._stateMap.set(resultKey, TemplateRendererState.ERROR);
               return;
             }
 
@@ -77,10 +94,11 @@ export class TemplatedConfigRenderer<
                 ? transform(res.result)
                 : res.result) as TObj[keyof TObj],
             };
+            this._stateMap.set(resultKey, TemplateRendererState.SUCCESS);
             this._notify();
           },
-        }),
-      );
+        });
+      });
 
     Promise.all(promises).then((unsubFuncs) => {
       this._unsubFuncs.push(...unsubFuncs);

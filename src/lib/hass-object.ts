@@ -1,7 +1,7 @@
-import { HomeAssistant } from "../types/ha/lovelace";
-
 import {
-  getCustomGlanceItemsRenderer,
+  getGlanceItemRenderer,
+  getGlanceItemsRenderer,
+  getGlancePageRenderer,
   getGlancePagesRenderer,
 } from "./at-a-glance/helpers";
 import {
@@ -9,23 +9,44 @@ import {
   BasicHassObjectMixin,
   HassObjectConstructor,
 } from "./basic-hass-object";
+import { GlanceItemType, GlancePageType } from "./at-a-glance/types";
 
 export function HassObjectMixin<TBase extends HassObjectConstructor>(
   Base: TBase,
 ) {
   return class extends BasicHassObjectMixin(Base) {
-    protected getGlancePagesRenderer() {
+    protected getGlancePageRenderer(
+      type: GlancePageType,
+      partial: boolean = false,
+    ) {
       if (!this.hass) {
         throw new Error("hass is not set");
       }
-      return getGlancePagesRenderer(this.hass);
+      return getGlancePageRenderer(this.hass, type, partial);
     }
 
-    protected getCustomGlanceItemsRenderer() {
+    protected getGlancePagesRenderer(partial: boolean = false) {
       if (!this.hass) {
         throw new Error("hass is not set");
       }
-      return getCustomGlanceItemsRenderer(this.hass);
+      return getGlancePagesRenderer(this.hass, partial);
+    }
+
+    protected getGlanceItemRenderer(
+      type: GlanceItemType,
+      partial: boolean = false,
+    ) {
+      if (!this.hass) {
+        throw new Error("hass is not set");
+      }
+      return getGlanceItemRenderer(this.hass, type, partial);
+    }
+
+    protected getGlanceItemsRenderer(partial: boolean = false) {
+      if (!this.hass) {
+        throw new Error("hass is not set");
+      }
+      return getGlanceItemsRenderer(this.hass, partial);
     }
   };
 }

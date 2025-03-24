@@ -6,11 +6,7 @@ import { BoldAtAGlanceCardConfig } from "./types";
 import { css, html, nothing } from "lit";
 import { CarouselStepperPosition } from "../../components/bc-carousel";
 import { TemplatedConfigListRenderer } from "../../lib/templates/templated-config-renderer";
-import {
-  ConcreteGlancePage,
-  GlancePageConfig,
-  GlancePageType,
-} from "../../lib/at-a-glance/types";
+import { GlancePageConfig, GlancePageType } from "../../lib/at-a-glance/types";
 import { PropertyValues } from "@lit/reactive-element";
 import { styleMap } from "lit-html/directives/style-map";
 
@@ -18,7 +14,7 @@ const cardType = BoldCardType.AT_A_GLANCE;
 
 @customElement(stripCustomPrefix(cardType))
 export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig> {
-  @state() private _pages: ConcreteGlancePage[] = [];
+  @state() private _pages: GlancePageConfig[] = [];
 
   private pagesRenderer?: TemplatedConfigListRenderer<GlancePageConfig>;
 
@@ -53,33 +49,15 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
   public connectedCallback() {
     super.connectedCallback();
 
-    this.pagesRenderer = this.getGlancePagesRenderer();
+    this.pagesRenderer = this.getGlancePagesRenderer(true);
 
     this.pagesRenderer.subscribe((list) => {
-      this._pages = list
-        .map((it): ConcreteGlancePage => {
-          if (it.type === GlancePageType.CUSTOM) {
-            return {
-              type: it.type,
-              title: it.title,
-              visibility: it.visibility ?? true,
-              items: it.items ?? [],
-            };
-          }
-          if (it.type === GlancePageType.WEATHER) {
-            return {
-              type: it.type,
-              entity: it.entity,
-            };
-          }
-          throw new Error("Unsupported glance page type");
-        })
-        .filter((it) => {
-          if (it.type !== GlancePageType.CUSTOM) {
-            return true;
-          }
-          return it.visibility;
-        });
+      this._pages = list.filter((it) => {
+        if (it.type !== GlancePageType.CUSTOM) {
+          return true;
+        }
+        return it.visibility ?? true;
+      });
     });
   }
 
@@ -109,7 +87,7 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
         .length=${this._pages.length}
         .getElement=${(index: number) => html`
           <bc-glance-page
-            .page=${this._pages[index]}
+            .config=${this._pages[index]}
             .hass=${this.hass}
           ></bc-glance-page>
         `}
