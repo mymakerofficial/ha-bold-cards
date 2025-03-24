@@ -28,8 +28,7 @@ export class BcGlancePage extends BoldHassElement {
     this.itemsRenderer = this.getCustomGlanceItemsRenderer();
 
     this.itemsRenderer.subscribe((list) => {
-      console.log(list);
-      this._items = list ?? [];
+      this._items = list;
     });
   }
 

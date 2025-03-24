@@ -104,7 +104,6 @@ export class BcCarousel extends LitElement {
       return;
     }
     this._containerWidth = newContainerWidth;
-    console.log(this, this._containerWidth);
     this._onScroll();
   }
 
