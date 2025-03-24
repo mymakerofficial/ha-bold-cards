@@ -37,7 +37,7 @@ export class BoldMediaPlayerSourceSelectFeature extends CustomLovelaceCardFeatur
   }
 
   protected get _childEntity() {
-    return getEntityByEntityId(this._childStateObj?.entity_id, this.hass);
+    return this.getEntityByEntityId(this._childStateObj?.entity_id);
   }
 
   protected get _sourceList() {
