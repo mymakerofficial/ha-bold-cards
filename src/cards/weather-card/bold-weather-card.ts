@@ -8,20 +8,14 @@ import { customElement } from "lit/decorators";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { BoldCardWithEntity } from "../base";
 import { WeatherCardConfig } from "./types";
-import { css, html, nothing, unsafeCSS } from "lit";
+import { css, html, nothing, svg, unsafeCSS } from "lit";
 import { WeatherEntity } from "../../lib/weather/types";
 import {
   getStubWeatherEntity,
   getWeatherIcon,
 } from "../../lib/weather/helpers";
 import { HassEntity } from "home-assistant-js-websocket";
-import { actionHandler } from "../../helpers/ha/action-handler-directive";
-import {
-  ActionHandlerEvent,
-  fireEvent,
-  handleAction,
-  hasAction,
-} from "custom-card-helpers";
+import { fireEvent } from "custom-card-helpers";
 
 const MASK_IMAGE = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`
       <svg width="100%" height="100%" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -96,17 +90,24 @@ export class BoldWeatherCard extends BoldCardWithEntity<
     const isNight = time < 6 || time > 18;
     const icon = getWeatherIcon(stateObj.state, isNight);
 
+    const labelSvg = svg`
+      <svg width="100%" height="100%" viewBox="0 0 200 200">
+        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">${temperature}˚</text>
+      </svg>
+    `;
+
     return html`<div class="content">
       <button
         class="background"
         role="button"
         tabindex="0"
+        aria-label="More Info"
         @click=${this._handleMoreInfo}
       >
         <ha-ripple></ha-ripple>
       </button>
       <bc-icon class="icon" icon=${icon}></bc-icon>
-      <div class="label">${temperature}˚</div>
+      <div class="label-svg">${labelSvg}</div>
     </div>`;
   }
 
@@ -141,10 +142,16 @@ export class BoldWeatherCard extends BoldCardWithEntity<
       }
 
       .content {
-        height: 100%;
+        max-height: 100%;
         max-width: 100%;
         aspect-ratio: 1 / 1;
         position: relative;
+        display: grid;
+        grid-template-rows: 50%;
+        grid-template-columns: 50%;
+        grid-template-areas:
+          ". label"
+          "icon .";
       }
 
       .content::before {
@@ -207,24 +214,28 @@ export class BoldWeatherCard extends BoldCardWithEntity<
       }
 
       .icon {
-        position: absolute;
-        bottom: 35%;
-        left: 40%;
-        transform: translate(-50%, 50%);
-        width: 50%;
-        height: 50%;
+        grid-area: icon;
+        transform: translate(25%, -25%);
+        scale: 1.1;
         z-index: 1;
       }
 
-      .label {
-        font-size: 300%;
+      .label-svg {
+        grid-area: label;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .label-svg svg {
+        transform: translate(-25%, 25%);
+        scale: 1.1;
+      }
+
+      .label-svg svg text {
+        font-size: 9rem;
         font-weight: 700;
-        line-height: 1;
-        position: absolute;
-        top: 17%;
-        left: 61%;
-        transform: translate(-50%, 0);
-        text-align: center;
+        fill: var(--primary-text-color);
       }
     `;
   }
