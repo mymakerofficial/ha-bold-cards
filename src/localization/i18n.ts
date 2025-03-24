@@ -20,6 +20,7 @@ import {
 } from "../cards/media-player-card/types";
 import { CardFeaturePosition } from "../cards/types";
 import { MediaPlayerState } from "../types/ha/entity";
+import { WeatherCardShape } from "../cards/weather-card/types";
 
 type EnumTranslations<T extends string> = {
   [key in T]: string;
@@ -104,6 +105,11 @@ const i18n = new I18n(
           [MediaPlayerCardColorMode.AMBIENT_SOLID]: "Ambient Solid",
           [MediaPlayerCardColorMode.MANUAL]: "Manual",
         } satisfies EnumTranslations<MediaPlayerCardColorMode>,
+        weather_card_shape: {
+          [WeatherCardShape.RECTANGLE]: "Rectangle",
+          [WeatherCardShape.PILL]: "Pill",
+          [WeatherCardShape.SCALLOP]: "Scallop",
+        } satisfies EnumTranslations<WeatherCardShape>,
         button: {
           size: {
             [ButtonSize.SM]: "Small",
@@ -207,6 +213,7 @@ const i18n = new I18n(
             label: {
               entity: "Entity",
               temperature_entity: "Temperature Entity",
+              shape: "Shape",
             },
             helper_text: {
               temperature_entity:

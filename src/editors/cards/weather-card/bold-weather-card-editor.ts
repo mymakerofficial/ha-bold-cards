@@ -4,9 +4,13 @@ import { customElement } from "lit/decorators";
 import { t } from "../../../localization/i18n";
 import { editorBaseStyles } from "../../styles";
 import { BoldLovelaceCardEditorWithEntity } from "../base";
-import { WeatherCardConfig } from "../../../cards/weather-card/types";
+import {
+  WeatherCardConfig,
+  WeatherCardShape,
+} from "../../../cards/weather-card/types";
 import { WeatherEntity } from "../../../lib/weather/types";
 import { weatherCardConfigStruct } from "../../../cards/weather-card/struct";
+import { enumToOptions } from "../../helpers";
 
 @customElement("bold-weather-card-editor")
 export class BoldWeatherCardEditor extends BoldLovelaceCardEditorWithEntity<
@@ -30,6 +34,17 @@ export class BoldWeatherCardEditor extends BoldLovelaceCardEditorWithEntity<
       {
         name: "temperature_entity",
         selector: { entity: { domain: "sensor" } },
+      },
+      {
+        name: "shape",
+        selector: {
+          select: {
+            mode: "box",
+            options: enumToOptions(WeatherCardShape, {
+              labelScope: "common.weather_card_shape",
+            }),
+          },
+        },
       },
     ];
 
