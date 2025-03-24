@@ -17,10 +17,7 @@ export class BcGlancePage extends BoldHassElement {
 
   @state() private _items: ConcreteCustomGlanceItem[] = [];
 
-  private itemsRenderer?: TemplatedConfigListRenderer<
-    CustomGlanceItemConfig,
-    ConcreteCustomGlanceItem
-  >;
+  private itemsRenderer?: TemplatedConfigListRenderer<CustomGlanceItemConfig>;
 
   public connectedCallback() {
     super.connectedCallback();

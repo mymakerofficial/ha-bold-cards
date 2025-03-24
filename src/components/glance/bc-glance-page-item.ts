@@ -1,6 +1,6 @@
 import { BoldHassElement } from "../hass-element";
 import { customElement, property } from "lit/decorators";
-import { css, html, nothing, svg } from "lit";
+import { css, html, nothing } from "lit";
 import { ConcreteCustomGlanceItem } from "../../lib/at-a-glance/types";
 import { mdiCircle } from "@mdi/js";
 

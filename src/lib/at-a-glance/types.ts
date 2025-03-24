@@ -8,7 +8,7 @@ export type GlancePageType =
 export type GlancePageTypes = typeof _GlancePageType;
 
 export interface CustomGlanceItemConfig {
-  item?: string;
+  icon?: string;
   icon_template?: string;
   content?: string;
   content_template: string;
@@ -18,7 +18,7 @@ export interface CustomGlancePageConfig {
   type: GlancePageTypes["CUSTOM"];
   visibility?: boolean;
   visibility_template?: string;
-  title: string;
+  title?: string;
   title_template?: string;
   items?: CustomGlanceItemConfig[];
 }
@@ -26,6 +26,7 @@ export interface CustomGlancePageConfig {
 export interface WeatherGlancePageConfig {
   type: GlancePageTypes["WEATHER"];
   entity?: string;
+  entity_template?: string;
 }
 
 export type GlancePageConfig = CustomGlancePageConfig | WeatherGlancePageConfig;
@@ -37,14 +38,14 @@ export interface ConcreteCustomGlanceItem {
 
 export interface ConcreteCustomGlancePage {
   type: GlancePageTypes["CUSTOM"];
-  title: string;
+  title?: string;
   visibility: boolean;
   items: CustomGlanceItemConfig[];
 }
 
 export interface ConcreteWeatherGlancePage {
   type: GlancePageTypes["WEATHER"];
-  entity: string;
+  entity?: string;
 }
 
 export type ConcreteGlancePage =

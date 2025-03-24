@@ -20,10 +20,7 @@ const cardType = BoldCardType.AT_A_GLANCE;
 export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig> {
   @state() private _pages: ConcreteGlancePage[] = [];
 
-  private pagesRenderer?: TemplatedConfigListRenderer<
-    GlancePageConfig,
-    ConcreteGlancePage
-  >;
+  private pagesRenderer?: TemplatedConfigListRenderer<GlancePageConfig>;
 
   constructor() {
     super();
@@ -59,12 +56,30 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
     this.pagesRenderer = this.getGlancePagesRenderer();
 
     this.pagesRenderer.subscribe((list) => {
-      this._pages = list.filter((it) => {
-        if (it.type !== GlancePageType.CUSTOM) {
-          return true;
-        }
-        return it.visibility;
-      });
+      this._pages = list
+        .map((it): ConcreteGlancePage => {
+          if (it.type === GlancePageType.CUSTOM) {
+            return {
+              type: it.type,
+              title: it.title,
+              visibility: it.visibility ?? true,
+              items: it.items ?? [],
+            };
+          }
+          if (it.type === GlancePageType.WEATHER) {
+            return {
+              type: it.type,
+              entity: it.entity,
+            };
+          }
+          throw new Error("Unsupported glance page type");
+        })
+        .filter((it) => {
+          if (it.type !== GlancePageType.CUSTOM) {
+            return true;
+          }
+          return it.visibility;
+        });
     });
   }
 

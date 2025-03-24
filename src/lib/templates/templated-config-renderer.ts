@@ -1,43 +1,28 @@
 import { HomeAssistant } from "../../types/ha/lovelace";
 import { isTemplateError } from "./helpers";
-import { isDefined } from "../helpers";
+import { isDefined, isUndefined } from "../helpers";
 import { BasicHassObject } from "../basic-hass-object";
+import { Optional } from "../types";
 
-type CombinedResult<
-  TObj extends object,
-  TResObj extends object = { [key: string]: unknown },
-> = TObj & { [key: string]: unknown } & Partial<TResObj>;
-
-export interface TemplatedConfigRendererKey<
-  TObj extends object,
-  TResObj extends object = { [key: string]: unknown },
-> {
+export interface TemplatedConfigRendererKey<TObj extends object> {
   templateKey: keyof TObj;
-  resultKey: keyof TResObj;
-  transform?: (result: string) => TResObj[keyof TResObj];
+  resultKey: keyof TObj;
+  transform?: (result: string) => TObj[keyof TObj];
 }
-
-type TransformFunc<
-  TObj extends object,
-  TResObj extends object = { [key: string]: unknown },
-> = (value: CombinedResult<TObj, TResObj>) => TResObj;
 
 export class TemplatedConfigRenderer<
   TObj extends object,
-  TResObj extends object = { [key: string]: unknown },
 > extends BasicHassObject {
-  protected _value?: CombinedResult<TObj, TResObj>;
-  protected _keyMap: TemplatedConfigRendererKey<TObj, TResObj>[] = [];
+  protected _value?: TObj;
+  protected _keyMap: TemplatedConfigRendererKey<TObj>[] = [];
   protected _getVariables: () => Record<string, unknown>;
-  protected _transform: TransformFunc<TObj, TResObj>;
 
   private _unsubFuncs: Array<() => void> = [];
-  private _listeners: Array<(value?: TResObj) => void> = [];
+  private _listeners: Array<(value?: TObj) => void> = [];
 
   constructor(
     hass: HomeAssistant | undefined,
-    keyMap: TemplatedConfigRendererKey<TObj, TResObj>[],
-    transform: TransformFunc<TObj, TResObj>,
+    keyMap: TemplatedConfigRendererKey<TObj>[],
     getVariables?: () => Record<string, unknown>,
   ) {
     super(hass);
@@ -47,14 +32,13 @@ export class TemplatedConfigRenderer<
       (() => ({
         user: this.hass?.user?.name,
       }));
-    this._transform = transform;
   }
 
-  public get value(): TResObj | undefined {
+  public get value(): TObj | undefined {
     if (!this._value) {
       return undefined;
     }
-    return this._transform(this._value);
+    return this._value;
   }
 
   protected _notify() {
@@ -69,7 +53,7 @@ export class TemplatedConfigRenderer<
   public setValue(value?: TObj): void {
     this._unsubscribeRenderTemplates();
 
-    this._value = value as CombinedResult<TObj, TResObj>;
+    this._value = value;
 
     if (!value) {
       return;
@@ -91,7 +75,7 @@ export class TemplatedConfigRenderer<
               ...this._value,
               [resultKey]: (transform
                 ? transform(res.result)
-                : res.result) as TResObj[keyof TResObj],
+                : res.result) as TObj[keyof TObj],
             };
             this._notify();
           },
@@ -103,7 +87,7 @@ export class TemplatedConfigRenderer<
     });
   }
 
-  public subscribe(listener: (value?: TResObj) => void): void {
+  public subscribe(listener: (value?: TObj) => void): void {
     this._listeners.push(listener);
   }
 
@@ -124,32 +108,23 @@ export class TemplatedConfigRenderer<
 
 export class TemplatedConfigListRenderer<
   TObj extends object,
-  TResObj extends object = { [key: string]: unknown },
 > extends BasicHassObject {
-  protected _getKeyMap: (
+  protected _getRenderer: (
     value: TObj,
-  ) => TemplatedConfigRendererKey<TObj, TResObj>[] | undefined = () => [];
-  protected _transform: TransformFunc<TObj, TResObj>;
-  protected _getVariables?: () => Record<string, unknown>;
+  ) => Optional<TemplatedConfigRenderer<TObj>>;
 
-  private _renderers: TemplatedConfigRenderer<TObj, TResObj>[] = [];
-  private _listeners: Array<(value: TResObj[]) => void> = [];
+  private _renderers: TemplatedConfigRenderer<TObj>[] = [];
+  private _listeners: Array<(value: TObj[]) => void> = [];
 
   constructor(
     hass: HomeAssistant | undefined,
-    getKeyMap: (
-      value: TObj,
-    ) => TemplatedConfigRendererKey<TObj, TResObj>[] | undefined,
-    transform: TransformFunc<TObj, TResObj>,
-    getVariables?: () => Record<string, unknown>,
+    getRenderer: (value: TObj) => Optional<TemplatedConfigRenderer<TObj>>,
   ) {
     super(hass);
-    this._getKeyMap = getKeyMap;
-    this._transform = transform;
-    this._getVariables = getVariables;
+    this._getRenderer = getRenderer;
   }
 
-  public get list(): TResObj[] {
+  public get list(): TObj[] {
     return this._renderers.map((r) => r.value).filter(isDefined);
   }
 
@@ -165,20 +140,20 @@ export class TemplatedConfigListRenderer<
       return;
     }
 
-    this._renderers = list.map((value) => {
-      const renderer = new TemplatedConfigRenderer<TObj, TResObj>(
-        this.hass,
-        this._getKeyMap(value) ?? [],
-        this._transform,
-        this._getVariables,
-      );
-      renderer.setValue(value);
-      renderer.subscribe(() => this._notify());
-      return renderer;
-    });
+    this._renderers = list
+      .map((value) => {
+        const renderer = this._getRenderer(value);
+        if (isUndefined(renderer)) {
+          return undefined;
+        }
+        renderer.setValue(value);
+        renderer.subscribe(() => this._notify());
+        return renderer;
+      })
+      .filter(isDefined);
   }
 
-  public subscribe(listener: (value: TResObj[]) => void): void {
+  public subscribe(listener: (value: TObj[]) => void): void {
     this._listeners.push(listener);
   }
 
