@@ -196,6 +196,13 @@ const i18n = new I18n(
           },
         },
         card: {
+          carousel: {
+            description:
+              "The carousel card allows you to turn any card that displays a single entity into a carousel.<br \><b>Note that this editor lets you configure any entity type, even if the card you're using doesn't support it.</b><br />The original card editor below might still show an entity picker, but please ignore that one.",
+            label: {
+              entities: "Entities",
+            },
+          },
           weather: {
             label: {
               entity: "Entity",
