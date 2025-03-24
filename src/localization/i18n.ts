@@ -16,6 +16,7 @@ import {
   MediaPlayerCardColorMode,
   MediaPlayerCardPicturePosition,
   MediaPlayerCardVerticalAlignment,
+  MediaPlayerCardBackgroundPictureStyle,
 } from "../cards/media-player-card/types";
 import { CardFeaturePosition } from "../cards/types";
 import { MediaPlayerState } from "../types/ha/entity";
@@ -76,7 +77,6 @@ const i18n = new I18n(
           [MediaPositionTimestampPosition.BOTTOM_RIGHT]: "Bottom Right",
         } satisfies EnumTranslations<MediaPositionTimestampPosition>,
         media_player_card_picture_position: {
-          [MediaPlayerCardPicturePosition.BACKGROUND]: "Background",
           [MediaPlayerCardPicturePosition.INLINE_LEFT]: "Inline Left",
           [MediaPlayerCardPicturePosition.INLINE_RIGHT]: "Inline Right",
           [MediaPlayerCardPicturePosition.TOP_LEFT]: "Top Left",
@@ -84,6 +84,10 @@ const i18n = new I18n(
           [MediaPlayerCardPicturePosition.TOP_RIGHT]: "Top Right",
           [MediaPlayerCardPicturePosition.HIDE]: "Hide",
         } satisfies EnumTranslations<MediaPlayerCardPicturePosition>,
+        media_player_card_background_picture_style: {
+          [MediaPlayerCardBackgroundPictureStyle.COVER]: "Cover",
+          [MediaPlayerCardBackgroundPictureStyle.HIDE]: "Hide",
+        } satisfies EnumTranslations<MediaPlayerCardBackgroundPictureStyle>,
         media_player_card_horizontal_alignment: {
           [MediaPlayerCardHorizontalAlignment.LEFT]: "Left",
           [MediaPlayerCardHorizontalAlignment.CENTER]: "Center",
@@ -211,8 +215,9 @@ const i18n = new I18n(
               color_mode: "Color Mode",
               color: "Fallback Color",
               picture_position: "Artwork Position",
-              horizontal_alignment: "Horizontal Alignment",
-              vertical_alignment: "Vertical Alignment",
+              background_picture: "Background Artwork Style",
+              content_horizontal_alignment: "Horizontal Alignment",
+              content_vertical_alignment: "Vertical Alignment",
               feature_position: "First Feature Position",
               show_title_bar: "Show Title Bar",
               hide_media_info: "Hide Media Info",

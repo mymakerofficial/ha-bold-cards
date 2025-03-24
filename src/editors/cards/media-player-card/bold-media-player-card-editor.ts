@@ -6,6 +6,7 @@ import {
   MediaPlayerCardPicturePosition,
   BoldMediaPlayerCardConfig,
   MediaPlayerCardVerticalAlignment,
+  MediaPlayerCardBackgroundPictureStyle,
 } from "../../../cards/media-player-card/types";
 import { customElement } from "lit/decorators";
 import { mdiCursorMove, mdiPalette, mdiStar, mdiTextShort } from "@mdi/js";
@@ -38,9 +39,6 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
       return nothing;
     }
 
-    const entityId = this._config?.entity;
-    const stateObj = entityId ? this.hass?.states[entityId] : undefined;
-
     const schema = [
       ...(!this._internals
         ? [
@@ -69,7 +67,20 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
             },
           },
           {
-            name: "horizontal_alignment",
+            name: "background_picture",
+            required: true,
+            selector: {
+              select: {
+                mode: "box",
+                options: enumToOptions(MediaPlayerCardBackgroundPictureStyle, {
+                  labelScope:
+                    "common.media_player_card_background_picture_style",
+                }),
+              },
+            },
+          },
+          {
+            name: "content_horizontal_alignment",
             required: true,
             selector: {
               select: {
@@ -81,7 +92,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
             },
           },
           {
-            name: "vertical_alignment",
+            name: "content_vertical_alignment",
             required: true,
             selector: {
               select: {
@@ -153,7 +164,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
             },
           },
           {
-            name: "hide_media_info",
+            name: "hide_content",
             selector: {
               boolean: {},
             },

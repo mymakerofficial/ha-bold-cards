@@ -12,6 +12,7 @@ import {
   MediaPlayerCardPicturePosition,
   BoldMediaPlayerCardConfig,
   MediaPlayerCardVerticalAlignment,
+  MediaPlayerCardBackgroundPictureStyle,
 } from "../../../cards/media-player-card/types";
 import { BoldMediaPlayerControlRowFeature } from "../../../features/media-player-control-row-feature/bold-media-player-control-row-feature";
 import { MediaPositionTimestampPosition } from "../../../components/bc-media-position-control";
@@ -79,9 +80,10 @@ export const presets: {
   {
     name: "Default",
     config: {
-      picture_position: MediaPlayerCardPicturePosition.BACKGROUND,
-      horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
-      vertical_alignment: MediaPlayerCardVerticalAlignment.CENTER,
+      picture_position: MediaPlayerCardPicturePosition.HIDE,
+      background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
+      content_horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
+      content_vertical_alignment: MediaPlayerCardVerticalAlignment.CENTER,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_SOLID,
       color: "primary",
@@ -109,8 +111,8 @@ export const presets: {
     name: "Horizontal Vibrant",
     config: {
       picture_position: MediaPlayerCardPicturePosition.INLINE_LEFT,
-      horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
-      vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
+      content_horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
+      content_vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
@@ -137,9 +139,10 @@ export const presets: {
   {
     name: "Horizontal Artwork Background Space",
     config: {
-      picture_position: MediaPlayerCardPicturePosition.BACKGROUND,
-      horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
-      vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
+      picture_position: MediaPlayerCardPicturePosition.HIDE,
+      background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
+      content_horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
+      content_vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_SOLID,
       color: "primary",
@@ -166,9 +169,10 @@ export const presets: {
   {
     name: "Artwork Square",
     config: {
-      picture_position: MediaPlayerCardPicturePosition.BACKGROUND,
-      horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
-      vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
+      picture_position: MediaPlayerCardPicturePosition.HIDE,
+      background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
+      content_horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
+      content_vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_SOLID,
       color: "primary",
@@ -191,9 +195,10 @@ export const presets: {
   {
     name: "Artwork Square Large",
     config: {
-      picture_position: MediaPlayerCardPicturePosition.BACKGROUND,
-      horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
-      vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
+      picture_position: MediaPlayerCardPicturePosition.HIDE,
+      background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
+      content_horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
+      content_vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_SOLID,
       color: "primary",
@@ -221,8 +226,8 @@ export const presets: {
     name: "Vertical Full",
     config: {
       picture_position: MediaPlayerCardPicturePosition.TOP_CENTER,
-      horizontal_alignment: MediaPlayerCardHorizontalAlignment.CENTER,
-      vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
+      content_horizontal_alignment: MediaPlayerCardHorizontalAlignment.CENTER,
+      content_vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
       feature_position: CardFeaturePosition.BOTTOM,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
@@ -243,9 +248,10 @@ export const presets: {
   {
     name: "Vertical Full Artwork Background",
     config: {
-      picture_position: MediaPlayerCardPicturePosition.BACKGROUND,
-      horizontal_alignment: MediaPlayerCardHorizontalAlignment.CENTER,
-      vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
+      picture_position: MediaPlayerCardPicturePosition.HIDE,
+      background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
+      content_horizontal_alignment: MediaPlayerCardHorizontalAlignment.CENTER,
+      content_vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
       feature_position: CardFeaturePosition.BOTTOM,
       color_mode: MediaPlayerCardColorMode.AMBIENT_SOLID,
       color: "primary",
@@ -267,8 +273,8 @@ export const presets: {
     name: "Simple Play/Pause",
     config: {
       picture_position: MediaPlayerCardPicturePosition.INLINE_LEFT,
-      horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
-      vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
+      content_horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
+      content_vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
@@ -290,8 +296,8 @@ export const presets: {
     name: "Info Only",
     config: {
       picture_position: MediaPlayerCardPicturePosition.INLINE_LEFT,
-      horizontal_alignment: MediaPlayerCardHorizontalAlignment.CENTER,
-      vertical_alignment: MediaPlayerCardVerticalAlignment.CENTER,
+      content_horizontal_alignment: MediaPlayerCardHorizontalAlignment.CENTER,
+      content_vertical_alignment: MediaPlayerCardVerticalAlignment.CENTER,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
@@ -306,8 +312,8 @@ export const presets: {
     name: "Large Centered",
     config: {
       picture_position: MediaPlayerCardPicturePosition.TOP_CENTER,
-      horizontal_alignment: MediaPlayerCardHorizontalAlignment.CENTER,
-      vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
+      content_horizontal_alignment: MediaPlayerCardHorizontalAlignment.CENTER,
+      content_vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",

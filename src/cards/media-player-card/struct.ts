@@ -1,6 +1,7 @@
 import { assign, boolean, enums, object, optional, string } from "superstruct";
 import { baseLovelaceCardConfig } from "../../helpers/ha/base-card-struct";
 import {
+  MediaPlayerCardBackgroundPictureStyle,
   MediaPlayerCardColorMode,
   MediaPlayerCardHorizontalAlignment,
   MediaPlayerCardPicturePosition,
@@ -29,14 +30,21 @@ export const mediaPlayerCardConfigStruct = assign(
   mediaPlayerCardBaseConfigStruct,
   object({
     type: exactMatch(BoldCardType.MEDIA_PLAYER),
-    picture_position: enums(Object.values(MediaPlayerCardPicturePosition)),
-    horizontal_alignment: enums(
+    picture_position: optional(
+      enums(Object.values(MediaPlayerCardPicturePosition)),
+    ),
+    background_picture: optional(
+      enums(Object.values(MediaPlayerCardBackgroundPictureStyle)),
+    ),
+    content_horizontal_alignment: enums(
       Object.values(MediaPlayerCardHorizontalAlignment),
     ),
-    vertical_alignment: enums(Object.values(MediaPlayerCardVerticalAlignment)),
+    content_vertical_alignment: enums(
+      Object.values(MediaPlayerCardVerticalAlignment),
+    ),
+    hide_content: optional(boolean()),
     feature_position: enums(Object.values(CardFeaturePosition)),
     show_title_bar: optional(boolean()),
-    hide_media_info: optional(boolean()),
     placeholder_when_off: optional(boolean()),
     features: featuresStruct,
   }),

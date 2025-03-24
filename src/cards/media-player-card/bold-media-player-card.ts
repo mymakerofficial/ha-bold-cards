@@ -2,6 +2,7 @@ import { html, nothing } from "lit";
 import { customElement } from "lit/decorators";
 import {
   BoldMediaPlayerCardConfig,
+  MediaPlayerCardBackgroundPictureStyle,
   MediaPlayerCardColorMode,
   MediaPlayerCardHorizontalAlignment,
   MediaPlayerCardPicturePosition,
@@ -63,12 +64,13 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
     return {
       type: this.cardType,
       entity: entity?.entity_id ?? "",
-      picture_position: MediaPlayerCardPicturePosition.BACKGROUND,
-      horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
-      vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
+      picture_position: MediaPlayerCardPicturePosition.HIDE,
+      background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
+      content_horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
+      content_vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
-      hide_media_info: false,
+      hide_content: false,
       placeholder_when_off: true,
       ...presets[0].config,
     };
@@ -156,11 +158,11 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
   }
 
   private get _horizontalAlign() {
-    return this._config?.horizontal_alignment;
+    return this._config?.content_horizontal_alignment;
   }
 
   private get _verticalAlign() {
-    return this._config?.vertical_alignment;
+    return this._config?.content_vertical_alignment;
   }
 
   protected render() {
@@ -181,11 +183,10 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
     const mediaDescription = this._mediaDescription;
 
     const renderBackgroundImage =
-      this._config?.picture_position ===
-      MediaPlayerCardPicturePosition.BACKGROUND;
+      this._config?.background_picture ===
+      MediaPlayerCardBackgroundPictureStyle.COVER;
 
     const renderHeroImage =
-      !renderBackgroundImage &&
       this._config?.picture_position !== MediaPlayerCardPicturePosition.HIDE &&
       this._hasLoadedImage;
 
@@ -264,7 +265,7 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
                   <div class="media-info-container">
                     <div
                       class="media-info ${classMap({
-                        "visually-hidden": !!this._config.hide_media_info,
+                        "visually-hidden": !!this._config.hide_content,
                       })}"
                       id="info"
                       data-horizontal-align=${horizontalAlign}

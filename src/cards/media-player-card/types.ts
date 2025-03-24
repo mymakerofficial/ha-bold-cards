@@ -13,7 +13,6 @@ export type MediaPlayerCardColorMode =
   (typeof MediaPlayerCardColorMode)[keyof typeof MediaPlayerCardColorMode];
 
 export const MediaPlayerCardPicturePosition = {
-  BACKGROUND: "background",
   INLINE_LEFT: "inline_left",
   INLINE_RIGHT: "inline_right",
   TOP_LEFT: "top_left",
@@ -23,6 +22,13 @@ export const MediaPlayerCardPicturePosition = {
 } as const;
 export type MediaPlayerCardPicturePosition =
   (typeof MediaPlayerCardPicturePosition)[keyof typeof MediaPlayerCardPicturePosition];
+
+export const MediaPlayerCardBackgroundPictureStyle = {
+  HIDE: "hide",
+  COVER: "cover",
+} as const;
+export type MediaPlayerCardBackgroundPictureStyle =
+  (typeof MediaPlayerCardBackgroundPictureStyle)[keyof typeof MediaPlayerCardBackgroundPictureStyle];
 
 export const MediaPlayerCardHorizontalAlignment = {
   LEFT: "left",
@@ -50,11 +56,12 @@ export interface BoldMediaPlayerCardBaseConfig
 export interface BoldMediaPlayerCardConfig
   extends BoldMediaPlayerCardBaseConfig {
   type: BoldCardTypes["MEDIA_PLAYER"];
-  picture_position: MediaPlayerCardPicturePosition;
-  horizontal_alignment: MediaPlayerCardHorizontalAlignment;
-  vertical_alignment: MediaPlayerCardVerticalAlignment;
+  picture_position?: MediaPlayerCardPicturePosition;
+  background_picture?: MediaPlayerCardBackgroundPictureStyle;
+  content_horizontal_alignment: MediaPlayerCardHorizontalAlignment;
+  content_vertical_alignment: MediaPlayerCardVerticalAlignment;
+  hide_content?: boolean;
   feature_position: CardFeaturePosition;
   show_title_bar?: boolean;
-  hide_media_info?: boolean;
   placeholder_when_off?: boolean;
 }
