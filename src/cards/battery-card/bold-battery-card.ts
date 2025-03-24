@@ -55,15 +55,13 @@ export class BoldBatteryCard extends BoldLovelaceCard<BatteryCardConfig> {
       // filter out unavailable entities
       .filter((stateObj) => stateObj.state !== EntityState.UNAVAILABLE)
       .map((stateObj) => {
-        const entity = this.hass!.entities[stateObj.entity_id];
-        if (!entity || !entity.device_id) return stateObj;
-        const device = this.hass!.devices[entity.device_id];
+        const device = this.getDeviceByEntityId(stateObj.entity_id);
         if (!device) return stateObj;
         return {
           ...stateObj,
           attributes: {
             ...stateObj.attributes,
-            friendly_name: device.name,
+            friendly_name: device.name_by_user ?? device.name,
           },
         };
       })

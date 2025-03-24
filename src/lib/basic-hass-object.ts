@@ -9,6 +9,7 @@ import {
   subscribeToRenderTemplate,
 } from "./templates/helpers";
 import {
+  getDeviceByDeviceId,
   getDeviceByEntityId,
   getEntityByEntityId,
   getStateObj,
@@ -36,6 +37,10 @@ export function BasicHassObjectMixin<TBase extends HassObjectConstructor>(
 
     protected getEntityByEntityId(entityId?: string) {
       return getEntityByEntityId(entityId, this.hass);
+    }
+
+    protected getDeviceByDeviceId(deviceId?: string) {
+      return getDeviceByDeviceId(deviceId, this.hass);
     }
 
     protected getDeviceByEntityId(entityId?: string) {

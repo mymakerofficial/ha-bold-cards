@@ -14,10 +14,17 @@ export function getEntityByEntityId(entityId?: string, hass?: HomeAssistant) {
   return hass?.entities[entityId];
 }
 
+export function getDeviceByDeviceId(deviceId?: string, hass?: HomeAssistant) {
+  if (!deviceId) {
+    return undefined;
+  }
+  return hass?.devices[deviceId];
+}
+
 export function getDeviceByEntityId(entityId?: string, hass?: HomeAssistant) {
   const entity = getEntityByEntityId(entityId, hass);
   if (!entity || !entity.device_id) {
     return undefined;
   }
-  return hass?.devices[entity.device_id];
+  return getDeviceByDeviceId(entity.device_id, hass);
 }
