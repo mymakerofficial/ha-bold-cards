@@ -13,4 +13,8 @@ export interface WeatherCardConfig extends LovelaceCardConfigWithEntity {
   type: BoldCardTypes["WEATHER"];
   temperature_entity?: string;
   shape?: WeatherCardShape;
+  temperature?: string;
+  temperature_template?: string;
+  icon?: string;
+  icon_template?: string;
 }

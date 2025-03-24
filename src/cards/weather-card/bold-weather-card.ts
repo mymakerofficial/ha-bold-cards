@@ -4,7 +4,7 @@ import {
   LovelaceGridOptions,
 } from "../../types/ha/lovelace";
 import { BoldCardType } from "../../lib/cards/types";
-import { customElement } from "lit/decorators";
+import { customElement, state } from "lit/decorators";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { BoldCardWithEntity } from "../base";
 import { WeatherCardConfig, WeatherCardShape } from "./types";
@@ -16,6 +16,8 @@ import {
 } from "../../lib/weather/helpers";
 import { HassEntity } from "home-assistant-js-websocket";
 import { fireEvent } from "custom-card-helpers";
+import { TemplatedConfigRenderer } from "../../lib/templates/templated-config-renderer";
+import { PropertyValues } from "@lit/reactive-element";
 
 const PILL_MASK_IMAGE = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`
       <svg width="100%" height="100%" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -40,6 +42,10 @@ export class BoldWeatherCard extends BoldCardWithEntity<
   WeatherCardConfig,
   WeatherEntity
 > {
+  @state() protected _renderedConfig?: WeatherCardConfig;
+
+  protected _configRenderer?: TemplatedConfigRenderer<WeatherCardConfig>;
+
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("../../editors/cards/weather-card/bold-weather-card-editor");
     return document.createElement(
@@ -58,6 +64,71 @@ export class BoldWeatherCard extends BoldCardWithEntity<
       entity: entity?.entity_id ?? "",
       shape: WeatherCardShape.PILL,
     };
+  }
+
+  protected _getWeatherIcon() {
+    const stateObj = this._stateObj;
+
+    if (!stateObj) {
+      return "mdi:help-circle";
+    }
+
+    const time = new Date(stateObj.last_changed).getHours();
+    const isNight = time < 6 || time > 18;
+    return getWeatherIcon(stateObj.state, isNight);
+  }
+
+  protected _getTemperature() {
+    return Number(
+      this._temperatureEntityStateObj?.state ??
+        this._stateObj?.attributes.temperature ??
+        0,
+    );
+  }
+
+  protected _getTemplateVariables() {
+    return {
+      entity: this._config?.entity,
+      temperature_entity: this._config?.temperature_entity,
+      temperature: this._getTemperature(),
+      icon: this._getWeatherIcon(),
+    };
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+
+    this._configRenderer = new TemplatedConfigRenderer(
+      this.hass,
+      [
+        {
+          templateKey: "temperature_template",
+          resultKey: "temperature",
+        },
+        {
+          templateKey: "icon_template",
+          resultKey: "icon",
+        },
+      ],
+      () => this._getTemplateVariables(),
+    );
+
+    this._configRenderer.subscribe((value) => {
+      this._renderedConfig = value;
+    });
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._configRenderer?.destroy();
+  }
+
+  public willUpdate(changedProps: PropertyValues) {
+    super.willUpdate(changedProps);
+
+    if (changedProps.has("_config") && this._configRenderer) {
+      this._configRenderer.setValue(this._config);
+    }
   }
 
   public getCardSize() {
@@ -84,30 +155,25 @@ export class BoldWeatherCard extends BoldCardWithEntity<
   protected render() {
     const stateObj = this._stateObj;
 
-    if (!this._config || !stateObj) {
+    if (!this._renderedConfig || !stateObj) {
       return nothing;
     }
 
-    const temperatureStateObj = this._temperatureEntityStateObj;
-    const temperature = Math.round(
-      Number(
-        temperatureStateObj?.state ?? stateObj.attributes.temperature ?? 0,
-      ),
-    );
-
-    const time = new Date(stateObj.last_changed).getHours();
-    const isNight = time < 6 || time > 18;
-    const icon = getWeatherIcon(stateObj.state, isNight);
+    const temperature =
+      this._renderedConfig.temperature ||
+      `${Math.round(this._getTemperature())}˚`;
 
     const labelSvg = svg`
       <svg width="100%" height="100%" viewBox="0 0 200 200">
-        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">${temperature}˚</text>
+        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">${temperature}</text>
       </svg>
     `;
 
+    const icon = this._renderedConfig.icon || this._getWeatherIcon();
+
     return html` <div
       class="container"
-      data-shape=${this._config.shape ?? WeatherCardShape.RECTANGLE}
+      data-shape=${this._renderedConfig.shape ?? WeatherCardShape.RECTANGLE}
     >
       <div class="content">
         <button

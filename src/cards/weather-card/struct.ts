@@ -8,5 +8,9 @@ export const weatherCardConfigStruct = assign(
     entity: optional(string()),
     temperature_entity: optional(string()),
     shape: optional(enums(Object.values(WeatherCardShape))),
+    temperature: optional(string()),
+    temperature_template: optional(string()),
+    icon: optional(string()),
+    icon_template: optional(string()),
   }),
 );
