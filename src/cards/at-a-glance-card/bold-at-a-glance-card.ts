@@ -9,6 +9,7 @@ import { TemplatedConfigListRenderer } from "../../lib/templates/templated-confi
 import {
   ConcreteGlancePage,
   GlancePageConfig,
+  GlancePageType,
 } from "../../lib/at-a-glance/types";
 import { PropertyValues } from "@lit/reactive-element";
 import { styleMap } from "lit-html/directives/style-map";
@@ -58,7 +59,12 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
     this.pagesRenderer = this.getGlancePagesRenderer();
 
     this.pagesRenderer.subscribe((list) => {
-      this._pages = list ?? [];
+      this._pages = list.filter((it) => {
+        if (it.type !== GlancePageType.CUSTOM) {
+          return true;
+        }
+        return it.visibility;
+      });
     });
   }
 

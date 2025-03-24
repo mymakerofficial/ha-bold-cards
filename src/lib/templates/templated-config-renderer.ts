@@ -3,23 +3,33 @@ import { isTemplateError } from "./helpers";
 import { isDefined } from "../helpers";
 import { BasicHassObject } from "../basic-hass-object";
 
+type CombinedResult<
+  TObj extends object,
+  TResObj extends object = { [key: string]: unknown },
+> = TObj & { [key: string]: unknown } & Partial<TResObj>;
+
 export interface TemplatedConfigRendererKey<
   TObj extends object,
   TResObj extends object = { [key: string]: unknown },
 > {
   templateKey: keyof TObj;
   resultKey: keyof TResObj;
-  transform?: (result: string) => unknown;
+  transform?: (result: string) => TResObj[keyof TResObj];
 }
+
+type TransformFunc<
+  TObj extends object,
+  TResObj extends object = { [key: string]: unknown },
+> = (value: CombinedResult<TObj, TResObj>) => TResObj;
 
 export class TemplatedConfigRenderer<
   TObj extends object,
   TResObj extends object = { [key: string]: unknown },
 > extends BasicHassObject {
-  protected _value?: TObj & TResObj;
+  protected _value?: CombinedResult<TObj, TResObj>;
   protected _keyMap: TemplatedConfigRendererKey<TObj, TResObj>[] = [];
   protected _getVariables: () => Record<string, unknown>;
-  protected _transform: (value: TObj & TResObj) => TResObj;
+  protected _transform: TransformFunc<TObj, TResObj>;
 
   private _unsubFuncs: Array<() => void> = [];
   private _listeners: Array<(value?: TResObj) => void> = [];
@@ -27,8 +37,8 @@ export class TemplatedConfigRenderer<
   constructor(
     hass: HomeAssistant | undefined,
     keyMap: TemplatedConfigRendererKey<TObj, TResObj>[],
+    transform: TransformFunc<TObj, TResObj>,
     getVariables?: () => Record<string, unknown>,
-    transform?: (value: TObj & TResObj) => TResObj,
   ) {
     super(hass);
     this._keyMap = keyMap ?? [];
@@ -37,7 +47,7 @@ export class TemplatedConfigRenderer<
       (() => ({
         user: this.hass?.user?.name,
       }));
-    this._transform = transform ?? ((value) => value);
+    this._transform = transform;
   }
 
   public get value(): TResObj | undefined {
@@ -59,7 +69,7 @@ export class TemplatedConfigRenderer<
   public setValue(value?: TObj): void {
     this._unsubscribeRenderTemplates();
 
-    this._value = value as TObj & TResObj;
+    this._value = value as CombinedResult<TObj, TResObj>;
 
     if (!value) {
       return;
@@ -119,8 +129,8 @@ export class TemplatedConfigListRenderer<
   protected _getKeyMap: (
     value: TObj,
   ) => TemplatedConfigRendererKey<TObj, TResObj>[] | undefined = () => [];
+  protected _transform: TransformFunc<TObj, TResObj>;
   protected _getVariables?: () => Record<string, unknown>;
-  protected _transform?: (value: TObj & TResObj) => TResObj;
 
   private _renderers: TemplatedConfigRenderer<TObj, TResObj>[] = [];
   private _listeners: Array<(value: TResObj[]) => void> = [];
@@ -130,13 +140,13 @@ export class TemplatedConfigListRenderer<
     getKeyMap: (
       value: TObj,
     ) => TemplatedConfigRendererKey<TObj, TResObj>[] | undefined,
+    transform: TransformFunc<TObj, TResObj>,
     getVariables?: () => Record<string, unknown>,
-    transform?: (value: TObj & TResObj) => TResObj,
   ) {
     super(hass);
     this._getKeyMap = getKeyMap;
-    this._getVariables = getVariables;
     this._transform = transform;
+    this._getVariables = getVariables;
   }
 
   public get list(): TResObj[] {
@@ -159,8 +169,8 @@ export class TemplatedConfigListRenderer<
       const renderer = new TemplatedConfigRenderer<TObj, TResObj>(
         this.hass,
         this._getKeyMap(value) ?? [],
-        this._getVariables,
         this._transform,
+        this._getVariables,
       );
       renderer.setValue(value);
       renderer.subscribe(() => this._notify());

@@ -82,3 +82,14 @@ export function resolveGetterOrMap<
     isFunction(getterOrMap) ? getterOrMap(value) : getterOrMap[value]
   ) as R;
 }
+
+export function parseYamlBoolean(value?: string): boolean {
+  return (
+    value === "true" ||
+    value === "True" ||
+    value === "TRUE" ||
+    value === "on" ||
+    value === "On" ||
+    value === "ON"
+  );
+}

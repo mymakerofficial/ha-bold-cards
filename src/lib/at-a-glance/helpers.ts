@@ -10,6 +10,7 @@ import {
   GlancePageType,
 } from "./types";
 import { HomeAssistant } from "../../types/ha/lovelace";
+import { parseYamlBoolean } from "../helpers";
 
 export function getGlancePagesRenderer(
   hass?: HomeAssistant,
@@ -25,8 +26,8 @@ export function getGlancePagesRenderer(
           },
           {
             templateKey: "visibility_template",
-            resultKey: "visible",
-            transform: (result) => Boolean(result) || result === "on",
+            resultKey: "visibility",
+            transform: parseYamlBoolean,
           },
         ] as unknown as TemplatedConfigRendererKey<
           GlancePageConfig,
@@ -35,17 +36,22 @@ export function getGlancePagesRenderer(
       }
       return [];
     },
-    undefined,
     (value) => {
       if (value.type === GlancePageType.CUSTOM) {
         return {
           type: value.type,
-          title: value.title,
-          visible: value.visible,
-          items: value.items,
+          title: value.title ?? "",
+          visibility: value.visibility ?? true,
+          items: value.items ?? [],
         };
       }
-      return value;
+      if (value.type === GlancePageType.WEATHER) {
+        return {
+          type: value.type,
+          entity: value.entity ?? "",
+        };
+      }
+      throw new Error("Unsupported glance page type");
     },
   );
 }
@@ -75,7 +81,6 @@ export function getCustomGlanceItemsRenderer(
         CustomGlanceItemConfig,
         ConcreteCustomGlanceItem
       >[],
-    undefined,
     (value) => ({
       icon: value.icon,
       content: value.content,
