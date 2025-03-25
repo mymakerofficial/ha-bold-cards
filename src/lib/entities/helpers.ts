@@ -1,10 +1,14 @@
 import { HomeAssistant } from "../../types/ha/lovelace";
+import { HassEntity } from "home-assistant-js-websocket";
 
-export function getStateObj(entityId?: string, hass?: HomeAssistant) {
+export function getStateObj<T extends HassEntity = HassEntity>(
+  entityId?: string,
+  hass?: HomeAssistant,
+) {
   if (!entityId) {
     return undefined;
   }
-  return hass?.states[entityId];
+  return hass?.states[entityId] as T;
 }
 
 export function getEntityByEntityId(entityId?: string, hass?: HomeAssistant) {

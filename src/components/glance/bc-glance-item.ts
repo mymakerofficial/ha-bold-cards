@@ -15,6 +15,13 @@ export class BcGlanceItem extends BoldHassElement {
       ></bc-custom-glance-item>`;
     }
 
+    if (this.config?.type === GlanceItemType.WEATHER) {
+      return html`<bc-weather-glance-item
+        .hass=${this.hass}
+        .config=${this.config}
+      ></bc-weather-glance-item>`;
+    }
+
     return nothing;
   }
 }

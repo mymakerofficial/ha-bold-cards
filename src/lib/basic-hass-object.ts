@@ -19,6 +19,7 @@ import { dedupeMediaPlayerEntities } from "./media-player/helpers";
 import { browseMediaPlayer } from "./media-player/media-browser";
 import { HomeAssistant } from "../types/ha/lovelace";
 import { getStubWeatherEntity } from "./weather/helpers";
+import { HassEntity } from "home-assistant-js-websocket";
 
 // hass object is split into two files to avoid circular dependencies
 //  any class that extends the hass object and is also used in the hass object should only import the basic-hass-object.ts file
@@ -31,8 +32,10 @@ export function BasicHassObjectMixin<TBase extends HassObjectConstructor>(
   return class extends Base {
     public hass?: HomeAssistant;
 
-    protected getStateObj(entityId?: string) {
-      return getStateObj(entityId, this.hass);
+    protected getStateObj<T extends HassEntity = HassEntity>(
+      entityId?: string,
+    ) {
+      return getStateObj<T>(entityId, this.hass);
     }
 
     protected getEntityByEntityId(entityId?: string) {
