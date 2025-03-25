@@ -85,6 +85,7 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
           "--ha-card-border-radius": 0,
         })}
         .length=${this._pages.length}
+        .getKey=${(index: number) => this._pages[index].type + index}
         .getElement=${(index: number) => html`
           <bc-glance-page
             .config=${this._pages[index]}
