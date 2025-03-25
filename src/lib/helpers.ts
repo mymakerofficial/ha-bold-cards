@@ -38,6 +38,32 @@ export function isFunction(value: unknown): value is Function {
   return typeof value === "function";
 }
 
+export function isString(value: unknown): value is string {
+  return typeof value === "string";
+}
+
+export function isArray<T>(value: unknown): value is T[] {
+  return Array.isArray(value);
+}
+
+export function isObject(value: unknown): value is object {
+  return typeof value === "object" && value !== null;
+}
+
+export function isEmpty<T extends string | object | any[]>(
+  value: T,
+): value is never {
+  if (isString(value) || isArray(value)) {
+    return value.length === 0;
+  }
+
+  if (isObject(value)) {
+    return Object.keys(value).length === 0;
+  }
+
+  return false;
+}
+
 export function resolve<T>(maybeFn: MaybeFunction<T>): T {
   return isFunction(maybeFn) ? maybeFn() : maybeFn;
 }

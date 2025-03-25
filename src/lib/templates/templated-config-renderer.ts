@@ -18,9 +18,19 @@ export interface TemplatedConfigRendererKey<TObj extends object> {
   transform?: (result: string) => TObj[keyof TObj];
 }
 
-export class TemplatedConfigRenderer<
-  TObj extends object,
-> extends BasicHassObject {
+export interface ConfigRenderer<TObj extends object> {
+  get value(): Optional<TObj>;
+  get state(): Map<keyof TObj, TemplateRendererState>;
+  setValue(value: Optional<TObj>): void;
+  subscribe(listener: (value: Optional<TObj>) => void): void;
+  unsubscribe(listener: (value: Optional<TObj>) => void): void;
+  destroy(): void;
+}
+
+export class TemplatedConfigRenderer<TObj extends object>
+  extends BasicHassObject
+  implements ConfigRenderer<TObj>
+{
   protected _value?: TObj;
   protected _keyMap: TemplatedConfigRendererKey<TObj>[] = [];
   protected _getVariables: () => Record<string, unknown>;
@@ -109,7 +119,7 @@ export class TemplatedConfigRenderer<
     this._listeners.push(listener);
   }
 
-  public unsubscribe(listener: () => void): void {
+  public unsubscribe(listener: (value?: TObj) => void): void {
     const index = this._listeners.indexOf(listener);
     if (index !== -1) {
       this._listeners.splice(index, 1);
@@ -124,19 +134,97 @@ export class TemplatedConfigRenderer<
   }
 }
 
+export class TemplatedConfigDynamicRenderer<TObj extends object>
+  extends BasicHassObject
+  implements ConfigRenderer<TObj>
+{
+  protected _getRenderer: (value: TObj) => Optional<ConfigRenderer<TObj>>;
+  protected _dependencies: string[] = [];
+
+  private _renderer: Optional<ConfigRenderer<TObj>> = undefined;
+  private _listeners: Array<(value: Optional<TObj>) => void> = [];
+
+  constructor(
+    hass: HomeAssistant | undefined,
+    getRenderer: (value: TObj) => Optional<ConfigRenderer<TObj>>,
+    deps?: string[],
+  ) {
+    super(hass);
+    this._getRenderer = getRenderer;
+    this._dependencies = deps ?? [];
+  }
+
+  public get value(): Optional<TObj> {
+    return this._renderer?.value;
+  }
+
+  public get state(): Map<keyof TObj, TemplateRendererState> {
+    return this._renderer?.state ?? new Map();
+  }
+
+  protected _notify() {
+    this._listeners.forEach((listener) => listener(this.value));
+  }
+
+  // returns true if any of the dependencies changed
+  protected _compareDeps(value: TObj): boolean {
+    return this._dependencies.some((dep) => {
+      return value[dep] !== this.value?.[dep];
+    });
+  }
+
+  public setValue(value: Optional<TObj>): void {
+    if (isDefined(value) && !this._compareDeps(value)) {
+      return;
+    }
+
+    this.destroy();
+
+    if (isUndefined(value)) {
+      return;
+    }
+
+    this._renderer = this._getRenderer(value);
+
+    if (isUndefined(this._renderer)) {
+      return;
+    }
+
+    this._renderer.setValue(value);
+    this._renderer.subscribe(() => this._notify());
+  }
+
+  public subscribe(listener: (value: Optional<TObj>) => void): void {
+    this._listeners.push(listener);
+  }
+
+  public unsubscribe(listener: (value: Optional<TObj>) => void): void {
+    const index = this._listeners.indexOf(listener);
+    if (index !== -1) {
+      this._listeners.splice(index, 1);
+    }
+    if (this._listeners.length === 0) {
+      this.destroy();
+    }
+  }
+
+  public destroy() {
+    this._renderer?.destroy();
+    this._renderer = undefined;
+  }
+}
+
 export class TemplatedConfigListRenderer<
   TObj extends object,
 > extends BasicHassObject {
-  protected _getRenderer: (
-    value: TObj,
-  ) => Optional<TemplatedConfigRenderer<TObj>>;
+  protected _getRenderer: (value: TObj) => Optional<ConfigRenderer<TObj>>;
 
-  private _renderers: TemplatedConfigRenderer<TObj>[] = [];
+  private _renderers: ConfigRenderer<TObj>[] = [];
   private _listeners: Array<(value: TObj[]) => void> = [];
 
   constructor(
     hass: HomeAssistant | undefined,
-    getRenderer: (value: TObj) => Optional<TemplatedConfigRenderer<TObj>>,
+    getRenderer: (value: TObj) => Optional<ConfigRenderer<TObj>>,
   ) {
     super(hass);
     this._getRenderer = getRenderer;

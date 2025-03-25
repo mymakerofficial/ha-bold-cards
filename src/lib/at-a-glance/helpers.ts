@@ -1,4 +1,5 @@
 import {
+  TemplatedConfigDynamicRenderer,
   TemplatedConfigListRenderer,
   TemplatedConfigRenderer,
   TemplatedConfigRendererKey,
@@ -43,30 +44,37 @@ export function getDateTimeGlancePageRenderer(hass?: HomeAssistant) {
 
 export function getGlancePageRenderer(
   hass: HomeAssistant | undefined,
-  type: GlancePageType,
   partial: boolean = false,
 ) {
-  switch (type) {
-    case GlancePageType.CUSTOM:
-      return getCustomGlancePageRenderer(
-        hass,
-        partial,
-      ) as TemplatedConfigRenderer<GlancePageConfig>;
-    case GlancePageType.DATE_TIME:
-      return getDateTimeGlancePageRenderer(
-        hass,
-      ) as TemplatedConfigRenderer<GlancePageConfig>;
-    default:
-      throw new Error(`Unsupported glance page type: "${type ?? "undefined"}"`);
-  }
+  return new TemplatedConfigDynamicRenderer<GlancePageConfig>(
+    hass,
+    (value) => {
+      switch (value.type) {
+        case GlancePageType.CUSTOM:
+          return getCustomGlancePageRenderer(
+            hass,
+            partial,
+          ) as TemplatedConfigRenderer<GlancePageConfig>;
+        case GlancePageType.DATE_TIME:
+          return getDateTimeGlancePageRenderer(
+            hass,
+          ) as TemplatedConfigRenderer<GlancePageConfig>;
+        default:
+          throw new Error(
+            `Unsupported glance page type: "${(value as any).type ?? "undefined"}"`,
+          );
+      }
+    },
+    ["type"],
+  );
 }
 
 export function getGlancePagesRenderer(
   hass?: HomeAssistant,
   partial: boolean = false,
 ) {
-  return new TemplatedConfigListRenderer<GlancePageConfig>(hass, (value) => {
-    return getGlancePageRenderer(hass, value.type, partial);
+  return new TemplatedConfigListRenderer<GlancePageConfig>(hass, () => {
+    return getGlancePageRenderer(hass, partial);
   });
 }
 
@@ -122,30 +130,37 @@ export function getWeatherGlanceItemRenderer(
 
 export function getGlanceItemRenderer(
   hass: HomeAssistant | undefined,
-  type: GlanceItemType,
   partial: boolean = false,
 ) {
-  switch (type) {
-    case GlanceItemType.CUSTOM:
-      return getCustomGlanceItemRenderer(
-        hass,
-        partial,
-      ) as TemplatedConfigRenderer<GlanceItemConfig>;
-    case GlanceItemType.WEATHER:
-      return getWeatherGlanceItemRenderer(
-        hass,
-        partial,
-      ) as TemplatedConfigRenderer<GlanceItemConfig>;
-    default:
-      throw new Error(`Unsupported glance item type: "${type ?? "undefined"}"`);
-  }
+  return new TemplatedConfigDynamicRenderer<GlanceItemConfig>(
+    hass,
+    (value) => {
+      switch (value.type) {
+        case GlanceItemType.CUSTOM:
+          return getCustomGlanceItemRenderer(
+            hass,
+            partial,
+          ) as TemplatedConfigRenderer<GlanceItemConfig>;
+        case GlanceItemType.WEATHER:
+          return getWeatherGlanceItemRenderer(
+            hass,
+            partial,
+          ) as TemplatedConfigRenderer<GlanceItemConfig>;
+        default:
+          throw new Error(
+            `Unsupported glance item type: "${(value as any).type ?? "undefined"}"`,
+          );
+      }
+    },
+    ["type"],
+  );
 }
 
 export function getGlanceItemsRenderer(
   hass?: HomeAssistant,
   partial: boolean = false,
 ) {
-  return new TemplatedConfigListRenderer<GlanceItemConfig>(hass, (value) => {
-    return getGlanceItemRenderer(hass, value.type, partial);
+  return new TemplatedConfigListRenderer<GlanceItemConfig>(hass, () => {
+    return getGlanceItemRenderer(hass, partial);
   });
 }
