@@ -1,6 +1,7 @@
 import {
   HomeAssistant as HomeAssistantBase,
   LovelaceConfig,
+  Theme,
 } from "custom-card-helpers";
 import { LovelaceCardFeatureConfig } from "./feature";
 import { CardInternals, FeatureInternals } from "../../lib/internals/types";
@@ -57,13 +58,26 @@ export interface ThemeSettings {
   accentColor?: string;
 }
 
+export interface Themes {
+  default_theme: string;
+  default_dark_theme: string | null;
+  themes: Record<string, Theme>;
+  // Currently effective dark mode. Will never be undefined. If user selected "auto"
+  // in theme picker, this property will still contain either true or false based on
+  // what has been determined via system preferences and support from the selected theme.
+  darkMode: boolean;
+  // Currently globally active theme name
+  theme: string;
+}
+
 export interface HomeAssistant
-  extends Omit<HomeAssistantBase, "selectedTheme" | "connection"> {
+  extends Omit<HomeAssistantBase, "selectedTheme" | "connection" | "themes"> {
   entities: Record<string, EntityRegistryDisplayEntry>;
   devices: Record<string, DeviceRegistryEntry>;
   hassUrl(path?): string;
   selectedTheme: ThemeSettings | null;
   connection: Connection;
+  themes: Themes;
 }
 
 export interface LovelaceCardConfig {

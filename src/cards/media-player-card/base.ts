@@ -115,9 +115,7 @@ export abstract class BoldMediaPlayerCardBase<
     }
 
     const swatches = await extractColors(this.hass!.hassUrl(this._imageUrl));
-    const darkMode =
-      this.hass?.selectedTheme?.dark ??
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const darkMode = this.isDarkMode();
 
     switch (this._config?.color_mode) {
       case MediaPlayerCardColorMode.AMBIENT:
