@@ -47,7 +47,6 @@ export abstract class BoldLovelaceCardEditorWithFeatures<
   protected constructor() {
     super();
     import("./features/bc-card-feature-editor");
-    import("./features/bc-card-control-features-editor");
   }
 
   protected _featureEditorTemplate() {
@@ -71,25 +70,6 @@ export abstract class BoldLovelaceCardEditorWithFeatures<
         </div>
       </ha-expansion-panel>
     `;
-  }
-
-  protected _controlsEditorTemplate() {
-    if (
-      !this._config ||
-      !this._config.features ||
-      !this._config.features.some(
-        (feature) => feature.type === "custom:bold-media-player-control-row",
-      )
-    ) {
-      return nothing;
-    }
-
-    return html`<bc-card-control-features-editor
-      .hass=${this.hass}
-      .stateObj=${this._stateObj}
-      .config=${this._config}
-      @value-changed=${this._handleFeaturesChanged}
-    ></bc-card-control-features-editor>`;
   }
 
   private _handleFeaturesChanged(

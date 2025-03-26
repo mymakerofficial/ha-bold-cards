@@ -188,7 +188,6 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
         .computeHelper=${this._computeHelperCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
-      ${this._controlsEditorTemplate()}
       <ha-expansion-panel outlined>
         <h3 slot="header">
           <ha-svg-icon .path=${mdiStar}></ha-svg-icon>
