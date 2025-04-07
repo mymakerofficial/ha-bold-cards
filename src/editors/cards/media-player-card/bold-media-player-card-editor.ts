@@ -1,24 +1,18 @@
 import { css, CSSResultGroup, html, nothing } from "lit";
 import { fireEvent } from "custom-card-helpers";
-import {
-  MediaPlayerCardHorizontalAlignment,
-  MediaPlayerCardColorMode,
-  MediaPlayerCardPicturePosition,
-  BoldMediaPlayerCardConfig,
-  MediaPlayerCardVerticalAlignment,
-  MediaPlayerCardBackgroundPictureStyle,
-} from "../../../cards/media-player-card/types";
+import { BoldMediaPlayerCardConfig } from "../../../cards/media-player-card/types";
 import { customElement } from "lit/decorators";
-import { mdiCursorMove, mdiPalette, mdiStar, mdiTextShort } from "@mdi/js";
+import { mdiCursorMove, mdiStar } from "@mdi/js";
 import { t } from "../../../localization/i18n";
-import { MediaButtonControlConfig } from "../../../lib/controls/types";
 import { editorBaseStyles } from "../../styles";
 import { BoldLovelaceCardEditorWithFeatures } from "../base";
 import { mediaPlayerCardConfigStruct } from "../../../cards/media-player-card/struct";
 import { MediaPlayerEntity } from "../../../types/ha/entity";
 import { presets } from "./constants";
-import { enumToOptions } from "../../helpers";
-import { CardFeaturePosition } from "../../../cards/types";
+import {
+  Position,
+  TopRowPositions,
+} from "../../../components/bc-layout-select";
 
 @customElement("bold-media-player-card-editor")
 export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeatures<
@@ -39,155 +33,201 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
       return nothing;
     }
 
-    const schema = [
-      ...(!this._internals
-        ? [
-            {
-              name: "entity",
-              selector: { entity: { domain: "media_player" } },
-            },
-          ]
-        : []),
-      {
-        name: "layout",
-        flatten: true,
-        type: "expandable",
-        iconPath: mdiCursorMove,
-        schema: [
-          {
-            name: "picture_position",
-            required: true,
-            selector: {
-              select: {
-                mode: "box",
-                options: enumToOptions(MediaPlayerCardPicturePosition, {
-                  labelScope: "common.media_player_card_picture_position",
-                }),
-              },
-            },
-          },
-          {
-            name: "background_picture",
-            required: true,
-            selector: {
-              select: {
-                mode: "box",
-                options: enumToOptions(MediaPlayerCardBackgroundPictureStyle, {
-                  labelScope:
-                    "common.media_player_card_background_picture_style",
-                }),
-              },
-            },
-          },
-          {
-            name: "content_horizontal_alignment",
-            required: true,
-            selector: {
-              select: {
-                mode: "box",
-                options: enumToOptions(MediaPlayerCardHorizontalAlignment, {
-                  labelScope: "common.media_player_card_horizontal_alignment",
-                }),
-              },
-            },
-          },
-          {
-            name: "content_vertical_alignment",
-            required: true,
-            selector: {
-              select: {
-                mode: "box",
-                options: enumToOptions(MediaPlayerCardVerticalAlignment, {
-                  labelScope: "common.media_player_card_vertical_alignment",
-                }),
-              },
-            },
-          },
-          {
-            name: "feature_position",
-            required: true,
-            selector: {
-              select: {
-                mode: "box",
-                options: enumToOptions(CardFeaturePosition, {
-                  labelScope: "common.card_feature_position",
-                  image: (value) => ({
-                    src: `/static/images/form/tile_features_position_${value}.svg`,
-                    src_dark: `/static/images/form/tile_features_position_${value}_dark.svg`,
-                    flip_rtl: true,
-                  }),
-                }),
-              },
-            },
-          },
-        ],
-      },
-      {
-        name: "appearance",
-        flatten: true,
-        type: "expandable",
-        iconPath: mdiPalette,
-        schema: [
-          {
-            name: "color_mode",
-            required: true,
-            selector: {
-              select: {
-                mode: "dropdown",
-                options: enumToOptions(MediaPlayerCardColorMode, {
-                  labelScope: "common.media_player_card_color_mode",
-                }),
-              },
-            },
-          },
-          {
-            name: "color",
-            required: true,
-            selector: {
-              ui_color: {
-                default_color: "primary",
-              },
-            },
-          },
-        ],
-      },
-      {
-        name: "content",
-        flatten: true,
-        type: "expandable",
-        iconPath: mdiTextShort,
-        schema: [
-          {
-            name: "show_title_bar",
-            selector: {
-              boolean: {},
-            },
-          },
-          {
-            name: "hide_content",
-            selector: {
-              boolean: {},
-            },
-          },
-          {
-            name: "placeholder_when_off",
-            selector: {
-              boolean: {},
-            },
-          },
-        ],
-      },
-    ];
+    // const schema = [
+    //   ...(!this._internals
+    //     ? [
+    //         {
+    //           name: "entity",
+    //           selector: { entity: { domain: "media_player" } },
+    //         },
+    //       ]
+    //     : []),
+    //   {
+    //     name: "layout",
+    //     flatten: true,
+    //     type: "expandable",
+    //     iconPath: mdiCursorMove,
+    //     schema: [
+    //       {
+    //         name: "picture_position",
+    //         required: true,
+    //         selector: {
+    //           select: {
+    //             mode: "box",
+    //             options: enumToOptions(MediaPlayerCardPicturePosition, {
+    //               labelScope: "common.media_player_card_picture_position",
+    //             }),
+    //           },
+    //         },
+    //       },
+    //       {
+    //         name: "background_picture",
+    //         required: true,
+    //         selector: {
+    //           select: {
+    //             mode: "box",
+    //             options: enumToOptions(MediaPlayerCardBackgroundPictureStyle, {
+    //               labelScope:
+    //                 "common.media_player_card_background_picture_style",
+    //             }),
+    //           },
+    //         },
+    //       },
+    //       {
+    //         name: "content_horizontal_alignment",
+    //         required: true,
+    //         selector: {
+    //           select: {
+    //             mode: "box",
+    //             options: enumToOptions(MediaPlayerCardHorizontalAlignment, {
+    //               labelScope: "common.media_player_card_horizontal_alignment",
+    //             }),
+    //           },
+    //         },
+    //       },
+    //       {
+    //         name: "content_vertical_alignment",
+    //         required: true,
+    //         selector: {
+    //           select: {
+    //             mode: "box",
+    //             options: enumToOptions(MediaPlayerCardVerticalAlignment, {
+    //               labelScope: "common.media_player_card_vertical_alignment",
+    //             }),
+    //           },
+    //         },
+    //       },
+    //       {
+    //         name: "feature_position",
+    //         required: true,
+    //         selector: {
+    //           select: {
+    //             mode: "box",
+    //             options: enumToOptions(CardFeaturePosition, {
+    //               labelScope: "common.card_feature_position",
+    //               image: (value) => ({
+    //                 src: `/static/images/form/tile_features_position_${value}.svg`,
+    //                 src_dark: `/static/images/form/tile_features_position_${value}_dark.svg`,
+    //                 flip_rtl: true,
+    //               }),
+    //             }),
+    //           },
+    //         },
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     name: "appearance",
+    //     flatten: true,
+    //     type: "expandable",
+    //     iconPath: mdiPalette,
+    //     schema: [
+    //       {
+    //         name: "color_mode",
+    //         required: true,
+    //         selector: {
+    //           select: {
+    //             mode: "dropdown",
+    //             options: enumToOptions(MediaPlayerCardColorMode, {
+    //               labelScope: "common.media_player_card_color_mode",
+    //             }),
+    //           },
+    //         },
+    //       },
+    //       {
+    //         name: "color",
+    //         required: true,
+    //         selector: {
+    //           ui_color: {
+    //             default_color: "primary",
+    //           },
+    //         },
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     name: "content",
+    //     flatten: true,
+    //     type: "expandable",
+    //     iconPath: mdiTextShort,
+    //     schema: [
+    //       {
+    //         name: "show_title_bar",
+    //         selector: {
+    //           boolean: {},
+    //         },
+    //       },
+    //       {
+    //         name: "hide_content",
+    //         selector: {
+    //           boolean: {},
+    //         },
+    //       },
+    //       {
+    //         name: "placeholder_when_off",
+    //         selector: {
+    //           boolean: {},
+    //         },
+    //       },
+    //     ],
+    //   },
+    // ];
 
     return html`
-      <ha-form
+      <ha-selector
+        .selector=${{
+          entity: { domain: "media_player" },
+        }}
+        .label=${t("editor.card.media_player.label.entity")}
+        .value=${this._config?.entity}
+        @value-changed=${(ev) => this._handleValueChanged("entity", ev)}
         .hass=${this.hass}
-        .data=${this._config}
-        .schema=${schema}
-        .computeLabel=${this._computeLabelCallback}
-        .computeHelper=${this._computeHelperCallback}
-        @value-changed=${this._valueChanged}
-      ></ha-form>
+      ></ha-selector>
+      <ha-expansion-panel outlined>
+        <h3 slot="header">
+          <ha-svg-icon .path=${mdiCursorMove}></ha-svg-icon>
+          <span>${t("editor.card.media_player.label.layout")}</span>
+        </h3>
+        <div class="content flex-row">
+          <div class="grid-2">
+            <bc-layout-select
+              .label=${t("editor.card.media_player.label.picture_position")}
+              .value=${this._config.picture_position}
+              .positions=${[
+                ...TopRowPositions,
+                Position.MIDDLE_LEFT,
+                Position.MIDDLE_RIGHT,
+              ]}
+              @value-changed=${(ev) =>
+                this._handleValueChanged("picture_position", ev)}
+            ></bc-layout-select>
+            <ha-selector
+              .selector=${{
+                boolean: {},
+              }}
+              .label=${t("editor.card.media_player.label.hide_picture")}
+              .value=${this._config?.hide_picture ?? false}
+              @value-changed=${(ev) => this._handleValueChanged("hide_picture", ev)}
+              .hass=${this.hass}
+            ></ha-selector>
+            <bc-layout-select
+              .label=${t("editor.card.media_player.label.text_position")}
+              .value=${this._config.text_position}
+              @value-changed=${(ev) =>
+                this._handleValueChanged("text_position", ev)}
+              .hass=${this.hass}
+            ></bc-layout-select>
+            <ha-selector
+              .selector=${{
+                boolean: {},
+              }}
+              .label=${t("editor.card.media_player.label.hide_text")}
+              .value=${this._config?.hide_text ?? false}
+              @value-changed=${(ev) => this._handleValueChanged("hide_text", ev)}
+            ></ha-selector-boolean>
+          </div>
+        </div>
+      </ha-expansion-panel>
       <ha-expansion-panel outlined>
         <h3 slot="header">
           <ha-svg-icon .path=${mdiStar}></ha-svg-icon>
@@ -231,22 +271,6 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
     fireEvent(this, "config-changed", { config });
   }
 
-  private _handleControlsChanged(ev: CustomEvent): void {
-    ev.stopPropagation();
-    if (!this._config || !this.hass) {
-      return;
-    }
-
-    const newControls = ev.detail.value as MediaButtonControlConfig[];
-
-    const config: BoldMediaPlayerCardConfig = {
-      ...this._config,
-      controls: newControls,
-    };
-
-    fireEvent(this, "config-changed", { config });
-  }
-
   private _computeLabelCallback = ({ name }: { name: string }) => {
     return t(name, {
       scope: "editor.card.media_player.label",
@@ -267,6 +291,27 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
         display: flex;
         flex-direction: column;
         gap: 24px;
+      }
+
+      .grid-2 {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, min-content);
+        grid-template-areas: "a c" "b d";
+        gap: 12px 24px;
+      }
+
+      .grid-2 *:nth-child(1) {
+        grid-area: a;
+      }
+      .grid-2 *:nth-child(2) {
+        grid-area: b;
+      }
+      .grid-2 *:nth-child(3) {
+        grid-area: c;
+      }
+      .grid-2 *:nth-child(4) {
+        grid-area: d;
       }
     `,
   ];

@@ -1,6 +1,22 @@
 import { css } from "lit";
 
 export const editorBaseStyles = css`
+  :host {
+    --ha-card-border-radius: 6px;
+  }
+
+  .flex-col {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .flex-row {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+  }
+
   ha-expansion-panel {
     display: block;
     --expansion-panel-content-padding: 0;

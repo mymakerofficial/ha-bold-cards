@@ -47,7 +47,14 @@ export function isArray<T>(value: unknown): value is T[] {
 }
 
 export function isObject(value: unknown): value is object {
-  return typeof value === "object" && value !== null;
+  return (
+    typeof value === "object" &&
+    !isArray(value) &&
+    !isFunction(value) &&
+    !isString(value) &&
+    !isUndefined(value) &&
+    !isNull(value)
+  );
 }
 
 export function isEmpty<T extends string | object | any[]>(
@@ -104,9 +111,13 @@ export function resolveGetterOrMap<
   if (isUndefined(value) || isUndefined(getterOrMap)) {
     return defaultValue as D;
   }
-  return (
-    isFunction(getterOrMap) ? getterOrMap(value) : getterOrMap[value]
-  ) as R;
+  if (isObject(getterOrMap)) {
+    return (getterOrMap as any)[value] || defaultValue;
+  }
+  if (isFunction(getterOrMap)) {
+    return getterOrMap(value);
+  }
+  return getterOrMap;
 }
 
 export function parseYamlBoolean(value?: string): boolean {
@@ -118,4 +129,15 @@ export function parseYamlBoolean(value?: string): boolean {
     value === "On" ||
     value === "ON"
   );
+}
+
+export function doIfDefined<T, R, E = R>(
+  fn: (value: T) => R,
+  value: Optional<T>,
+  elseValue: E,
+): R | E {
+  if (isDefined(value)) {
+    return fn(value);
+  }
+  return elseValue;
 }

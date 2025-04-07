@@ -4,9 +4,6 @@ import {
   BoldMediaPlayerCardConfig,
   MediaPlayerCardBackgroundPictureStyle,
   MediaPlayerCardColorMode,
-  MediaPlayerCardHorizontalAlignment,
-  MediaPlayerCardPicturePosition,
-  MediaPlayerCardVerticalAlignment,
 } from "./types";
 import {
   HomeAssistant,
@@ -25,6 +22,12 @@ import { isMediaPlayerStateActive } from "../../helpers/states";
 import { FeatureInternals } from "../../lib/internals/types";
 import { BoldCardType } from "../../lib/cards/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
+import {
+  Position,
+  splitPosition,
+  VerticalPosition,
+} from "../../components/bc-layout-select";
+import { doIfDefined, pair } from "../../lib/helpers";
 
 function getFeatureInternals(
   context: GetFeatureInternalsContext<BoldMediaPlayerCardConfig>,
@@ -64,13 +67,13 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
     return {
       type: this.cardType,
       entity: entity?.entity_id ?? "",
-      picture_position: MediaPlayerCardPicturePosition.HIDE,
+      picture_position: Position.MIDDLE_LEFT,
+      hide_picture: true,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
-      content_horizontal_alignment: MediaPlayerCardHorizontalAlignment.LEFT,
-      content_vertical_alignment: MediaPlayerCardVerticalAlignment.BOTTOM,
+      text_position: Position.BOTTOM_LEFT,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
-      hide_content: false,
+      hide_text: false,
       placeholder_when_off: true,
       ...presets[0].config,
     };
@@ -118,9 +121,9 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
 
   private get _contentSize() {
     switch (this._config?.picture_position) {
-      case MediaPlayerCardPicturePosition.TOP_LEFT:
-      case MediaPlayerCardPicturePosition.TOP_CENTER:
-      case MediaPlayerCardPicturePosition.TOP_RIGHT:
+      case Position.TOP_LEFT:
+      case Position.TOP_CENTER:
+      case Position.TOP_RIGHT:
         return 4;
       default:
         return 2;
@@ -132,37 +135,31 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
   }
 
   private get _heroLayout() {
-    switch (this._config?.picture_position) {
-      case MediaPlayerCardPicturePosition.INLINE_LEFT:
-        return "left";
-      case MediaPlayerCardPicturePosition.INLINE_RIGHT:
-        return "right";
-      case MediaPlayerCardPicturePosition.TOP_LEFT:
-      case MediaPlayerCardPicturePosition.TOP_CENTER:
-      case MediaPlayerCardPicturePosition.TOP_RIGHT:
-        return "vertical";
-      default:
-        return "";
+    const [vertical, horizontal] = doIfDefined(
+      splitPosition,
+      this._config?.picture_position,
+      pair(undefined, undefined),
+    );
+
+    if (vertical === VerticalPosition.MIDDLE) {
+      return horizontal;
     }
+
+    return "vertical";
   }
 
   private get _imageContainerLayout() {
-    switch (this._config?.picture_position) {
-      case MediaPlayerCardPicturePosition.TOP_LEFT:
-        return "left";
-      case MediaPlayerCardPicturePosition.TOP_RIGHT:
-        return "right";
-      default:
-        return "center";
+    const [vertical, horizontal] = doIfDefined(
+      splitPosition,
+      this._config?.picture_position,
+      pair(undefined, undefined),
+    );
+
+    if (vertical === VerticalPosition.TOP) {
+      return horizontal;
     }
-  }
 
-  private get _horizontalAlign() {
-    return this._config?.content_horizontal_alignment;
-  }
-
-  private get _verticalAlign() {
-    return this._config?.content_vertical_alignment;
+    return "center";
   }
 
   protected render() {
@@ -186,17 +183,18 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
       this._config?.background_picture ===
       MediaPlayerCardBackgroundPictureStyle.COVER;
 
-    const renderHeroImage =
-      this._config?.picture_position !== MediaPlayerCardPicturePosition.HIDE &&
-      this._hasLoadedImage;
+    const renderHeroImage = !this._config?.hide_picture && this._hasLoadedImage;
 
     const inlineFeatures = this._getRenderingInlineFeatures();
     const bottomFeatures = this._getRenderingBottomFeatures();
 
     const heroLayout = this._heroLayout;
     const imageContainerLayout = this._imageContainerLayout;
-    const horizontalAlign = this._horizontalAlign;
-    const verticalAlign = this._verticalAlign;
+    const [verticalAlign, horizontalAlign] = doIfDefined(
+      splitPosition,
+      this._config?.text_position,
+      pair(undefined, undefined),
+    );
 
     const showNoMedia = this._config?.placeholder_when_off
       ? !isMediaPlayerStateActive(stateObj.state)
@@ -265,7 +263,7 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
                   <div class="media-info-container">
                     <div
                       class="media-info ${classMap({
-                        "visually-hidden": !!this._config.hide_content,
+                        "visually-hidden": !!this._config.hide_text,
                       })}"
                       id="info"
                       data-horizontal-align=${horizontalAlign}

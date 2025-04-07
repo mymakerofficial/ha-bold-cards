@@ -3,6 +3,7 @@ import "./components/bc-icon";
 import "./components/bc-contol-surface";
 import "./components/bc-carousel";
 import "./components/bc-cover-image";
+import "./components/bc-layout-select";
 import "./components/bc-large-select-menu";
 import "./components/bc-button";
 import "./components/bc-selector-select";

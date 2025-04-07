@@ -2,6 +2,7 @@ import { LovelaceCardConfigWithFeatures } from "../../types/card";
 import { CardFeaturePosition } from "../types";
 import { UniversalMediaPlayerEnhancements } from "../../lib/media-player/universal-media-player";
 import { BoldCardTypes } from "../../lib/cards/types";
+import { Position } from "../../components/bc-layout-select";
 
 export const MediaPlayerCardColorMode = {
   AMBIENT: "ambient",
@@ -56,11 +57,11 @@ export interface BoldMediaPlayerCardBaseConfig
 export interface BoldMediaPlayerCardConfig
   extends BoldMediaPlayerCardBaseConfig {
   type: BoldCardTypes["MEDIA_PLAYER"];
-  picture_position?: MediaPlayerCardPicturePosition;
+  picture_position?: Position;
+  hide_picture?: boolean;
   background_picture?: MediaPlayerCardBackgroundPictureStyle;
-  content_horizontal_alignment: MediaPlayerCardHorizontalAlignment;
-  content_vertical_alignment: MediaPlayerCardVerticalAlignment;
-  hide_content?: boolean;
+  text_position?: Position;
+  hide_text?: boolean;
   feature_position: CardFeaturePosition;
   show_title_bar?: boolean;
   placeholder_when_off?: boolean;

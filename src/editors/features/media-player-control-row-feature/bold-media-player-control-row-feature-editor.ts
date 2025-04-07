@@ -6,10 +6,7 @@ import { mediaPlayerControlRowFeatureStruct } from "../../../features/media-play
 import { fireEvent } from "custom-card-helpers";
 import { editorBaseStyles } from "../../styles";
 import { t } from "../../../localization/i18n";
-import {
-  ElementWhenUnavailable,
-  MediaButtonControlConfig,
-} from "../../../lib/controls/types";
+import { ElementWhenUnavailable } from "../../../lib/controls/types";
 import { enumToOptions } from "../../helpers";
 
 @customElement("bold-media-player-control-row-feature-editor")
@@ -51,17 +48,6 @@ export class BoldMediaPlayerControlRowFeatureEditor extends BoldLovelaceCardFeat
         ></bc-controls-editor>
       </div>
     `;
-  }
-
-  protected _handleValueChanged(
-    field: keyof MediaButtonControlConfig,
-    ev: CustomEvent,
-  ) {
-    ev.stopPropagation();
-
-    fireEvent(this, "config-changed", {
-      config: { ...this._config, [field]: ev.detail.value },
-    });
   }
 
   protected _handleControlsChanged(ev: CustomEvent) {

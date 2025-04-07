@@ -10,6 +10,10 @@ export interface SelectOption {
   description?: string;
   image?: string | SelectBoxOptionImage;
   disabled?: boolean;
+  // not supported by home assistant elements
+  icon?: string;
+  // not supported by home assistant elements
+  hideLabel?: boolean;
 }
 
 export interface SelectSelector {

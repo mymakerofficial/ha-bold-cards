@@ -20,4 +20,5 @@ export type MaybeFunction<T> = T | (() => T);
 
 export type GetterOrMap<T extends string | number | symbol, R> =
   | ((value: T) => R)
-  | Partial<{ [key in T]: R }>;
+  | Partial<{ [key in T]: R }>
+  | R;

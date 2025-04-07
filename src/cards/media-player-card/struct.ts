@@ -3,15 +3,13 @@ import { baseLovelaceCardConfig } from "../../helpers/ha/base-card-struct";
 import {
   MediaPlayerCardBackgroundPictureStyle,
   MediaPlayerCardColorMode,
-  MediaPlayerCardHorizontalAlignment,
-  MediaPlayerCardPicturePosition,
-  MediaPlayerCardVerticalAlignment,
 } from "./types";
 import { CardFeaturePosition } from "../types";
 import { featuresStruct } from "../../lib/features/structs";
 import { universalMediaPlayerEnhancementsStruct } from "../../lib/media-player/universal-media-player";
 import { exactMatch } from "../../lib/struct";
 import { BoldCardType } from "../../lib/cards/types";
+import { Position } from "../../components/bc-layout-select";
 
 export const mediaPlayerCardBaseConfigStruct = assign(
   baseLovelaceCardConfig,
@@ -30,19 +28,13 @@ export const mediaPlayerCardConfigStruct = assign(
   mediaPlayerCardBaseConfigStruct,
   object({
     type: exactMatch(BoldCardType.MEDIA_PLAYER),
-    picture_position: optional(
-      enums(Object.values(MediaPlayerCardPicturePosition)),
-    ),
+    picture_position: optional(enums(Object.values(Position))),
+    hide_picture: optional(boolean()),
     background_picture: optional(
       enums(Object.values(MediaPlayerCardBackgroundPictureStyle)),
     ),
-    content_horizontal_alignment: enums(
-      Object.values(MediaPlayerCardHorizontalAlignment),
-    ),
-    content_vertical_alignment: enums(
-      Object.values(MediaPlayerCardVerticalAlignment),
-    ),
-    hide_content: optional(boolean()),
+    text_position: optional(enums(Object.values(Position))),
+    hide_text: optional(boolean()),
     feature_position: enums(Object.values(CardFeaturePosition)),
     show_title_bar: optional(boolean()),
     placeholder_when_off: optional(boolean()),

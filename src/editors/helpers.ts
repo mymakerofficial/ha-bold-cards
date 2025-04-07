@@ -7,7 +7,9 @@ interface ToOptionsOptions<T extends string | number | symbol> {
   labelScope?: string;
   descriptionScope?: string;
   image?: GetterOrMap<T, string | SelectBoxOptionImage>;
+  icon?: GetterOrMap<T, string>;
   disabled?: GetterOrMap<T, boolean>;
+  hideLabel?: GetterOrMap<T, boolean>;
 }
 
 export function enumToOptions<T extends string | number | symbol>(
@@ -21,21 +23,28 @@ export function arrayToOptions<T extends string | number | symbol>(
   arr: T[],
   options?: ToOptionsOptions<T>,
 ): SelectOption[] {
-  return arr.map((item) => ({
-    value: item,
+  return arr.map((item) => valueToOption(item, options)) as SelectOption[];
+}
+
+export function valueToOption<T extends string | number | symbol>(
+  value: T,
+  options?: ToOptionsOptions<T>,
+): SelectOption {
+  return {
+    value,
     label: options?.labelScope
-      ? t(String(item), { scope: options?.labelScope })
-      : item,
+      ? t(String(value), { scope: options?.labelScope })
+      : value,
     description: options?.descriptionScope
-      ? t(String(item), { scope: options?.descriptionScope, defaultValue: "" })
+      ? t(String(value), { scope: options?.descriptionScope, defaultValue: "" })
       : undefined,
-    image: resolveGetterOrMap(item, options?.image),
-    disabled: resolveGetterOrMap(item, options?.disabled, false),
-  })) as SelectOption[];
+    image: resolveGetterOrMap(value, options?.image),
+    icon: resolveGetterOrMap(value, options?.icon),
+    disabled: resolveGetterOrMap(value, options?.disabled, false),
+    hideLabel: resolveGetterOrMap(value, options?.hideLabel, false),
+  } as SelectOption;
 }
 
 export function stopPropagation(ev: Event) {
-  ev.stopImmediatePropagation();
   ev.stopPropagation();
-  ev.preventDefault();
 }
