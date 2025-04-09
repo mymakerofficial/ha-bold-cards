@@ -9,7 +9,7 @@ import { featuresStruct } from "../../lib/features/structs";
 import { universalMediaPlayerEnhancementsStruct } from "../../lib/media-player/universal-media-player";
 import { exactMatch } from "../../lib/struct";
 import { BoldCardType } from "../../lib/cards/types";
-import { Position } from "../../lib/layout/position";
+import { Position, TopRowPositions } from "../../lib/layout/position";
 
 export const mediaPlayerCardBaseConfigStruct = assign(
   baseLovelaceCardConfig,
@@ -24,16 +24,24 @@ export const mediaPlayerCardBaseConfigStruct = assign(
   }),
 );
 
+export const mediaPlayerAllowedPicturePositions = [
+  ...TopRowPositions,
+  Position.MIDDLE_LEFT,
+  Position.MIDDLE_RIGHT,
+];
+
+export const mediaPlayerAllowedTextPositions = Object.values(Position);
+
 export const mediaPlayerCardConfigStruct = assign(
   mediaPlayerCardBaseConfigStruct,
   object({
     type: exactMatch(BoldCardType.MEDIA_PLAYER),
-    picture_position: optional(enums(Object.values(Position))),
+    picture_position: optional(enums(mediaPlayerAllowedPicturePositions)),
     show_picture: optional(boolean()),
     background_picture: optional(
       enums(Object.values(MediaPlayerCardBackgroundPictureStyle)),
     ),
-    text_position: optional(enums(Object.values(Position))),
+    text_position: optional(enums(mediaPlayerAllowedTextPositions)),
     show_text: optional(boolean()),
     feature_position: enums(Object.values(CardFeaturePosition)),
     show_title_bar: optional(boolean()),

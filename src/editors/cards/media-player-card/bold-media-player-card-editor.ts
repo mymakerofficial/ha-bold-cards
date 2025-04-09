@@ -10,7 +10,11 @@ import { mdiCursorMove, mdiPalette, mdiStar, mdiTextShort } from "@mdi/js";
 import { t } from "../../../localization/i18n";
 import { editorBaseStyles } from "../../styles";
 import { BoldLovelaceCardEditorWithFeatures } from "../base";
-import { mediaPlayerCardConfigStruct } from "../../../cards/media-player-card/struct";
+import {
+  mediaPlayerAllowedPicturePositions,
+  mediaPlayerAllowedTextPositions,
+  mediaPlayerCardConfigStruct,
+} from "../../../cards/media-player-card/struct";
 import { MediaPlayerEntity } from "../../../types/ha/entity";
 import { presets } from "./constants";
 import { enumToOptions } from "../../helpers";
@@ -124,11 +128,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
               .label=${t("editor.card.media_player.label.picture_position")}
               .hideLabel=${true}
               .value=${this._config.picture_position}
-              .positions=${[
-                ...TopRowPositions,
-                Position.MIDDLE_LEFT,
-                Position.MIDDLE_RIGHT,
-              ]}
+              .positions=${mediaPlayerAllowedPicturePositions}
               @value-changed=${(ev) =>
                 this._handleValueChanged("picture_position", ev)}
             ></bc-layout-select>
@@ -150,6 +150,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
               .label=${t("editor.card.media_player.label.text_position")}
               .hideLabel=${true}
               .value=${this._config.text_position}
+              .positions=${mediaPlayerAllowedTextPositions}
               @value-changed=${(ev) =>
                 this._handleValueChanged("text_position", ev)}
               .hass=${this.hass}
