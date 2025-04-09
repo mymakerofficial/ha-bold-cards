@@ -330,8 +330,8 @@ export class BoldWeatherCard extends BoldCardWithEntity<
       }
 
       .icon-container bc-icon {
-        max-height: 100%;
-        max-width: 100%;
+        height: 100%;
+        width: 100%;
         aspect-ratio: 1 / 1;
         transform: translate(25%, -25%);
         scale: 1.1;
