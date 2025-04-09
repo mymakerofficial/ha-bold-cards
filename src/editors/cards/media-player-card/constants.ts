@@ -16,7 +16,7 @@ import { MediaPositionTimestampPosition } from "../../../components/bc-media-pos
 import { LovelaceCardFeatureConfig } from "../../../types/ha/feature";
 import { CardFeaturePosition } from "../../../cards/types";
 
-import { Position } from "../../../lib/layout/position";
+import { InlinePosition, Position } from "../../../lib/layout/position";
 
 function controlsRow(controls: ControlConfig[]): LovelaceCardFeatureConfig {
   return {
@@ -83,7 +83,7 @@ export const presets: {
       show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.MIDDLE_LEFT,
-      feature_position: CardFeaturePosition.INLINE,
+      feature_position: InlinePosition.INLINE_RIGHT,
       color_mode: MediaPlayerCardColorMode.AMBIENT_SOLID,
       color: "primary",
       show_title_bar: true,
@@ -113,7 +113,7 @@ export const presets: {
       show_picture: true,
       background_picture: MediaPlayerCardBackgroundPictureStyle.HIDE,
       text_position: Position.MIDDLE_LEFT,
-      feature_position: CardFeaturePosition.INLINE,
+      feature_position: InlinePosition.INLINE_RIGHT,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
       show_title_bar: true,
@@ -143,7 +143,7 @@ export const presets: {
       show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.BOTTOM_LEFT,
-      feature_position: CardFeaturePosition.INLINE,
+      feature_position: InlinePosition.INLINE_RIGHT,
       color_mode: MediaPlayerCardColorMode.AMBIENT_SOLID,
       color: "primary",
       show_title_bar: true,
@@ -173,7 +173,7 @@ export const presets: {
       show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.BOTTOM_LEFT,
-      feature_position: CardFeaturePosition.INLINE,
+      feature_position: InlinePosition.INLINE_RIGHT,
       color_mode: MediaPlayerCardColorMode.AMBIENT_SOLID,
       color: "primary",
       show_title_bar: true,
@@ -199,7 +199,7 @@ export const presets: {
       show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.BOTTOM_LEFT,
-      feature_position: CardFeaturePosition.INLINE,
+      feature_position: InlinePosition.INLINE_RIGHT,
       color_mode: MediaPlayerCardColorMode.AMBIENT_SOLID,
       color: "primary",
       show_title_bar: true,
@@ -277,7 +277,7 @@ export const presets: {
       show_picture: true,
       background_picture: MediaPlayerCardBackgroundPictureStyle.HIDE,
       text_position: Position.BOTTOM_LEFT,
-      feature_position: CardFeaturePosition.INLINE,
+      feature_position: InlinePosition.INLINE_RIGHT,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
       show_title_bar: true,
@@ -301,7 +301,7 @@ export const presets: {
       show_picture: true,
       background_picture: MediaPlayerCardBackgroundPictureStyle.HIDE,
       text_position: Position.MIDDLE_CENTER,
-      feature_position: CardFeaturePosition.INLINE,
+      feature_position: InlinePosition.INLINE_RIGHT,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
       show_title_bar: false,
@@ -318,7 +318,7 @@ export const presets: {
       show_picture: true,
       background_picture: MediaPlayerCardBackgroundPictureStyle.HIDE,
       text_position: Position.BOTTOM_CENTER,
-      feature_position: CardFeaturePosition.INLINE,
+      feature_position: InlinePosition.INLINE_RIGHT,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       color: "primary",
       show_title_bar: false,

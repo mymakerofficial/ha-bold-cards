@@ -258,6 +258,20 @@ export const boldIconsMap = {
         </g>
     </svg>
   `,
+  ["align-box-inline-left"]: svg`
+    <svg width="100%" height="100%" viewBox="0 0 800 800" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+        <g transform="matrix(3.01693,0,0,0.679012,363.555,-163.209)">
+            <path d="M120.559,682.182L120.559,800L0,800L0,682.182L120.559,682.182ZM60.28,858.909L60.28,976.727L0,976.727L0,858.909L60.28,858.909ZM-24.106,749.184L-24.106,909.725C-24.106,954.027 -32.202,989.995 -42.173,989.995L-78.332,989.995C-88.303,989.995 -96.398,954.027 -96.398,909.725L-96.398,749.184C-96.398,704.882 -88.303,668.914 -78.332,668.914L-42.173,668.914C-32.202,668.914 -24.106,704.882 -24.106,749.184Z" />
+        </g>
+    </svg>
+  `,
+  ["align-box-inline-right"]: svg`
+    <svg width="100%" height="100%" viewBox="0 0 800 800" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+        <g transform="matrix(-3.01693,0,0,0.679012,436.445,-163.209)">
+            <path d="M120.559,682.182L0,682.182L0,800L120.559,800L120.559,682.182ZM120.559,858.909L60.28,858.909L60.28,976.727L120.559,976.727L120.559,858.909ZM-24.106,749.184C-24.106,704.882 -32.202,668.914 -42.173,668.914L-78.332,668.914C-88.303,668.914 -96.398,704.882 -96.398,749.184L-96.398,909.725C-96.398,954.027 -88.303,989.995 -78.332,989.995L-42.173,989.995C-32.202,989.995 -24.106,954.027 -24.106,909.725L-24.106,749.184Z" />
+        </g>
+    </svg>
+  `,
 } as const satisfies { [key: string]: TemplateResult<2> };
 
 const boldIconAliases = {

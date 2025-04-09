@@ -9,9 +9,15 @@ import { styleMap } from "lit-html/directives/style-map";
 import { isDefined } from "../lib/helpers";
 import {
   BottomRowPositions,
+  ExtendedPosition,
+  HorizontalPosition,
+  HorizontalPositions,
+  InlinePosition,
+  InlinePositions,
   MiddleRowPositions,
   Position,
   TopRowPositions,
+  VerticalPosition,
 } from "../lib/layout/position";
 import { GetterOrMap } from "../lib/types";
 
@@ -25,34 +31,56 @@ const iconMap = {
   [Position.BOTTOM_LEFT]: "bold:align-box-bottom-left",
   [Position.BOTTOM_CENTER]: "bold:align-box-bottom-center",
   [Position.BOTTOM_RIGHT]: "bold:align-box-bottom-right",
+  [HorizontalPosition.LEFT]: "bold:align-box-middle-left",
+  [HorizontalPosition.CENTER]: "bold:align-box-middle-center",
+  [HorizontalPosition.RIGHT]: "bold:align-box-middle-right",
+  [VerticalPosition.TOP]: "bold:align-box-top-center",
+  [VerticalPosition.MIDDLE]: "bold:align-box-middle-center",
+  [VerticalPosition.BOTTOM]: "bold:align-box-bottom-center",
+  [InlinePosition.INLINE_LEFT]: "bold:align-box-inline-left",
+  [InlinePosition.INLINE_RIGHT]: "bold:align-box-inline-right",
 };
 
-const optionsLayout: Position[][] = [
-  TopRowPositions,
-  MiddleRowPositions,
-  BottomRowPositions,
+const optionsLayout: ExtendedPosition[][] = [
+  [...TopRowPositions, VerticalPosition.TOP],
+  [
+    ...MiddleRowPositions,
+    ...HorizontalPositions,
+    ...InlinePositions,
+    VerticalPosition.MIDDLE,
+  ],
+  [...BottomRowPositions, VerticalPosition.BOTTOM],
 ];
 
 @customElement("bc-layout-select")
 export class BcLayoutSelect extends BoldHassElement {
-  @property({ attribute: false }) public value?: Position;
-  @property({ attribute: false }) public positions?: Position[];
+  @property({ attribute: false }) public value?: ExtendedPosition;
+  @property({ attribute: false }) public positions?: ExtendedPosition[];
 
   @property({ attribute: false }) public label?: string;
   @property({ attribute: false, type: Boolean }) public hideLabel?: boolean;
 
   @property({ attribute: false }) public optionLabel?: GetterOrMap<
-    Position,
+    ExtendedPosition,
     string
   >;
   @property({ attribute: false }) public optionLabelScope?: string;
   @property({ attribute: false }) public optionIcon?: GetterOrMap<
-    Position,
+    ExtendedPosition,
     string
   >;
 
+  private get _availablePositions() {
+    return this.positions || Object.values(Position);
+  }
+
+  private get _value() {
+    return this.value ?? this._availablePositions[0];
+  }
+
   render() {
-    const availablePositions = this.positions || Object.values(Position);
+    const availablePositions = this._availablePositions;
+    const value = this._value;
 
     const props = {
       label: this.optionLabel,
@@ -67,7 +95,9 @@ export class BcLayoutSelect extends BoldHassElement {
         .map((it) => valueToOption(it, props));
     });
 
-    const selectedOption = valueToOption(this.value!, props);
+    const selectedOption = valueToOption(value, props);
+
+    console.log(options);
 
     return html`
       ${isDefined(this.label)
@@ -100,8 +130,7 @@ export class BcLayoutSelect extends BoldHassElement {
   }
 
   private _renderOption(option: SelectOption, colSpan = 1) {
-    const selected = option.value === this.value || false;
-
+    const selected = option.value === this._value || false;
     const isDark = this.hass?.themes.darkMode || false;
 
     const imageSrc =

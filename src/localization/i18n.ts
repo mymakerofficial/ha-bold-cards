@@ -21,7 +21,14 @@ import {
 import { CardFeaturePosition } from "../cards/types";
 import { MediaPlayerState } from "../types/ha/entity";
 import { WeatherCardShape } from "../cards/weather-card/types";
-import { Position } from "../lib/layout/position";
+import {
+  ExtendedPosition,
+  HorizontalPosition,
+  InlinePosition,
+  InlinePositions,
+  Position,
+  VerticalPosition,
+} from "../lib/layout/position";
 
 type EnumTranslations<T extends string> = {
   [key in T]: string;
@@ -56,7 +63,15 @@ const i18n = new I18n(
           [Position.BOTTOM_LEFT]: "Bottom Left",
           [Position.BOTTOM_CENTER]: "Bottom Center",
           [Position.BOTTOM_RIGHT]: "Bottom Right",
-        } satisfies EnumTranslations<Position>,
+          [HorizontalPosition.LEFT]: "Left",
+          [HorizontalPosition.CENTER]: "Center",
+          [HorizontalPosition.RIGHT]: "Right",
+          [VerticalPosition.TOP]: "Top",
+          [VerticalPosition.MIDDLE]: "Middle",
+          [VerticalPosition.BOTTOM]: "Bottom",
+          [InlinePosition.INLINE_LEFT]: "Inline Left",
+          [InlinePosition.INLINE_RIGHT]: "Inline Right",
+        } satisfies EnumTranslations<ExtendedPosition>,
         card_feature_position: {
           [CardFeaturePosition.BOTTOM]: "Bottom",
           [CardFeaturePosition.INLINE]: "Inline",
@@ -261,7 +276,7 @@ const i18n = new I18n(
               text: "Text",
               text_position: "Text Position",
               show_text: "Show Text",
-              feature_position: "First Feature Position",
+              feature_position: "First Feature",
               show_title_bar: "Show Title Bar",
               placeholder_when_off: "Replace with Placeholder When Off",
             },

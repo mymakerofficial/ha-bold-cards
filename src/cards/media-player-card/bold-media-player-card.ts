@@ -24,6 +24,7 @@ import { BoldCardType } from "../../lib/cards/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { doIfDefined, pair } from "../../lib/helpers";
 import {
+  isInlinePosition,
   Position,
   splitPosition,
   VerticalPosition,
@@ -36,7 +37,7 @@ function getFeatureInternals(
     parent_card_type: context.config?.type ?? "",
     is_inlined:
       context.featureIndex === 0 &&
-      context.config?.feature_position === CardFeaturePosition.INLINE,
+      isInlinePosition(context.config?.feature_position),
     is_first: context.featureIndex === 0,
     is_last: context.featureIndex === context.features.length - 1,
     universal_media_player_enhancements:
@@ -71,7 +72,7 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
       show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.BOTTOM_LEFT,
-      feature_position: CardFeaturePosition.INLINE,
+      feature_position: VerticalPosition.BOTTOM,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
       placeholder_when_off: true,
       ...presets[0].config,
@@ -95,7 +96,7 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
   }
 
   protected _getShouldRenderInlineFeature(): boolean {
-    return this._config?.feature_position === CardFeaturePosition.INLINE;
+    return isInlinePosition(this._config?.feature_position);
   }
 
   protected _getSizeWithoutFeatures() {

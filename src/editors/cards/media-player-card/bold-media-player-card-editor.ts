@@ -11,6 +11,7 @@ import { t } from "../../../localization/i18n";
 import { editorBaseStyles } from "../../styles";
 import { BoldLovelaceCardEditorWithFeatures } from "../base";
 import {
+  mediaPlayerAllowedFeaturePositions,
   mediaPlayerAllowedPicturePositions,
   mediaPlayerAllowedTextPositions,
   mediaPlayerCardConfigStruct,
@@ -19,7 +20,14 @@ import { MediaPlayerEntity } from "../../../types/ha/entity";
 import { presets } from "./constants";
 import { enumToOptions } from "../../helpers";
 import { CardFeaturePosition } from "../../../cards/types";
-import { Position, TopRowPositions } from "../../../lib/layout/position";
+import {
+  HorizontalPosition,
+  LeftAndRightPositions,
+  Position,
+  TopAndBottomPositions,
+  TopRowPositions,
+  VerticalPosition,
+} from "../../../lib/layout/position";
 
 @customElement("bold-media-player-card-editor")
 export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeatures<
@@ -168,27 +176,14 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
                 this._handleValueChanged("show_text", ev)}
             ></bc-boolean-toggle>
           </bc-form-element>
-          <ha-selector
-            .selector=${{
-              select: {
-                mode: "box",
-                options: enumToOptions(CardFeaturePosition, {
-                  labelScope: "common.card_feature_position",
-                  image: (value) => ({
-                    src: `/static/images/form/tile_features_position_${value}.svg`,
-                    src_dark: `/static/images/form/tile_features_position_${value}_dark.svg`,
-                    flip_rtl: true,
-                  }),
-                }),
-              },
-            }}
+          <bc-layout-select
             .label=${t("editor.card.media_player.label.feature_position")}
-            .value=${this._config?.feature_position ??
-            CardFeaturePosition.BOTTOM}
+            .positions=${mediaPlayerAllowedFeaturePositions}
+            .value=${this._config?.feature_position ?? VerticalPosition.BOTTOM}
             @value-changed=${(ev) =>
               this._handleValueChanged("feature_position", ev)}
             .hass=${this.hass}
-          ></ha-selector>
+          ></bc-layout-select>
         </div>
       </ha-expansion-panel>
       <ha-form

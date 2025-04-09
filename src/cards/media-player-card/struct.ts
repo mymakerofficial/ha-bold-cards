@@ -4,12 +4,19 @@ import {
   MediaPlayerCardBackgroundPictureStyle,
   MediaPlayerCardColorMode,
 } from "./types";
-import { CardFeaturePosition } from "../types";
 import { featuresStruct } from "../../lib/features/structs";
 import { universalMediaPlayerEnhancementsStruct } from "../../lib/media-player/universal-media-player";
 import { exactMatch } from "../../lib/struct";
 import { BoldCardType } from "../../lib/cards/types";
-import { Position, TopRowPositions } from "../../lib/layout/position";
+import {
+  InlinePosition,
+  InlinePositions,
+  LeftAndRightPositions,
+  Position,
+  TopAndBottomPositions,
+  TopRowPositions,
+  VerticalPosition,
+} from "../../lib/layout/position";
 
 export const mediaPlayerCardBaseConfigStruct = assign(
   baseLovelaceCardConfig,
@@ -26,11 +33,13 @@ export const mediaPlayerCardBaseConfigStruct = assign(
 
 export const mediaPlayerAllowedPicturePositions = [
   ...TopRowPositions,
-  Position.MIDDLE_LEFT,
-  Position.MIDDLE_RIGHT,
+  ...InlinePositions,
 ];
-
 export const mediaPlayerAllowedTextPositions = Object.values(Position);
+export const mediaPlayerAllowedFeaturePositions = [
+  ...InlinePositions,
+  VerticalPosition.BOTTOM,
+];
 
 export const mediaPlayerCardConfigStruct = assign(
   mediaPlayerCardBaseConfigStruct,
@@ -43,7 +52,7 @@ export const mediaPlayerCardConfigStruct = assign(
     ),
     text_position: optional(enums(mediaPlayerAllowedTextPositions)),
     show_text: optional(boolean()),
-    feature_position: enums(Object.values(CardFeaturePosition)),
+    feature_position: enums(mediaPlayerAllowedFeaturePositions),
     show_title_bar: optional(boolean()),
     placeholder_when_off: optional(boolean()),
     features: featuresStruct,
