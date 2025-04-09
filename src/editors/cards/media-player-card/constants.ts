@@ -80,7 +80,7 @@ export const presets: {
     name: "Default",
     config: {
       picture_position: Position.MIDDLE_LEFT,
-      hide_picture: true,
+      show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.MIDDLE_LEFT,
       feature_position: CardFeaturePosition.INLINE,
@@ -110,7 +110,7 @@ export const presets: {
     name: "Horizontal Vibrant",
     config: {
       picture_position: Position.MIDDLE_LEFT,
-      hide_picture: false,
+      show_picture: true,
       background_picture: MediaPlayerCardBackgroundPictureStyle.HIDE,
       text_position: Position.MIDDLE_LEFT,
       feature_position: CardFeaturePosition.INLINE,
@@ -140,7 +140,7 @@ export const presets: {
     name: "Horizontal Artwork Background Space",
     config: {
       picture_position: Position.MIDDLE_LEFT,
-      hide_picture: true,
+      show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.BOTTOM_LEFT,
       feature_position: CardFeaturePosition.INLINE,
@@ -170,7 +170,7 @@ export const presets: {
     name: "Artwork Square",
     config: {
       picture_position: Position.MIDDLE_LEFT,
-      hide_picture: true,
+      show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.BOTTOM_LEFT,
       feature_position: CardFeaturePosition.INLINE,
@@ -196,7 +196,7 @@ export const presets: {
     name: "Artwork Square Large",
     config: {
       picture_position: Position.MIDDLE_LEFT,
-      hide_picture: true,
+      show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.BOTTOM_LEFT,
       feature_position: CardFeaturePosition.INLINE,
@@ -226,7 +226,7 @@ export const presets: {
     name: "Vertical Full",
     config: {
       picture_position: Position.TOP_CENTER,
-      hide_picture: false,
+      show_picture: true,
       background_picture: MediaPlayerCardBackgroundPictureStyle.HIDE,
       text_position: Position.BOTTOM_CENTER,
       feature_position: CardFeaturePosition.BOTTOM,
@@ -250,7 +250,7 @@ export const presets: {
     name: "Vertical Full Artwork Background",
     config: {
       picture_position: Position.MIDDLE_LEFT,
-      hide_picture: true,
+      show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.BOTTOM_CENTER,
       feature_position: CardFeaturePosition.BOTTOM,
@@ -274,7 +274,7 @@ export const presets: {
     name: "Simple Play/Pause",
     config: {
       picture_position: Position.MIDDLE_LEFT,
-      hide_picture: false,
+      show_picture: true,
       background_picture: MediaPlayerCardBackgroundPictureStyle.HIDE,
       text_position: Position.BOTTOM_LEFT,
       feature_position: CardFeaturePosition.INLINE,
@@ -298,7 +298,7 @@ export const presets: {
     name: "Info Only",
     config: {
       picture_position: Position.MIDDLE_LEFT,
-      hide_picture: false,
+      show_picture: true,
       background_picture: MediaPlayerCardBackgroundPictureStyle.HIDE,
       text_position: Position.MIDDLE_CENTER,
       feature_position: CardFeaturePosition.INLINE,
@@ -315,7 +315,7 @@ export const presets: {
     name: "Large Centered",
     config: {
       picture_position: Position.TOP_CENTER,
-      hide_picture: false,
+      show_picture: true,
       background_picture: MediaPlayerCardBackgroundPictureStyle.HIDE,
       text_position: Position.BOTTOM_CENTER,
       feature_position: CardFeaturePosition.INLINE,
