@@ -213,7 +213,6 @@ export class BcLayoutSelect extends BoldHassElement {
 
     .option {
       position: relative;
-      border: 1px solid var(--outline-color);
       border-radius: var(--ha-card-border-radius, 12px);
       display: flex;
       flex-direction: column;
@@ -224,22 +223,7 @@ export class BcLayoutSelect extends BoldHassElement {
       overflow: hidden;
       cursor: pointer;
       box-sizing: content-box;
-      transition:
-        background-color 180ms ease-in-out,
-        box-shadow 180ms ease-in-out;
-    }
-
-    .option:before {
-      content: "";
-      display: block;
-      inset: 0;
-      position: absolute;
-      background-color: transparent;
-      pointer-events: none;
-      opacity: 0.2;
-      transition:
-        background-color 180ms ease-in-out,
-        opacity 180ms ease-in-out;
+      transition: background-color 180ms ease-in-out;
     }
 
     .option:hover {
@@ -248,8 +232,7 @@ export class BcLayoutSelect extends BoldHassElement {
 
     .option[data-selected="true"] {
       background-color: rgb(from var(--primary-color) r g b / 20%);
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 1px var(--primary-color);
+      color: var(--primary-color);
     }
 
     .option .content {
