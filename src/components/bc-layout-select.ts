@@ -65,15 +65,15 @@ export function splitPosition(
 }
 
 const iconMap = {
-  [Position.TOP_LEFT]: "mdi:arrow-top-left-thin",
-  [Position.TOP_CENTER]: "mdi:arrow-up-thin",
-  [Position.TOP_RIGHT]: "mdi:arrow-top-right-thin",
-  [Position.MIDDLE_LEFT]: "mdi:arrow-left-thin",
-  [Position.MIDDLE_CENTER]: "mdi:border-radius",
-  [Position.MIDDLE_RIGHT]: "mdi:arrow-right-thin",
-  [Position.BOTTOM_LEFT]: "mdi:arrow-bottom-left-thin",
-  [Position.BOTTOM_CENTER]: "mdi:arrow-down-thin",
-  [Position.BOTTOM_RIGHT]: "mdi:arrow-bottom-right-thin",
+  [Position.TOP_LEFT]: "bold:align-box-top-left",
+  [Position.TOP_CENTER]: "bold:align-box-top-center",
+  [Position.TOP_RIGHT]: "bold:align-box-top-right",
+  [Position.MIDDLE_LEFT]: "bold:align-box-middle-left",
+  [Position.MIDDLE_CENTER]: "bold:align-box-middle-center",
+  [Position.MIDDLE_RIGHT]: "bold:align-box-middle-right",
+  [Position.BOTTOM_LEFT]: "bold:align-box-bottom-left",
+  [Position.BOTTOM_CENTER]: "bold:align-box-bottom-center",
+  [Position.BOTTOM_RIGHT]: "bold:align-box-bottom-right",
 };
 
 const optionsLayout: Position[][] = [
