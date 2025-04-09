@@ -42,6 +42,10 @@ const i18n = new I18n(
           [MediaPlayerState.UNKNOWN]: "Unknown",
           [MediaPlayerState.STANDBY]: "Standby",
         } satisfies EnumTranslations<MediaPlayerState>,
+        boolean_toggle: {
+          true: "On",
+          false: "Off",
+        },
         position: {
           [Position.TOP_LEFT]: "Top Left",
           [Position.TOP_CENTER]: "Top Center",
@@ -175,6 +179,10 @@ const i18n = new I18n(
           },
           wip_section_text:
             "This section isn't ready yet. In the meantime, you can use the YAML editor to customize your card.",
+          visible_toggle: {
+            true: "Visible",
+            false: "Hidden",
+          },
         },
         features: {
           add: "Add feature",
@@ -246,16 +254,16 @@ const i18n = new I18n(
               content: "Content",
               color_mode: "Color Mode",
               color: "Fallback Color",
+              picture: "Artwork",
               picture_position: "Artwork Position",
-              hide_picture: "Hide Artwork",
+              show_picture: "Show Artwork",
               background_picture: "Background Artwork Style",
+              text: "Text",
               text_position: "Text Position",
-              hide_text: "Hide Text",
+              show_text: "Show Text",
               feature_position: "First Feature Position",
               show_title_bar: "Show Title Bar",
-              hide_media_info: "Hide Media Info",
               placeholder_when_off: "Replace with Placeholder When Off",
-              additional_controls: `Controls (%{count})`,
             },
             helper_text: {
               color:

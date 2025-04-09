@@ -31,6 +31,13 @@ export class BcIcon extends LitElement {
       height: var(--mdc-icon-size, 24px);
     }
 
+    ha-icon {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      --mdc-icon-size: 100%;
+    }
+
     svg {
       width: 100%;
       height: 100%;

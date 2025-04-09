@@ -13,6 +13,7 @@ import {
   Position,
   TopRowPositions,
 } from "../lib/layout/position";
+import { GetterOrMap } from "../lib/types";
 
 const iconMap = {
   [Position.TOP_LEFT]: "bold:align-box-top-left",
@@ -32,31 +33,51 @@ const optionsLayout: Position[][] = [
   BottomRowPositions,
 ];
 
-const TO_OPTION_PROPS = {
-  icon: iconMap,
-  labelScope: "common.position",
-  hideLabel: true,
-};
-
 @customElement("bc-layout-select")
 export class BcLayoutSelect extends BoldHassElement {
-  @property({ attribute: false }) public value?: string;
+  @property({ attribute: false }) public value?: Position;
   @property({ attribute: false }) public positions?: Position[];
 
   @property({ attribute: false }) public label?: string;
+  @property({ attribute: false, type: Boolean }) public hideLabel?: boolean;
+
+  @property({ attribute: false }) public optionLabel?: GetterOrMap<
+    Position,
+    string
+  >;
+  @property({ attribute: false }) public optionLabelScope?: string;
+  @property({ attribute: false }) public optionIcon?: GetterOrMap<
+    Position,
+    string
+  >;
 
   render() {
     const availablePositions = this.positions || Object.values(Position);
+
+    const props = {
+      label: this.optionLabel,
+      labelScope: this.optionLabelScope ?? "common.position",
+      icon: this.optionIcon ?? iconMap,
+      hideLabel: true,
+    };
+
     const options = optionsLayout.map((row) => {
       return row
         .filter((it) => availablePositions.includes(it))
-        .map((it) => valueToOption(it, TO_OPTION_PROPS));
+        .map((it) => valueToOption(it, props));
     });
 
-    const selectedOption = valueToOption(this.value!, TO_OPTION_PROPS);
+    const selectedOption = valueToOption(this.value!, props);
 
     return html`
-      ${isDefined(this.label) ? html`<label>${this.label}</label>` : nothing}
+      ${isDefined(this.label)
+        ? html`<label
+            class=${classMap({
+              "visually-hidden": !!this.hideLabel,
+            })}
+            >${this.label}</label
+          >`
+        : nothing}
       <ha-button-menu
         style=${styleMap({
           "--mdc-list-vertical-padding": 0,

@@ -58,10 +58,10 @@ export interface BoldMediaPlayerCardConfig
   extends BoldMediaPlayerCardBaseConfig {
   type: BoldCardTypes["MEDIA_PLAYER"];
   picture_position?: Position;
-  hide_picture?: boolean;
+  show_picture?: boolean;
   background_picture?: MediaPlayerCardBackgroundPictureStyle;
   text_position?: Position;
-  hide_text?: boolean;
+  show_text?: boolean;
   feature_position: CardFeaturePosition;
   show_title_bar?: boolean;
   placeholder_when_off?: boolean;

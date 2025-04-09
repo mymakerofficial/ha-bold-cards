@@ -68,12 +68,11 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
       type: this.cardType,
       entity: entity?.entity_id ?? "",
       picture_position: Position.MIDDLE_LEFT,
-      hide_picture: true,
+      show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.BOTTOM_LEFT,
       feature_position: CardFeaturePosition.INLINE,
       color_mode: MediaPlayerCardColorMode.AMBIENT_VIBRANT,
-      hide_text: false,
       placeholder_when_off: true,
       ...presets[0].config,
     };
@@ -82,6 +81,8 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
   public setConfig(config: BoldMediaPlayerCardConfig) {
     super.setConfig({
       color: "primary",
+      show_picture: true,
+      show_text: true,
       show_title_bar: true,
       ...config,
     });
@@ -183,7 +184,7 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
       this._config?.background_picture ===
       MediaPlayerCardBackgroundPictureStyle.COVER;
 
-    const renderHeroImage = !this._config?.hide_picture && this._hasLoadedImage;
+    const renderHeroImage = this._config?.show_picture && this._hasLoadedImage;
 
     const inlineFeatures = this._getRenderingInlineFeatures();
     const bottomFeatures = this._getRenderingBottomFeatures();
@@ -263,7 +264,7 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
                   <div class="media-info-container">
                     <div
                       class="media-info ${classMap({
-                        "visually-hidden": !!this._config.hide_text,
+                        "visually-hidden": !this._config.show_text,
                       })}"
                       id="info"
                       data-horizontal-align=${horizontalAlign}

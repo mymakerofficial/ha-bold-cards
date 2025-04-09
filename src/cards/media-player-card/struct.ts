@@ -29,12 +29,12 @@ export const mediaPlayerCardConfigStruct = assign(
   object({
     type: exactMatch(BoldCardType.MEDIA_PLAYER),
     picture_position: optional(enums(Object.values(Position))),
-    hide_picture: optional(boolean()),
+    show_picture: optional(boolean()),
     background_picture: optional(
       enums(Object.values(MediaPlayerCardBackgroundPictureStyle)),
     ),
     text_position: optional(enums(Object.values(Position))),
-    hide_text: optional(boolean()),
+    show_text: optional(boolean()),
     feature_position: enums(Object.values(CardFeaturePosition)),
     show_title_bar: optional(boolean()),
     placeholder_when_off: optional(boolean()),

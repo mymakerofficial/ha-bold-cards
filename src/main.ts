@@ -1,5 +1,7 @@
 import "./lib/basic-hass-object";
 import "./components/bc-icon";
+import "./components/bc-form-element";
+import "./components/bc-boolean-toggle";
 import "./components/bc-layout-select";
 import "./components/bc-contol-surface";
 import "./components/bc-carousel";
