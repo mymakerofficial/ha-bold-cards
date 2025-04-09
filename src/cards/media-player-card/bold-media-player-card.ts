@@ -22,12 +22,12 @@ import { isMediaPlayerStateActive } from "../../helpers/states";
 import { FeatureInternals } from "../../lib/internals/types";
 import { BoldCardType } from "../../lib/cards/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
+import { doIfDefined, pair } from "../../lib/helpers";
 import {
   Position,
   splitPosition,
   VerticalPosition,
-} from "../../components/bc-layout-select";
-import { doIfDefined, pair } from "../../lib/helpers";
+} from "../../lib/layout/position";
 
 function getFeatureInternals(
   context: GetFeatureInternalsContext<BoldMediaPlayerCardConfig>,

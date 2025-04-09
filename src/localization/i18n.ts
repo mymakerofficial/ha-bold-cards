@@ -21,6 +21,7 @@ import {
 import { CardFeaturePosition } from "../cards/types";
 import { MediaPlayerState } from "../types/ha/entity";
 import { WeatherCardShape } from "../cards/weather-card/types";
+import { Position } from "../lib/layout/position";
 
 type EnumTranslations<T extends string> = {
   [key in T]: string;
@@ -41,6 +42,17 @@ const i18n = new I18n(
           [MediaPlayerState.UNKNOWN]: "Unknown",
           [MediaPlayerState.STANDBY]: "Standby",
         } satisfies EnumTranslations<MediaPlayerState>,
+        position: {
+          [Position.TOP_LEFT]: "Top Left",
+          [Position.TOP_CENTER]: "Top Center",
+          [Position.TOP_RIGHT]: "Top Right",
+          [Position.MIDDLE_LEFT]: "Middle Left",
+          [Position.MIDDLE_CENTER]: "Middle Center",
+          [Position.MIDDLE_RIGHT]: "Middle Right",
+          [Position.BOTTOM_LEFT]: "Bottom Left",
+          [Position.BOTTOM_CENTER]: "Bottom Center",
+          [Position.BOTTOM_RIGHT]: "Bottom Right",
+        } satisfies EnumTranslations<Position>,
         card_feature_position: {
           [CardFeaturePosition.BOTTOM]: "Bottom",
           [CardFeaturePosition.INLINE]: "Inline",

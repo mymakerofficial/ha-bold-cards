@@ -1,9 +1,5 @@
 import { css, html, nothing } from "lit";
-import {
-  arrayToOptions,
-  stopPropagation,
-  valueToOption,
-} from "../editors/helpers";
+import { stopPropagation, valueToOption } from "../editors/helpers";
 import { BoldHassElement } from "./hass-element";
 import { SelectOption } from "../types/ha/selector";
 import { fireEvent } from "custom-card-helpers";
@@ -11,58 +7,12 @@ import { customElement, property } from "lit/decorators";
 import { classMap } from "lit-html/directives/class-map";
 import { styleMap } from "lit-html/directives/style-map";
 import { isDefined } from "../lib/helpers";
-
-export const HorizontalPosition = {
-  LEFT: "left",
-  CENTER: "center",
-  RIGHT: "right",
-} as const;
-export type HorizontalPosition =
-  (typeof HorizontalPosition)[keyof typeof HorizontalPosition];
-
-export const VerticalPosition = {
-  TOP: "top",
-  MIDDLE: "middle",
-  BOTTOM: "bottom",
-} as const;
-export type VerticalPosition =
-  (typeof VerticalPosition)[keyof typeof VerticalPosition];
-
-export const Position = {
-  TOP_LEFT: `${VerticalPosition.TOP}-${HorizontalPosition.LEFT}`,
-  TOP_CENTER: `${VerticalPosition.TOP}-${HorizontalPosition.CENTER}`,
-  TOP_RIGHT: `${VerticalPosition.TOP}-${HorizontalPosition.RIGHT}`,
-  MIDDLE_LEFT: `${VerticalPosition.MIDDLE}-${HorizontalPosition.LEFT}`,
-  MIDDLE_CENTER: `${VerticalPosition.MIDDLE}-${HorizontalPosition.CENTER}`,
-  MIDDLE_RIGHT: `${VerticalPosition.MIDDLE}-${HorizontalPosition.RIGHT}`,
-  BOTTOM_LEFT: `${VerticalPosition.BOTTOM}-${HorizontalPosition.LEFT}`,
-  BOTTOM_CENTER: `${VerticalPosition.BOTTOM}-${HorizontalPosition.CENTER}`,
-  BOTTOM_RIGHT: `${VerticalPosition.BOTTOM}-${HorizontalPosition.RIGHT}`,
-} as const;
-export type Position = (typeof Position)[keyof typeof Position];
-
-export const TopRowPositions: Position[] = [
-  Position.TOP_LEFT,
-  Position.TOP_CENTER,
-  Position.TOP_RIGHT,
-];
-export const MiddleRowPositions: Position[] = [
-  Position.MIDDLE_LEFT,
-  Position.MIDDLE_CENTER,
-  Position.MIDDLE_RIGHT,
-];
-export const BottomRowPositions: Position[] = [
-  Position.BOTTOM_LEFT,
-  Position.BOTTOM_CENTER,
-  Position.BOTTOM_RIGHT,
-];
-
-export function splitPosition(
-  position: Position,
-): [VerticalPosition, HorizontalPosition] {
-  const [vertical, horizontal] = position.split("-");
-  return [vertical as VerticalPosition, horizontal as HorizontalPosition];
-}
+import {
+  BottomRowPositions,
+  MiddleRowPositions,
+  Position,
+  TopRowPositions,
+} from "../lib/layout/position";
 
 const iconMap = {
   [Position.TOP_LEFT]: "bold:align-box-top-left",
@@ -82,6 +32,12 @@ const optionsLayout: Position[][] = [
   BottomRowPositions,
 ];
 
+const TO_OPTION_PROPS = {
+  icon: iconMap,
+  labelScope: "common.position",
+  hideLabel: true,
+};
+
 @customElement("bc-layout-select")
 export class BcLayoutSelect extends BoldHassElement {
   @property({ attribute: false }) public value?: string;
@@ -94,22 +50,31 @@ export class BcLayoutSelect extends BoldHassElement {
     const options = optionsLayout.map((row) => {
       return row
         .filter((it) => availablePositions.includes(it))
-        .map((it) =>
-          valueToOption(it, {
-            icon: iconMap,
-            hideLabel: true,
-          }),
-        );
+        .map((it) => valueToOption(it, TO_OPTION_PROPS));
     });
+
+    const selectedOption = valueToOption(this.value!, TO_OPTION_PROPS);
 
     return html`
       ${isDefined(this.label) ? html`<label>${this.label}</label>` : nothing}
-      <div role="radiogroup" class="grid">
-        ${options.map((row) => {
-          const itemColSpan = (3 / row.length) * 2;
-          return row.map((option) => this._renderOption(option, itemColSpan));
+      <ha-button-menu
+        style=${styleMap({
+          "--mdc-list-vertical-padding": 0,
         })}
-      </div>
+        fixed
+        @closed=${stopPropagation}
+      >
+        <ha-button slot="trigger">
+          <bc-icon .icon=${selectedOption.icon} slot="icon"></bc-icon>
+          ${selectedOption.label}
+        </ha-button>
+        <div role="radiogroup" class="grid">
+          ${options.map((row) => {
+            const itemColSpan = (3 / row.length) * 2;
+            return row.map((option) => this._renderOption(option, itemColSpan));
+          })}
+        </div>
+      </ha-button-menu>
     `;
   }
 
@@ -180,7 +145,9 @@ export class BcLayoutSelect extends BoldHassElement {
   static styles = css`
     :host {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
       gap: 8px;
     }
 
@@ -188,6 +155,7 @@ export class BcLayoutSelect extends BoldHassElement {
     }
 
     .grid {
+      padding: 8px;
       display: grid;
       grid-template-columns: repeat(6, min-content);
       gap: 12px;

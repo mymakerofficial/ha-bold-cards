@@ -2,7 +2,7 @@ import { LovelaceCardConfigWithFeatures } from "../../types/card";
 import { CardFeaturePosition } from "../types";
 import { UniversalMediaPlayerEnhancements } from "../../lib/media-player/universal-media-player";
 import { BoldCardTypes } from "../../lib/cards/types";
-import { Position } from "../../components/bc-layout-select";
+import { Position } from "../../lib/layout/position";
 
 export const MediaPlayerCardColorMode = {
   AMBIENT: "ambient",

@@ -13,12 +13,9 @@ import { BoldLovelaceCardEditorWithFeatures } from "../base";
 import { mediaPlayerCardConfigStruct } from "../../../cards/media-player-card/struct";
 import { MediaPlayerEntity } from "../../../types/ha/entity";
 import { presets } from "./constants";
-import {
-  Position,
-  TopRowPositions,
-} from "../../../components/bc-layout-select";
 import { enumToOptions } from "../../helpers";
 import { CardFeaturePosition } from "../../../cards/types";
+import { Position, TopRowPositions } from "../../../lib/layout/position";
 
 @customElement("bold-media-player-card-editor")
 export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeatures<
@@ -107,49 +104,46 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
           <span>${t("editor.card.media_player.label.layout")}</span>
         </h3>
         <div class="content flex-col">
-          <div class="grid-2">
-            <bc-layout-select
-              .label=${t("editor.card.media_player.label.picture_position")}
-              .value=${this._config.picture_position}
-              .positions=${[
-                ...TopRowPositions,
-                Position.MIDDLE_LEFT,
-                Position.MIDDLE_RIGHT,
-              ]}
-              @value-changed=${(ev) =>
-                this._handleValueChanged("picture_position", ev)}
-            ></bc-layout-select>
-            <ha-selector
-              .selector=${{
-                boolean: {},
-              }}
-              .label=${t("editor.card.media_player.label.hide_picture")}
-              .value=${this._config?.hide_picture ?? false}
-              @value-changed=${(ev) =>
-                this._handleValueChanged("hide_picture", ev)}
-              .hass=${this.hass}
-            ></ha-selector>
-            <bc-layout-select
-              .label=${t("editor.card.media_player.label.text_position")}
-              .value=${this._config.text_position}
-              @value-changed=${(ev) =>
-                this._handleValueChanged("text_position", ev)}
-              .hass=${this.hass}
-            ></bc-layout-select>
-            <ha-selector
-              .selector=${{
-                boolean: {},
-              }}
-              .label=${t("editor.card.media_player.label.hide_text")}
-              .value=${this._config?.hide_text ?? false}
-              @value-changed=${(ev) =>
-                this._handleValueChanged("hide_text", ev)}
-            ></ha-selector>
-          </div>
+          <bc-layout-select
+            .label=${t("editor.card.media_player.label.picture_position")}
+            .value=${this._config.picture_position}
+            .positions=${[
+              ...TopRowPositions,
+              Position.MIDDLE_LEFT,
+              Position.MIDDLE_RIGHT,
+            ]}
+            @value-changed=${(ev) =>
+              this._handleValueChanged("picture_position", ev)}
+          ></bc-layout-select>
+          <ha-selector
+            .selector=${{
+              boolean: {},
+            }}
+            .label=${t("editor.card.media_player.label.hide_picture")}
+            .value=${this._config?.hide_picture ?? false}
+            @value-changed=${(ev) =>
+              this._handleValueChanged("hide_picture", ev)}
+            .hass=${this.hass}
+          ></ha-selector>
+          <bc-layout-select
+            .label=${t("editor.card.media_player.label.text_position")}
+            .value=${this._config.text_position}
+            @value-changed=${(ev) =>
+              this._handleValueChanged("text_position", ev)}
+            .hass=${this.hass}
+          ></bc-layout-select>
+          <ha-selector
+            .selector=${{
+              boolean: {},
+            }}
+            .label=${t("editor.card.media_player.label.hide_text")}
+            .value=${this._config?.hide_text ?? false}
+            @value-changed=${(ev) => this._handleValueChanged("hide_text", ev)}
+          ></ha-selector>
           <ha-selector
             .selector=${{
               select: {
-                mode: "box",
+                mode: "dropdown",
                 options: enumToOptions(MediaPlayerCardBackgroundPictureStyle, {
                   labelScope:
                     "common.media_player_card_background_picture_style",

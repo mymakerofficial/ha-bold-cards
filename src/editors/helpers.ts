@@ -3,7 +3,7 @@ import { SelectBoxOptionImage, SelectOption } from "../types/ha/selector";
 import { resolveGetterOrMap } from "../lib/helpers";
 import { GetterOrMap } from "../lib/types";
 
-interface ToOptionsOptions<T extends string | number | symbol> {
+interface ToOptionsProps<T extends string | number | symbol> {
   labelScope?: string;
   descriptionScope?: string;
   image?: GetterOrMap<T, string | SelectBoxOptionImage>;
@@ -14,34 +14,34 @@ interface ToOptionsOptions<T extends string | number | symbol> {
 
 export function enumToOptions<T extends string | number | symbol>(
   obj: { [key in T]: string },
-  options?: ToOptionsOptions<T>,
+  props?: ToOptionsProps<T>,
 ): SelectOption[] {
-  return arrayToOptions<T>(Object.values(obj), options);
+  return arrayToOptions<T>(Object.values(obj), props);
 }
 
 export function arrayToOptions<T extends string | number | symbol>(
   arr: T[],
-  options?: ToOptionsOptions<T>,
+  props?: ToOptionsProps<T>,
 ): SelectOption[] {
-  return arr.map((item) => valueToOption(item, options)) as SelectOption[];
+  return arr.map((item) => valueToOption(item, props)) as SelectOption[];
 }
 
 export function valueToOption<T extends string | number | symbol>(
   value: T,
-  options?: ToOptionsOptions<T>,
+  props?: ToOptionsProps<T>,
 ): SelectOption {
   return {
     value,
-    label: options?.labelScope
-      ? t(String(value), { scope: options?.labelScope })
+    label: props?.labelScope
+      ? t(String(value), { scope: props?.labelScope })
       : value,
-    description: options?.descriptionScope
-      ? t(String(value), { scope: options?.descriptionScope, defaultValue: "" })
+    description: props?.descriptionScope
+      ? t(String(value), { scope: props?.descriptionScope, defaultValue: "" })
       : undefined,
-    image: resolveGetterOrMap(value, options?.image),
-    icon: resolveGetterOrMap(value, options?.icon),
-    disabled: resolveGetterOrMap(value, options?.disabled, false),
-    hideLabel: resolveGetterOrMap(value, options?.hideLabel, false),
+    image: resolveGetterOrMap(value, props?.image),
+    icon: resolveGetterOrMap(value, props?.icon),
+    disabled: resolveGetterOrMap(value, props?.disabled, false),
+    hideLabel: resolveGetterOrMap(value, props?.hideLabel, false),
   } as SelectOption;
 }
 

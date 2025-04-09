@@ -15,7 +15,8 @@ import { BoldMediaPlayerControlRowFeature } from "../../../features/media-player
 import { MediaPositionTimestampPosition } from "../../../components/bc-media-position-control";
 import { LovelaceCardFeatureConfig } from "../../../types/ha/feature";
 import { CardFeaturePosition } from "../../../cards/types";
-import { Position } from "../../../components/bc-layout-select";
+
+import { Position } from "../../../lib/layout/position";
 
 function controlsRow(controls: ControlConfig[]): LovelaceCardFeatureConfig {
   return {

@@ -9,7 +9,7 @@ import { featuresStruct } from "../../lib/features/structs";
 import { universalMediaPlayerEnhancementsStruct } from "../../lib/media-player/universal-media-player";
 import { exactMatch } from "../../lib/struct";
 import { BoldCardType } from "../../lib/cards/types";
-import { Position } from "../../components/bc-layout-select";
+import { Position } from "../../lib/layout/position";
 
 export const mediaPlayerCardBaseConfigStruct = assign(
   baseLovelaceCardConfig,
