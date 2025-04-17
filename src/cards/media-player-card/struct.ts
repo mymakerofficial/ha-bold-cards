@@ -37,7 +37,7 @@ export const mediaPlayerAllowedPicturePositions = [
 ];
 export const mediaPlayerAllowedTextPositions = Object.values(Position);
 export const mediaPlayerAllowedFeaturePositions = [
-  ...InlinePositions,
+  InlinePosition.INLINE_RIGHT,
   VerticalPosition.BOTTOM,
 ];
 
