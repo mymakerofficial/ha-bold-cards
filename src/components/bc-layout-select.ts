@@ -97,8 +97,6 @@ export class BcLayoutSelect extends BoldHassElement {
 
     const selectedOption = valueToOption(value, props);
 
-    console.log(options);
-
     return html`
       ${isDefined(this.label)
         ? html`<label
