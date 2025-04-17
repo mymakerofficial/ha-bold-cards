@@ -130,7 +130,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
         </h3>
         <div class="content flex-col">
           <bc-form-element
-            .label=${t("editor.card.media_player.label.picture")}
+            .label=${t("editor.card.media_player.label.picture_position")}
           >
             <bc-layout-select
               .label=${t("editor.card.media_player.label.picture_position")}
@@ -140,20 +140,22 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
               @value-changed=${(ev) =>
                 this._handleValueChanged("picture_position", ev)}
             ></bc-layout-select>
-            <bc-boolean-toggle
-              .label=${t("editor.card.media_player.label.show_picture")}
-              .hideLabel=${true}
-              .optionLabelScope=${"editor.common.visible_toggle"}
-              .optionIcon=${{
-                true: "mdi:eye",
-                false: "mdi:eye-off",
+          </bc-form-element>
+          <bc-form-element
+            .label=${t("editor.card.media_player.label.show_picture")}
+          >
+            <ha-selector
+              .selector=${{
+                boolean: {},
               }}
               .value=${this._config?.show_picture ?? true}
               @value-changed=${(ev) =>
                 this._handleValueChanged("show_picture", ev)}
-            ></bc-boolean-toggle>
+            ></ha-selector>
           </bc-form-element>
-          <bc-form-element .label=${t("editor.card.media_player.label.text")}>
+          <bc-form-element
+            .label=${t("editor.card.media_player.label.text_position")}
+          >
             <bc-layout-select
               .label=${t("editor.card.media_player.label.text_position")}
               .hideLabel=${true}
@@ -163,18 +165,18 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
                 this._handleValueChanged("text_position", ev)}
               .hass=${this.hass}
             ></bc-layout-select>
-            <bc-boolean-toggle
-              .label=${t("editor.card.media_player.label.show_text")}
-              .hideLabel=${true}
-              .optionLabelScope=${"editor.common.visible_toggle"}
-              .optionIcon=${{
-                true: "mdi:eye",
-                false: "mdi:eye-off",
+          </bc-form-element>
+          <bc-form-element
+            .label=${t("editor.card.media_player.label.show_text")}
+          >
+            <ha-selector
+              .selector=${{
+                boolean: {},
               }}
               .value=${this._config?.show_text ?? true}
               @value-changed=${(ev) =>
                 this._handleValueChanged("show_text", ev)}
-            ></bc-boolean-toggle>
+            ></ha-selector>
           </bc-form-element>
           <bc-layout-select
             .label=${t("editor.card.media_player.label.feature_position")}
