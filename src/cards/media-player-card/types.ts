@@ -1,8 +1,12 @@
 import { LovelaceCardConfigWithFeatures } from "../../types/card";
-import { CardFeaturePosition } from "../types";
 import { UniversalMediaPlayerEnhancements } from "../../lib/media-player/universal-media-player";
 import { BoldCardTypes } from "../../lib/cards/types";
-import { ExtendedPosition, Position } from "../../lib/layout/position";
+import { ExtendedPosition } from "../../lib/layout/position";
+import {
+  mediaPlayerAllowedFeaturePositions,
+  mediaPlayerAllowedPicturePositions,
+  mediaPlayerAllowedTextPositions,
+} from "./struct";
 
 export const MediaPlayerCardColorMode = {
   AMBIENT: "ambient",
@@ -57,12 +61,12 @@ export interface BoldMediaPlayerCardBaseConfig
 export interface BoldMediaPlayerCardConfig
   extends BoldMediaPlayerCardBaseConfig {
   type: BoldCardTypes["MEDIA_PLAYER"];
-  picture_position?: ExtendedPosition;
+  picture_position?: (typeof mediaPlayerAllowedPicturePositions)[number];
   show_picture?: boolean;
   background_picture?: MediaPlayerCardBackgroundPictureStyle;
-  text_position?: ExtendedPosition;
+  text_position?: (typeof mediaPlayerAllowedTextPositions)[number];
   show_text?: boolean;
-  feature_position: ExtendedPosition;
+  feature_position: (typeof mediaPlayerAllowedFeaturePositions)[number];
   show_title_bar?: boolean;
   placeholder_when_off?: boolean;
 }

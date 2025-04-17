@@ -79,7 +79,7 @@ export const presets: {
   {
     name: "Default",
     config: {
-      picture_position: Position.MIDDLE_LEFT,
+      picture_position: InlinePosition.INLINE_LEFT,
       show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.MIDDLE_LEFT,
@@ -109,7 +109,7 @@ export const presets: {
   {
     name: "Horizontal Vibrant",
     config: {
-      picture_position: Position.MIDDLE_LEFT,
+      picture_position: InlinePosition.INLINE_LEFT,
       show_picture: true,
       background_picture: MediaPlayerCardBackgroundPictureStyle.HIDE,
       text_position: Position.MIDDLE_LEFT,
@@ -139,7 +139,7 @@ export const presets: {
   {
     name: "Horizontal Artwork Background Space",
     config: {
-      picture_position: Position.MIDDLE_LEFT,
+      picture_position: InlinePosition.INLINE_LEFT,
       show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.BOTTOM_LEFT,
@@ -169,7 +169,7 @@ export const presets: {
   {
     name: "Artwork Square",
     config: {
-      picture_position: Position.MIDDLE_LEFT,
+      picture_position: InlinePosition.INLINE_LEFT,
       show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.BOTTOM_LEFT,
@@ -195,7 +195,7 @@ export const presets: {
   {
     name: "Artwork Square Large",
     config: {
-      picture_position: Position.MIDDLE_LEFT,
+      picture_position: InlinePosition.INLINE_LEFT,
       show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.BOTTOM_LEFT,
@@ -249,7 +249,7 @@ export const presets: {
   {
     name: "Vertical Full Artwork Background",
     config: {
-      picture_position: Position.MIDDLE_LEFT,
+      picture_position: InlinePosition.INLINE_LEFT,
       show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.BOTTOM_CENTER,
@@ -273,7 +273,7 @@ export const presets: {
   {
     name: "Simple Play/Pause",
     config: {
-      picture_position: Position.MIDDLE_LEFT,
+      picture_position: InlinePosition.INLINE_LEFT,
       show_picture: true,
       background_picture: MediaPlayerCardBackgroundPictureStyle.HIDE,
       text_position: Position.BOTTOM_LEFT,
@@ -297,7 +297,7 @@ export const presets: {
   {
     name: "Info Only",
     config: {
-      picture_position: Position.MIDDLE_LEFT,
+      picture_position: InlinePosition.INLINE_LEFT,
       show_picture: true,
       background_picture: MediaPlayerCardBackgroundPictureStyle.HIDE,
       text_position: Position.MIDDLE_CENTER,

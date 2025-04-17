@@ -24,6 +24,7 @@ import { BoldCardType } from "../../lib/cards/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { doIfDefined, pair } from "../../lib/helpers";
 import {
+  InlinePosition,
   isInlinePosition,
   Position,
   splitPosition,
@@ -68,7 +69,7 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
     return {
       type: this.cardType,
       entity: entity?.entity_id ?? "",
-      picture_position: Position.MIDDLE_LEFT,
+      picture_position: InlinePosition.INLINE_LEFT,
       show_picture: false,
       background_picture: MediaPlayerCardBackgroundPictureStyle.COVER,
       text_position: Position.BOTTOM_LEFT,

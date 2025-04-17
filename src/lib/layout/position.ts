@@ -43,41 +43,41 @@ export const ExtendedPosition = {
 export type ExtendedPosition =
   (typeof ExtendedPosition)[keyof typeof ExtendedPosition];
 
-export const TopRowPositions: Position[] = [
+export const TopRowPositions = [
   Position.TOP_LEFT,
   Position.TOP_CENTER,
   Position.TOP_RIGHT,
 ];
 
-export const MiddleRowPositions: Position[] = [
+export const MiddleRowPositions = [
   Position.MIDDLE_LEFT,
   Position.MIDDLE_CENTER,
   Position.MIDDLE_RIGHT,
 ];
 
-export const BottomRowPositions: Position[] = [
+export const BottomRowPositions = [
   Position.BOTTOM_LEFT,
   Position.BOTTOM_CENTER,
   Position.BOTTOM_RIGHT,
 ];
 
-export const TopAndBottomPositions: VerticalPosition[] = [
+export const TopAndBottomPositions = [
   VerticalPosition.TOP,
   VerticalPosition.BOTTOM,
 ];
 
-export const LeftAndRightPositions: HorizontalPosition[] = [
+export const LeftAndRightPositions = [
   HorizontalPosition.LEFT,
   HorizontalPosition.RIGHT,
 ];
 
-export const HorizontalPositions: HorizontalPosition[] = [
+export const HorizontalPositions = [
   HorizontalPosition.LEFT,
   HorizontalPosition.CENTER,
   HorizontalPosition.RIGHT,
 ];
 
-export const InlinePositions: InlinePosition[] = [
+export const InlinePositions = [
   InlinePosition.INLINE_LEFT,
   InlinePosition.INLINE_RIGHT,
 ];
