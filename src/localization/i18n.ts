@@ -25,7 +25,6 @@ import {
   ExtendedPosition,
   HorizontalPosition,
   InlinePosition,
-  InlinePositions,
   Position,
   VerticalPosition,
 } from "../lib/layout/position";
@@ -249,16 +248,10 @@ const i18n = new I18n(
               entity: "Entity",
               temperature_entity: "Temperature Entity",
               shape: "Shape",
-              temperature_template: "Temperature Template",
-              icon_template: "Icon Template",
             },
             helper_text: {
               temperature_entity:
                 "Optionally replace the displayed temperature with the value of any sensor entity.",
-              temperature_template:
-                "Optionally replace the displayed temperature with the template result. Use the `temperature` variable to access the value you're overriding.",
-              icon_template:
-                "Optionally replace the displayed icon with the template result. Use the `icon` variable to access the value you're overriding.",
             },
           },
           media_player: {

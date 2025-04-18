@@ -42,10 +42,6 @@ export class BoldWeatherCard extends BoldCardWithEntity<
   WeatherCardConfig,
   WeatherEntity
 > {
-  @state() protected _renderedConfig?: WeatherCardConfig;
-
-  protected _configRenderer?: TemplatedConfigRenderer<WeatherCardConfig>;
-
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("../../editors/cards/weather-card/bold-weather-card-editor");
     return document.createElement(
@@ -64,6 +60,14 @@ export class BoldWeatherCard extends BoldCardWithEntity<
       entity: entity?.entity_id ?? "",
       shape: WeatherCardShape.PILL,
     };
+  }
+
+  protected get _temperatureEntityStateObj() {
+    if (!this._config?.temperature_entity) {
+      return undefined;
+    }
+    const entityId = this._config.temperature_entity;
+    return this.hass?.states[entityId] as HassEntity | undefined;
   }
 
   protected _getWeatherIcon() {
@@ -86,51 +90,6 @@ export class BoldWeatherCard extends BoldCardWithEntity<
     );
   }
 
-  protected _getTemplateVariables() {
-    return {
-      entity: this._config?.entity,
-      temperature_entity: this._config?.temperature_entity,
-      temperature: this._getTemperature(),
-      icon: this._getWeatherIcon(),
-    };
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-
-    this._configRenderer = new TemplatedConfigRenderer(
-      this.hass,
-      [
-        {
-          templateKey: "temperature_template",
-          resultKey: "temperature",
-        },
-        {
-          templateKey: "icon_template",
-          resultKey: "icon",
-        },
-      ],
-      () => this._getTemplateVariables(),
-    );
-
-    this._configRenderer.subscribe((value) => {
-      this._renderedConfig = value;
-    });
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this._configRenderer?.destroy();
-  }
-
-  public willUpdate(changedProps: PropertyValues) {
-    super.willUpdate(changedProps);
-
-    if (changedProps.has("_config") && this._configRenderer) {
-      this._configRenderer.setValue(this._config);
-    }
-  }
-
   public getCardSize() {
     return 2;
   }
@@ -144,36 +103,29 @@ export class BoldWeatherCard extends BoldCardWithEntity<
     };
   }
 
-  protected get _temperatureEntityStateObj() {
-    if (!this._config?.temperature_entity) {
-      return undefined;
-    }
-    const entityId = this._config.temperature_entity;
-    return this.hass?.states[entityId] as HassEntity | undefined;
+  protected _getTemperatureTemplate() {
+    const temperature = `${Math.round(this._getTemperature())}˚`;
+
+    return svg`
+      <svg aria-label=${temperature} width="100%" height="100%" viewBox="0 0 200 200">
+        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">${temperature}</text>
+      </svg>
+    `;
   }
 
   protected render() {
     const stateObj = this._stateObj;
 
-    if (!this._renderedConfig || !stateObj) {
+    if (!this._config || !stateObj) {
       return nothing;
     }
 
-    const temperature =
-      this._renderedConfig.temperature ||
-      `${Math.round(this._getTemperature())}˚`;
-
-    const labelSvg = svg`
-      <svg width="100%" height="100%" viewBox="0 0 200 200">
-        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">${temperature}</text>
-      </svg>
-    `;
-
-    const icon = this._renderedConfig.icon || this._getWeatherIcon();
+    const icon = this._getWeatherIcon();
+    const temperature = this._getTemperatureTemplate();
 
     return html` <div
       class="container"
-      data-shape=${this._renderedConfig.shape ?? WeatherCardShape.RECTANGLE}
+      data-shape=${this._config.shape ?? WeatherCardShape.RECTANGLE}
     >
       <div class="content">
         <button
@@ -188,7 +140,7 @@ export class BoldWeatherCard extends BoldCardWithEntity<
         <div class="icon-container">
           <bc-icon icon=${icon}></bc-icon>
         </div>
-        <div class="label-container">${labelSvg}</div>
+        <div class="label-container">${temperature}</div>
       </div>
     </div>`;
   }

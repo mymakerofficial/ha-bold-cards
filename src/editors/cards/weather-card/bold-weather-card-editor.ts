@@ -46,18 +46,6 @@ export class BoldWeatherCardEditor extends BoldLovelaceCardEditorWithEntity<
           },
         },
       },
-      {
-        name: "temperature_template",
-        selector: {
-          template: {},
-        },
-      },
-      {
-        name: "icon_template",
-        selector: {
-          template: {},
-        },
-      },
     ];
 
     const stateObj = this._stateObj;
