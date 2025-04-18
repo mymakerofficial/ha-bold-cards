@@ -5,20 +5,21 @@ import { t } from "../../../localization/i18n";
 import { editorBaseStyles } from "../../styles";
 import { BoldLovelaceCardEditorWithEntity } from "../base";
 import {
-  WeatherCardConfig,
-  WeatherCardShape,
+  MiniWeatherCardArrangement,
+  MiniWeatherCardConfig,
+  MiniWeatherCardShape,
 } from "../../../cards/mini-weather-card/types";
 import { WeatherEntity } from "../../../lib/weather/types";
-import { weatherCardConfigStruct } from "../../../cards/mini-weather-card/struct";
+import { miniWeatherCardConfigStruct } from "../../../cards/mini-weather-card/struct";
 import { enumToOptions } from "../../helpers";
 
 @customElement("bold-mini-weather-card-editor")
 export class BoldMiniWeatherCardEditor extends BoldLovelaceCardEditorWithEntity<
-  WeatherCardConfig,
+  MiniWeatherCardConfig,
   WeatherEntity
 > {
   protected get _struct() {
-    return weatherCardConfigStruct;
+    return miniWeatherCardConfigStruct;
   }
 
   protected render() {
@@ -40,8 +41,19 @@ export class BoldMiniWeatherCardEditor extends BoldLovelaceCardEditorWithEntity<
         selector: {
           select: {
             mode: "box",
-            options: enumToOptions(WeatherCardShape, {
-              labelScope: "common.weather_card_shape",
+            options: enumToOptions(MiniWeatherCardShape, {
+              labelScope: "common.mini_weather_card_shape",
+            }),
+          },
+        },
+      },
+      {
+        name: "arrangement",
+        selector: {
+          select: {
+            mode: "box",
+            options: enumToOptions(MiniWeatherCardArrangement, {
+              labelScope: "common.mini_weather_card_arrangement",
             }),
           },
         },
@@ -71,7 +83,7 @@ export class BoldMiniWeatherCardEditor extends BoldLovelaceCardEditorWithEntity<
     }
 
     fireEvent(this, "config-changed", {
-      config: ev.detail.value as WeatherCardConfig,
+      config: ev.detail.value as MiniWeatherCardConfig,
     });
   }
 

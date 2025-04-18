@@ -7,7 +7,11 @@ import { BoldCardType } from "../../lib/cards/types";
 import { customElement } from "lit/decorators";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { BoldCardWithEntity } from "../base";
-import { WeatherCardConfig, WeatherCardShape } from "./types";
+import {
+  MiniWeatherCardArrangement,
+  MiniWeatherCardConfig,
+  MiniWeatherCardShape,
+} from "./types";
 import { css, html, nothing, svg, unsafeCSS } from "lit";
 import { WeatherEntity } from "../../lib/weather/types";
 import {
@@ -41,7 +45,7 @@ const cardType = BoldCardType.MINI_WEATHER;
 
 @customElement(stripCustomPrefix(cardType))
 export class BoldMiniWeatherCard extends BoldCardWithEntity<
-  WeatherCardConfig,
+  MiniWeatherCardConfig,
   WeatherEntity
 > {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
@@ -57,12 +61,12 @@ export class BoldMiniWeatherCard extends BoldCardWithEntity<
     return cardType;
   }
 
-  public static getStubConfig(hass?: HomeAssistant): WeatherCardConfig {
+  public static getStubConfig(hass?: HomeAssistant): MiniWeatherCardConfig {
     const entity = getStubWeatherEntity(hass);
     return {
       type: this.cardType,
       entity: entity?.entity_id ?? "",
-      shape: WeatherCardShape.PILL,
+      shape: MiniWeatherCardShape.PILL,
     };
   }
 
@@ -83,7 +87,7 @@ export class BoldMiniWeatherCard extends BoldCardWithEntity<
 
     const time = new Date().getHours(); // TODO use a better time source
     const isNight = time < 6 || time > 18;
-    return getWeatherIcon(stateObj.state, isNight);
+    return getWeatherIcon(stateObj.state, isNight) ?? "bold:weather-cloudy";
   }
 
   protected _getTemperature() {
@@ -111,7 +115,7 @@ export class BoldMiniWeatherCard extends BoldCardWithEntity<
     const temperature = `${Math.round(this._getTemperature())}˚`;
 
     return svg`
-      <svg aria-label=${temperature} width="100%" height="100%" viewBox="0 0 200 200">
+      <svg aria-label=${temperature} class="display-item" width="100%" height="100%" viewBox="0 0 200 200">
         <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">${temperature}</text>
       </svg>
     `;
@@ -127,9 +131,11 @@ export class BoldMiniWeatherCard extends BoldCardWithEntity<
     const icon = this._getWeatherIcon();
     const temperature = this._getTemperatureTemplate();
 
-    return html` <div
+    return html`<div
       class="container"
-      data-shape=${this._config.shape ?? WeatherCardShape.RECTANGLE}
+      data-shape=${this._config.shape ?? MiniWeatherCardShape.RECTANGLE}
+      data-arrangement=${this._config.arrangement ??
+      MiniWeatherCardArrangement.TILTED}
     >
       <div class="content">
         <button
@@ -141,10 +147,10 @@ export class BoldMiniWeatherCard extends BoldCardWithEntity<
         >
           <ha-ripple></ha-ripple>
         </button>
-        <div class="icon-container">
-          <bc-icon icon=${icon}></bc-icon>
+        <div class="display-container icon-container">
+          <bc-icon icon=${icon} class="display-item"></bc-icon>
         </div>
-        <div class="label-container">${temperature}</div>
+        <div class="display-container label-container">${temperature}</div>
       </div>
     </div>`;
   }
@@ -189,18 +195,26 @@ export class BoldMiniWeatherCard extends BoldCardWithEntity<
         align-items: center;
       }
 
-      .container[data-shape="${unsafeCSS(WeatherCardShape.RECTANGLE)}"] {
+      .container[data-shape="${unsafeCSS(MiniWeatherCardShape.NONE)}"] {
+        --ha-card-background: transparent;
         --border-radius: var(--ha-card-border-radius, 12px);
         height: 100%;
         width: 100%;
         aspect-ratio: unset;
       }
 
-      .container[data-shape="${unsafeCSS(WeatherCardShape.PILL)}"] {
+      .container[data-shape="${unsafeCSS(MiniWeatherCardShape.RECTANGLE)}"] {
+        --border-radius: var(--ha-card-border-radius, 12px);
+        height: 100%;
+        width: 100%;
+        aspect-ratio: unset;
+      }
+
+      .container[data-shape="${unsafeCSS(MiniWeatherCardShape.PILL)}"] {
         --mask: url("${unsafeCSS(PILL_MASK_IMAGE)}");
       }
 
-      .container[data-shape="${unsafeCSS(WeatherCardShape.SCALLOP)}"] {
+      .container[data-shape="${unsafeCSS(MiniWeatherCardShape.SCALLOP)}"] {
         --mask: url("${unsafeCSS(SCALLOP_MASK_IMAGE)}");
       }
 
@@ -237,6 +251,10 @@ export class BoldMiniWeatherCard extends BoldCardWithEntity<
         height: calc(100% + 4px);
       }
 
+      .container[data-shape="${unsafeCSS(MiniWeatherCardShape.NONE)}"]::before {
+        display: none;
+      }
+
       .container * {
         pointer-events: none;
       }
@@ -263,9 +281,31 @@ export class BoldMiniWeatherCard extends BoldCardWithEntity<
         cursor: pointer;
         pointer-events: all;
         border: none;
+        transition: box-shadow 180ms ease-in-out;
       }
 
-      .content {
+      .container[data-shape="${unsafeCSS(MiniWeatherCardShape.NONE)}"]
+        .background:focus-visible {
+        box-shadow: 0 0 0 2px var(--primary-color);
+      }
+
+      .container[data-arrangement="${unsafeCSS(
+          MiniWeatherCardArrangement.HORIZONTAL,
+        )}"]
+        .content {
+        max-height: 100%;
+        max-width: 100%;
+        display: grid;
+        padding: 0 12%;
+        gap: 12%;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas: "icon label";
+      }
+
+      .container[data-arrangement="${unsafeCSS(
+          MiniWeatherCardArrangement.TILTED,
+        )}"]
+        .content {
         max-height: 100%;
         max-width: 100%;
         aspect-ratio: 1 / 1;
@@ -279,39 +319,56 @@ export class BoldMiniWeatherCard extends BoldCardWithEntity<
 
       .icon-container {
         grid-area: icon;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1;
-      }
-
-      .icon-container bc-icon {
-        height: 100%;
-        width: 100%;
-        aspect-ratio: 1 / 1;
-        transform: translate(25%, -25%);
-        scale: 1.1;
+        z-index: 2;
       }
 
       .label-container {
         grid-area: label;
+        z-index: 1;
+      }
+
+      .display-container {
         display: flex;
         justify-content: center;
         align-items: center;
       }
 
-      .label-container svg {
+      .container[data-arrangement="${unsafeCSS(
+          MiniWeatherCardArrangement.TILTED,
+        )}"]
+        .icon-container
+        .display-item {
+        transform: translate(25%, -25%);
+      }
+
+      .container[data-arrangement="${unsafeCSS(
+          MiniWeatherCardArrangement.TILTED,
+        )}"]
+        .label-container
+        .display-item {
+        transform: translate(-25%, 25%);
+      }
+
+      .display-container .display-item {
+        height: 100%;
+        width: 100%;
         max-height: 100%;
         max-width: 100%;
         aspect-ratio: 1 / 1;
-        transform: translate(-25%, 25%);
+      }
+
+      .container[data-arrangement="${unsafeCSS(
+          MiniWeatherCardArrangement.TILTED,
+        )}"]
+        .display-container
+        .display-item {
         scale: 1.1;
       }
 
       .label-container svg text {
+        fill: var(--primary-text-color);
         font-size: 9rem;
         font-weight: 700;
-        fill: var(--primary-text-color);
       }
     `;
   }

@@ -20,7 +20,10 @@ import {
 } from "../cards/media-player-card/types";
 import { CardFeaturePosition } from "../cards/types";
 import { MediaPlayerState } from "../types/ha/entity";
-import { WeatherCardShape } from "../cards/mini-weather-card/types";
+import {
+  MiniWeatherCardArrangement,
+  MiniWeatherCardShape,
+} from "../cards/mini-weather-card/types";
 import {
   ExtendedPosition,
   HorizontalPosition,
@@ -135,11 +138,16 @@ const i18n = new I18n(
           [MediaPlayerCardColorMode.AMBIENT_SOLID]: "Ambient Solid",
           [MediaPlayerCardColorMode.MANUAL]: "Manual",
         } satisfies EnumTranslations<MediaPlayerCardColorMode>,
-        weather_card_shape: {
-          [WeatherCardShape.RECTANGLE]: "Rectangle",
-          [WeatherCardShape.PILL]: "Pill",
-          [WeatherCardShape.SCALLOP]: "Scallop",
-        } satisfies EnumTranslations<WeatherCardShape>,
+        mini_weather_card_shape: {
+          [MiniWeatherCardShape.NONE]: "No Background",
+          [MiniWeatherCardShape.RECTANGLE]: "Rectangle",
+          [MiniWeatherCardShape.PILL]: "Pill",
+          [MiniWeatherCardShape.SCALLOP]: "Scallop",
+        } satisfies EnumTranslations<MiniWeatherCardShape>,
+        mini_weather_card_arrangement: {
+          [MiniWeatherCardArrangement.HORIZONTAL]: "Horizontal",
+          [MiniWeatherCardArrangement.TILTED]: "Tilted",
+        } satisfies EnumTranslations<MiniWeatherCardArrangement>,
         button: {
           size: {
             [ButtonSize.SM]: "Small",
@@ -248,6 +256,7 @@ const i18n = new I18n(
               entity: "Entity",
               temperature_entity: "Temperature Entity",
               shape: "Shape",
+              arrangement: "Arrangement",
             },
             helper_text: {
               temperature_entity:

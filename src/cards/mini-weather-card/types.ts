@@ -1,20 +1,25 @@
 import { LovelaceCardConfigWithEntity } from "../../types/card";
 import { BoldCardTypes } from "../../lib/cards/types";
 
-export const WeatherCardShape = {
+export const MiniWeatherCardShape = {
+  NONE: "none",
   RECTANGLE: "rectangle",
   PILL: "pill",
   SCALLOP: "scallop",
 } as const;
-export type WeatherCardShape =
-  (typeof WeatherCardShape)[keyof typeof WeatherCardShape];
+export type MiniWeatherCardShape =
+  (typeof MiniWeatherCardShape)[keyof typeof MiniWeatherCardShape];
 
-export interface WeatherCardConfig extends LovelaceCardConfigWithEntity {
+export const MiniWeatherCardArrangement = {
+  HORIZONTAL: "horizontal",
+  TILTED: "tilted",
+} as const;
+export type MiniWeatherCardArrangement =
+  (typeof MiniWeatherCardArrangement)[keyof typeof MiniWeatherCardArrangement];
+
+export interface MiniWeatherCardConfig extends LovelaceCardConfigWithEntity {
   type: BoldCardTypes["MINI_WEATHER"];
   temperature_entity?: string;
-  shape?: WeatherCardShape;
-  temperature?: string;
-  temperature_template?: string;
-  icon?: string;
-  icon_template?: string;
+  shape?: MiniWeatherCardShape;
+  arrangement?: MiniWeatherCardArrangement;
 }
