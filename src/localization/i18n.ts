@@ -20,7 +20,7 @@ import {
 } from "../cards/media-player-card/types";
 import { CardFeaturePosition } from "../cards/types";
 import { MediaPlayerState } from "../types/ha/entity";
-import { WeatherCardShape } from "../cards/weather-card/types";
+import { WeatherCardShape } from "../cards/mini-weather-card/types";
 import {
   ExtendedPosition,
   HorizontalPosition,

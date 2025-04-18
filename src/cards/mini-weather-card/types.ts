@@ -10,7 +10,7 @@ export type WeatherCardShape =
   (typeof WeatherCardShape)[keyof typeof WeatherCardShape];
 
 export interface WeatherCardConfig extends LovelaceCardConfigWithEntity {
-  type: BoldCardTypes["WEATHER"];
+  type: BoldCardTypes["MINI_WEATHER"];
   temperature_entity?: string;
   shape?: WeatherCardShape;
   temperature?: string;

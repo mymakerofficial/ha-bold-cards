@@ -7,13 +7,13 @@ import { BoldLovelaceCardEditorWithEntity } from "../base";
 import {
   WeatherCardConfig,
   WeatherCardShape,
-} from "../../../cards/weather-card/types";
+} from "../../../cards/mini-weather-card/types";
 import { WeatherEntity } from "../../../lib/weather/types";
-import { weatherCardConfigStruct } from "../../../cards/weather-card/struct";
+import { weatherCardConfigStruct } from "../../../cards/mini-weather-card/struct";
 import { enumToOptions } from "../../helpers";
 
-@customElement("bold-weather-card-editor")
-export class BoldWeatherCardEditor extends BoldLovelaceCardEditorWithEntity<
+@customElement("bold-mini-weather-card-editor")
+export class BoldMiniWeatherCardEditor extends BoldLovelaceCardEditorWithEntity<
   WeatherCardConfig,
   WeatherEntity
 > {

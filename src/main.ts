@@ -21,4 +21,4 @@ import "./cards/battery-card/bold-battery-card";
 import "./cards/record-player-card/bold-record-player-card";
 import "./cards/at-a-glance-card/bold-at-a-glance-card";
 import "./cards/carousel-card/bold-carousel-card";
-import "./cards/weather-card/bold-weather-card";
+import "./cards/mini-weather-card/bold-mini-weather-card";

@@ -64,8 +64,5 @@ const nightWeatherIcons: Partial<{
 };
 
 export function getWeatherIcon(state: WeatherState, isNight = false) {
-  return (
-    (isNight ? nightWeatherIcons[state] : dayWeatherIcons[state]) ??
-    "mdi:help-circle"
-  );
+  return isNight ? nightWeatherIcons[state] : dayWeatherIcons[state];
 }
