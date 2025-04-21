@@ -150,16 +150,22 @@ export abstract class BoldMediaPlayerCardBase<
   }
 }
 
-export function getStubMediaPlayerEntity(hass: HomeAssistant) {
-  const entities = Object.values(hass.states).filter(isMediaPlayerEntity);
+export function getStubMediaPlayerEntity(
+  hass: HomeAssistant,
+  entities: string[],
+  _entitiesFallback: string[],
+) {
+  const mediaPlayerEntities = Object.values(hass.states)
+    .filter((it) => entities.includes(it.entity_id))
+    .filter(isMediaPlayerEntity);
 
-  if (entities.length === 0) {
+  if (mediaPlayerEntities.length === 0) {
     return undefined;
   }
 
-  const activeEntities = entities.filter(isStateActive);
+  const activeEntities = mediaPlayerEntities.filter(isStateActive);
 
   return activeEntities.length > 0
     ? randomFrom(activeEntities)
-    : randomFrom(entities);
+    : randomFrom(mediaPlayerEntities);
 }

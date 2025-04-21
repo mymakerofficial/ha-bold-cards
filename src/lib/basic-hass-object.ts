@@ -18,10 +18,10 @@ import { getFeatureTypeLabel } from "../editors/cards/features/helpers";
 import { dedupeMediaPlayerEntities } from "./media-player/helpers";
 import { browseMediaPlayer } from "./media-player/media-browser";
 import { HomeAssistant } from "../types/ha/lovelace";
-import { getStubWeatherEntity } from "./weather/helpers";
 import { HassEntity } from "home-assistant-js-websocket";
 import { computeIsDarkMode } from "./theme";
 import { getCardStubConfig } from "./cards/helpers";
+import { getEntitiesForCard } from "../editors/cards/carousel-card/helpers";
 
 // hass object is split into two files to avoid circular dependencies
 //  any class that extends the hass object and is also used in the hass object should only import the basic-hass-object.ts file
@@ -98,10 +98,6 @@ export function BasicHassObjectMixin<TBase extends HassObjectConstructor>(
       return subscribeToRenderTemplate(this.hass!.connection, params);
     }
 
-    protected getStubWeatherEntity() {
-      return getStubWeatherEntity(this.hass);
-    }
-
     protected isDarkMode() {
       return computeIsDarkMode(this.hass);
     }
@@ -121,6 +117,18 @@ export function BasicHassObjectMixin<TBase extends HassObjectConstructor>(
         entities,
         entitiesFallback,
       );
+    }
+
+    protected async getEntitiesForCard(
+      type: string,
+      entities: string[],
+      count: number,
+    ) {
+      if (!this.hass) {
+        throw new Error("No Home Assistant instance available");
+      }
+
+      return await getEntitiesForCard(this.hass, type, entities, count);
     }
 
     protected getAllEntityIds() {

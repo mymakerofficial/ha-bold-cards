@@ -14,7 +14,6 @@ import { styleMap } from "lit-html/directives/style-map";
 import { classMap } from "lit-html/directives/class-map";
 import { mediaPlayerCardStyles } from "./style";
 import { presets } from "../../editors/cards/media-player-card/constants";
-import { CardFeaturePosition } from "../types";
 import { GetFeatureInternalsContext } from "../../types/card";
 import { BoldMediaPlayerCardBase, getStubMediaPlayerEntity } from "./base";
 import { t } from "../../localization/i18n";
@@ -63,8 +62,12 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
     return cardType;
   }
 
-  public static getStubConfig(hass: HomeAssistant): BoldMediaPlayerCardConfig {
-    const entity = getStubMediaPlayerEntity(hass);
+  public static getStubConfig(
+    hass: HomeAssistant,
+    entities: string[],
+    entitiesFallback: string[],
+  ): BoldMediaPlayerCardConfig {
+    const entity = getStubMediaPlayerEntity(hass, entities, entitiesFallback);
 
     return {
       type: this.cardType,
