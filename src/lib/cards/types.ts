@@ -3,6 +3,7 @@ const _BoldCardType = {
   RECORD_PLAYER: "custom:bold-record-player-card",
   AIR_QUALITY: "custom:bold-air-quality-card",
   BATTERY: "custom:bold-battery-card",
+  CAROUSEL: "custom:bold-carousel-card",
   ENTITY_CAROUSEL: "custom:bold-entity-carousel-card",
   AT_A_GLANCE: "custom:bold-at-a-glance-card",
   MINI_WEATHER: "custom:bold-mini-weather-card",
