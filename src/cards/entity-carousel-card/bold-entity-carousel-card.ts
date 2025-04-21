@@ -1,5 +1,5 @@
 import { BoldLovelaceCard } from "../base";
-import { CarouselCardConfig } from "./types";
+import { EntityCarouselCardConfig } from "./types";
 import { css, html, nothing } from "lit";
 import { customElement, query } from "lit/decorators";
 import {
@@ -14,16 +14,19 @@ import {
 } from "../../lib/helpers";
 import { BoldCardType } from "../../lib/cards/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
-import { getCarouselCardConfig } from "./helpers";
+import { getEntityCarouselCardConfig } from "./helpers";
+import { getCardEditorTag } from "../../lib/cards/helpers";
 
-const cardType = BoldCardType.CAROUSEL;
+const cardType = BoldCardType.ENTITY_CAROUSEL;
 
 @customElement(stripCustomPrefix(cardType))
-export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
+export class BoldEntityCarouselCard extends BoldLovelaceCard<EntityCarouselCardConfig> {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
-    await import("../../editors/cards/carousel-card/bold-carousel-card-editor");
+    await import(
+      "../../editors/cards/entity-carousel-card/bold-entity-carousel-card-editor"
+    );
     return document.createElement(
-      "bold-carousel-card-editor",
+      getCardEditorTag(cardType),
     ) as LovelaceCardEditor;
   }
 
@@ -31,7 +34,7 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
     return cardType;
   }
 
-  static getStubConfig(): CarouselCardConfig {
+  static getStubConfig(): EntityCarouselCardConfig {
     return {
       type: this.cardType,
       entities: [],
@@ -53,7 +56,7 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
 
     const grids = this._config!.entities.map((entity) =>
       this.getCardGridOptions(
-        getCarouselCardConfig({ config: this._config!, entity }),
+        getEntityCarouselCardConfig({ config: this._config!, entity }),
       ),
     ).filter(isDefined);
 
@@ -77,7 +80,7 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
   }
 
   protected toCardWithEntity(entity: string) {
-    return getCarouselCardConfig({
+    return getEntityCarouselCardConfig({
       config: this._config!,
       entity,
     });
@@ -142,8 +145,8 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
   }
 }
 
-BoldCarouselCard.registerCustomCard({
-  name: "Bold Carousel",
+BoldEntityCarouselCard.registerCustomCard({
+  name: "Bold Entity Carousel",
   description: "Turn any card into a carousel with multiple entities.",
   preview: false,
 });

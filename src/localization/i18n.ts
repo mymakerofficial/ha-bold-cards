@@ -249,7 +249,7 @@ const i18n = new I18n(
           },
         },
         card: {
-          carousel: {
+          entity_carousel: {
             tab: {
               carousel: "Carousel",
               card: "Card",

@@ -5,7 +5,7 @@ import {
   LovelaceCardConstructor,
   LovelaceGridOptions,
 } from "../../types/ha/lovelace";
-import { isDefined, isUndefined, toPromise } from "../helpers";
+import { isDefined, isEmpty, isUndefined, toPromise } from "../helpers";
 import { Optional } from "../types";
 import { LitElement } from "lit";
 
@@ -24,6 +24,10 @@ export function stripCustomPrefix(type: string) {
 
 export function prefixCustomType(type: string) {
   return `${CUSTOM_PREFIX}${type}`;
+}
+
+export function getCardEditorTag(type: string) {
+  return `${stripCustomPrefix(type)}-editor`;
 }
 
 export function optionallyPrefixCustomType(
@@ -75,6 +79,7 @@ export async function getCardStubConfig(
     card.getStubConfig(hass, entities, entitiesFallback ?? entities),
   );
 }
+
 export function getCardGridOptions(
   hass: HomeAssistant,
   config: LovelaceCardConfig,
@@ -86,4 +91,39 @@ export function getCardGridOptions(
   el.setConfig(config);
 
   return el.getGridOptions?.();
+}
+
+export async function getEntitiesForCard(
+  hass: HomeAssistant,
+  type: string,
+  entities: string[],
+  count: number,
+) {
+  const pickedEntities: string[] = [];
+
+  while (count > pickedEntities.length) {
+    const availableEntities = entities.filter(
+      (entity) => !pickedEntities.includes(entity),
+    );
+
+    const entity = await getNextEntityForCard(hass, type, availableEntities);
+
+    if (isUndefined(entity) || isEmpty(entity)) {
+      // no entity was provided so we can stop
+      break;
+    }
+
+    pickedEntities.push(entity);
+  }
+
+  return pickedEntities;
+}
+
+async function getNextEntityForCard(
+  hass: HomeAssistant,
+  type: string,
+  availableEntities: string[],
+) {
+  const stub = await getCardStubConfig(hass, type, availableEntities);
+  return stub.entity as Optional<string>;
 }
