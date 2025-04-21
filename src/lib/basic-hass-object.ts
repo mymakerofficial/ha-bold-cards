@@ -21,6 +21,7 @@ import { HomeAssistant } from "../types/ha/lovelace";
 import { getStubWeatherEntity } from "./weather/helpers";
 import { HassEntity } from "home-assistant-js-websocket";
 import { computeIsDarkMode } from "./theme";
+import { getCardStubConfig } from "./cards/helpers";
 
 // hass object is split into two files to avoid circular dependencies
 //  any class that extends the hass object and is also used in the hass object should only import the basic-hass-object.ts file
@@ -103,6 +104,31 @@ export function BasicHassObjectMixin<TBase extends HassObjectConstructor>(
 
     protected isDarkMode() {
       return computeIsDarkMode(this.hass);
+    }
+
+    protected async getCardStubConfig(
+      type: string,
+      entities: string[],
+      entitiesFallback?: string[],
+    ) {
+      if (!this.hass) {
+        throw new Error("No Home Assistant instance available");
+      }
+
+      return await getCardStubConfig(
+        this.hass,
+        type,
+        entities,
+        entitiesFallback,
+      );
+    }
+
+    protected getAllEntityIds() {
+      if (!this.hass) {
+        throw new Error("No Home Assistant instance available");
+      }
+
+      return Object.keys(this.hass.states);
     }
   };
 }

@@ -18,7 +18,11 @@ export type Pair<T, G> = [T, G];
 
 export type MaybeFunction<T> = T | (() => T);
 
+export type MaybePromise<T> = T | Promise<T>;
+
 export type GetterOrMap<T extends string | number | symbol, R> =
   | ((value: T) => R)
   | Partial<{ [key in T]: R }>
   | R;
+
+export type Constructor<T = any> = new (...args: any[]) => T;

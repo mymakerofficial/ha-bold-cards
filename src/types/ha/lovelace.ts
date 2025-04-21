@@ -6,6 +6,7 @@ import {
 import { LovelaceCardFeatureConfig } from "./feature";
 import { CardInternals, FeatureInternals } from "../../lib/internals/types";
 import { Connection } from "home-assistant-js-websocket";
+import { Constructor, MaybePromise } from "../../lib/types";
 
 type EntityCategory = "config" | "diagnostic";
 
@@ -122,6 +123,16 @@ export interface LovelaceCard<TConfig = LovelaceCardConfig>
   getLayoutOptions?(): LovelaceLayoutOptions;
   getGridOptions?(): LovelaceGridOptions;
   setConfig(config: TConfig): void;
+}
+
+export interface LovelaceCardConstructor extends Constructor<LovelaceCard> {
+  getStubConfig?: (
+    hass: HomeAssistant,
+    entities: string[],
+    entitiesFallback: string[],
+  ) => MaybePromise<LovelaceCardConfig>;
+  getConfigElement?: () => MaybePromise<LovelaceCardEditor>;
+  getConfigForm?: any;
 }
 
 export interface LovelaceGenericElementEditor<TConfig = any, TContext = any>
