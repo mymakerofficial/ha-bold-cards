@@ -160,3 +160,17 @@ export function doIfDefined<T, R, E = R>(
 export function toPromise<T>(value: MaybePromise<T>): Promise<T> {
   return isPromise(value) ? value : Promise.resolve(value);
 }
+
+export function maxOrUndefined(arr: number[]): Optional<number> {
+  if (isEmpty(arr)) {
+    return undefined;
+  }
+  return Math.max(...arr);
+}
+
+export function minOrUndefined(arr: number[]): Optional<number> {
+  if (isEmpty(arr)) {
+    return undefined;
+  }
+  return Math.min(...arr);
+}
