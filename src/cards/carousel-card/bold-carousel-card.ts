@@ -46,9 +46,13 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
       };
     }
 
-    const grids = this._config!.entities.map(() =>
-      this.getCardGridOptions(getCarouselCardConfig({ config: this._config! })),
-    ).filter(isDefined);
+    const grids = this._config.cards
+      .map((card) =>
+        this.getCardGridOptions(
+          getCarouselCardConfig({ config: this._config!, card }),
+        ),
+      )
+      .filter(isDefined);
 
     const columns = grids.map((grid) => grid.columns).filter(isDefined);
     const rows = grids.map((grid) => grid.rows).filter(isDefined);
@@ -74,19 +78,19 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
       return nothing;
     }
 
+    const cards = this._config.cards.map((card) =>
+      getCarouselCardConfig({ config: this._config!, card }),
+    );
+
     return html`
       <bc-carousel
-        .length=${this._config.cards.length}
+        .length=${cards.length}
         .getElement=${(index: number) => html`
-          <hui-card
-            .config=${this._config!.cards[index]}
-            .hass=${this.hass}
-          ></hui-card>
+          <hui-card .config=${cards[index]} .hass=${this.hass}></hui-card>
         `}
         .getKey=${
           (index: number) =>
-            this._config!.cards[index].entity ||
-            index /* TODO find better indexing */
+            cards[index].entity + index /* TODO find better indexing */
         }
       />
     `;
