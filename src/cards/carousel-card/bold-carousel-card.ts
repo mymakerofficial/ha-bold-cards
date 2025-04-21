@@ -1,30 +1,23 @@
 import { BoldLovelaceCard } from "../base";
-import { EntityCarouselCardConfig } from "./types";
-import { html, nothing } from "lit";
+import { CarouselCardConfig } from "./types";
+import { css, html, nothing } from "lit";
 import { customElement } from "lit/decorators";
 import {
   LovelaceCardEditor,
   LovelaceGridOptions,
 } from "../../types/ha/lovelace";
-import {
-  firstOf,
-  isDefined,
-  maxOrUndefined,
-  minOrUndefined,
-} from "../../lib/helpers";
+import { isDefined, maxOrUndefined, minOrUndefined } from "../../lib/helpers";
 import { BoldCardType } from "../../lib/cards/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
-import { getEntityCarouselCardConfig } from "./helpers";
+import { getCarouselCardConfig } from "./helpers";
 import { getCardEditorTag } from "../../lib/cards/helpers";
 
-const cardType = BoldCardType.ENTITY_CAROUSEL;
+const cardType = BoldCardType.CAROUSEL;
 
 @customElement(stripCustomPrefix(cardType))
-export class BoldEntityCarouselCard extends BoldLovelaceCard<EntityCarouselCardConfig> {
+export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
-    await import(
-      "../../editors/cards/entity-carousel-card/bold-entity-carousel-card-editor"
-    );
+    await import("../../editors/cards/carousel-card/bold-carousel-card-editor");
     return document.createElement(
       getCardEditorTag(cardType),
     ) as LovelaceCardEditor;
@@ -34,11 +27,10 @@ export class BoldEntityCarouselCard extends BoldLovelaceCard<EntityCarouselCardC
     return cardType;
   }
 
-  static getStubConfig(): EntityCarouselCardConfig {
+  static getStubConfig(): CarouselCardConfig {
     return {
       type: this.cardType,
-      entities: [],
-      card: undefined,
+      cards: [],
     };
   }
 
@@ -54,10 +46,8 @@ export class BoldEntityCarouselCard extends BoldLovelaceCard<EntityCarouselCardC
       };
     }
 
-    const grids = this._config!.entities.map((entity) =>
-      this.getCardGridOptions(
-        getEntityCarouselCardConfig({ config: this._config!, entity }),
-      ),
+    const grids = this._config!.entities.map(() =>
+      this.getCardGridOptions(getCarouselCardConfig({ config: this._config! })),
     ).filter(isDefined);
 
     const columns = grids.map((grid) => grid.columns).filter(isDefined);
@@ -79,53 +69,49 @@ export class BoldEntityCarouselCard extends BoldLovelaceCard<EntityCarouselCardC
     };
   }
 
-  protected toCardWithEntity(entity: string) {
-    return getEntityCarouselCardConfig({
-      config: this._config!,
-      entity,
-    });
-  }
-
-  protected getCards() {
-    const entities = this._config?.entities;
-    if (
-      !this.hass ||
-      !entities ||
-      entities.length === 0 ||
-      !this._config ||
-      !this._config.card
-    ) {
-      return [];
-    }
-
-    const cards = this.dedupeMediaPlayerEntities(entities)
-      .filter((entityId) => this.isStateActiveByEntityId(entityId))
-      .map((entityId) => this.toCardWithEntity(entityId));
-
-    if (cards.length >= 1) {
-      return cards;
-    }
-
-    return [this.toCardWithEntity(firstOf(entities)!)];
-  }
-
   protected render() {
     if (!this._config || !this.hass) {
       return nothing;
     }
 
-    const cards = this.getCards();
-    const config = {
-      type: BoldCardType.CAROUSEL,
-      cards: cards,
-    };
+    return html`
+      <bc-carousel
+        .length=${this._config.cards.length}
+        .getElement=${(index: number) => html`
+          <hui-card
+            .config=${this._config!.cards[index]}
+            .hass=${this.hass}
+          ></hui-card>
+        `}
+        .getKey=${
+          (index: number) =>
+            this._config!.cards[index].entity ||
+            index /* TODO find better indexing */
+        }
+      />
+    `;
+  }
 
-    return html`<hui-card .hass=${this.hass} .config=${config}></hui-card> `;
+  static get styles() {
+    return css`
+      :host {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      hui-card {
+        height: 100%;
+        min-width: 100%;
+        width: 100%;
+        position: absolute;
+      }
+    `;
   }
 }
 
-BoldEntityCarouselCard.registerCustomCard({
-  name: "Bold Entity Carousel",
-  description: "Turn any card into a carousel with multiple entities.",
+BoldCarouselCard.registerCustomCard({
+  name: "Bold Carousel",
+  description: "A carousel of cards.",
   preview: false,
 });

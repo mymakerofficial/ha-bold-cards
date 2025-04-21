@@ -21,5 +21,6 @@ import "./cards/air-quality-card/bold-air-quality-card";
 import "./cards/battery-card/bold-battery-card";
 import "./cards/record-player-card/bold-record-player-card";
 import "./cards/at-a-glance-card/bold-at-a-glance-card";
+import "./cards/carousel-card/bold-carousel-card";
 import "./cards/entity-carousel-card/bold-entity-carousel-card";
 import "./cards/mini-weather-card/bold-mini-weather-card";
