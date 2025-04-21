@@ -1,5 +1,5 @@
 import { customElement, property, query, state } from "lit/decorators";
-import { html, LitElement } from "lit";
+import { css, html, LitElement, nothing } from "lit";
 import {
   LovelaceCardConfig,
   LovelaceCardConstructor,
@@ -11,6 +11,8 @@ import { PropertyValues, TemplateResult } from "lit-element";
 import { isDefined, isUndefined, toPromise } from "../lib/helpers";
 import { optionallyPrefixCustomType } from "../lib/cards/helpers";
 import { Optional } from "../lib/types";
+import { classMap } from "lit-html/directives/class-map";
+import { t } from "../localization/i18n";
 
 export interface Card {
   type: string;
@@ -140,15 +142,41 @@ class BcCardPicker extends BoldHassElement {
     }
   }
 
+  protected get _spinner() {
+    return html`<div>
+      <ha-spinner size="small"></ha-spinner
+      ><span>${t("components.card_picker.loading")}</span>
+    </div>`;
+  }
+
   render() {
     if (this._loading) {
-      return html`<ha-spinner size="small"></ha-spinner>`;
+      return this._spinner;
     }
 
-    return html`<hui-card-picker
-      .hass=${this.hass}
-      .lovelace=${this.lovelace}
-      @config-changed=${(ev) => this.fireEvent("config-changed", ev)}
-    ></hui-card-picker>`;
+    return html`${!this._done ? this._spinner : nothing}<hui-card-picker
+        class=${classMap({
+          "visually-hidden": !this._done,
+        })}
+        .hass=${this.hass}
+        .lovelace=${this.lovelace}
+        @config-changed=${(ev) => this.fireEvent("config-changed", ev)}
+      ></hui-card-picker>`;
   }
+
+  static styles = css`
+    div:has(ha-spinner) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+  `;
 }
