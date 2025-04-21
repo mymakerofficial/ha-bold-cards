@@ -23,12 +23,11 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
     return cardType;
   }
 
-  static getStubConfig(hass: HomeAssistant): CarouselCardConfig {
-    const { entity, ...stubCard } = BoldMediaPlayerCard.getStubConfig(hass);
+  static getStubConfig(): CarouselCardConfig {
     return {
       type: this.cardType,
-      entities: [entity],
-      card: stubCard,
+      entities: [],
+      card: undefined,
     };
   }
 
