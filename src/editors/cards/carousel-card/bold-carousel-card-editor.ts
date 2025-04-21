@@ -94,8 +94,7 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
       ${showCardEditor
         ? html`
             <ha-alert alert-type="info">
-              The entity field in this editor is ignored. Please use the
-              entities field in the carousel card editor.
+              ${t("editor.card.carousel.helper_text.card_editor")}
             </ha-alert>
             <hui-card-element-editor
               .hass=${this.hass}
