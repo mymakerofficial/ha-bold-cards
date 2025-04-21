@@ -5,6 +5,7 @@ import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
 import { BoldMediaPlayerSourceSelectFeatureConfig } from "../../features/media-player-source-select-feature/types";
 import { BoldMediaPlayerMediaBrowserFeatureConfig } from "../../features/media-player-media-browser-feature/types";
 import { BoldFeatureStackFeatureConfig } from "../../features/feature-stack-feature/types";
+import { Constructor } from "../../lib/types";
 
 export interface MediaPlayerVolumeSliderCardFeatureConfig {
   type: "media-player-volume-slider";
@@ -26,8 +27,6 @@ export interface LovelaceCardFeature<
   setConfig(config: FeatureConfigWithMaybeInternals<TConfig>): void;
   color?: string;
 }
-
-export type Constructor<T = any> = new (...args: any[]) => T;
 
 export interface LovelaceCardFeatureConstructor
   extends Constructor<LovelaceCardFeature> {

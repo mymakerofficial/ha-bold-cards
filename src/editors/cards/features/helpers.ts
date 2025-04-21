@@ -69,6 +69,7 @@ export function getIsFeatureTypeEditable(type: string) {
   return false; // TODO
 }
 
+// TODO extract to lib
 export function getFeatureStubConfig(
   type: string,
   hass: HomeAssistant,

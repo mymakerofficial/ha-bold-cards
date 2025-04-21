@@ -1,4 +1,10 @@
-import { GetterOrMap, MaybeFunction, Optional, Pair } from "./types";
+import {
+  GetterOrMap,
+  MaybeFunction,
+  MaybePromise,
+  Optional,
+  Pair,
+} from "./types";
 
 export function randomFrom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -71,6 +77,14 @@ export function isEmpty<T extends string | object | any[]>(
   return false;
 }
 
+export function isPromise<T>(value: unknown): value is Promise<T> {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as Promise<T>).then === "function"
+  );
+}
+
 export function resolve<T>(maybeFn: MaybeFunction<T>): T {
   return isFunction(maybeFn) ? maybeFn() : maybeFn;
 }
@@ -140,4 +154,9 @@ export function doIfDefined<T, R, E = R>(
     return fn(value);
   }
   return elseValue;
+}
+
+// takes a maybe promise and returns a promise
+export function toPromise<T>(value: MaybePromise<T>): Promise<T> {
+  return isPromise(value) ? value : Promise.resolve(value);
 }
