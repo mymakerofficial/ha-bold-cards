@@ -11,6 +11,7 @@ import "./components/bc-button";
 import "./components/bc-selector-select";
 import "./components/bc-media-position-control";
 import "./components/bc-control-row";
+import "./components/bc-card-picker";
 import "./features/media-player-control-row-feature/bold-media-player-control-row-feature";
 import "./features/media-player-source-select-feature/bold-media-player-source-select-feature";
 import "./features/media-player-media-browser-feature/bold-media-player-media-browser-feature";

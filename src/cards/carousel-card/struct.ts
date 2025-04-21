@@ -17,18 +17,21 @@ export const carouselCardConfigStruct = assign(
   object({
     type: exactMatch(BoldCardType.CAROUSEL),
     entities: optional(array(string())),
-    card: typedUnion({
-      key: "type",
-      structs: {
-        [BoldCardType.MEDIA_PLAYER]: omit(mediaPlayerCardConfigStruct, [
-          "entity",
-          "view_layout",
-          "layout_options",
-          "grid_options",
-          "visibility",
-        ]),
-      },
-      default: any(),
-    }),
+    card: optional(
+      // typedUnion({
+      //   key: "type",
+      //   structs: {
+      //     [BoldCardType.MEDIA_PLAYER]: omit(mediaPlayerCardConfigStruct, [
+      //       "entity",
+      //       "view_layout",
+      //       "layout_options",
+      //       "grid_options",
+      //       "visibility",
+      //     ]),
+      //   },
+      //   default: any(),
+      // }),
+      any(),
+    ),
   }),
 );

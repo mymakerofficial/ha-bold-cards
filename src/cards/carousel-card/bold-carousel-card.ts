@@ -45,7 +45,13 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
 
   protected getCards() {
     const entities = this._config?.entities;
-    if (!this.hass || !entities || entities.length === 0) {
+    if (
+      !this.hass ||
+      !entities ||
+      entities.length === 0 ||
+      !this._config ||
+      !this._config.card
+    ) {
       return [];
     }
 

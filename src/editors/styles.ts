@@ -1,10 +1,6 @@
 import { css } from "lit";
 
 export const editorBaseStyles = css`
-  :host {
-    --ha-card-border-radius: 6px;
-  }
-
   .flex-col {
     display: flex;
     flex-direction: column;
@@ -32,5 +28,9 @@ export const editorBaseStyles = css`
 
   ha-expansion-panel .content {
     padding: 12px;
+  }
+
+  ha-select-box {
+    --ha-card-border-radius: 6px;
   }
 `;
