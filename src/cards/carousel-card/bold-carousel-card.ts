@@ -2,11 +2,11 @@ import { BoldLovelaceCard } from "../base";
 import { CarouselCardConfig } from "./types";
 import { css, html, nothing } from "lit";
 import { customElement } from "lit/decorators";
-import { HomeAssistant, LovelaceCardEditor } from "../../types/ha/lovelace";
+import { LovelaceCardEditor } from "../../types/ha/lovelace";
 import { firstOf } from "../../lib/helpers";
 import { BoldCardType } from "../../lib/cards/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
-import { BoldMediaPlayerCard } from "../media-player-card/bold-media-player-card";
+import { getCarouselCardConfig } from "./helpers";
 
 const cardType = BoldCardType.CAROUSEL;
 
@@ -36,10 +36,10 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
   }
 
   protected toCardWithEntity(entity: string) {
-    return {
-      ...this._config!.card,
+    return getCarouselCardConfig({
+      config: this._config!,
       entity,
-    };
+    });
   }
 
   protected getCards() {

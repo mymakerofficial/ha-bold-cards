@@ -19,15 +19,7 @@ import {
 import { MediaPlayerEntity } from "../../../types/ha/entity";
 import { presets } from "./constants";
 import { enumToOptions } from "../../helpers";
-import { CardFeaturePosition } from "../../../cards/types";
-import {
-  HorizontalPosition,
-  LeftAndRightPositions,
-  Position,
-  TopAndBottomPositions,
-  TopRowPositions,
-  VerticalPosition,
-} from "../../../lib/layout/position";
+import { VerticalPosition } from "../../../lib/layout/position";
 
 @customElement("bold-media-player-card-editor")
 export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeatures<

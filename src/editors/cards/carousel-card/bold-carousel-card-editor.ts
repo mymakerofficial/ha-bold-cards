@@ -5,13 +5,18 @@ import { css, CSSResultGroup, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
 import {
   LovelaceCardConfig,
+  LovelaceCardEditor,
   LovelaceCardEditorContext,
 } from "../../../types/ha/lovelace";
 import { BoldCardType } from "../../../lib/cards/types";
 import { t } from "../../../localization/i18n";
 import { editorBaseStyles } from "../../styles";
-import { isUndefined } from "../../../lib/helpers";
+import { isDefined, isUndefined, toPromise } from "../../../lib/helpers";
 import { LovelaceCardConfigWithEntity } from "../../../types/card";
+import { getLovelaceCardElementClass } from "../../../lib/cards/helpers";
+import { PropertyValues } from "lit-element";
+import { assert } from "superstruct";
+import { getCarouselCardConfig } from "../../../cards/carousel-card/helpers";
 
 const TAB = {
   CAROUSEL: 0,
@@ -20,7 +25,10 @@ const TAB = {
 
 @customElement("bold-carousel-card-editor")
 export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardConfig> {
+  protected _cardEditor?: LovelaceCardEditor;
+
   @state() private _selectedTab = 1;
+  @state() private _loadingCardEditor = false;
 
   protected get _struct() {
     return carouselCardConfigStruct;
@@ -28,6 +36,24 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
 
   private _handleSelectTab(ev: CustomEvent<{ index: number }>): void {
     this._selectedTab = ev.detail.index;
+  }
+
+  public setConfig(config: CarouselCardConfig): void {
+    assert(config, this._struct);
+    this._cardEditor?.setConfig(getCarouselCardConfig({ config: config }));
+    this._config = config;
+  }
+
+  protected willUpdate(changedProperties: PropertyValues) {
+    super.willUpdate(changedProperties);
+
+    if (
+      changedProperties.has("_config") &&
+      !!this._config?.card?.type &&
+      this._config?.card?.type !== changedProperties.get("_config")?.card?.type
+    ) {
+      this._loadEditor().then();
+    }
   }
 
   protected render() {
@@ -68,6 +94,14 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
         <mwc-tab .label=${t("editor.card.carousel.tab.carousel")}></mwc-tab>
         <mwc-tab .label=${t("editor.card.carousel.tab.card")}></mwc-tab>
       </mwc-tab-bar>
+      ${this._loadingCardEditor
+        ? html`<div>
+            <ha-spinner size="small"></ha-spinner
+            ><span
+              >${t("editor.card.carousel.helper_text.loading_editor")}</span
+            >
+          </div>`
+        : nothing}
       ${showCarouselForm
         ? html`<ha-form
             .hass=${this.hass}
@@ -138,6 +172,25 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     return card;
   }
 
+  private async _loadEditor() {
+    if (isUndefined(this._config) || isUndefined(this._config.card)) {
+      return;
+    }
+
+    const cardClass = getLovelaceCardElementClass(this._config.card.type);
+
+    this._loadingCardEditor = true;
+    this._cardEditor = undefined;
+
+    if (isUndefined(cardClass.getConfigElement)) {
+      return;
+    }
+
+    this._cardEditor = await toPromise(cardClass.getConfigElement());
+
+    this._loadingCardEditor = false;
+  }
+
   private _valueChanged(ev: CustomEvent): void {
     ev.stopPropagation();
     this.fireEvent("config-changed", { config: ev.detail.value });
@@ -166,6 +219,10 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     ev: CustomEvent<{ config?: LovelaceCardConfigWithEntity }>,
   ): void {
     ev.stopPropagation();
+
+    if (isDefined(this._config?.card)) {
+      return;
+    }
 
     const config = ev.detail.config;
     if (!config) {

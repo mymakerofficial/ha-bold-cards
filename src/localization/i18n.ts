@@ -261,6 +261,7 @@ const i18n = new I18n(
             helper_text: {
               card_editor:
                 "The entity field in this editor is ignored. Please use the entities field in the carousel editor.",
+              loading_editor: "Loading card editor...",
             },
           },
           weather: {
