@@ -12,7 +12,6 @@ import {
   LovelaceCardConfigWithFeatures,
 } from "../../types/card";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
-import { fireEvent } from "custom-card-helpers";
 import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
 
 export abstract class BoldLovelaceCardEditor<TConfig extends LovelaceCardConfig>
@@ -81,7 +80,7 @@ export abstract class BoldLovelaceCardEditorWithFeatures<
       return;
     }
 
-    fireEvent(this, "config-changed", {
+    this.fireEvent("config-changed", {
       config: {
         ...this._config,
         features: ev.detail.value,
