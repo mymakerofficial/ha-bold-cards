@@ -31,18 +31,13 @@ export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
       return;
     }
 
-    const newValue = {
+    const newConfig = {
       ...this._config,
-      [field]: value,
     };
 
-    this.dispatchEvent(
-      new CustomEvent("config-changed", {
-        detail: {
-          config: newValue,
-        },
-      }),
-    );
+    newConfig[field] = value;
+
+    this.fireEvent("config-changed", { config: newConfig });
   }
 
   protected _handleValueChanged<TField extends keyof TConfig>(
