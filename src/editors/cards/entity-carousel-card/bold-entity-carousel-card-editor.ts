@@ -1,6 +1,4 @@
 import { BoldLovelaceCardEditor } from "../base";
-import { CarouselCardConfig } from "../../../cards/carousel-card/types";
-import { carouselCardConfigStruct } from "../../../cards/carousel-card/struct";
 import { css, CSSResultGroup, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
 import {
@@ -13,34 +11,39 @@ import { t } from "../../../localization/i18n";
 import { editorBaseStyles } from "../../styles";
 import { isDefined, isUndefined, toPromise } from "../../../lib/helpers";
 import { LovelaceCardConfigWithEntity } from "../../../types/card";
-import { getLovelaceCardElementClass } from "../../../lib/cards/helpers";
+import {
+  getCardEditorTag,
+  getLovelaceCardElementClass,
+} from "../../../lib/cards/helpers";
 import { PropertyValues } from "lit-element";
 import { assert } from "superstruct";
-import { getCarouselCardConfig } from "../../../cards/carousel-card/helpers";
+import { getEntityCarouselCardConfig } from "../../../cards/entity-carousel-card/helpers";
+import { entityCarouselCardConfigStruct } from "../../../cards/entity-carousel-card/struct";
+import { EntityCarouselCardConfig } from "../../../cards/entity-carousel-card/types";
 
 const TAB = {
   CAROUSEL: 0,
   CARD: 1,
 } as const;
 
-@customElement("bold-carousel-card-editor")
-export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardConfig> {
+@customElement(getCardEditorTag(BoldCardType.ENTITY_CAROUSEL))
+export class BoldEntityCarouselCardEditor extends BoldLovelaceCardEditor<EntityCarouselCardConfig> {
   protected _cardEditor?: LovelaceCardEditor;
 
   @state() private _selectedTab = 1;
   @state() private _loadingCardEditor = false;
 
   protected get _struct() {
-    return carouselCardConfigStruct;
+    return entityCarouselCardConfigStruct;
   }
 
   private _handleSelectTab(ev: CustomEvent<{ index: number }>): void {
     this._selectedTab = ev.detail.index;
   }
 
-  public setConfig(config: CarouselCardConfig): void {
+  public setConfig(config: EntityCarouselCardConfig): void {
     assert(config, this._struct);
-    this._cardEditor?.setConfig(getCarouselCardConfig({ config: config }));
+    this._cardEditor?.setConfig(getEntityCarouselCardConfig({ config }));
     this._config = config;
   }
 
@@ -76,7 +79,7 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
 
     const context: LovelaceCardEditorContext = {
       internals: {
-        parent_card_type: BoldCardType.CAROUSEL,
+        parent_card_type: BoldCardType.ENTITY_CAROUSEL,
       },
     };
 
@@ -92,14 +95,18 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
         .activeIndex=${this._selectedTab}
         @MDCTabBar:activated=${this._handleSelectTab}
       >
-        <mwc-tab .label=${t("editor.card.carousel.tab.carousel")}></mwc-tab>
-        <mwc-tab .label=${t("editor.card.carousel.tab.card")}></mwc-tab>
+        <mwc-tab
+          .label=${t("editor.card.entity_carousel.tab.carousel")}
+        ></mwc-tab>
+        <mwc-tab .label=${t("editor.card.entity_carousel.tab.card")}></mwc-tab>
       </mwc-tab-bar>
       ${this._loadingCardEditor
         ? html`<div>
             <ha-spinner size="small"></ha-spinner
             ><span
-              >${t("editor.card.carousel.helper_text.loading_editor")}</span
+              >${t(
+                "editor.card.entity_carousel.helper_text.loading_editor",
+              )}</span
             >
           </div>`
         : nothing}
@@ -129,7 +136,7 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
       ${showCardEditor
         ? html`
             <ha-alert alert-type="info">
-              ${t("editor.card.carousel.helper_text.card_editor")}
+              ${t("editor.card.entity_carousel.helper_text.card_editor")}
             </ha-alert>
             <hui-card-element-editor
               .hass=${this.hass}
@@ -140,7 +147,7 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
             ></hui-card-element-editor>
             <div>
               <ha-button @click=${this._handleRemoveCard}>
-                ${t("editor.card.carousel.label.change_card_type")}
+                ${t("editor.card.entity_carousel.label.change_card_type")}
               </ha-button>
             </div>
           `
@@ -150,13 +157,13 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
 
   private _computeLabelCallback = ({ name }: { name: string }) => {
     return t(name, {
-      scope: "editor.card.carousel.label",
+      scope: "editor.card.entity_carousel.label",
     });
   };
 
   private _computeHelperCallback = ({ name }: { name: string }) => {
     return t(name, {
-      scope: "editor.card.carousel.helper_text",
+      scope: "editor.card.entity_carousel.helper_text",
       defaultValue: "",
     });
   };
@@ -239,8 +246,11 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     const cardConfig = this._stripCardConfig(config);
 
     const gridOptions = this.getCardGridOptions(
-      getCarouselCardConfig({
-        config: { ...this._config, card: cardConfig } as CarouselCardConfig,
+      getEntityCarouselCardConfig({
+        config: {
+          ...this._config,
+          card: cardConfig,
+        } as EntityCarouselCardConfig,
         entity: entities[0],
       }),
     );

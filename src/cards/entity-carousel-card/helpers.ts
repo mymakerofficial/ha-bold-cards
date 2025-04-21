@@ -1,12 +1,12 @@
 import { LovelaceCardConfig } from "../../types/ha/lovelace";
-import { CarouselCardConfig } from "./types";
+import { EntityCarouselCardConfig } from "./types";
 
-export function getCarouselCardConfig({
+export function getEntityCarouselCardConfig({
   config,
   entity,
   index = 0,
 }: {
-  config: CarouselCardConfig;
+  config: EntityCarouselCardConfig;
   entity?: string;
   index?: number;
 }): LovelaceCardConfig {
