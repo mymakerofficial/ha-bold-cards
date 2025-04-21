@@ -2,18 +2,32 @@ import { BoldLovelaceCardEditor } from "../base";
 import { CarouselCardConfig } from "../../../cards/carousel-card/types";
 import { carouselCardConfigStruct } from "../../../cards/carousel-card/struct";
 import { css, CSSResultGroup, html, nothing } from "lit";
-import { customElement } from "lit/decorators";
-import { LovelaceCardEditorContext } from "../../../types/ha/lovelace";
-import { fireEvent } from "custom-card-helpers";
+import { customElement, state } from "lit/decorators";
+import {
+  LovelaceCardConfig,
+  LovelaceCardEditorContext,
+} from "../../../types/ha/lovelace";
 import { BoldCardType } from "../../../lib/cards/types";
 import { t } from "../../../localization/i18n";
 import { editorBaseStyles } from "../../styles";
-import { unsafeHTML } from "lit-html/directives/unsafe-html";
+import { isUndefined } from "../../../lib/helpers";
+import { LovelaceCardConfigWithEntity } from "../../../types/card";
+
+const TAB = {
+  CAROUSEL: 0,
+  CARD: 1,
+} as const;
 
 @customElement("bold-carousel-card-editor")
 export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardConfig> {
+  @state() private _selectedTab = 1;
+
   protected get _struct() {
     return carouselCardConfigStruct;
+  }
+
+  private _handleSelectTab(ev: CustomEvent<{ index: number }>): void {
+    this._selectedTab = ev.detail.index;
   }
 
   protected render() {
@@ -39,26 +53,64 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
       },
     };
 
+    const showCarouselForm = this._selectedTab === TAB.CAROUSEL;
+
+    const showCardPicker =
+      this._selectedTab === TAB.CARD && isUndefined(this._config.card);
+
+    const showCardEditor = this._selectedTab === TAB.CARD && !showCardPicker;
+
     return html`
-      <ha-form
-        .hass=${this.hass}
-        .data=${this._config}
-        .schema=${schema}
-        .computeLabel=${this._computeLabelCallback}
-        .computeHelper=${this._computeHelperCallback}
-        @value-changed=${this._valueChanged}
-      ></ha-form>
-      <div class="description">
-        ${unsafeHTML(t("editor.card.carousel.description"))}
-      </div>
-      <hr />
-      <hui-card-element-editor
-        .hass=${this.hass}
-        .value=${cardConfig}
-        .lovelace=${this.lovelace}
-        .context=${context}
-        @config-changed=${this._handleConfigChanged}
-      ></hui-card-element-editor>
+      <mwc-tab-bar
+        .activeIndex=${this._selectedTab}
+        @MDCTabBar:activated=${this._handleSelectTab}
+      >
+        <mwc-tab .label=${t("editor.card.carousel.tab.carousel")}></mwc-tab>
+        <mwc-tab .label=${t("editor.card.carousel.tab.card")}></mwc-tab>
+      </mwc-tab-bar>
+      ${showCarouselForm
+        ? html`<ha-form
+            .hass=${this.hass}
+            .data=${this._config}
+            .schema=${schema}
+            .computeLabel=${this._computeLabelCallback}
+            .computeHelper=${this._computeHelperCallback}
+            @value-changed=${this._valueChanged}
+          ></ha-form>`
+        : nothing}
+      ${showCardPicker
+        ? html`<bc-card-picker
+            .hass=${this.hass}
+            .lovelace=${this.lovelace}
+            .filter=${(card: LovelaceCardConfig) => {
+              return (
+                Object.keys(card).includes("entity") &&
+                this.getAllEntityIds().includes(card.entity)
+              );
+            }}
+            @config-changed=${this._handleCardPicked}
+          ></bc-card-picker>`
+        : nothing}
+      ${showCardEditor
+        ? html`
+            <ha-alert alert-type="info">
+              The entity field in this editor is ignored. Please use the
+              entities field in the carousel card editor.
+            </ha-alert>
+            <hui-card-element-editor
+              .hass=${this.hass}
+              .value=${cardConfig}
+              .lovelace=${this.lovelace}
+              .context=${context}
+              @config-changed=${this._handleCardConfigChanged}
+            ></hui-card-element-editor>
+            <div>
+              <ha-button @click=${this._handleRemoveCard}>
+                ${t("editor.card.carousel.label.change_card_type")}
+              </ha-button>
+            </div>
+          `
+        : nothing}
     `;
   }
 
@@ -75,28 +127,68 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     });
   };
 
-  private _valueChanged(ev: CustomEvent): void {
-    ev.stopPropagation();
-    if (!this._config || !this.hass) {
-      return;
-    }
-
-    fireEvent(this, "config-changed", { config: ev.detail.value });
+  private _stripCardConfig(config: LovelaceCardConfigWithEntity) {
+    const {
+      entity: _entity,
+      view_layout: _view_layout,
+      layout_options: _layout_options,
+      grid_options: _grid_options,
+      visibility: _visibility,
+      ...card
+    } = config;
+    return card;
   }
 
-  private _handleConfigChanged(ev: CustomEvent): void {
+  private _valueChanged(ev: CustomEvent): void {
+    ev.stopPropagation();
+    this.fireEvent("config-changed", { config: ev.detail.value });
+  }
+
+  private _handleCardConfigChanged(
+    ev: CustomEvent<{ config?: LovelaceCardConfigWithEntity }>,
+  ): void {
     ev.stopPropagation();
 
-    if (!this._config || !this.hass) {
+    const config = ev.detail.config;
+    if (!config) {
       return;
     }
 
-    const { entity: _entity, ...card } = ev.detail.config;
-
-    fireEvent(this, "config-changed", {
+    this.fireEvent("config-changed", {
       config: {
         ...this._config,
-        card,
+        card: this._stripCardConfig(config),
+        entities: [config.entity, ...(this._config?.entities ?? []).slice(1)],
+      },
+    });
+  }
+
+  private _handleCardPicked(
+    ev: CustomEvent<{ config?: LovelaceCardConfigWithEntity }>,
+  ): void {
+    ev.stopPropagation();
+
+    const config = ev.detail.config;
+    if (!config) {
+      return;
+    }
+
+    this.fireEvent("config-changed", {
+      config: {
+        ...this._config,
+        card: this._stripCardConfig(config),
+        entities: [config.entity],
+      },
+    });
+  }
+
+  private _handleRemoveCard(ev: CustomEvent): void {
+    ev.stopPropagation();
+    this.fireEvent("config-changed", {
+      config: {
+        ...this._config,
+        card: undefined,
+        entities: [],
       },
     });
   }
