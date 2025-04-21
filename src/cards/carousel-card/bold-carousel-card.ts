@@ -1,9 +1,17 @@
 import { BoldLovelaceCard } from "../base";
 import { CarouselCardConfig } from "./types";
 import { css, html, nothing } from "lit";
-import { customElement } from "lit/decorators";
-import { LovelaceCardEditor } from "../../types/ha/lovelace";
-import { firstOf } from "../../lib/helpers";
+import { customElement, query } from "lit/decorators";
+import {
+  LovelaceCardEditor,
+  LovelaceGridOptions,
+} from "../../types/ha/lovelace";
+import {
+  firstOf,
+  isDefined,
+  maxOrUndefined,
+  minOrUndefined,
+} from "../../lib/helpers";
 import { BoldCardType } from "../../lib/cards/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { getCarouselCardConfig } from "./helpers";
@@ -33,6 +41,39 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
 
   public getCardSize(): number {
     return 1;
+  }
+
+  public getGridOptions(): LovelaceGridOptions {
+    if (!this._config || !this.hass) {
+      return {
+        columns: 1,
+        rows: "auto",
+      };
+    }
+
+    const grids = this._config!.entities.map((entity) =>
+      this.getCardGridOptions(
+        getCarouselCardConfig({ config: this._config!, entity }),
+      ),
+    ).filter(isDefined);
+
+    const columns = grids.map((grid) => grid.columns).filter(isDefined);
+    const rows = grids.map((grid) => grid.rows).filter(isDefined);
+    const max_columns = grids.map((grid) => grid.max_columns).filter(isDefined);
+    const min_columns = grids.map((grid) => grid.min_columns).filter(isDefined);
+    const min_rows = grids.map((grid) => grid.min_rows).filter(isDefined);
+    const max_rows = grids.map((grid) => grid.max_rows).filter(isDefined);
+
+    return {
+      columns: columns.includes("full")
+        ? "full"
+        : minOrUndefined(columns as number[]),
+      rows: rows.includes("auto") ? "auto" : minOrUndefined(rows as number[]),
+      max_columns: minOrUndefined(max_columns),
+      min_columns: maxOrUndefined(min_columns),
+      min_rows: maxOrUndefined(min_rows),
+      max_rows: minOrUndefined(max_rows),
+    };
   }
 
   protected toCardWithEntity(entity: string) {

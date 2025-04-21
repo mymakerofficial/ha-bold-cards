@@ -236,10 +236,23 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
       6,
     );
 
+    const cardConfig = this._stripCardConfig(config);
+
+    const gridOptions = this.getCardGridOptions(
+      getCarouselCardConfig({
+        config: { ...this._config, card: cardConfig } as CarouselCardConfig,
+        entity: entities[0],
+      }),
+    );
+
     this.fireEvent("config-changed", {
       config: {
         ...this._config,
-        card: this._stripCardConfig(config),
+        card: cardConfig,
+        grid_options: {
+          columns: gridOptions?.columns,
+          rows: gridOptions?.rows,
+        },
         entities,
       },
     });

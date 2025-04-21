@@ -17,10 +17,10 @@ import {
 import { getFeatureTypeLabel } from "../editors/cards/features/helpers";
 import { dedupeMediaPlayerEntities } from "./media-player/helpers";
 import { browseMediaPlayer } from "./media-player/media-browser";
-import { HomeAssistant } from "../types/ha/lovelace";
+import { HomeAssistant, LovelaceCardConfig } from "../types/ha/lovelace";
 import { HassEntity } from "home-assistant-js-websocket";
 import { computeIsDarkMode } from "./theme";
-import { getCardStubConfig } from "./cards/helpers";
+import { getCardGridOptions, getCardStubConfig } from "./cards/helpers";
 import { getEntitiesForCard } from "../editors/cards/carousel-card/helpers";
 
 // hass object is split into two files to avoid circular dependencies
@@ -117,6 +117,14 @@ export function BasicHassObjectMixin<TBase extends HassObjectConstructor>(
         entities,
         entitiesFallback,
       );
+    }
+
+    protected getCardGridOptions(config: LovelaceCardConfig) {
+      if (!this.hass) {
+        throw new Error("No Home Assistant instance available");
+      }
+
+      return getCardGridOptions(this.hass, config);
     }
 
     protected async getEntitiesForCard(
