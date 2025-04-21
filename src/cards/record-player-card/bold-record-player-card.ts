@@ -46,8 +46,12 @@ export class BoldRecordPlayerCard extends BoldMediaPlayerCardBase<BoldRecordPlay
     return cardType;
   }
 
-  public static getStubConfig(hass: HomeAssistant): BoldRecordPlayerCardConfig {
-    const entity = getStubMediaPlayerEntity(hass);
+  public static getStubConfig(
+    hass: HomeAssistant,
+    entities: string[],
+    entitiesFallback: string[],
+  ): BoldRecordPlayerCardConfig {
+    const entity = getStubMediaPlayerEntity(hass, entities, entitiesFallback);
 
     return {
       type: this.cardType,

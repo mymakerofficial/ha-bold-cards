@@ -20,6 +20,7 @@ import {
 } from "../../lib/weather/helpers";
 import { HassEntity } from "home-assistant-js-websocket";
 import { fireEvent } from "custom-card-helpers";
+import { Optional } from "../../lib/types";
 
 function encode(str: string) {
   return encodeURIComponent(str.replace(/[\n\r]+/g, ""));
@@ -61,8 +62,12 @@ export class BoldMiniWeatherCard extends BoldCardWithEntity<
     return cardType;
   }
 
-  public static getStubConfig(hass?: HomeAssistant): MiniWeatherCardConfig {
-    const entity = getStubWeatherEntity(hass);
+  public static getStubConfig(
+    hass: Optional<HomeAssistant>,
+    entities: string[],
+    entitiesFallback: string[],
+  ): MiniWeatherCardConfig {
+    const entity = getStubWeatherEntity(hass, entities, entitiesFallback);
     return {
       type: this.cardType,
       entity: entity?.entity_id ?? "",

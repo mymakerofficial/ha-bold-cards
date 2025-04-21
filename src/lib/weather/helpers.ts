@@ -4,23 +4,30 @@ import { isStateActive } from "../../helpers/states";
 import { randomFrom } from "../helpers";
 import { BoldIcon } from "../icons/icons";
 import { WeatherState } from "./types";
+import { Optional } from "../types";
 
-export function getStubWeatherEntity(hass?: HomeAssistant) {
+export function getStubWeatherEntity(
+  hass: Optional<HomeAssistant>,
+  entities: string[],
+  _entitiesFallback: string[],
+) {
   if (!hass) {
     return undefined;
   }
 
-  const entities = Object.values(hass.states).filter(isWeatherEntity);
+  const weatherEntities = Object.values(hass.states)
+    .filter((it) => entities.includes(it.entity_id))
+    .filter(isWeatherEntity);
 
-  if (entities.length === 0) {
+  if (weatherEntities.length === 0) {
     return undefined;
   }
 
-  const activeEntities = entities.filter(isStateActive);
+  const activeEntities = weatherEntities.filter(isStateActive);
 
   return activeEntities.length > 0
     ? randomFrom(activeEntities)
-    : randomFrom(entities);
+    : randomFrom(weatherEntities);
 }
 
 const dayWeatherIcons: Partial<{

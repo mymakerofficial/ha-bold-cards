@@ -49,6 +49,7 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
 
     if (
       changedProperties.has("_config") &&
+      !!changedProperties.get("_config")?.card?.type &&
       !!this._config?.card?.type &&
       this._config?.card?.type !== changedProperties.get("_config")?.card?.type
     ) {
@@ -215,9 +216,9 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     });
   }
 
-  private _handleCardPicked(
+  private async _handleCardPicked(
     ev: CustomEvent<{ config?: LovelaceCardConfigWithEntity }>,
-  ): void {
+  ) {
     ev.stopPropagation();
 
     if (isDefined(this._config?.card)) {
@@ -229,11 +230,17 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
       return;
     }
 
+    const entities = await this.getEntitiesForCard(
+      config.type,
+      this.getAllEntityIds(),
+      6,
+    );
+
     this.fireEvent("config-changed", {
       config: {
         ...this._config,
         card: this._stripCardConfig(config),
-        entities: [config.entity],
+        entities,
       },
     });
   }
