@@ -13,6 +13,7 @@ import { optionallyPrefixCustomType } from "../lib/cards/helpers";
 import { Optional } from "../lib/types";
 import { classMap } from "lit-html/directives/class-map";
 import { t } from "../localization/i18n";
+import { BoldCardType } from "../lib/cards/types";
 
 export interface Card {
   type: string;
@@ -27,6 +28,8 @@ interface CardElement {
   card: Card;
   element: TemplateResult;
 }
+
+const SUGGESTED_CARDS: string[] = ["tile", BoldCardType.MEDIA_PLAYER];
 
 async function loadCardPicker() {
   if (isDefined(customElements.get("hui-card-picker"))) {
@@ -101,12 +104,23 @@ class BcCardPicker extends BoldHassElement {
     const entityIds = this.getAllEntityIds();
 
     const promises = cards.map(async (card) => {
+      const type = optionallyPrefixCustomType(
+        card.card.type,
+        card.card.isCustom,
+      );
       const stubConfig = await this.getCardStubConfig(
         optionallyPrefixCustomType(card.card.type, card.card.isCustom),
         entityIds,
       );
       return {
-        ...card,
+        ...{
+          ...card,
+          card: {
+            ...card.card,
+            isSuggested:
+              card.card.isSuggested || SUGGESTED_CARDS.includes(type),
+          },
+        },
         stub: stubConfig,
       };
     });
