@@ -23,6 +23,7 @@ import { computeIsDarkMode } from "./theme";
 import {
   getCardGridOptions,
   getCardStubConfig,
+  getCardTypeName,
   getEntitiesForCard,
 } from "./cards/helpers";
 
@@ -57,6 +58,10 @@ export function BasicHassObjectMixin<TBase extends HassObjectConstructor>(
 
     protected getFeatureTypeLabel(type: string) {
       return getFeatureTypeLabel(type, this.hass);
+    }
+
+    protected getCardTypeName(type: string) {
+      return getCardTypeName(type, this.hass);
     }
 
     protected getUniversalMediaPlayerChildStateObj(

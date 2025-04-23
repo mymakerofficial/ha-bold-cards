@@ -2,12 +2,15 @@ import { BoldLovelaceCardEditor } from "../base";
 import { css, CSSResultGroup, html, nothing } from "lit";
 import { customElement } from "lit/decorators";
 import { BoldCardType } from "../../../lib/cards/types";
-import { t } from "../../../localization/i18n";
 import { editorBaseStyles } from "../../styles";
 import { LovelaceCardConfigWithEntity } from "../../../types/card";
 import { getCardEditorTag } from "../../../lib/cards/helpers";
 import { CarouselCardConfig } from "../../../cards/carousel-card/types";
 import { carouselCardConfigStruct } from "../../../cards/carousel-card/struct";
+import { SortableListItem } from "../../../components/bc-sortable-list";
+import { t } from "../../../localization/i18n";
+import { mdiPlus } from "@mdi/js";
+import { mdiCardMultipleOutline } from "@mdi/js/commonjs/mdi";
 
 @customElement(getCardEditorTag(BoldCardType.CAROUSEL))
 export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardConfig> {
@@ -20,34 +23,35 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
       return nothing;
     }
 
-    const schema = [{}];
-
     return html`
-      <p>foo</p>
-      <pre>${JSON.stringify(this._config)}</pre>
-      <ha-form
-        .hass=${this.hass}
-        .data=${this._config}
-        .schema=${schema}
-        .computeLabel=${this._computeLabelCallback}
-        .computeHelper=${this._computeHelperCallback}
-        @value-changed=${this._valueChanged}
-      ></ha-form>
+      <ha-expansion-panel outlined>
+        <h3 slot="header">
+          <ha-svg-icon .path=${mdiCardMultipleOutline}></ha-svg-icon>
+          ${t("editor.card.carousel.label.cards")}
+        </h3>
+        <div class="content">
+          <bc-sortable-list
+            .items=${this._config.cards.map(
+              (card, index): SortableListItem => ({
+                label: this.getCardTypeName(card.type),
+                key: card.type + index,
+                onEdit: () => {},
+                onRemove: () => {},
+              }),
+            )}
+            @item-moved=${console.log}
+          >
+            <ha-button
+              outlined
+              .label=${t("editor.card.carousel.label.add_card")}
+            >
+              <ha-svg-icon .path=${mdiPlus} slot="icon"></ha-svg-icon>
+            </ha-button>
+          </bc-sortable-list>
+        </div>
+      </ha-expansion-panel>
     `;
   }
-
-  private _computeLabelCallback = ({ name }: { name: string }) => {
-    return t(name, {
-      scope: "editor.card.entity_carousel.label",
-    });
-  };
-
-  private _computeHelperCallback = ({ name }: { name: string }) => {
-    return t(name, {
-      scope: "editor.card.entity_carousel.helper_text",
-      defaultValue: "",
-    });
-  };
 
   private _stripCardConfig(config: LovelaceCardConfigWithEntity) {
     const {

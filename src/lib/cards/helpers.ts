@@ -8,6 +8,7 @@ import {
 import { isDefined, isEmpty, isUndefined, toPromise } from "../helpers";
 import { Optional } from "../types";
 import { LitElement } from "lit";
+import { CustomCardEntry } from "../../types/card";
 
 const CUSTOM_PREFIX = "custom:";
 
@@ -126,4 +127,22 @@ async function getNextEntityForCard(
 ) {
   const stub = await getCardStubConfig(hass, type, availableEntities);
   return stub.entity as Optional<string>;
+}
+
+export function getCustomCardEntries() {
+  return (
+    ((window as any).customCards as CustomCardEntry[] | undefined) ?? []
+  ).reduce((acc, entry) => {
+    acc[entry.type] = entry;
+    return acc;
+  }, {}) as Record<string, CustomCardEntry>;
+}
+
+export function getCardTypeName(type: string, hass?: HomeAssistant) {
+  if (isCustomType(type)) {
+    const customType = stripCustomPrefix(type);
+    const customCardEntry = getCustomCardEntries()[customType];
+    return customCardEntry?.name || type;
+  }
+  return hass?.localize(`ui.panel.lovelace.editor.card.${type}.name`) || type;
 }
