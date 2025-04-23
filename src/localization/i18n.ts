@@ -203,6 +203,8 @@ const i18n = new I18n(
           label: {
             presets: "Presets",
             features: "Features",
+            edit: "Edit",
+            remove: "Remove",
           },
           wip_section_text:
             "This section isn't ready yet. In the meantime, you can use the YAML editor to customize your card.",
@@ -249,6 +251,12 @@ const i18n = new I18n(
           },
         },
         card: {
+          carousel: {
+            label: {
+              cards: "Cards",
+              add_card: "Add Card",
+            },
+          },
           entity_carousel: {
             tab: {
               carousel: "Carousel",
