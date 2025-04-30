@@ -8,9 +8,9 @@ import {
 import { BoldHassElement } from "./hass-element";
 import { LovelaceConfig } from "custom-card-helpers";
 import { PropertyValues, TemplateResult } from "lit-element";
-import { isDefined, isUndefined, toPromise } from "../lib/helpers";
+import { isDefined, isNull, isUndefined, toPromise } from "../lib/helpers";
 import { optionallyPrefixCustomType } from "../lib/cards/helpers";
-import { Optional } from "../lib/types";
+import { Nullable, Optional } from "../lib/types";
 import { classMap } from "lit-html/directives/class-map";
 import { t } from "../localization/i18n";
 import { BoldCardType } from "../lib/cards/types";
@@ -86,10 +86,12 @@ class BcCardPicker extends BoldHassElement {
   @state() private _done = false;
 
   @query("hui-card-picker")
-  private _cardPickerEl?: LovelaceCardEditor &
-    LitElement & {
-      _cards: CardElement[];
-    };
+  private _cardPickerEl?: Nullable<
+    LovelaceCardEditor &
+      LitElement & {
+        _cards: CardElement[];
+      }
+  >;
 
   private async _load() {
     if (!this.hass || !this.lovelace) {
@@ -150,7 +152,7 @@ class BcCardPicker extends BoldHassElement {
     }
 
     const cardPickerEl = this._cardPickerEl;
-    if (isUndefined(cardPickerEl) || !cardPickerEl._cards.length) {
+    if (!cardPickerEl || !cardPickerEl._cards.length) {
       return;
     }
 

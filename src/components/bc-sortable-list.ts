@@ -34,7 +34,10 @@ export class BcSortableList extends BoldElement {
                   .label=${t("editor.common.label.edit")}
                   .path=${mdiPencil}
                   class="edit-icon"
-                  @click=${item.onEdit}
+                  @click=${(ev) => {
+                    ev.stopPropagation();
+                    return item.onEdit?.();
+                  }}
                 ></ha-icon-button>
               `
             : nothing}
@@ -44,7 +47,10 @@ export class BcSortableList extends BoldElement {
                   .label=${t("editor.common.label.remove")}
                   .path=${mdiDelete}
                   class="remove-icon"
-                  @click=${item.onRemove}
+                  @click=${(ev) => {
+                    ev.stopPropagation();
+                    return item.onRemove?.();
+                  }}
                 ></ha-icon-button>
               `
             : nothing}
