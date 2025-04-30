@@ -205,6 +205,7 @@ const i18n = new I18n(
             features: "Features",
             edit: "Edit",
             remove: "Remove",
+            back: "Back",
           },
           wip_section_text:
             "This section isn't ready yet. In the meantime, you can use the YAML editor to customize your card.",
