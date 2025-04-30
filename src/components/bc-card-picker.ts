@@ -97,7 +97,6 @@ class BcCardPicker extends BoldHassElement {
     }
 
     await loadCardPicker();
-
     this._loading = false;
   }
 
@@ -146,27 +145,29 @@ class BcCardPicker extends BoldHassElement {
   protected updated(_changedProperties: PropertyValues) {
     super.updated(_changedProperties);
 
-    // TODO should this filter check be here?
-    if (isUndefined(this.filter) || this._done) {
+    if (this._done) {
       return;
     }
 
-    if (this._cardPickerEl?._cards?.length) {
-      this._transformCards(this._cardPickerEl._cards).then((cards) => {
-        if (this._cardPickerEl!._cards.length !== cards.length) {
-          this._cardPickerEl!._cards = cards;
-          this._cardPickerEl!.requestUpdate();
-        }
-        this._done = true;
-      });
+    const cardPickerEl = this._cardPickerEl;
+    if (isUndefined(cardPickerEl) || !cardPickerEl._cards.length) {
+      return;
     }
+
+    this._transformCards(cardPickerEl._cards).then((cards) => {
+      cardPickerEl._cards = cards;
+      cardPickerEl.requestUpdate();
+      this._done = true;
+    });
   }
 
   protected get _spinner() {
-    return html`<div>
-      <ha-spinner size="small"></ha-spinner
-      ><span>${t("components.card_picker.loading")}</span>
-    </div>`;
+    return html`
+      <div>
+        <ha-spinner size="small"></ha-spinner>
+        <span>${t("components.card_picker.loading")}</span>
+      </div>
+    `;
   }
 
   render() {
@@ -174,14 +175,18 @@ class BcCardPicker extends BoldHassElement {
       return this._spinner;
     }
 
-    return html`${!this._done ? this._spinner : nothing}<hui-card-picker
+    return html`
+      ${!this._done ? this._spinner : nothing}
+      <hui-card-picker
         class=${classMap({
           "visually-hidden": !this._done,
         })}
+        aria-hidden=${!this._done}
         .hass=${this.hass}
         .lovelace=${this.lovelace}
         @config-changed=${(ev) => this.fireEvent("config-changed", ev)}
-      ></hui-card-picker>`;
+      ></hui-card-picker>
+    `;
   }
 
   static styles = css`

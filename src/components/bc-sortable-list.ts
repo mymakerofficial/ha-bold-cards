@@ -18,18 +18,6 @@ export interface SortableListItem {
 export class BcSortableList extends BoldElement {
   @property({ attribute: false }) public items: SortableListItem[] = [];
 
-  private _handleMoved(
-    ev: CustomEvent<{ oldIndex: number; newIndex: number }>,
-  ) {
-    const newItems = [...this.items];
-    const [movedItem] = newItems.splice(ev.detail.oldIndex, 1);
-    newItems.splice(ev.detail.newIndex, 0, movedItem);
-
-    this.fireEvent("value-changed", {
-      value: newItems,
-    });
-  }
-
   protected _renderItem(item: SortableListItem) {
     return html`
       <div class="item">
@@ -67,7 +55,7 @@ export class BcSortableList extends BoldElement {
 
   protected render() {
     return html`
-      <ha-sortable handle-selector=".handle" @item-moved=${this._handleMoved}>
+      <ha-sortable handle-selector=".handle">
         <div class="items">
           ${repeat(
             this.items ?? [],

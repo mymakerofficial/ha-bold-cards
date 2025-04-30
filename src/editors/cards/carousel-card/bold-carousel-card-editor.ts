@@ -1,19 +1,21 @@
 import { BoldLovelaceCardEditor } from "../base";
 import { css, CSSResultGroup, html, nothing } from "lit";
-import { customElement } from "lit/decorators";
+import { customElement, state } from "lit/decorators";
 import { BoldCardType } from "../../../lib/cards/types";
 import { editorBaseStyles } from "../../styles";
-import { LovelaceCardConfigWithEntity } from "../../../types/card";
 import { getCardEditorTag } from "../../../lib/cards/helpers";
 import { CarouselCardConfig } from "../../../cards/carousel-card/types";
 import { carouselCardConfigStruct } from "../../../cards/carousel-card/struct";
 import { SortableListItem } from "../../../components/bc-sortable-list";
 import { t } from "../../../localization/i18n";
-import { mdiPlus } from "@mdi/js";
-import { mdiCardMultipleOutline } from "@mdi/js/commonjs/mdi";
+import { mdiCardText, mdiChevronLeft, mdiPlus } from "@mdi/js";
+import { LovelaceCardConfig } from "../../../types/ha/lovelace";
+import { isUndefined } from "../../../lib/helpers";
 
 @customElement(getCardEditorTag(BoldCardType.CAROUSEL))
 export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardConfig> {
+  @state() private _isPicking = false;
+
   protected get _struct() {
     return carouselCardConfigStruct;
   }
@@ -23,27 +25,61 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
       return nothing;
     }
 
+    if (this._isPicking || this._config.cards.length === 0) {
+      return html`
+        ${this._config.cards.length > 0
+          ? html`
+              <div>
+                <ha-button
+                  .label=${t("editor.common.label.back")}
+                  @click=${(ev) => {
+                    ev.stopPropagation();
+                    this._isPicking = false;
+                  }}
+                >
+                  <ha-svg-icon
+                    .path=${mdiChevronLeft}
+                    slot="icon"
+                  ></ha-svg-icon>
+                </ha-button>
+              </div>
+            `
+          : nothing}
+        <bc-card-picker
+          .hass=${this.hass}
+          .lovelace=${this.lovelace}
+          @config-changed=${(ev) => {
+            this._isPicking = false;
+            return this._handleCardPicked(ev);
+          }}
+        ></bc-card-picker>
+      `;
+    }
+
+    const items = this._config.cards.map(
+      (card, index): SortableListItem => ({
+        label: this.getCardTypeName(card.type),
+        key: card.type + index,
+        onEdit: () => {},
+        onRemove: () => {},
+      }),
+    );
+
     return html`
-      <ha-expansion-panel outlined>
+      <ha-expansion-panel outlined expanded>
         <h3 slot="header">
-          <ha-svg-icon .path=${mdiCardMultipleOutline}></ha-svg-icon>
+          <ha-svg-icon .path=${mdiCardText}></ha-svg-icon>
           ${t("editor.card.carousel.label.cards")}
         </h3>
         <div class="content">
-          <bc-sortable-list
-            .items=${this._config.cards.map(
-              (card, index): SortableListItem => ({
-                label: this.getCardTypeName(card.type),
-                key: card.type + index,
-                onEdit: () => {},
-                onRemove: () => {},
-              }),
-            )}
-            @item-moved=${console.log}
-          >
+          <bc-sortable-list .items=${items} @item-moved=${console.log}>
             <ha-button
               outlined
               .label=${t("editor.card.carousel.label.add_card")}
+              @click=${(ev) => {
+                ev.stopPropagation();
+                this._isPicking = true;
+              }}
             >
               <ha-svg-icon .path=${mdiPlus} slot="icon"></ha-svg-icon>
             </ha-button>
@@ -53,20 +89,20 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     `;
   }
 
-  private _stripCardConfig(config: LovelaceCardConfigWithEntity) {
-    const {
-      view_layout: _view_layout,
-      layout_options: _layout_options,
-      grid_options: _grid_options,
-      visibility: _visibility,
-      ...card
-    } = config;
-    return card;
-  }
-
-  private _valueChanged(ev: CustomEvent): void {
+  private async _handleCardPicked(
+    ev: CustomEvent<{ config?: LovelaceCardConfig }>,
+  ) {
     ev.stopPropagation();
-    this.fireEvent("config-changed", { config: ev.detail.value });
+
+    const oldCards = this._config?.cards;
+    const newCardConfig = ev.detail.config;
+    if (isUndefined(oldCards) || isUndefined(newCardConfig)) {
+      return;
+    }
+
+    this._patchConfig({
+      cards: [...oldCards, newCardConfig],
+    });
   }
 
   static styles: CSSResultGroup = [
