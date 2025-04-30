@@ -179,11 +179,12 @@ export function splice<T>(
   arr: Optional<T[]>,
   start: number,
   deleteCount: number = 1,
+  ...items: T[]
 ): T[] {
   if (!arr) {
     return [];
   }
   const newArr = [...arr];
-  newArr.splice(start, deleteCount);
+  newArr.splice(start, deleteCount, ...items);
   return newArr;
 }
