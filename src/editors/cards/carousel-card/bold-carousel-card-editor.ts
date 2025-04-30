@@ -10,7 +10,7 @@ import { SortableListItem } from "../../../components/bc-sortable-list";
 import { t } from "../../../localization/i18n";
 import { mdiCardText, mdiChevronLeft, mdiPlus } from "@mdi/js";
 import { LovelaceCardConfig } from "../../../types/ha/lovelace";
-import { isUndefined } from "../../../lib/helpers";
+import { isUndefined, splice } from "../../../lib/helpers";
 
 @customElement(getCardEditorTag(BoldCardType.CAROUSEL))
 export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardConfig> {
@@ -61,7 +61,7 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
         label: this.getCardTypeName(card.type),
         key: card.type + index,
         onEdit: () => {},
-        onRemove: () => {},
+        onRemove: () => this._removeCard(index),
       }),
     );
 
@@ -89,9 +89,7 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     `;
   }
 
-  private async _handleCardPicked(
-    ev: CustomEvent<{ config?: LovelaceCardConfig }>,
-  ) {
+  private _handleCardPicked(ev: CustomEvent<{ config?: LovelaceCardConfig }>) {
     ev.stopPropagation();
 
     const oldCards = this._config?.cards;
@@ -102,6 +100,12 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
 
     this._patchConfig({
       cards: [...oldCards, newCardConfig],
+    });
+  }
+
+  private _removeCard(index: number) {
+    this._patchConfig({
+      cards: splice(this._config?.cards, index),
     });
   }
 

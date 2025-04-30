@@ -174,3 +174,16 @@ export function minOrUndefined(arr: number[]): Optional<number> {
   }
   return Math.min(...arr);
 }
+
+export function splice<T>(
+  arr: Optional<T[]>,
+  start: number,
+  deleteCount: number = 1,
+): T[] {
+  if (!arr) {
+    return [];
+  }
+  const newArr = [...arr];
+  newArr.splice(start, deleteCount);
+  return newArr;
+}
