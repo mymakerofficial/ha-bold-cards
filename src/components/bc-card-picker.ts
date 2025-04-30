@@ -29,8 +29,13 @@ interface CardElement {
   element: TemplateResult;
 }
 
+interface CardElementWithStub extends CardElement {
+  stub: LovelaceCardConfig;
+}
+
 const SUGGESTED_CARDS: string[] = ["tile", BoldCardType.MEDIA_PLAYER];
 
+// loads the hui-card-picker element
 async function loadCardPicker() {
   if (isDefined(customElements.get("hui-card-picker"))) {
     return Promise.resolve();
@@ -96,22 +101,15 @@ class BcCardPicker extends BoldHassElement {
     this._loading = false;
   }
 
-  private async _filterCard(cards: CardElement[]) {
-    if (!this.filter) {
-      return cards;
-    }
-
+  private async _transformCards(cards: CardElement[]) {
     const entityIds = this.getAllEntityIds();
 
-    const promises = cards.map(async (card) => {
+    const promises = cards.map(async (card): Promise<CardElementWithStub> => {
       const type = optionallyPrefixCustomType(
         card.card.type,
         card.card.isCustom,
       );
-      const stubConfig = await this.getCardStubConfig(
-        optionallyPrefixCustomType(card.card.type, card.card.isCustom),
-        entityIds,
-      );
+      const stubConfig = await this.getCardStubConfig(type, entityIds);
       return {
         ...{
           ...card,
@@ -125,8 +123,15 @@ class BcCardPicker extends BoldHassElement {
       };
     });
 
-    return (await Promise.all(promises)).filter((card) => {
-      return this.filter!(card.stub);
+    const cardsWithStub = await Promise.all(promises);
+
+    const filter = this.filter;
+    if (!filter) {
+      return cardsWithStub;
+    }
+
+    return cardsWithStub.filter((card) => {
+      return filter(card.stub);
     });
   }
 
@@ -141,12 +146,13 @@ class BcCardPicker extends BoldHassElement {
   protected updated(_changedProperties: PropertyValues) {
     super.updated(_changedProperties);
 
+    // TODO should this filter check be here?
     if (isUndefined(this.filter) || this._done) {
       return;
     }
 
     if (this._cardPickerEl?._cards?.length) {
-      this._filterCard(this._cardPickerEl._cards).then((cards) => {
+      this._transformCards(this._cardPickerEl._cards).then((cards) => {
         if (this._cardPickerEl!._cards.length !== cards.length) {
           this._cardPickerEl!._cards = cards;
           this._cardPickerEl!.requestUpdate();
