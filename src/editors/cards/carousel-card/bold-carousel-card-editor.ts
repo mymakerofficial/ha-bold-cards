@@ -25,6 +25,27 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     return carouselCardConfigStruct;
   }
 
+  protected _renderSubEditorHeader({
+    onBack,
+    title,
+  }: {
+    onBack: () => void;
+    title: string;
+  }) {
+    return html`
+      <div class="sub-header">
+        <ha-icon-button-prev
+          .label=${t("editor.common.label.back")}
+          @click=${(ev) => {
+            ev.stopPropagation();
+            onBack();
+          }}
+        ></ha-icon-button-prev>
+        <span class="title">${title}</span>
+      </div>
+    `;
+  }
+
   protected render() {
     if (!this.hass || !this._config) {
       return nothing;
@@ -32,32 +53,22 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
 
     if (this._isPicking || this._config.cards.length === 0) {
       return html`
-        ${this._config.cards.length > 0
-          ? html`
-              <div>
-                <ha-button
-                  .label=${t("editor.common.label.back")}
-                  @click=${(ev) => {
-                    ev.stopPropagation();
-                    this._isPicking = false;
-                  }}
-                >
-                  <ha-svg-icon
-                    .path=${mdiChevronLeft}
-                    slot="icon"
-                  ></ha-svg-icon>
-                </ha-button>
-              </div>
-            `
-          : nothing}
-        <bc-card-picker
-          .hass=${this.hass}
-          .lovelace=${this.lovelace}
-          @config-changed=${(ev) => {
-            this._isPicking = false;
-            return this._handleCardPicked(ev);
-          }}
-        ></bc-card-picker>
+        <div class="sub-editor">
+          ${this._config.cards.length > 0
+            ? this._renderSubEditorHeader({
+                onBack: () => (this._isPicking = false),
+                title: t("editor.card.carousel.label.add_card"),
+              })
+            : nothing}
+          <bc-card-picker
+            .hass=${this.hass}
+            .lovelace=${this.lovelace}
+            @config-changed=${(ev) => {
+              this._isPicking = false;
+              return this._handleCardPicked(ev);
+            }}
+          ></bc-card-picker>
+        </div>
       `;
     }
 
@@ -68,31 +79,26 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
       });
 
       return html`
-        <div>
-          <ha-button
-            .label=${t("editor.common.label.back")}
-            @click=${(ev) => {
+        <div class="sub-editor">
+          ${this._renderSubEditorHeader({
+            onBack: () => (this._editIndex = -1),
+            title: this.getCardTypeName(card.type),
+          })}
+          <hui-card-element-editor
+            .hass=${this.hass}
+            .lovelace=${this.lovelace}
+            .value=${card}
+            @config-changed=${(
+              ev: CustomEvent<{ config: LovelaceCardConfig }>,
+            ) => {
               ev.stopPropagation();
-              this._editIndex = -1;
+              this._updateCardConfig(this._editIndex, ev.detail.config);
             }}
-          >
-            <ha-svg-icon .path=${mdiChevronLeft} slot="icon"></ha-svg-icon>
-          </ha-button>
+            @GUImode-changed=${(ev: CustomEvent) => {
+              ev.stopPropagation();
+            }}
+          ></hui-card-element-editor>
         </div>
-        <hui-card-element-editor
-          .hass=${this.hass}
-          .lovelace=${this.lovelace}
-          .value=${card}
-          @config-changed=${(
-            ev: CustomEvent<{ config: LovelaceCardConfig }>,
-          ) => {
-            ev.stopPropagation();
-            this._updateCardConfig(this._editIndex, ev.detail.config);
-          }}
-          @GUImode-changed=${(ev: CustomEvent) => {
-            ev.stopPropagation();
-          }}
-        ></hui-card-element-editor>
       `;
     }
 
@@ -181,6 +187,23 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
         display: flex;
         flex-direction: column;
         gap: 24px;
+      }
+
+      .sub-editor {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .sub-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .sub-header .title {
+        flex: 1;
+        font-size: 18px;
       }
     `,
   ];
