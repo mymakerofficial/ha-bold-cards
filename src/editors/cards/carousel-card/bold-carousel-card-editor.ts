@@ -8,7 +8,7 @@ import { CarouselCardConfig } from "../../../cards/carousel-card/types";
 import { carouselCardConfigStruct } from "../../../cards/carousel-card/struct";
 import { SortableListItem } from "../../../components/bc-sortable-list";
 import { t } from "../../../localization/i18n";
-import { mdiCardText, mdiChevronLeft, mdiPlus } from "@mdi/js";
+import { mdiCardText, mdiPlus } from "@mdi/js";
 import { LovelaceCardConfig } from "../../../types/ha/lovelace";
 import { isUndefined, move, patchElement, splice } from "../../../lib/helpers";
 import {
@@ -110,6 +110,7 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
         key: Object.entries(entry.card).flat().join(),
         onEdit: () => (this._editIndex = index),
         onRemove: () => this._removeCard(index),
+        onDuplicate: () => this._duplicateCard(index),
       }),
     );
 
@@ -164,6 +165,18 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
 
     this._patchConfig({
       cards: move(this._config?.cards, ev.detail.oldIndex, ev.detail.newIndex),
+    });
+  }
+
+  private _duplicateCard(index: number) {
+    const oldCards = this._config?.cards;
+    const newCardEntry = this._config?.cards[index];
+    if (isUndefined(oldCards) || isUndefined(newCardEntry)) {
+      return;
+    }
+
+    this._patchConfig({
+      cards: [...oldCards, newCardEntry],
     });
   }
 
