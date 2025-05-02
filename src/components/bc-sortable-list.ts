@@ -1,7 +1,12 @@
 import { customElement, property } from "lit/decorators";
 import { css, html, nothing } from "lit";
 import { repeat } from "lit-html/directives/repeat";
-import { mdiDelete, mdiDrag, mdiPencil } from "@mdi/js";
+import {
+  mdiDelete,
+  mdiDrag,
+  mdiPencil,
+  mdiPlusCircleMultipleOutline,
+} from "@mdi/js";
 import { t } from "../localization/i18n";
 import { editorBaseStyles } from "../editors/styles";
 import { isDefined } from "../lib/helpers";
@@ -12,6 +17,7 @@ export interface SortableListItem {
   key: string;
   onEdit?: () => void;
   onRemove?: () => void;
+  onDuplicate?: () => void;
 }
 
 @customElement("bc-sortable-list")
@@ -33,10 +39,21 @@ export class BcSortableList extends BoldElement {
                 <ha-icon-button
                   .label=${t("editor.common.label.edit")}
                   .path=${mdiPencil}
-                  class="edit-icon"
                   @click=${(ev) => {
                     ev.stopPropagation();
                     return item.onEdit?.();
+                  }}
+                ></ha-icon-button>
+              `
+            : nothing}
+          ${isDefined(item.onDuplicate)
+            ? html`
+                <ha-icon-button
+                  .label=${t("editor.common.label.duplicate")}
+                  .path=${mdiPlusCircleMultipleOutline}
+                  @click=${(ev) => {
+                    ev.stopPropagation();
+                    return item.onDuplicate?.();
                   }}
                 ></ha-icon-button>
               `
@@ -46,7 +63,6 @@ export class BcSortableList extends BoldElement {
                 <ha-icon-button
                   .label=${t("editor.common.label.remove")}
                   .path=${mdiDelete}
-                  class="remove-icon"
                   @click=${(ev) => {
                     ev.stopPropagation();
                     return item.onRemove?.();
