@@ -12,10 +12,7 @@ import {
 } from "../components/bc-button";
 import { MediaPositionTimestampPosition } from "../components/bc-media-position-control";
 import {
-  MediaPlayerCardHorizontalAlignment,
   MediaPlayerCardColorMode,
-  MediaPlayerCardPicturePosition,
-  MediaPlayerCardVerticalAlignment,
   MediaPlayerCardBackgroundPictureStyle,
 } from "../cards/media-player-card/types";
 import { CardFeaturePosition } from "../cards/types";
@@ -110,28 +107,10 @@ const i18n = new I18n(
           [MediaPositionTimestampPosition.BOTTOM_LEFT]: "Bottom Left",
           [MediaPositionTimestampPosition.BOTTOM_RIGHT]: "Bottom Right",
         } satisfies EnumTranslations<MediaPositionTimestampPosition>,
-        media_player_card_picture_position: {
-          [MediaPlayerCardPicturePosition.INLINE_LEFT]: "Inline Left",
-          [MediaPlayerCardPicturePosition.INLINE_RIGHT]: "Inline Right",
-          [MediaPlayerCardPicturePosition.TOP_LEFT]: "Top Left",
-          [MediaPlayerCardPicturePosition.TOP_CENTER]: "Top Center",
-          [MediaPlayerCardPicturePosition.TOP_RIGHT]: "Top Right",
-          [MediaPlayerCardPicturePosition.HIDE]: "Hide",
-        } satisfies EnumTranslations<MediaPlayerCardPicturePosition>,
         media_player_card_background_picture_style: {
           [MediaPlayerCardBackgroundPictureStyle.COVER]: "Cover",
           [MediaPlayerCardBackgroundPictureStyle.HIDE]: "Hide",
         } satisfies EnumTranslations<MediaPlayerCardBackgroundPictureStyle>,
-        media_player_card_horizontal_alignment: {
-          [MediaPlayerCardHorizontalAlignment.LEFT]: "Left",
-          [MediaPlayerCardHorizontalAlignment.CENTER]: "Center",
-          [MediaPlayerCardHorizontalAlignment.RIGHT]: "Right",
-        } satisfies EnumTranslations<MediaPlayerCardHorizontalAlignment>,
-        media_player_card_vertical_alignment: {
-          [MediaPlayerCardVerticalAlignment.TOP]: "Top",
-          [MediaPlayerCardVerticalAlignment.CENTER]: "Center",
-          [MediaPlayerCardVerticalAlignment.BOTTOM]: "Bottom",
-        } satisfies EnumTranslations<MediaPlayerCardVerticalAlignment>,
         media_player_card_color_mode: {
           [MediaPlayerCardColorMode.AMBIENT]: "Ambient",
           [MediaPlayerCardColorMode.AMBIENT_VIBRANT]: "Ambient Vibrant",
