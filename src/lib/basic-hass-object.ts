@@ -12,6 +12,7 @@ import {
   getDeviceByDeviceId,
   getDeviceByEntityId,
   getEntityByEntityId,
+  getEntityName,
   getStateObj,
 } from "./entities/helpers";
 import { getFeatureTypeLabel } from "../editors/cards/features/helpers";
@@ -21,6 +22,7 @@ import { HomeAssistant, LovelaceCardConfig } from "../types/ha/lovelace";
 import { HassEntity } from "home-assistant-js-websocket";
 import { computeIsDarkMode } from "./theme";
 import {
+  getCardConfigHumanReadableName,
   getCardGridOptions,
   getCardStubConfig,
   getCardTypeName,
@@ -56,12 +58,20 @@ export function BasicHassObjectMixin<TBase extends HassObjectConstructor>(
       return getDeviceByEntityId(entityId, this.hass);
     }
 
+    protected getEntityName(entityId?: string) {
+      return getEntityName(entityId, this.hass);
+    }
+
     protected getFeatureTypeLabel(type: string) {
       return getFeatureTypeLabel(type, this.hass);
     }
 
     protected getCardTypeName(type: string) {
       return getCardTypeName(type, this.hass);
+    }
+
+    protected getCardConfigHumanReadableName(config: LovelaceCardConfig) {
+      return getCardConfigHumanReadableName(config, this.hass);
     }
 
     protected getUniversalMediaPlayerChildStateObj(
