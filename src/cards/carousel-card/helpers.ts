@@ -1,18 +1,34 @@
 import { LovelaceCardConfig } from "../../types/ha/lovelace";
-import { CarouselCardCardConfig, CarouselCardConfig } from "./types";
+import {
+  CarouselCardCardConfig,
+  CarouselCardCardEntry,
+  CarouselCardConfig,
+} from "./types";
+import { omit } from "../../lib/helpers";
 
-export function getCarouselCardConfig({
+export function enrichCarouselCardConfig({
   config,
-  card,
+  entry,
 }: {
   config: CarouselCardConfig;
-  card: CarouselCardCardConfig;
+  entry: CarouselCardCardEntry;
 }): LovelaceCardConfig {
   return {
-    ...card,
-    type: card.type,
+    ...entry.card,
+    type: entry.card.type,
     view_layout: config.view_layout,
     grid_options: config.grid_options,
     visibility: config.visibility,
   };
+}
+
+export function stripCarouselCardConfig(
+  config: LovelaceCardConfig,
+): CarouselCardCardConfig {
+  return omit(config, [
+    "view_layout",
+    "layout_options",
+    "grid_options",
+    "visibility",
+  ]);
 }

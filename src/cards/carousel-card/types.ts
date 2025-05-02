@@ -6,7 +6,11 @@ export type CarouselCardCardConfig = Omit<
   "view_layout" | "layout_options" | "grid_options" | "visibility"
 >;
 
+export type CarouselCardCardEntry = {
+  card: CarouselCardCardConfig;
+};
+
 export type CarouselCardConfig = LovelaceCardConfig & {
   type: BoldCardTypes["CAROUSEL"];
-  cards: CarouselCardCardConfig[];
+  cards: CarouselCardCardEntry[];
 };
