@@ -234,6 +234,8 @@ const i18n = new I18n(
         card: {
           carousel: {
             label: {
+              layout: "Layout",
+              stepper_position: "Stepper Position",
               cards: "Cards",
               add_card: "Add Card",
             },

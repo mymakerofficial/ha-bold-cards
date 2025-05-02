@@ -5,16 +5,20 @@ import { BoldCardType } from "../../../lib/cards/types";
 import { editorBaseStyles } from "../../styles";
 import { getCardEditorTag } from "../../../lib/cards/helpers";
 import { CarouselCardConfig } from "../../../cards/carousel-card/types";
-import { carouselCardConfigStruct } from "../../../cards/carousel-card/struct";
+import {
+  carouselCardAllowedStepperPositions,
+  carouselCardConfigStruct,
+} from "../../../cards/carousel-card/struct";
 import { SortableListItem } from "../../../components/bc-sortable-list";
 import { t } from "../../../localization/i18n";
-import { mdiCardText, mdiPlus } from "@mdi/js";
+import { mdiCardText, mdiCursorMove, mdiPlus } from "@mdi/js";
 import { LovelaceCardConfig } from "../../../types/ha/lovelace";
 import { isUndefined, move, patchElement, splice } from "../../../lib/helpers";
 import {
   enrichCarouselCardConfig,
   stripCarouselCardConfig,
 } from "../../../cards/carousel-card/helpers";
+import { Position } from "../../../lib/layout/position";
 
 @customElement(getCardEditorTag(BoldCardType.CAROUSEL))
 export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardConfig> {
@@ -115,6 +119,27 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     );
 
     return html`
+      <ha-expansion-panel outlined expanded>
+        <h3 slot="header">
+          <ha-svg-icon .path=${mdiCursorMove}></ha-svg-icon>
+          ${t("editor.card.carousel.label.layout")}
+        </h3>
+        <div class="content">
+          <bc-form-element
+            .label=${t("editor.card.carousel.label.stepper_position")}
+          >
+            <bc-layout-select
+              .label=${t("editor.card.carousel.label.stepper_position")}
+              .hideLabel=${true}
+              .value=${this._config.stepper_position ?? Position.BOTTOM_CENTER}
+              .positions=${carouselCardAllowedStepperPositions}
+              @value-changed=${(ev) =>
+                this._handleValueChanged("stepper_position", ev)}
+              .hass=${this.hass}
+            ></bc-layout-select>
+          </bc-form-element>
+        </div>
+      </ha-expansion-panel>
       <ha-expansion-panel outlined expanded>
         <h3 slot="header">
           <ha-svg-icon .path=${mdiCardText}></ha-svg-icon>

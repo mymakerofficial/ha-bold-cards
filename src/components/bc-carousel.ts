@@ -2,16 +2,15 @@ import { html, nothing, TemplateResult } from "lit-element";
 import { createRef, ref } from "lit-html/directives/ref";
 import { repeat } from "lit-html/directives/repeat";
 import { customElement, property, state } from "lit/decorators";
-import { LitElement, css, unsafeCSS } from "lit";
+import { css, LitElement, unsafeCSS } from "lit";
 import { PropertyValues } from "@lit/reactive-element";
-
-export const CarouselStepperPosition = {
-  LEFT: "left",
-  CENTER: "center",
-  RIGHT: "right",
-} as const;
-export type CarouselStepperPosition =
-  (typeof CarouselStepperPosition)[keyof typeof CarouselStepperPosition];
+import {
+  getHorizontalPosition,
+  getVerticalPosition,
+  HorizontalPosition,
+  Position,
+  VerticalPosition,
+} from "../lib/layout/position";
 
 @customElement("bc-carousel")
 export class BcCarousel extends LitElement {
@@ -22,8 +21,7 @@ export class BcCarousel extends LitElement {
     index,
   ) => index.toString();
   @property({ attribute: false }) public length: number = 0;
-  @property() public position: CarouselStepperPosition =
-    CarouselStepperPosition.CENTER;
+  @property() public position: Position = Position.BOTTOM_CENTER;
 
   private _containerRef = createRef();
 
@@ -143,7 +141,11 @@ export class BcCarousel extends LitElement {
       <div class="carousel" data-is-scrolling=${this._isScrolling}>
         ${this.length > 1
           ? html`
-              <div class="stepper-container" data-position=${this.position}>
+              <div
+                class="stepper-container"
+                data-horizontal-position=${getHorizontalPosition(this.position)}
+                data-vertical-position=${getVerticalPosition(this.position)}
+              >
                 <div
                   class="stepper"
                   tabindex="0"
@@ -261,27 +263,38 @@ export class BcCarousel extends LitElement {
 
       .stepper-container {
         position: absolute;
-        bottom: var(--stepper-y-offset);
         display: flex;
         gap: 8px;
         z-index: 1;
       }
 
-      .stepper-container[data-position="${unsafeCSS(
-          CarouselStepperPosition.LEFT,
+      .stepper-container[data-vertical-position="${unsafeCSS(
+          VerticalPosition.TOP,
+        )}"] {
+        top: var(--stepper-y-offset);
+      }
+
+      .stepper-container[data-vertical-position="${unsafeCSS(
+          VerticalPosition.BOTTOM,
+        )}"] {
+        bottom: var(--stepper-y-offset);
+      }
+
+      .stepper-container[data-horizontal-position="${unsafeCSS(
+          HorizontalPosition.LEFT,
         )}"] {
         left: var(--stepper-x-offset);
       }
 
-      .stepper-container[data-position="${unsafeCSS(
-          CarouselStepperPosition.CENTER,
+      .stepper-container[data-horizontal-position="${unsafeCSS(
+          HorizontalPosition.CENTER,
         )}"] {
         left: 50%;
         transform: translateX(-50%);
       }
 
-      .stepper-container[data-position="${unsafeCSS(
-          CarouselStepperPosition.RIGHT,
+      .stepper-container[data-horizontal-position="${unsafeCSS(
+          HorizontalPosition.RIGHT,
         )}"] {
         left: auto;
         right: var(--stepper-x-offset);
