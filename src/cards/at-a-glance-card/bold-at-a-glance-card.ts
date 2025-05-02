@@ -4,11 +4,11 @@ import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { BoldLovelaceCard } from "../base";
 import { BoldAtAGlanceCardConfig } from "./types";
 import { css, html, nothing } from "lit";
-import { CarouselStepperPosition } from "../../components/bc-carousel";
 import { TemplatedConfigListRenderer } from "../../lib/templates/templated-config-renderer";
 import { GlancePageConfig, GlancePageType } from "../../lib/at-a-glance/types";
 import { PropertyValues } from "@lit/reactive-element";
 import { styleMap } from "lit-html/directives/style-map";
+import { Position } from "../../lib/layout/position";
 
 const cardType = BoldCardType.AT_A_GLANCE;
 
@@ -92,7 +92,7 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
             .hass=${this.hass}
           ></bc-glance-page>
         `}
-        position=${CarouselStepperPosition.LEFT}
+        position=${Position.BOTTOM_LEFT}
       </div>
     `;
   }

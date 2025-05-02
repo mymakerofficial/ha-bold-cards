@@ -11,6 +11,9 @@ import { BoldCardType } from "../../lib/cards/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { enrichCarouselCardConfig } from "./helpers";
 import { getCardEditorTag } from "../../lib/cards/helpers";
+import { config } from "home-assistant-js-websocket/dist/messages";
+import { Position } from "../../lib/layout/position";
+import { styleMap } from "lit-html/directives/style-map";
 
 const cardType = BoldCardType.CAROUSEL;
 
@@ -32,6 +35,13 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
       type: this.cardType,
       cards: [],
     };
+  }
+
+  public setConfig(config: CarouselCardConfig) {
+    super.setConfig({
+      stepper_position: Position.BOTTOM_CENTER,
+      ...config,
+    });
   }
 
   public getCardSize(): number {
@@ -85,11 +95,16 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
 
     return html`
       <bc-carousel
+        style=${styleMap({
+          "--stepper-x-offset":
+            "max(calc(var(--ha-card-border-radius, 12px) / 1.5), 4px)",
+        })}
         .length=${cards.length}
         .getElement=${(index: number) => html`
           <hui-card .config=${cards[index]} .hass=${this.hass}></hui-card>
         `}
         .getKey=${(index: number) => Object.entries(cards[index]).flat().join()}
+        .position=${config.stepper_position}
       />
     `;
   }
