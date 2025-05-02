@@ -32,3 +32,15 @@ export function getDeviceByEntityId(entityId?: string, hass?: HomeAssistant) {
   }
   return getDeviceByDeviceId(entity.device_id, hass);
 }
+
+export function getEntityName(entityId?: string, hass?: HomeAssistant) {
+  const stateObj = getStateObj(entityId, hass);
+  if (stateObj && stateObj.attributes.friendly_name) {
+    return stateObj.attributes.friendly_name;
+  }
+  const device = getDeviceByEntityId(entityId, hass);
+  if (device) {
+    return device.name_by_user || device.name || undefined;
+  }
+  return undefined;
+}

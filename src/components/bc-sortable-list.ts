@@ -115,6 +115,9 @@ export class BcSortableList extends BoldElement {
 
       .content {
         flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       .content label {

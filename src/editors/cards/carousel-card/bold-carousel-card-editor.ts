@@ -90,8 +90,10 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
 
     const items = this._config.cards.map(
       (card, index): SortableListItem => ({
-        label: this.getCardTypeName(card.type),
-        key: card.type + index,
+        label: this.getCardConfigHumanReadableName(
+          card as LovelaceCardConfig,
+        ).join(" • "),
+        key: Object.entries(card).flat().join() + index,
         onEdit: () => (this._editIndex = index),
         onRemove: () => this._removeCard(index),
       }),
@@ -133,6 +135,8 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     this._patchConfig({
       cards: [...oldCards, newCardConfig],
     });
+
+    this._editIndex = oldCards.length;
   }
 
   private _removeCard(index: number) {
@@ -147,24 +151,5 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     });
   }
 
-  static styles: CSSResultGroup = [
-    editorBaseStyles,
-    css`
-      :host {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-      }
-
-      .description {
-        color: var(--secondary-text-color);
-        padding: 8px;
-      }
-
-      hr {
-        border: none;
-        border-top: 1px solid var(--divider-color);
-      }
-    `,
-  ];
+  static styles: CSSResultGroup = [editorBaseStyles];
 }

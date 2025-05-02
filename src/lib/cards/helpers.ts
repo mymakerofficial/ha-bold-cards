@@ -9,6 +9,8 @@ import { isDefined, isEmpty, isUndefined, toPromise } from "../helpers";
 import { Optional } from "../types";
 import { LitElement } from "lit";
 import { CustomCardEntry } from "../../types/card";
+import { isLovelaceCardConfigWithEntity } from "./guards";
+import { getEntityName } from "../entities/helpers";
 
 const CUSTOM_PREFIX = "custom:";
 
@@ -145,4 +147,16 @@ export function getCardTypeName(type: string, hass?: HomeAssistant) {
     return customCardEntry?.name || type;
   }
   return hass?.localize(`ui.panel.lovelace.editor.card.${type}.name`) || type;
+}
+
+export function getCardConfigHumanReadableName(
+  config: LovelaceCardConfig,
+  hass?: HomeAssistant,
+) {
+  const typeName = getCardTypeName(config.type, hass);
+  if (isLovelaceCardConfigWithEntity(config)) {
+    const entityName = getEntityName(config.entity, hass);
+    return [typeName, entityName];
+  }
+  return [typeName];
 }
