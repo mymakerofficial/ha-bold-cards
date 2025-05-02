@@ -7,6 +7,10 @@ export const carouselCardConfigStruct = assign(
   baseLovelaceCardConfig,
   object({
     type: exactMatch(BoldCardType.CAROUSEL),
-    cards: array(any()), // validated by editor
+    cards: array(
+      object({
+        card: any(), // validated by editor
+      }),
+    ),
   }),
 );

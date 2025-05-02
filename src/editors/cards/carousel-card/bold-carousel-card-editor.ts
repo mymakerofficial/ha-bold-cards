@@ -1,6 +1,6 @@
 import { BoldLovelaceCardEditor } from "../base";
-import { css, CSSResultGroup, html, LitElement, nothing } from "lit";
-import { customElement, query, state } from "lit/decorators";
+import { css, CSSResultGroup, html, nothing } from "lit";
+import { customElement, state } from "lit/decorators";
 import { BoldCardType } from "../../../lib/cards/types";
 import { editorBaseStyles } from "../../styles";
 import { getCardEditorTag } from "../../../lib/cards/helpers";
@@ -10,7 +10,11 @@ import { SortableListItem } from "../../../components/bc-sortable-list";
 import { t } from "../../../localization/i18n";
 import { mdiCardText, mdiChevronLeft, mdiPlus } from "@mdi/js";
 import { LovelaceCardConfig } from "../../../types/ha/lovelace";
-import { isUndefined, move, splice } from "../../../lib/helpers";
+import { isUndefined, move, patchElement, splice } from "../../../lib/helpers";
+import {
+  enrichCarouselCardConfig,
+  stripCarouselCardConfig,
+} from "../../../cards/carousel-card/helpers";
 
 @customElement(getCardEditorTag(BoldCardType.CAROUSEL))
 export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardConfig> {
@@ -58,7 +62,11 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     }
 
     if (this._editIndex > -1) {
-      const card = this._config.cards[this._editIndex];
+      const card = enrichCarouselCardConfig({
+        config: this._config,
+        entry: this._config.cards[this._editIndex],
+      });
+
       return html`
         <div>
           <ha-button
@@ -79,7 +87,7 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
             ev: CustomEvent<{ config: LovelaceCardConfig }>,
           ) => {
             ev.stopPropagation();
-            this._updateCard(this._editIndex, ev.detail.config);
+            this._updateCardConfig(this._editIndex, ev.detail.config);
           }}
           @GUImode-changed=${(ev: CustomEvent) => {
             ev.stopPropagation();
@@ -89,11 +97,11 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     }
 
     const items = this._config.cards.map(
-      (card, index): SortableListItem => ({
+      (entry, index): SortableListItem => ({
         label: this.getCardConfigHumanReadableName(
-          card as LovelaceCardConfig,
+          entry.card as LovelaceCardConfig,
         ).join(" • "),
-        key: Object.entries(card).flat().join(),
+        key: Object.entries(entry.card).flat().join(),
         onEdit: () => (this._editIndex = index),
         onRemove: () => this._removeCard(index),
       }),
@@ -135,8 +143,9 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
       return;
     }
 
+    const card = stripCarouselCardConfig(newCardConfig);
     this._patchConfig({
-      cards: [...oldCards, newCardConfig],
+      cards: [...oldCards, { card }],
     });
 
     this._editIndex = oldCards.length;
@@ -158,11 +167,21 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     });
   }
 
-  private _updateCard(index: number, newConfig: LovelaceCardConfig) {
+  private _updateCardConfig(index: number, newConfig: LovelaceCardConfig) {
+    const card = stripCarouselCardConfig(newConfig);
     this._patchConfig({
-      cards: splice(this._config?.cards, index, 1, newConfig),
+      cards: patchElement(this._config?.cards, index, { card }),
     });
   }
 
-  static styles: CSSResultGroup = [editorBaseStyles];
+  static styles: CSSResultGroup = [
+    editorBaseStyles,
+    css`
+      :host {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+    `,
+  ];
 }

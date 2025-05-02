@@ -189,6 +189,19 @@ export function splice<T>(
   return newArr;
 }
 
+export function patchElement<T>(
+  arr: Optional<T[]>,
+  index: number,
+  patch: Partial<T>,
+) {
+  if (!arr) {
+    return [];
+  }
+  const newArr = [...arr];
+  newArr[index] = { ...newArr[index], ...patch };
+  return newArr;
+}
+
 export function move<T>(arr: Optional<T[]>, from: number, to: number): T[] {
   if (!arr) {
     return [];
@@ -197,4 +210,15 @@ export function move<T>(arr: Optional<T[]>, from: number, to: number): T[] {
   const item = newArr.splice(from, 1)[0];
   newArr.splice(to, 0, item);
   return newArr;
+}
+
+export function omit<T extends object, K extends keyof T>(
+  obj: T,
+  keys: K[],
+): Omit<T, K> {
+  const newObj = { ...obj };
+  keys.forEach((key) => {
+    delete newObj[key];
+  });
+  return newObj;
 }

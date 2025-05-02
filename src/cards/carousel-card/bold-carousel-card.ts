@@ -9,7 +9,7 @@ import {
 import { isDefined, maxOrUndefined, minOrUndefined } from "../../lib/helpers";
 import { BoldCardType } from "../../lib/cards/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
-import { getCarouselCardConfig } from "./helpers";
+import { enrichCarouselCardConfig } from "./helpers";
 import { getCardEditorTag } from "../../lib/cards/helpers";
 
 const cardType = BoldCardType.CAROUSEL;
@@ -49,7 +49,7 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
     const grids = this._config.cards
       .map((card) =>
         this.getCardGridOptions(
-          getCarouselCardConfig({ config: this._config!, card }),
+          enrichCarouselCardConfig({ config: this._config!, entry: card }),
         ),
       )
       .filter(isDefined);
@@ -74,12 +74,13 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
   }
 
   protected render() {
-    if (!this._config || !this.hass) {
+    const config = this._config;
+    if (!config || !this.hass) {
       return nothing;
     }
 
-    const cards = this._config.cards.map((card) =>
-      getCarouselCardConfig({ config: this._config!, card }),
+    const cards = config.cards.map((entry) =>
+      enrichCarouselCardConfig({ config, entry }),
     );
 
     return html`
@@ -88,10 +89,7 @@ export class BoldCarouselCard extends BoldLovelaceCard<CarouselCardConfig> {
         .getElement=${(index: number) => html`
           <hui-card .config=${cards[index]} .hass=${this.hass}></hui-card>
         `}
-        .getKey=${
-          (index: number) =>
-            cards[index].entity + index /* TODO find better indexing */
-        }
+        .getKey=${(index: number) => Object.entries(cards[index]).flat().join()}
       />
     `;
   }
