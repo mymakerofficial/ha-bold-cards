@@ -10,7 +10,7 @@ import { SortableListItem } from "../../../components/bc-sortable-list";
 import { t } from "../../../localization/i18n";
 import { mdiCardText, mdiChevronLeft, mdiPlus } from "@mdi/js";
 import { LovelaceCardConfig } from "../../../types/ha/lovelace";
-import { isUndefined, splice } from "../../../lib/helpers";
+import { isUndefined, move, splice } from "../../../lib/helpers";
 
 @customElement(getCardEditorTag(BoldCardType.CAROUSEL))
 export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardConfig> {
@@ -93,7 +93,7 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
         label: this.getCardConfigHumanReadableName(
           card as LovelaceCardConfig,
         ).join(" • "),
-        key: Object.entries(card).flat().join() + index,
+        key: Object.entries(card).flat().join(),
         onEdit: () => (this._editIndex = index),
         onRemove: () => this._removeCard(index),
       }),
@@ -106,7 +106,10 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
           ${t("editor.card.carousel.label.cards")}
         </h3>
         <div class="content">
-          <bc-sortable-list .items=${items} @item-moved=${console.log}>
+          <bc-sortable-list
+            .items=${items}
+            @item-moved=${this._handleCardMoved}
+          >
             <ha-button
               outlined
               .label=${t("editor.card.carousel.label.add_card")}
@@ -137,6 +140,16 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     });
 
     this._editIndex = oldCards.length;
+  }
+
+  private _handleCardMoved(
+    ev: CustomEvent<{ newIndex: number; oldIndex: number }>,
+  ) {
+    ev.stopPropagation();
+
+    this._patchConfig({
+      cards: move(this._config?.cards, ev.detail.oldIndex, ev.detail.newIndex),
+    });
   }
 
   private _removeCard(index: number) {

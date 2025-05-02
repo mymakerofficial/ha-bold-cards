@@ -188,3 +188,13 @@ export function splice<T>(
   newArr.splice(start, deleteCount, ...items);
   return newArr;
 }
+
+export function move<T>(arr: Optional<T[]>, from: number, to: number): T[] {
+  if (!arr) {
+    return [];
+  }
+  const newArr = [...arr];
+  const item = newArr.splice(from, 1)[0];
+  newArr.splice(to, 0, item);
+  return newArr;
+}
