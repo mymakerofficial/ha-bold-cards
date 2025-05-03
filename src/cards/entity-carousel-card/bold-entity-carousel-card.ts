@@ -114,7 +114,7 @@ export class BoldEntityCarouselCard extends BoldLovelaceCard<EntityCarouselCardC
       return nothing;
     }
 
-    const cards = this.getCards();
+    const cards = this.getCards().map((card) => ({ card }));
     const config = {
       type: BoldCardType.CAROUSEL,
       cards: cards,
