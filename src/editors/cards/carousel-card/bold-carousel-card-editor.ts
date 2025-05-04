@@ -67,6 +67,12 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
           <bc-card-picker
             .hass=${this.hass}
             .lovelace=${this.lovelace}
+            .filter=${(card: LovelaceCardConfig) => {
+              return (
+                card.type !== BoldCardType.CAROUSEL &&
+                card.type !== BoldCardType.ENTITY_CAROUSEL
+              );
+            }}
             @config-changed=${(ev) => {
               this._isPicking = false;
               return this._handleCardPicked(ev);
