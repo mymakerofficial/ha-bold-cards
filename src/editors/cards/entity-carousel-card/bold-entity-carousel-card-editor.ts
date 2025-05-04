@@ -121,17 +121,21 @@ export class BoldEntityCarouselCardEditor extends BoldLovelaceCardEditor<EntityC
           ></ha-form>`
         : nothing}
       ${showCardPicker
-        ? html`<bc-card-picker
-            .hass=${this.hass}
-            .lovelace=${this.lovelace}
-            .filter=${(card: LovelaceCardConfig) => {
-              return (
-                Object.keys(card).includes("entity") &&
-                this.getAllEntityIds().includes(card.entity)
-              );
-            }}
-            @config-changed=${this._handleCardPicked}
-          ></bc-card-picker>`
+        ? html`
+            <bc-card-picker
+              .hass=${this.hass}
+              .lovelace=${this.lovelace}
+              .filter=${(card: LovelaceCardConfig) => {
+                return (
+                  card.type !== BoldCardType.CAROUSEL &&
+                  card.type !== BoldCardType.ENTITY_CAROUSEL &&
+                  Object.keys(card).includes("entity") &&
+                  this.getAllEntityIds().includes(card.entity)
+                );
+              }}
+              @config-changed=${this._handleCardPicked}
+            ></bc-card-picker>
+          `
         : nothing}
       ${showCardEditor
         ? html`
