@@ -90,10 +90,14 @@ export function getCardGridOptions(
   const tag = getLovelaceCardTag(config.type);
   const el = document.createElement(tag) as LovelaceCard & LitElement;
 
+  if (isUndefined(el.setConfig) || isUndefined(el.getGridOptions)) {
+    return undefined;
+  }
+
   el.hass = hass;
   el.setConfig(config);
 
-  return el.getGridOptions?.();
+  return el.getGridOptions();
 }
 
 export async function getEntitiesForCard(
