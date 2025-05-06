@@ -17,13 +17,14 @@ import { isErrorResult, run, successResult } from "../../../lib/result";
 import { Mutex } from "async-mutex";
 import { CarouselStepperStyle } from "../../../components/bc-carousel";
 import { enumToOptions } from "../../helpers";
+import { Optional } from "../../../lib/types";
 
 export abstract class BoldCarouselCardEditorBase<
   TConfig extends CarouselCardBaseConfig,
 > extends BoldLovelaceCardEditor<TConfig> {
   private _cardEditor: Map<
     string,
-    { doesValidate: boolean; editor: LovelaceCardEditor }
+    { doesValidate: boolean; editor: Optional<LovelaceCardEditor> }
   > = new Map();
   private _loadCardEditorMutex = new Mutex();
 
@@ -47,7 +48,7 @@ export abstract class BoldCarouselCardEditorBase<
         const cardClass = getLovelaceCardElementClass(type);
 
         if (isUndefined(cardClass.getConfigElement)) {
-          return;
+          throw new Error(`Card ${type} does not have a config element`);
         }
 
         const editor = await toPromise(cardClass.getConfigElement());
@@ -66,6 +67,15 @@ export abstract class BoldCarouselCardEditorBase<
           editor,
         });
       })
+      .catch((error) => {
+        console.warn(`Failed to load card editor for ${type}`, error);
+        this._isLoadingCardEditor = false;
+        this._cardEditor.set(type, {
+          doesValidate: false,
+          editor: undefined,
+        });
+        return false;
+      })
       .then(() => {
         this._isLoadingCardEditor = false;
         return true;
@@ -78,15 +88,15 @@ export abstract class BoldCarouselCardEditorBase<
 
   protected _validateCardConfig(config: LovelaceCardConfig) {
     const entry = this._cardEditor.get(config.type);
-
-    if (isUndefined(entry) || !entry.doesValidate) {
+    const editor = entry?.editor;
+    if (isUndefined(entry) || !entry.doesValidate || isUndefined(editor)) {
       return successResult(undefined);
     }
 
     // remove card_mod to avoid validation errors
     const newConfig = omit(config, ["card_mod"]) as LovelaceCardConfig;
 
-    return run(() => entry.editor.setConfig(newConfig));
+    return run(() => editor.setConfig(newConfig));
   }
 
   protected _renderCarouselLayoutSection() {
