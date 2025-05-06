@@ -16,6 +16,5 @@ export function getEntityCarouselCardConfig({
     entity: entity ?? config.entities[index],
     view_layout: config.view_layout,
     grid_options: config.grid_options,
-    visibility: config.visibility,
   };
 }
