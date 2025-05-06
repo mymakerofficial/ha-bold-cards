@@ -7,7 +7,7 @@ import { mdiCursorMove } from "@mdi/js";
 import { Position } from "../../../lib/layout/position";
 import { editorBaseStyles } from "../../styles";
 import { getLovelaceCardElementClass } from "../../../lib/cards/helpers";
-import { isUndefined, toPromise } from "../../../lib/helpers";
+import { isUndefined, omit, toPromise } from "../../../lib/helpers";
 import {
   LovelaceCardConfig,
   LovelaceCardEditor,
@@ -81,7 +81,10 @@ export abstract class BoldCarouselCardEditorBase<
       return successResult(undefined);
     }
 
-    return run(() => entry.editor.setConfig(config));
+    // remove card_mod to avoid validation errors
+    const newConfig = omit(config, ["card_mod"]) as LovelaceCardConfig;
+
+    return run(() => entry.editor.setConfig(newConfig));
   }
 
   protected _renderCarouselLayoutSection() {
