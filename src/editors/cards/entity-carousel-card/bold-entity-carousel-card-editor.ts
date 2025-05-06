@@ -20,25 +20,18 @@ import { assert } from "superstruct";
 import { getEntityCarouselCardConfig } from "../../../cards/entity-carousel-card/helpers";
 import { entityCarouselCardConfigStruct } from "../../../cards/entity-carousel-card/struct";
 import { EntityCarouselCardConfig } from "../../../cards/entity-carousel-card/types";
-
-const TAB = {
-  CAROUSEL: 0,
-  CARD: 1,
-} as const;
+import { mdiDevices, mdiPencil } from "@mdi/js";
 
 @customElement(getCardEditorTag(BoldCardType.ENTITY_CAROUSEL))
 export class BoldEntityCarouselCardEditor extends BoldLovelaceCardEditor<EntityCarouselCardConfig> {
   protected _cardEditor?: LovelaceCardEditor;
 
-  @state() private _selectedTab = 1;
+  @state() private _isEditingCard = false;
+  @state() private _isPickingCard = false;
   @state() private _loadingCardEditor = false;
 
   protected get _struct() {
     return entityCarouselCardConfigStruct;
-  }
-
-  private _handleSelectTab(ev: CustomEvent<{ index: number }>): void {
-    this._selectedTab = ev.detail.index;
   }
 
   public setConfig(config: EntityCarouselCardConfig): void {
@@ -72,10 +65,9 @@ export class BoldEntityCarouselCardEditor extends BoldLovelaceCardEditor<EntityC
       },
     ];
 
-    const cardConfig = {
-      entity: this._config.entities[0],
-      ...this._config.card,
-    };
+    const cardConfig = getEntityCarouselCardConfig({
+      config: this._config,
+    });
 
     const context: LovelaceCardEditorContext = {
       internals: {
@@ -83,79 +75,85 @@ export class BoldEntityCarouselCardEditor extends BoldLovelaceCardEditor<EntityC
       },
     };
 
-    const showCarouselForm = this._selectedTab === TAB.CAROUSEL;
+    if (this._loadingCardEditor) {
+      return html`
+        <div>
+          <ha-spinner size="small"></ha-spinner>
+          <span>
+            ${t("editor.card.entity_carousel.helper_text.loading_editor")}
+          </span>
+        </div>
+      `;
+    }
 
-    const showCardPicker =
-      this._selectedTab === TAB.CARD && isUndefined(this._config.card);
+    if (isUndefined(this._config.card) || this._isPickingCard) {
+      return this._renderSubEditor({
+        title: t("editor.card.entity_carousel.label.pick_card"),
+        onBack: () => (this._isPickingCard = false),
+        showHeader: isDefined(this._config.card),
+        content: html`
+          <bc-card-picker
+            .hass=${this.hass}
+            .lovelace=${this.lovelace}
+            .filter=${(card: LovelaceCardConfig) => {
+              return (
+                card.type !== BoldCardType.CAROUSEL &&
+                card.type !== BoldCardType.ENTITY_CAROUSEL &&
+                Object.keys(card).includes("entity") &&
+                this.getAllEntityIds().includes(card.entity)
+              );
+            }}
+            @config-changed=${this._handleCardPicked}
+          ></bc-card-picker>
+        `,
+      });
+    }
 
-    const showCardEditor = this._selectedTab === TAB.CARD && !showCardPicker;
+    if (this._isEditingCard) {
+      return this._renderSubEditor({
+        title: this.getCardTypeName(cardConfig.type),
+        onBack: () => (this._isEditingCard = false),
+        content: html`
+          <ha-alert alert-type="warning">
+            ${t("editor.card.entity_carousel.helper_text.card_editor")}
+          </ha-alert>
+          <hui-card-element-editor
+            .hass=${this.hass}
+            .value=${cardConfig}
+            .lovelace=${this.lovelace}
+            .context=${context}
+            @config-changed=${this._handleCardConfigChanged}
+          ></hui-card-element-editor>
+        `,
+      });
+    }
 
     return html`
-      <mwc-tab-bar
-        .activeIndex=${this._selectedTab}
-        @MDCTabBar:activated=${this._handleSelectTab}
-      >
-        <mwc-tab
-          .label=${t("editor.card.entity_carousel.tab.carousel")}
-        ></mwc-tab>
-        <mwc-tab .label=${t("editor.card.entity_carousel.tab.card")}></mwc-tab>
-      </mwc-tab-bar>
-      ${this._loadingCardEditor
-        ? html`<div>
-            <ha-spinner size="small"></ha-spinner
-            ><span
-              >${t(
-                "editor.card.entity_carousel.helper_text.loading_editor",
-              )}</span
-            >
-          </div>`
-        : nothing}
-      ${showCarouselForm
-        ? html`<ha-form
+      <div class="panel">
+        <ha-button raised @click="${() => (this._isEditingCard = true)}">
+          ${t("editor.card.entity_carousel.label.edit_card")}
+          <ha-svg-icon .path=${mdiPencil} slot="icon"></ha-svg-icon>
+        </ha-button>
+        <ha-button @click=${() => (this._isPickingCard = true)}>
+          ${t("editor.card.entity_carousel.label.change_card_type")}
+        </ha-button>
+      </div>
+      <ha-expansion-panel outlined expanded>
+        <h3 slot="header">
+          <ha-svg-icon .path=${mdiDevices}></ha-svg-icon>
+          ${t("editor.card.entity_carousel.label.entities")}
+        </h3>
+        <div class="content">
+          <ha-form
             .hass=${this.hass}
             .data=${this._config}
             .schema=${schema}
             .computeLabel=${this._computeLabelCallback}
             .computeHelper=${this._computeHelperCallback}
             @value-changed=${this._valueChanged}
-          ></ha-form>`
-        : nothing}
-      ${showCardPicker
-        ? html`
-            <bc-card-picker
-              .hass=${this.hass}
-              .lovelace=${this.lovelace}
-              .filter=${(card: LovelaceCardConfig) => {
-                return (
-                  card.type !== BoldCardType.CAROUSEL &&
-                  card.type !== BoldCardType.ENTITY_CAROUSEL &&
-                  Object.keys(card).includes("entity") &&
-                  this.getAllEntityIds().includes(card.entity)
-                );
-              }}
-              @config-changed=${this._handleCardPicked}
-            ></bc-card-picker>
-          `
-        : nothing}
-      ${showCardEditor
-        ? html`
-            <ha-alert alert-type="info">
-              ${t("editor.card.entity_carousel.helper_text.card_editor")}
-            </ha-alert>
-            <hui-card-element-editor
-              .hass=${this.hass}
-              .value=${cardConfig}
-              .lovelace=${this.lovelace}
-              .context=${context}
-              @config-changed=${this._handleCardConfigChanged}
-            ></hui-card-element-editor>
-            <div>
-              <ha-button @click=${this._handleRemoveCard}>
-                ${t("editor.card.entity_carousel.label.change_card_type")}
-              </ha-button>
-            </div>
-          `
-        : nothing}
+          ></ha-form>
+        </div>
+      </ha-expansion-panel>
     `;
   }
 

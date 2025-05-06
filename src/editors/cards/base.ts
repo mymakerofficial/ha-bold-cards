@@ -14,6 +14,7 @@ import {
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
 import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
 import { TemplateResult } from "lit-element";
+import { isDefined } from "../../lib/helpers";
 
 export abstract class BoldLovelaceCardEditor<TConfig extends LovelaceCardConfig>
   extends BoldLovelaceEditor<TConfig, LovelaceCardEditorContext>
@@ -43,37 +44,42 @@ export abstract class BoldLovelaceCardEditor<TConfig extends LovelaceCardConfig>
     onBack,
     title,
   }: {
-    onBack: () => void;
+    onBack?: () => void;
     title: string;
   }) {
     return html`
       <div class="sub-header">
-        <ha-icon-button-prev
-          .label=${t("editor.common.label.back")}
-          @click=${(ev) => {
-            ev.stopPropagation();
-            onBack();
-          }}
-        ></ha-icon-button-prev>
+        ${isDefined(onBack)
+          ? html`<ha-icon-button-prev
+              .label=${t("editor.common.label.back")}
+              @click=${(ev) => {
+                ev.stopPropagation();
+                onBack();
+              }}
+            ></ha-icon-button-prev>`
+          : nothing}
         <span class="title">${title}</span>
       </div>
     `;
   }
 
   protected _renderSubEditor({
+    onBack,
+    title,
     content,
     showHeader = true,
-    ...props
   }: {
-    onBack: () => void;
-    title: string;
+    onBack?: () => void;
+    title?: string;
     showHeader?: boolean;
     content: TemplateResult;
   }) {
     return html`
       <div class="sub-editor">
-        ${showHeader ? this._renderSubEditorHeader(props) : nothing}
-        <div class="content">${content}</div>
+        ${showHeader && isDefined(title)
+          ? this._renderSubEditorHeader({ onBack, title })
+          : nothing}
+        ${content}
       </div>
     `;
   }

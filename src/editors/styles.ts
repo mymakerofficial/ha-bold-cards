@@ -13,6 +13,17 @@ export const editorBaseStyles = css`
     gap: 24px;
   }
 
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 6px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--outline-color);
+  }
+
   ha-expansion-panel {
     display: block;
     --expansion-panel-content-padding: 0;
