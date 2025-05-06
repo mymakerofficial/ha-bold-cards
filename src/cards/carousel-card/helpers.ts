@@ -18,7 +18,6 @@ export function enrichCarouselCardConfig({
     type: entry.card.type,
     view_layout: config.view_layout,
     grid_options: config.grid_options,
-    visibility: config.visibility,
   };
 }
 
