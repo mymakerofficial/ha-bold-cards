@@ -51,19 +51,24 @@ export class BoldEntityCarouselCard extends BoldCarouselCardBase<EntityCarouselC
   }
 
   protected _getCards() {
+    if (!this.hass) {
+      return [];
+    }
+    const config = this._config;
+    if (!config) {
+      return [];
+    }
     const entities = this._config?.entities;
-    if (
-      !this.hass ||
-      !entities ||
-      entities.length === 0 ||
-      !this._config ||
-      !this._config.card
-    ) {
+    if (!entities || entities.length === 0) {
       return [];
     }
 
     const cards = this.dedupeMediaPlayerEntities(entities)
-      .filter((entityId) => this.isStateActiveByEntityId(entityId))
+      .filter(
+        (entityId) =>
+          !config.remove_inactive_entities ||
+          this.isStateActiveByEntityId(entityId),
+      )
       .map((entityId) => this.toCardWithEntity(entityId));
 
     if (cards.length >= 1) {

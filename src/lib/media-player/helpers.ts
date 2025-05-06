@@ -1,6 +1,6 @@
 import { HomeAssistant } from "../../types/ha/lovelace";
 import { getStateObj } from "../entities/helpers";
-import { isMediaPlayerEntity } from "../../helpers/states";
+import { isMediaPlayerEntity, isStateActive } from "../../helpers/states";
 
 export function dedupeMediaPlayerEntities(
   entityIds: string[],
@@ -19,6 +19,11 @@ export function dedupeMediaPlayerEntities(
   return entities
     .filter((entity) => {
       if (!isMediaPlayerEntity(entity)) {
+        return true;
+      }
+
+      // there is gonna be multiple inactive media players, so ignore them
+      if (!isStateActive(entity)) {
         return true;
       }
 
