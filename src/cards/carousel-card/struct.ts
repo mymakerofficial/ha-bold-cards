@@ -9,8 +9,15 @@ export const carouselCardAllowedStepperPositions = [
   ...BottomRowPositions,
 ];
 
-export const carouselCardConfigStruct = assign(
+export const carouselCardConfigBaseStruct = assign(
   baseLovelaceCardConfig,
+  object({
+    stepper_position: optional(enums(carouselCardAllowedStepperPositions)),
+  }),
+);
+
+export const carouselCardConfigStruct = assign(
+  carouselCardConfigBaseStruct,
   object({
     type: exactMatch(BoldCardType.CAROUSEL),
     cards: array(
@@ -18,6 +25,5 @@ export const carouselCardConfigStruct = assign(
         card: any(), // validated by editor
       }),
     ),
-    stepper_position: optional(enums(carouselCardAllowedStepperPositions)),
   }),
 );

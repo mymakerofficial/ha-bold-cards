@@ -16,11 +16,12 @@ import { BoldCardType } from "../../lib/cards/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { getEntityCarouselCardConfig } from "./helpers";
 import { getCardEditorTag } from "../../lib/cards/helpers";
+import { BoldCarouselCardBase } from "../carousel-card/base";
 
 const cardType = BoldCardType.ENTITY_CAROUSEL;
 
 @customElement(stripCustomPrefix(cardType))
-export class BoldEntityCarouselCard extends BoldLovelaceCard<EntityCarouselCardConfig> {
+export class BoldEntityCarouselCard extends BoldCarouselCardBase<EntityCarouselCardConfig> {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import(
       "../../editors/cards/entity-carousel-card/bold-entity-carousel-card-editor"
@@ -42,43 +43,6 @@ export class BoldEntityCarouselCard extends BoldLovelaceCard<EntityCarouselCardC
     };
   }
 
-  public getCardSize(): number {
-    return 1;
-  }
-
-  public getGridOptions(): LovelaceGridOptions {
-    if (!this._config || !this.hass) {
-      return {
-        columns: 1,
-        rows: "auto",
-      };
-    }
-
-    const grids = this._config!.entities.map((entity) =>
-      this.getCardGridOptions(
-        getEntityCarouselCardConfig({ config: this._config!, entity }),
-      ),
-    ).filter(isDefined);
-
-    const columns = grids.map((grid) => grid.columns).filter(isDefined);
-    const rows = grids.map((grid) => grid.rows).filter(isDefined);
-    const max_columns = grids.map((grid) => grid.max_columns).filter(isDefined);
-    const min_columns = grids.map((grid) => grid.min_columns).filter(isDefined);
-    const min_rows = grids.map((grid) => grid.min_rows).filter(isDefined);
-    const max_rows = grids.map((grid) => grid.max_rows).filter(isDefined);
-
-    return {
-      columns: columns.includes("full")
-        ? "full"
-        : minOrUndefined(columns as number[]),
-      rows: rows.includes("auto") ? "auto" : minOrUndefined(rows as number[]),
-      max_columns: minOrUndefined(max_columns),
-      min_columns: maxOrUndefined(min_columns),
-      min_rows: maxOrUndefined(min_rows),
-      max_rows: minOrUndefined(max_rows),
-    };
-  }
-
   protected toCardWithEntity(entity: string) {
     return getEntityCarouselCardConfig({
       config: this._config!,
@@ -86,7 +50,7 @@ export class BoldEntityCarouselCard extends BoldLovelaceCard<EntityCarouselCardC
     });
   }
 
-  protected getCards() {
+  protected _getCards() {
     const entities = this._config?.entities;
     if (
       !this.hass ||
@@ -107,20 +71,6 @@ export class BoldEntityCarouselCard extends BoldLovelaceCard<EntityCarouselCardC
     }
 
     return [this.toCardWithEntity(firstOf(entities)!)];
-  }
-
-  protected render() {
-    if (!this._config || !this.hass) {
-      return nothing;
-    }
-
-    const cards = this.getCards().map((card) => ({ card }));
-    const config = {
-      type: BoldCardType.CAROUSEL,
-      cards: cards,
-    };
-
-    return html`<hui-card .hass=${this.hass} .config=${config}></hui-card> `;
   }
 }
 

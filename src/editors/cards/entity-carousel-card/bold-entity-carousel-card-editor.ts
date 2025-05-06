@@ -1,4 +1,3 @@
-import { BoldLovelaceCardEditor } from "../base";
 import { css, CSSResultGroup, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
 import {
@@ -9,7 +8,12 @@ import {
 import { BoldCardType } from "../../../lib/cards/types";
 import { t } from "../../../localization/i18n";
 import { editorBaseStyles } from "../../styles";
-import { isDefined, isUndefined, toPromise } from "../../../lib/helpers";
+import {
+  isDefined,
+  isUndefined,
+  patchElement,
+  toPromise,
+} from "../../../lib/helpers";
 import { LovelaceCardConfigWithEntity } from "../../../types/card";
 import {
   getCardEditorTag,
@@ -21,9 +25,11 @@ import { getEntityCarouselCardConfig } from "../../../cards/entity-carousel-card
 import { entityCarouselCardConfigStruct } from "../../../cards/entity-carousel-card/struct";
 import { EntityCarouselCardConfig } from "../../../cards/entity-carousel-card/types";
 import { mdiDevices, mdiPencil } from "@mdi/js";
+import { BoldCarouselCardEditorBase } from "../carousel-card/base";
+import { stripCarouselCardConfig } from "../../../cards/carousel-card/helpers";
 
 @customElement(getCardEditorTag(BoldCardType.ENTITY_CAROUSEL))
-export class BoldEntityCarouselCardEditor extends BoldLovelaceCardEditor<EntityCarouselCardConfig> {
+export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<EntityCarouselCardConfig> {
   protected _cardEditor?: LovelaceCardEditor;
 
   @state() private _isEditingCard = false;
@@ -138,6 +144,7 @@ export class BoldEntityCarouselCardEditor extends BoldLovelaceCardEditor<EntityC
           ${t("editor.card.entity_carousel.label.change_card_type")}
         </ha-button>
       </div>
+      ${this._renderCarouselLayoutSection()}
       <ha-expansion-panel outlined expanded>
         <h3 slot="header">
           <ha-svg-icon .path=${mdiDevices}></ha-svg-icon>
@@ -150,7 +157,7 @@ export class BoldEntityCarouselCardEditor extends BoldLovelaceCardEditor<EntityC
             .schema=${schema}
             .computeLabel=${this._computeLabelCallback}
             .computeHelper=${this._computeHelperCallback}
-            @value-changed=${this._valueChanged}
+            @value-changed=${this._handleValueChanged}
           ></ha-form>
         </div>
       </ha-expansion-panel>
@@ -169,18 +176,6 @@ export class BoldEntityCarouselCardEditor extends BoldLovelaceCardEditor<EntityC
       defaultValue: "",
     });
   };
-
-  private _stripCardConfig(config: LovelaceCardConfigWithEntity) {
-    const {
-      entity: _entity,
-      view_layout: _view_layout,
-      layout_options: _layout_options,
-      grid_options: _grid_options,
-      visibility: _visibility,
-      ...card
-    } = config;
-    return card;
-  }
 
   private async _loadEditor() {
     if (isUndefined(this._config) || isUndefined(this._config.card)) {
@@ -201,11 +196,6 @@ export class BoldEntityCarouselCardEditor extends BoldLovelaceCardEditor<EntityC
     this._loadingCardEditor = false;
   }
 
-  private _valueChanged(ev: CustomEvent): void {
-    ev.stopPropagation();
-    this.fireEvent("config-changed", { config: ev.detail.value });
-  }
-
   private _handleCardConfigChanged(
     ev: CustomEvent<{ config?: LovelaceCardConfigWithEntity }>,
   ): void {
@@ -216,12 +206,9 @@ export class BoldEntityCarouselCardEditor extends BoldLovelaceCardEditor<EntityC
       return;
     }
 
-    this.fireEvent("config-changed", {
-      config: {
-        ...this._config,
-        card: this._stripCardConfig(config),
-        entities: [config.entity, ...(this._config?.entities ?? []).slice(1)],
-      },
+    const card = stripCarouselCardConfig(config);
+    this._patchConfig({
+      card,
     });
   }
 
@@ -230,75 +217,24 @@ export class BoldEntityCarouselCardEditor extends BoldLovelaceCardEditor<EntityC
   ) {
     ev.stopPropagation();
 
-    if (isDefined(this._config?.card)) {
+    const config = this._config;
+    const newCardConfig = ev.detail.config;
+    if (isUndefined(config) || isUndefined(newCardConfig)) {
       return;
     }
 
-    const config = ev.detail.config;
-    if (!config) {
-      return;
-    }
+    const entities =
+      config.entities || // keep old entities
+      (await this.getEntitiesForCard(
+        newCardConfig.type,
+        this.getAllEntityIds(),
+        6,
+      ));
 
-    const entities = await this.getEntitiesForCard(
-      config.type,
-      this.getAllEntityIds(),
-      6,
-    );
-
-    const cardConfig = this._stripCardConfig(config);
-
-    const gridOptions = this.getCardGridOptions(
-      getEntityCarouselCardConfig({
-        config: {
-          ...this._config,
-          card: cardConfig,
-        } as EntityCarouselCardConfig,
-        entity: entities[0],
-      }),
-    );
-
-    this.fireEvent("config-changed", {
-      config: {
-        ...this._config,
-        card: cardConfig,
-        grid_options: {
-          columns: gridOptions?.columns,
-          rows: gridOptions?.rows,
-        },
-        entities,
-      },
+    const card = stripCarouselCardConfig(newCardConfig);
+    this._patchConfig({
+      card,
+      entities,
     });
   }
-
-  private _handleRemoveCard(ev: CustomEvent): void {
-    ev.stopPropagation();
-    this.fireEvent("config-changed", {
-      config: {
-        ...this._config,
-        card: undefined,
-        entities: [],
-      },
-    });
-  }
-
-  static styles: CSSResultGroup = [
-    editorBaseStyles,
-    css`
-      :host {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-      }
-
-      .description {
-        color: var(--secondary-text-color);
-        padding: 8px;
-      }
-
-      hr {
-        border: none;
-        border-top: 1px solid var(--divider-color);
-      }
-    `,
-  ];
 }
