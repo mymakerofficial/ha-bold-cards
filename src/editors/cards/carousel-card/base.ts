@@ -15,6 +15,8 @@ import {
 import { state } from "lit/decorators.js";
 import { isErrorResult, run, successResult } from "../../../lib/result";
 import { Mutex } from "async-mutex";
+import { CarouselStepperStyle } from "../../../components/bc-carousel";
+import { enumToOptions } from "../../helpers";
 
 export abstract class BoldCarouselCardEditorBase<
   TConfig extends CarouselCardBaseConfig,
@@ -111,6 +113,25 @@ export abstract class BoldCarouselCardEditorBase<
                 this._handleValueChanged("stepper_position", ev)}
               .hass=${this.hass}
             ></bc-layout-select>
+          </bc-form-element>
+          <bc-form-element
+            .label=${t("editor.card.carousel.label.stepper_style")}
+          >
+            <bc-selector-select
+              .hass=${this.hass}
+              .value=${this._config.stepper_style}
+              .default=${CarouselStepperStyle.DOTS}
+              @value-changed=${(ev) =>
+                this._handleValueChanged("stepper_style", ev)}
+              .selector=${{
+                select: {
+                  mode: "dropdown",
+                  options: enumToOptions(CarouselStepperStyle, {
+                    labelScope: "common.carousel_stepper_style",
+                  }),
+                },
+              }}
+            ></bc-selector-select>
           </bc-form-element>
         </div>
       </ha-expansion-panel>

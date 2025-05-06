@@ -39,6 +39,9 @@ export const editorBaseStyles = css`
 
   ha-expansion-panel .content {
     padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 
   ha-select-box {

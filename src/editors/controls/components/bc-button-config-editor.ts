@@ -10,6 +10,7 @@ import {
   ButtonVariant,
 } from "../../../components/bc-button";
 
+// TODO use correct base class
 @customElement("bc-button-config-editor")
 export class ButtonConfigEditor extends LitElement {
   @property({ attribute: false }) public config?: ButtonBaseConfig;

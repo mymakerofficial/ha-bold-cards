@@ -1,6 +1,6 @@
 import { LovelaceCardConfig } from "../../types/ha/lovelace";
-import { BoldCardTypes } from "../../lib/cards/types";
 import { Position } from "../../lib/layout/position";
+import { CarouselStepperStyle } from "../../components/bc-carousel";
 
 export type CarouselCardCardConfig = Omit<
   LovelaceCardConfig,
@@ -13,6 +13,7 @@ export type CarouselCardCardEntry = {
 
 export type CarouselCardBaseConfig = LovelaceCardConfig & {
   stepper_position?: Position;
+  stepper_style?: CarouselStepperStyle;
 };
 
 export type CarouselCardConfig = CarouselCardBaseConfig & {
