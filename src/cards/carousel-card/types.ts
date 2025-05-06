@@ -11,8 +11,10 @@ export type CarouselCardCardEntry = {
   card: CarouselCardCardConfig;
 };
 
-export type CarouselCardConfig = LovelaceCardConfig & {
-  type: BoldCardTypes["CAROUSEL"];
-  cards: CarouselCardCardEntry[];
+export type CarouselCardBaseConfig = LovelaceCardConfig & {
   stepper_position?: Position;
+};
+
+export type CarouselCardConfig = CarouselCardBaseConfig & {
+  cards: CarouselCardCardEntry[];
 };
