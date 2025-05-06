@@ -1,7 +1,6 @@
-import { css, CSSResultGroup, html, nothing } from "lit";
+import { html, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
 import { BoldCardType } from "../../../lib/cards/types";
-import { editorBaseStyles } from "../../styles";
 import { getCardEditorTag } from "../../../lib/cards/helpers";
 import { CarouselCardConfig } from "../../../cards/carousel-card/types";
 import { carouselCardConfigStruct } from "../../../cards/carousel-card/struct";
@@ -15,6 +14,7 @@ import {
   stripCarouselCardConfig,
 } from "../../../cards/carousel-card/helpers";
 import { BoldCarouselCardEditorBase } from "./base";
+import { resolveResult } from "../../../lib/result";
 
 @customElement(getCardEditorTag(BoldCardType.CAROUSEL))
 export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselCardConfig> {
@@ -25,9 +25,42 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
     return carouselCardConfigStruct;
   }
 
+  public setConfig(config: CarouselCardConfig): void {
+    // ensure all editors are loaded, if a new one was loaded, reload the error to validate
+    Promise.all(
+      config.cards.map((entry) => this._loadCardEditor(entry.card.type)),
+    ).then((results) => {
+      results.some((didChange) => {
+        if (didChange) {
+          this._reload();
+        }
+      });
+    });
+
+    // validate all cards
+    config.cards.forEach((entry) => {
+      const cardConfig = enrichCarouselCardConfig({
+        config,
+        entry,
+      });
+      const res = this._validateCardConfig(cardConfig);
+      resolveResult(res, (message) => `Invalid card config: ${message}`);
+    });
+
+    super.setConfig(config);
+  }
+
   protected render() {
     if (!this.hass || !this._config) {
       return nothing;
+    }
+
+    if (this._isLoadingCardEditor) {
+      return html`
+        <bc-spinner
+          .label=${t("editor.card.carousel.helper_text.loading_editor")}
+        ></bc-spinner>
+      `;
     }
 
     if (this._isPicking || this._config.cards.length === 0) {
@@ -122,7 +155,9 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
     `;
   }
 
-  private _handleCardPicked(ev: CustomEvent<{ config?: LovelaceCardConfig }>) {
+  private async _handleCardPicked(
+    ev: CustomEvent<{ config?: LovelaceCardConfig }>,
+  ) {
     ev.stopPropagation();
 
     const oldCards = this._config?.cards;
@@ -132,6 +167,9 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
     }
 
     const card = stripCarouselCardConfig(newCardConfig);
+
+    await this._loadCardEditor(card.type);
+
     this._patchConfig({
       cards: [...oldCards, { card }],
     });

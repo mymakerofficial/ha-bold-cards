@@ -1,10 +1,11 @@
 import { LovelaceGenericElementEditor } from "../types/ha/lovelace";
-import { CSSResultGroup } from "lit";
+import { CSSResultGroup, LitElement } from "lit";
 import { property, state } from "lit/decorators";
 import { assert, Struct } from "superstruct";
 import { editorBaseStyles } from "./styles";
 import { LovelaceConfig } from "custom-card-helpers";
 import { BoldHassElement } from "../components/hass-element";
+import { Optional } from "../lib/types";
 
 export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
   extends BoldHassElement
@@ -21,6 +22,27 @@ export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
   public setConfig(config: TConfig): void {
     assert(config, this._struct);
     this._config = config;
+  }
+
+  // forces the parent to update the editor
+  protected _reload() {
+    // @ts-ignore
+    (this.getRootNode() as Optional<ShadowRoot>)?.host?._updateConfigElement();
+  }
+
+  protected _changeConfig(config: TConfig) {
+    this.fireEvent("config-changed", { config });
+  }
+
+  protected _patchConfig(config: Partial<TConfig>) {
+    if (!this._config) {
+      return;
+    }
+
+    this._changeConfig({
+      ...this._config,
+      ...config,
+    });
   }
 
   protected _setField<TField extends keyof TConfig>(

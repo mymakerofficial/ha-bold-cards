@@ -1,67 +1,65 @@
-import { css, CSSResultGroup, html, nothing } from "lit";
+import { html, nothing } from "lit";
 import { customElement, state } from "lit/decorators";
 import {
   LovelaceCardConfig,
-  LovelaceCardEditor,
   LovelaceCardEditorContext,
 } from "../../../types/ha/lovelace";
 import { BoldCardType } from "../../../lib/cards/types";
 import { t } from "../../../localization/i18n";
-import { editorBaseStyles } from "../../styles";
-import {
-  isDefined,
-  isUndefined,
-  patchElement,
-  toPromise,
-} from "../../../lib/helpers";
+import { isDefined, isUndefined } from "../../../lib/helpers";
 import { LovelaceCardConfigWithEntity } from "../../../types/card";
-import {
-  getCardEditorTag,
-  getLovelaceCardElementClass,
-} from "../../../lib/cards/helpers";
-import { PropertyValues } from "lit-element";
-import { assert } from "superstruct";
+import { getCardEditorTag } from "../../../lib/cards/helpers";
 import { getEntityCarouselCardConfig } from "../../../cards/entity-carousel-card/helpers";
 import { entityCarouselCardConfigStruct } from "../../../cards/entity-carousel-card/struct";
 import { EntityCarouselCardConfig } from "../../../cards/entity-carousel-card/types";
 import { mdiDevices, mdiPencil } from "@mdi/js";
 import { BoldCarouselCardEditorBase } from "../carousel-card/base";
 import { stripCarouselCardConfig } from "../../../cards/carousel-card/helpers";
+import { resolveResult } from "../../../lib/result";
 
 @customElement(getCardEditorTag(BoldCardType.ENTITY_CAROUSEL))
 export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<EntityCarouselCardConfig> {
-  protected _cardEditor?: LovelaceCardEditor;
-
   @state() private _isEditingCard = false;
   @state() private _isPickingCard = false;
-  @state() private _loadingCardEditor = false;
 
   protected get _struct() {
     return entityCarouselCardConfigStruct;
   }
 
   public setConfig(config: EntityCarouselCardConfig): void {
-    assert(config, this._struct);
-    this._cardEditor?.setConfig(getEntityCarouselCardConfig({ config }));
-    this._config = config;
-  }
+    // ensure the card editor is loaded, if a new one was loaded, reload the error to validate
+    this._loadCardEditor(config.card?.type).then((didChange) => {
+      if (didChange) {
+        this._reload();
+      }
+    });
 
-  protected willUpdate(changedProperties: PropertyValues) {
-    super.willUpdate(changedProperties);
-
-    if (
-      changedProperties.has("_config") &&
-      !!changedProperties.get("_config")?.card?.type &&
-      !!this._config?.card?.type &&
-      this._config?.card?.type !== changedProperties.get("_config")?.card?.type
-    ) {
-      this._loadEditor().then();
+    // validate card config with all entities
+    if (this._canValidateCardType(config.card?.type)) {
+      config.entities.forEach((_, index) => {
+        const cardConfig = getEntityCarouselCardConfig({
+          config,
+          index,
+        });
+        const res = this._validateCardConfig(cardConfig);
+        resolveResult(res, (message) => `Invalid card config: ${message}`);
+      });
     }
+
+    super.setConfig(config);
   }
 
   protected render() {
     if (!this.hass || !this._config) {
       return nothing;
+    }
+
+    if (this._isLoadingCardEditor) {
+      return html`
+        <bc-spinner
+          .label=${t("editor.card.carousel.helper_text.loading_editor")}
+        ></bc-spinner>
+      `;
     }
 
     const schema = [
@@ -80,17 +78,6 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
         parent_card_type: BoldCardType.ENTITY_CAROUSEL,
       },
     };
-
-    if (this._loadingCardEditor) {
-      return html`
-        <div>
-          <ha-spinner size="small"></ha-spinner>
-          <span>
-            ${t("editor.card.entity_carousel.helper_text.loading_editor")}
-          </span>
-        </div>
-      `;
-    }
 
     if (isUndefined(this._config.card) || this._isPickingCard) {
       return this._renderSubEditor({
@@ -177,25 +164,6 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
     });
   };
 
-  private async _loadEditor() {
-    if (isUndefined(this._config) || isUndefined(this._config.card)) {
-      return;
-    }
-
-    const cardClass = getLovelaceCardElementClass(this._config.card.type);
-
-    this._loadingCardEditor = true;
-    this._cardEditor = undefined;
-
-    if (isUndefined(cardClass.getConfigElement)) {
-      return;
-    }
-
-    this._cardEditor = await toPromise(cardClass.getConfigElement());
-
-    this._loadingCardEditor = false;
-  }
-
   private _handleCardConfigChanged(
     ev: CustomEvent<{ config?: LovelaceCardConfigWithEntity }>,
   ): void {
@@ -232,9 +200,15 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
       ));
 
     const card = stripCarouselCardConfig(newCardConfig);
+
+    await this._loadCardEditor(newCardConfig.type);
+
     this._patchConfig({
       card,
       entities,
     });
+
+    this._isPickingCard = false;
+    this._isEditingCard = false;
   }
 }

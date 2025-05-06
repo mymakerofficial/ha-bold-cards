@@ -165,10 +165,7 @@ class BcCardPicker extends BoldHassElement {
 
   protected get _spinner() {
     return html`
-      <div>
-        <ha-spinner size="small"></ha-spinner>
-        <span>${t("components.card_picker.loading")}</span>
-      </div>
+      <bc-spinner .label=${t("components.card_picker.loading")}></bc-spinner>
     `;
   }
 
@@ -192,13 +189,6 @@ class BcCardPicker extends BoldHassElement {
   }
 
   static styles = css`
-    div:has(ha-spinner) {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 16px;
-    }
-
     .visually-hidden {
       position: absolute;
       width: 0;

@@ -1,4 +1,5 @@
 import "./lib/basic-hass-object";
+import "./components/bc-spinner";
 import "./components/bc-icon";
 import "./components/bc-form-element";
 import "./components/bc-boolean-toggle";
