@@ -28,6 +28,7 @@ import {
   Position,
   VerticalPosition,
 } from "../lib/layout/position";
+import { CarouselStepperStyle } from "../components/bc-carousel";
 
 type EnumTranslations<T extends string> = {
   [key in T]: string;
@@ -127,6 +128,10 @@ const i18n = new I18n(
           [MiniWeatherCardArrangement.HORIZONTAL]: "Horizontal",
           [MiniWeatherCardArrangement.TILTED]: "Tilted",
         } satisfies EnumTranslations<MiniWeatherCardArrangement>,
+        carousel_stepper_style: {
+          [CarouselStepperStyle.DOTS]: "Dots",
+          [CarouselStepperStyle.HIDE]: "Hidden",
+        } satisfies EnumTranslations<CarouselStepperStyle>,
         button: {
           size: {
             [ButtonSize.SM]: "Small",
@@ -236,6 +241,7 @@ const i18n = new I18n(
             label: {
               layout: "Layout",
               stepper_position: "Stepper Position",
+              stepper_style: "Stepper Style",
               cards: "Cards",
               add_card: "Add Card",
             },

@@ -72,7 +72,8 @@ export abstract class BoldCarouselCardBase<
           <hui-card .config=${cards[index]} .hass=${this.hass}></hui-card>
         `}
         .getKey=${(index: number) => Object.entries(cards[index]).flat().join()}
-        .position=${config.stepper_position}
+        .stepperPosition=${config.stepper_position}
+        .stepperStyle=${config.stepper_style}
       />
     `;
   }

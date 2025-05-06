@@ -1,14 +1,11 @@
-import { LitElement } from "lit-element";
 import { customElement, property } from "lit/decorators";
-import { HomeAssistant } from "../types/ha/lovelace";
 import { html } from "lit";
 import { SelectSelector } from "../types/ha/selector";
 import { t } from "../localization/i18n";
+import { BoldHassElement } from "./hass-element";
 
 @customElement("bc-selector-select")
-export class BcSelectSelector extends LitElement {
-  @property({ attribute: false }) public hass!: HomeAssistant;
-
+export class BcSelectSelector extends BoldHassElement {
   @property({ attribute: false }) public selector!: SelectSelector;
 
   @property() public value?: string | string[];
@@ -25,17 +22,12 @@ export class BcSelectSelector extends LitElement {
 
   protected _valueChanged(ev: CustomEvent) {
     ev.stopPropagation();
-    this.dispatchEvent(
-      new CustomEvent("value-changed", {
-        detail: {
-          value:
-            !!this.default && ev.detail.value === "__default__"
-              ? undefined
-              : ev.detail.value,
-        },
-        bubbles: false,
-      }),
-    );
+    this.fireEvent("value-changed", {
+      value:
+        !!this.default && ev.detail.value === "__default__"
+          ? undefined
+          : ev.detail.value,
+    });
   }
 
   protected get _value() {
@@ -76,9 +68,8 @@ export class BcSelectSelector extends LitElement {
   }
 
   protected render() {
-    // TODO ha-selector-select might not be imported
     return html`
-      <ha-selector-select
+      <ha-selector
         .hass=${this.hass}
         .selector=${this._selector}
         .value=${this._value}
@@ -87,7 +78,7 @@ export class BcSelectSelector extends LitElement {
         .disabled=${this.disabled}
         .required=${this.required}
         @value-changed=${this._valueChanged}
-      ></ha-selector-select>
+      ></ha-selector>
     `;
   }
 }

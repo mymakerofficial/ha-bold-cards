@@ -12,6 +12,13 @@ import {
   VerticalPosition,
 } from "../lib/layout/position";
 
+export const CarouselStepperStyle = {
+  HIDE: "hide",
+  DOTS: "dots",
+} as const;
+export type CarouselStepperStyle =
+  (typeof CarouselStepperStyle)[keyof typeof CarouselStepperStyle];
+
 @customElement("bc-carousel")
 export class BcCarousel extends LitElement {
   @property({ attribute: false }) public getElement?: (
@@ -21,7 +28,9 @@ export class BcCarousel extends LitElement {
     index,
   ) => index.toString();
   @property({ attribute: false }) public length: number = 0;
-  @property() public position: Position = Position.BOTTOM_CENTER;
+  @property() public stepperPosition: Position = Position.BOTTOM_CENTER;
+  @property() public stepperStyle: CarouselStepperStyle =
+    CarouselStepperStyle.DOTS;
 
   private _containerRef = createRef();
 
@@ -139,12 +148,16 @@ export class BcCarousel extends LitElement {
   protected render() {
     return html`
       <div class="carousel" data-is-scrolling=${this._isScrolling}>
-        ${this.length > 1
+        ${this.length > 1 && this.stepperStyle !== CarouselStepperStyle.HIDE
           ? html`
               <div
                 class="stepper-container"
-                data-horizontal-position=${getHorizontalPosition(this.position)}
-                data-vertical-position=${getVerticalPosition(this.position)}
+                data-horizontal-position=${getHorizontalPosition(
+                  this.stepperPosition,
+                )}
+                data-vertical-position=${getVerticalPosition(
+                  this.stepperPosition,
+                )}
               >
                 <div
                   class="stepper"

@@ -1,7 +1,6 @@
 import { LovelaceCardConfigWithFeatures } from "../../types/card";
 import { UniversalMediaPlayerEnhancements } from "../../lib/media-player/universal-media-player";
 import { BoldCardTypes } from "../../lib/cards/types";
-import { ExtendedPosition } from "../../lib/layout/position";
 import {
   mediaPlayerAllowedFeaturePositions,
   mediaPlayerAllowedPicturePositions,

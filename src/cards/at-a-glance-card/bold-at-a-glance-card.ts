@@ -92,7 +92,7 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
             .hass=${this.hass}
           ></bc-glance-page>
         `}
-        position=${Position.BOTTOM_LEFT}
+        stepperPosition=${Position.BOTTOM_LEFT}
       </div>
     `;
   }
