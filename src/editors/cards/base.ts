@@ -13,6 +13,7 @@ import {
 } from "../../types/card";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
 import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
+import { TemplateResult } from "lit-element";
 
 export abstract class BoldLovelaceCardEditor<TConfig extends LovelaceCardConfig>
   extends BoldLovelaceEditor<TConfig, LovelaceCardEditorContext>
@@ -36,6 +37,45 @@ export abstract class BoldLovelaceCardEditor<TConfig extends LovelaceCardConfig>
         ...config,
       },
     });
+  }
+
+  protected _renderSubEditorHeader({
+    onBack,
+    title,
+  }: {
+    onBack: () => void;
+    title: string;
+  }) {
+    return html`
+      <div class="sub-header">
+        <ha-icon-button-prev
+          .label=${t("editor.common.label.back")}
+          @click=${(ev) => {
+            ev.stopPropagation();
+            onBack();
+          }}
+        ></ha-icon-button-prev>
+        <span class="title">${title}</span>
+      </div>
+    `;
+  }
+
+  protected _renderSubEditor({
+    content,
+    showHeader = true,
+    ...props
+  }: {
+    onBack: () => void;
+    title: string;
+    showHeader?: boolean;
+    content: TemplateResult;
+  }) {
+    return html`
+      <div class="sub-editor">
+        ${showHeader ? this._renderSubEditorHeader(props) : nothing}
+        <div class="content">${content}</div>
+      </div>
+    `;
   }
 }
 

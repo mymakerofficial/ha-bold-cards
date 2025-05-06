@@ -29,41 +29,17 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
     return carouselCardConfigStruct;
   }
 
-  protected _renderSubEditorHeader({
-    onBack,
-    title,
-  }: {
-    onBack: () => void;
-    title: string;
-  }) {
-    return html`
-      <div class="sub-header">
-        <ha-icon-button-prev
-          .label=${t("editor.common.label.back")}
-          @click=${(ev) => {
-            ev.stopPropagation();
-            onBack();
-          }}
-        ></ha-icon-button-prev>
-        <span class="title">${title}</span>
-      </div>
-    `;
-  }
-
   protected render() {
     if (!this.hass || !this._config) {
       return nothing;
     }
 
     if (this._isPicking || this._config.cards.length === 0) {
-      return html`
-        <div class="sub-editor">
-          ${this._config.cards.length > 0
-            ? this._renderSubEditorHeader({
-                onBack: () => (this._isPicking = false),
-                title: t("editor.card.carousel.label.add_card"),
-              })
-            : nothing}
+      return this._renderSubEditor({
+        title: t("editor.card.carousel.label.add_card"),
+        onBack: () => (this._isPicking = false),
+        showHeader: this._config.cards.length > 0,
+        content: html`
           <bc-card-picker
             .hass=${this.hass}
             .lovelace=${this.lovelace}
@@ -78,8 +54,8 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
               return this._handleCardPicked(ev);
             }}
           ></bc-card-picker>
-        </div>
-      `;
+        `,
+      });
     }
 
     if (this._editIndex > -1) {
@@ -88,12 +64,10 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
         entry: this._config.cards[this._editIndex],
       });
 
-      return html`
-        <div class="sub-editor">
-          ${this._renderSubEditorHeader({
-            onBack: () => (this._editIndex = -1),
-            title: this.getCardTypeName(card.type),
-          })}
+      return this._renderSubEditor({
+        onBack: () => (this._editIndex = -1),
+        title: this.getCardTypeName(card.type),
+        content: html`
           <hui-card-element-editor
             .hass=${this.hass}
             .lovelace=${this.lovelace}
@@ -108,8 +82,8 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
               ev.stopPropagation();
             }}
           ></hui-card-element-editor>
-        </div>
-      `;
+        `,
+      });
     }
 
     const items = this._config.cards.map(
@@ -231,23 +205,6 @@ export class BoldCarouselCardEditor extends BoldLovelaceCardEditor<CarouselCardC
         display: flex;
         flex-direction: column;
         gap: 24px;
-      }
-
-      .sub-editor {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .sub-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .sub-header .title {
-        flex: 1;
-        font-size: 18px;
       }
     `,
   ];
