@@ -247,11 +247,13 @@ const i18n = new I18n(
             },
             label: {
               entities: "Entities",
+              edit_card: "Edit Card",
               change_card_type: "Change Card Type",
+              pick_card: "Pick a Card",
             },
             helper_text: {
               card_editor:
-                "The entity field in this editor is ignored. Please use the entities field in the carousel editor.",
+                "The entity field in this editor will be overridden by the entities selected in the carousel editor.",
               loading_editor: "Loading card editor...",
             },
           },
