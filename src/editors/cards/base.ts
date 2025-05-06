@@ -27,19 +27,6 @@ export abstract class BoldLovelaceCardEditor<TConfig extends LovelaceCardConfig>
     return "internals" in this.context ? this.context.internals : undefined;
   }
 
-  protected _patchConfig(config: Partial<TConfig>) {
-    if (!this._config) {
-      return;
-    }
-
-    this.fireEvent("config-changed", {
-      config: {
-        ...this._config,
-        ...config,
-      },
-    });
-  }
-
   protected _renderSubEditorHeader({
     onBack,
     title,

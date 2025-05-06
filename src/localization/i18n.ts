@@ -239,6 +239,9 @@ const i18n = new I18n(
               cards: "Cards",
               add_card: "Add Card",
             },
+            helper_text: {
+              loading_editor: "Loading card editor...",
+            },
           },
           entity_carousel: {
             tab: {
@@ -254,7 +257,6 @@ const i18n = new I18n(
             helper_text: {
               card_editor:
                 "The entity field in this editor will be overridden by the entities selected in the carousel editor.",
-              loading_editor: "Loading card editor...",
             },
           },
           weather: {
