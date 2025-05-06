@@ -100,7 +100,7 @@ export abstract class BoldCarouselCardEditorBase<
           <ha-svg-icon .path=${mdiCursorMove}></ha-svg-icon>
           ${t("editor.card.carousel.label.layout")}
         </h3>
-        <div class="content">
+        <div class="content flex-col-small">
           <bc-form-element
             .label=${t("editor.card.carousel.label.stepper_position")}
           >
