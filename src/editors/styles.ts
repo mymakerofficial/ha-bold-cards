@@ -33,4 +33,21 @@ export const editorBaseStyles = css`
   ha-select-box {
     --ha-card-border-radius: 6px;
   }
+
+  .sub-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .sub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .sub-header .title {
+    flex: 1;
+    font-size: 18px;
+  }
 `;
