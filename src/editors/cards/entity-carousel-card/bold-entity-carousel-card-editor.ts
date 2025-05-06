@@ -146,6 +146,20 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
             .computeHelper=${this._computeHelperCallback}
             @value-changed=${this._handleValueChanged}
           ></ha-form>
+          <bc-form-element
+            .label=${t(
+              "editor.card.entity_carousel.label.remove_inactive_entities",
+            )}
+          >
+            <ha-selector
+              .selector=${{
+                boolean: {},
+              }}
+              .value=${this._config?.remove_inactive_entities ?? false}
+              @value-changed=${(ev) =>
+                this._handleValueChanged("remove_inactive_entities", ev)}
+            ></ha-selector>
+          </bc-form-element>
         </div>
       </ha-expansion-panel>
     `;

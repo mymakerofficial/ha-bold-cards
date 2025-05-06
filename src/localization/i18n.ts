@@ -256,6 +256,7 @@ const i18n = new I18n(
             },
             label: {
               entities: "Entities",
+              remove_inactive_entities: "Filter out inactive entities",
               edit_card: "Edit Card",
               change_card_type: "Change Card Type",
               pick_card: "Pick a Card",
