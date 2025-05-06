@@ -1,6 +1,12 @@
 import { css } from "lit";
 
 export const editorBaseStyles = css`
+  .flex-col-small {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
   .flex-col {
     display: flex;
     flex-direction: column;
@@ -39,9 +45,6 @@ export const editorBaseStyles = css`
 
   ha-expansion-panel .content {
     padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
   }
 
   ha-select-box {
