@@ -8,7 +8,7 @@ import {
 import { BoldHassElement } from "./hass-element";
 import { LovelaceConfig } from "custom-card-helpers";
 import { PropertyValues, TemplateResult } from "lit-element";
-import { isDefined, isNull, isUndefined, toPromise } from "../lib/helpers";
+import { isDefined, isUndefined, toPromise } from "../lib/helpers";
 import { optionallyPrefixCustomType } from "../lib/cards/helpers";
 import { Nullable, Optional } from "../lib/types";
 import { classMap } from "lit-html/directives/class-map";

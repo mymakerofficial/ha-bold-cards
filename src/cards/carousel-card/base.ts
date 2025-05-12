@@ -7,7 +7,6 @@ import {
 import { Position } from "../../lib/layout/position";
 import { isDefined, maxOrUndefined, minOrUndefined } from "../../lib/helpers";
 import { css, html, nothing } from "lit";
-import { styleMap } from "lit-html/directives/style-map.js";
 
 export abstract class BoldCarouselCardBase<
   TConfig extends CarouselCardBaseConfig,
