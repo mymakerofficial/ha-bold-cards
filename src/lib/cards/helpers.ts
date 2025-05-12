@@ -128,11 +128,11 @@ export async function getEntitiesForCard(
   entities: string[],
   count: number,
 ) {
-  const pickedEntities: string[] = [];
+  const pickedEntities = new Set<string>();
 
-  while (count > pickedEntities.length) {
+  while (count > pickedEntities.size) {
     const availableEntities = entities.filter(
-      (entity) => !pickedEntities.includes(entity),
+      (entity) => !pickedEntities.has(entity),
     );
 
     const entity = await getNextEntityForCard(hass, type, availableEntities);
@@ -142,10 +142,10 @@ export async function getEntitiesForCard(
       break;
     }
 
-    pickedEntities.push(entity);
+    pickedEntities.add(entity);
   }
 
-  return pickedEntities;
+  return [...pickedEntities.values()];
 }
 
 async function getNextEntityForCard(
@@ -153,7 +153,12 @@ async function getNextEntityForCard(
   type: string,
   availableEntities: string[],
 ) {
-  const stub = await getCardStubConfig(hass, type, availableEntities);
+  const stub = await getCardStubConfig(
+    hass,
+    type,
+    availableEntities,
+    availableEntities,
+  );
   return stub.entity as Optional<string>;
 }
 
