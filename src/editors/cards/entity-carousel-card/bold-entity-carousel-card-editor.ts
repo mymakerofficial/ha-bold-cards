@@ -100,9 +100,10 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
         title: this.getCardTypeName(cardConfig.type),
         onBack: () => (this._isEditingCard = false),
         content: html`
-          <ha-alert alert-type="warning">
-            ${t("editor.card.entity_carousel.helper_text.card_editor")}
-          </ha-alert>
+          <bc-form-help-box
+            .header=${t("editor.card.entity_carousel.helper_text.card_editor")}
+            .icon=${"mdi:alert-outline"}
+          ></bc-form-help-box>
           <hui-card-element-editor
             .hass=${this.hass}
             .value=${cardConfig}
@@ -113,6 +114,21 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
         `,
       });
     }
+
+    const entities = this._getEntitiesFor(this._config.card.type);
+    const entitiesSelectorFilter = this._getEntitiesSelectorFilter(
+      this._config.card.type,
+    );
+
+    const noneAvailableEntitiesSelected =
+      (!entities.all &&
+        !!entities.availableEntities &&
+        this._config.entities.filter(
+          (entity) => !entities.availableEntities?.includes(entity),
+        )) ||
+      undefined;
+
+    console.log(entities, noneAvailableEntitiesSelected);
 
     return html`
       <div class="panel">
@@ -130,14 +146,49 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
           <ha-svg-icon .path=${mdiDevices}></ha-svg-icon>
           ${t("editor.card.entity_carousel.label.entities")}
         </h3>
-        <div class="content">
+        <div class="content flex-col-small">
+          ${!entities.all && !!entities.availableEntities?.length
+            ? html`
+                <bc-form-help-box
+                  .header=${`This card supports ${entities.availableEntities.length} of your entities.`}
+                  .content=${`For your convenience, your selection has been pre-filled.`}
+                  .icon=${"mdi:information-outline"}
+                  .actions=${html`<ha-button slot="action" @click=${() => {}}>
+                      Allow all entities
+                    </ha-button>
+                    <ha-button slot="action" @click=${() => {}}>
+                      Dismiss
+                    </ha-button>`}
+                ></bc-form-help-box>
+              `
+            : nothing}
+          ${!!noneAvailableEntitiesSelected?.length
+            ? html`
+                <bc-form-help-box
+                  .header=${`Unsupported entities selected.`}
+                  .content=${`You have selected entities that might not supported by this card. They will still be filled in, but might cause errors.`}
+                  .icon=${"mdi:alert-outline"}
+                  .actions=${html`<ha-button slot="action" @click=${() => {}}>
+                      Remove unsupported
+                    </ha-button>
+                    <ha-button slot="action" @click=${() => {}}>
+                      Dismiss
+                    </ha-button>`}
+                ></bc-form-help-box>
+              `
+            : nothing}
           <ha-form
             .hass=${this.hass}
             .data=${this._config}
             .schema=${[
               {
                 name: "entities",
-                selector: { entity: { multiple: true } },
+                selector: {
+                  entity: {
+                    multiple: true,
+                    ...entitiesSelectorFilter,
+                  },
+                },
               },
             ]}
             .computeLabel=${this._computeLabelCallback}
@@ -203,17 +254,14 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
       return;
     }
 
-    const entities = isEmpty(config.entities)
-      ? await this.getEntitiesForCard(
-          newCardConfig.type,
-          this.getAllEntityIds(),
-          6,
-        )
-      : config.entities; // keep old entities
-
     const card = stripCarouselCardConfig(newCardConfig);
 
-    await this._loadCardEditor(newCardConfig.type);
+    await this._loadCardEditor(card.type);
+
+    const entities = isEmpty(config.entities)
+      ? (this._getEntitiesFor(card.type).availableEntities?.slice(0, 6) ??
+        config.entities)
+      : config.entities; // keep old entities
 
     this._patchConfig({
       card,

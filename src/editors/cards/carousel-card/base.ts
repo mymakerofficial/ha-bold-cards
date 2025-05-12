@@ -14,19 +14,33 @@ import {
 } from "../../../types/ha/lovelace";
 import { state } from "lit/decorators.js";
 import { isErrorResult, run, successResult } from "../../../lib/result";
-import { Mutex } from "async-mutex";
+import { Mutex, withTimeout } from "async-mutex";
 import { CarouselStepperStyle } from "../../../components/bc-carousel";
 import { enumToOptions } from "../../helpers";
 import { Optional } from "../../../lib/types";
 
+type CardEntities = {
+  availableEntities: Optional<string[]>;
+  all: boolean;
+  error: boolean;
+};
+
+type CardEditorEntry = {
+  doesValidate: boolean;
+  entities: CardEntities;
+  editor: Optional<LovelaceCardEditor>;
+};
+
 export abstract class BoldCarouselCardEditorBase<
   TConfig extends CarouselCardBaseConfig,
 > extends BoldLovelaceCardEditor<TConfig> {
-  private _cardEditor: Map<
-    string,
-    { doesValidate: boolean; editor: Optional<LovelaceCardEditor> }
-  > = new Map();
+  private _cardEditor: Map<string, CardEditorEntry> = new Map();
   private _loadCardEditorMutex = new Mutex();
+  private _loadEntitiesMutex = withTimeout(
+    new Mutex(),
+    100,
+    new Error("Timeout loading available entities"),
+  );
 
   @state() protected _isLoadingCardEditor = false;
 
@@ -42,6 +56,45 @@ export abstract class BoldCarouselCardEditorBase<
     }
 
     this._isLoadingCardEditor = true;
+
+    const entities: CardEntities = await this._loadEntitiesMutex
+      .runExclusive(async () => {
+        const entities = await this.getEntitiesForCard(
+          type,
+          this.getAllEntityIds(),
+          Infinity,
+        );
+
+        if (type === "tile") {
+          return {
+            availableEntities: entities,
+            all: true,
+            error: false,
+          };
+        }
+
+        if (entities.length === 0) {
+          return {
+            availableEntities: undefined,
+            all: false,
+            error: false,
+          };
+        }
+
+        return {
+          availableEntities: entities,
+          all: false,
+          error: false,
+        };
+      })
+      .catch((error) => {
+        console.log(error);
+        return {
+          availableEntities: undefined,
+          all: false,
+          error: true,
+        }; // took too long or something else went wrong
+      });
 
     return await this._loadCardEditorMutex
       .runExclusive(async () => {
@@ -64,6 +117,7 @@ export abstract class BoldCarouselCardEditorBase<
 
         this._cardEditor.set(type, {
           doesValidate: isErrorResult(invalidConfigResult),
+          entities,
           editor,
         });
       })
@@ -72,6 +126,7 @@ export abstract class BoldCarouselCardEditorBase<
         this._isLoadingCardEditor = false;
         this._cardEditor.set(type, {
           doesValidate: false,
+          entities,
           editor: undefined,
         });
         return false;
@@ -84,6 +139,36 @@ export abstract class BoldCarouselCardEditorBase<
 
   protected _canValidateCardType(type: string) {
     return this._cardEditor.get(type)?.doesValidate ?? false;
+  }
+
+  protected _getEntitiesFor(type: string) {
+    return (
+      this._cardEditor.get(type)?.entities ?? {
+        availableEntities: undefined,
+        all: false,
+        error: true,
+      }
+    );
+  }
+
+  protected _getEntitiesSelectorFilter(type: string) {
+    const { availableEntities, all, error } = this._getEntitiesFor(type);
+
+    if (error) {
+      return {};
+    }
+
+    if (all) {
+      return {};
+    }
+
+    if (availableEntities) {
+      return {
+        include_entities: availableEntities,
+      };
+    }
+
+    return {};
   }
 
   protected _validateCardConfig(config: LovelaceCardConfig) {
