@@ -5,7 +5,13 @@ import {
   LovelaceCardConstructor,
   LovelaceGridOptions,
 } from "../../types/ha/lovelace";
-import { isDefined, isEmpty, isUndefined, toPromise } from "../helpers";
+import {
+  isDefined,
+  isEmpty,
+  isObject,
+  isUndefined,
+  toPromise,
+} from "../helpers";
 import { Optional } from "../types";
 import { LitElement } from "lit";
 import { CustomCardEntry } from "../../types/card";
@@ -80,7 +86,17 @@ export async function getCardStubConfig(
 
   return toPromise(
     card.getStubConfig(hass, entities, entitiesFallback ?? entities),
-  );
+  ).then((res) => {
+    // some cards don't behave like they are supposed to,
+    //  so we need to make sure it doesn't break
+    if (!isObject(res)) {
+      console.warn(`Card ${type} getStubConfig did not return an object`, res);
+      return {
+        type,
+      };
+    }
+    return res;
+  });
 }
 
 export function getCardGridOptions(
@@ -97,7 +113,13 @@ export function getCardGridOptions(
   el.hass = hass;
   el.setConfig(config);
 
-  return el.getGridOptions();
+  const gridOptions = el.getGridOptions();
+
+  if (!isObject(gridOptions)) {
+    return undefined;
+  }
+
+  return gridOptions;
 }
 
 export async function getEntitiesForCard(
