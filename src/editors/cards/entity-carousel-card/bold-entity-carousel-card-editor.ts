@@ -6,7 +6,7 @@ import {
 } from "../../../types/ha/lovelace";
 import { BoldCardType } from "../../../lib/cards/types";
 import { t } from "../../../localization/i18n";
-import { isDefined, isUndefined } from "../../../lib/helpers";
+import { isDefined, isEmpty, isUndefined } from "../../../lib/helpers";
 import { LovelaceCardConfigWithEntity } from "../../../types/card";
 import { getCardEditorTag } from "../../../lib/cards/helpers";
 import { getEntityCarouselCardConfig } from "../../../cards/entity-carousel-card/helpers";
@@ -61,13 +61,6 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
         ></bc-spinner>
       `;
     }
-
-    const schema = [
-      {
-        name: "entities",
-        selector: { entity: { multiple: true } },
-      },
-    ];
 
     const cardConfig = getEntityCarouselCardConfig({
       config: this._config,
@@ -141,10 +134,15 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
           <ha-form
             .hass=${this.hass}
             .data=${this._config}
-            .schema=${schema}
+            .schema=${[
+              {
+                name: "entities",
+                selector: { entity: { multiple: true } },
+              },
+            ]}
             .computeLabel=${this._computeLabelCallback}
             .computeHelper=${this._computeHelperCallback}
-            @value-changed=${this._handleValueChanged}
+            @value-changed=${this._formValueChanged}
           ></ha-form>
           <bc-form-element
             .label=${t(
@@ -205,13 +203,13 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
       return;
     }
 
-    const entities =
-      config.entities || // keep old entities
-      (await this.getEntitiesForCard(
-        newCardConfig.type,
-        this.getAllEntityIds(),
-        6,
-      ));
+    const entities = isEmpty(config.entities)
+      ? await this.getEntitiesForCard(
+          newCardConfig.type,
+          this.getAllEntityIds(),
+          6,
+        )
+      : config.entities; // keep old entities
 
     const card = stripCarouselCardConfig(newCardConfig);
 

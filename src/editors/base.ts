@@ -69,5 +69,9 @@ export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
     this._setField(field, ev.detail.value);
   }
 
+  protected _formValueChanged(ev: CustomEvent<{ value: Partial<TConfig> }>) {
+    this._patchConfig(ev.detail.value);
+  }
+
   static styles: CSSResultGroup = editorBaseStyles;
 }
