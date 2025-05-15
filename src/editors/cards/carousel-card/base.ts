@@ -17,7 +17,7 @@ import { Result, run } from "../../../lib/result";
 import { Mutex, withTimeout } from "async-mutex";
 import { CarouselStepperStyle } from "../../../components/bc-carousel";
 import { enumToOptions } from "../../helpers";
-import { Maybe } from "../../../lib/types";
+import { Maybe, RenderResult } from "../../../lib/types";
 
 type CardEntities = {
   availableEntities: Maybe<string[]>;
@@ -232,6 +232,18 @@ export abstract class BoldCarouselCardEditorBase<
         </div>
       </ha-expansion-panel>
     `;
+  }
+
+  protected renderWith(renderFn: () => RenderResult) {
+    return super.renderWith(() => {
+      if (this._isLoadingCardEditor) {
+        return this.renderSpinner({
+          label: t("editor.card.carousel.helper_text.loading_editor"),
+        });
+      }
+
+      return renderFn();
+    });
   }
 
   static styles: CSSResultGroup = [

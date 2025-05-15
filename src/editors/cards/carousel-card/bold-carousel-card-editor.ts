@@ -1,5 +1,5 @@
 import { html, nothing } from "lit";
-import { customElement, state } from "lit/decorators";
+import { customElement } from "lit/decorators";
 import { BoldCardType } from "../../../lib/cards/types";
 import { getCardEditorTag } from "../../../lib/cards/helpers";
 import { CarouselCardConfig } from "../../../cards/carousel-card/types";
@@ -8,7 +8,13 @@ import { SortableListItem } from "../../../components/bc-sortable-list";
 import { t } from "../../../localization/i18n";
 import { mdiCardText, mdiPlus } from "@mdi/js";
 import { LovelaceCardConfig } from "../../../types/ha/lovelace";
-import { isUndefined, move, patchElement, splice } from "../../../lib/helpers";
+import {
+  isEmpty,
+  isUndefined,
+  move,
+  patchElement,
+  splice,
+} from "../../../lib/helpers";
 import {
   enrichCarouselCardConfig,
   stripCarouselCardConfig,
@@ -17,9 +23,6 @@ import { BoldCarouselCardEditorBase } from "./base";
 
 @customElement(getCardEditorTag(BoldCardType.CAROUSEL))
 export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselCardConfig> {
-  @state() private _isPicking = false;
-  @state() private _editIndex = -1;
-
   protected get _struct() {
     return carouselCardConfigStruct;
   }
@@ -48,111 +51,108 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
     });
 
     super.setConfig(config);
+
+    if (isEmpty(config.cards)) {
+      this.openPickCard();
+    }
+  }
+
+  protected openPickCard() {
+    this.openSubEditor({
+      title: t("editor.card.carousel.label.add_card"),
+      showBack: !isEmpty(this._config?.cards),
+      render: () => html`
+        <bc-card-picker
+          .hass=${this.hass}
+          .lovelace=${this.lovelace}
+          .filter=${(card: LovelaceCardConfig) => {
+            return (
+              card.type !== BoldCardType.CAROUSEL &&
+              card.type !== BoldCardType.ENTITY_CAROUSEL
+            );
+          }}
+          @config-changed=${this._handleCardPicked}
+        ></bc-card-picker>
+      `,
+    });
+  }
+
+  protected openEditCard(index: number) {
+    if (isUndefined(this._config?.cards)) {
+      throw new Error("No cards defined");
+    }
+
+    const card = enrichCarouselCardConfig({
+      config: this._config,
+      entry: this._config.cards[index],
+    });
+
+    return this.openSubEditor({
+      title: this.getCardTypeName(card.type),
+      render: () => html`
+        <hui-card-element-editor
+          .hass=${this.hass}
+          .lovelace=${this.lovelace}
+          .value=${card}
+          @config-changed=${(
+            ev: CustomEvent<{ config: LovelaceCardConfig }>,
+          ) => {
+            ev.stopPropagation();
+            this._updateCardConfig(index, ev.detail.config);
+          }}
+          @GUImode-changed=${(ev: CustomEvent) => {
+            ev.stopPropagation();
+          }}
+        ></hui-card-element-editor>
+      `,
+    });
   }
 
   protected render() {
-    if (!this.hass || !this._config) {
-      return nothing;
-    }
+    return this.renderWith(() => {
+      if (!this.hass || !this._config) {
+        return nothing;
+      }
 
-    if (this._isLoadingCardEditor) {
+      const items = this._config.cards.map(
+        (entry, index): SortableListItem => ({
+          label: this.getCardConfigHumanReadableName(
+            entry.card as LovelaceCardConfig,
+          ).join(" • "),
+          key: Object.entries(entry.card).flat().join(),
+          onEdit: () => this.openEditCard(index),
+          onRemove: () => this._removeCard(index),
+          onDuplicate: () => this._duplicateCard(index),
+        }),
+      );
+
       return html`
-        <bc-spinner
-          .label=${t("editor.card.carousel.helper_text.loading_editor")}
-        ></bc-spinner>
-      `;
-    }
-
-    if (this._isPicking || this._config.cards.length === 0) {
-      return this._renderSubEditor({
-        title: t("editor.card.carousel.label.add_card"),
-        onBack: () => (this._isPicking = false),
-        showHeader: this._config.cards.length > 0,
-        content: html`
-          <bc-card-picker
-            .hass=${this.hass}
-            .lovelace=${this.lovelace}
-            .filter=${(card: LovelaceCardConfig) => {
-              return (
-                card.type !== BoldCardType.CAROUSEL &&
-                card.type !== BoldCardType.ENTITY_CAROUSEL
-              );
-            }}
-            @config-changed=${(ev) => {
-              this._isPicking = false;
-              return this._handleCardPicked(ev);
-            }}
-          ></bc-card-picker>
-        `,
-      });
-    }
-
-    if (this._editIndex > -1) {
-      const card = enrichCarouselCardConfig({
-        config: this._config,
-        entry: this._config.cards[this._editIndex],
-      });
-
-      return this._renderSubEditor({
-        onBack: () => (this._editIndex = -1),
-        title: this.getCardTypeName(card.type),
-        content: html`
-          <hui-card-element-editor
-            .hass=${this.hass}
-            .lovelace=${this.lovelace}
-            .value=${card}
-            @config-changed=${(
-              ev: CustomEvent<{ config: LovelaceCardConfig }>,
-            ) => {
-              ev.stopPropagation();
-              this._updateCardConfig(this._editIndex, ev.detail.config);
-            }}
-            @GUImode-changed=${(ev: CustomEvent) => {
-              ev.stopPropagation();
-            }}
-          ></hui-card-element-editor>
-        `,
-      });
-    }
-
-    const items = this._config.cards.map(
-      (entry, index): SortableListItem => ({
-        label: this.getCardConfigHumanReadableName(
-          entry.card as LovelaceCardConfig,
-        ).join(" • "),
-        key: Object.entries(entry.card).flat().join(),
-        onEdit: () => (this._editIndex = index),
-        onRemove: () => this._removeCard(index),
-        onDuplicate: () => this._duplicateCard(index),
-      }),
-    );
-
-    return html`
-      ${this._renderCarouselLayoutSection()}
-      <ha-expansion-panel outlined expanded>
-        <h3 slot="header">
-          <ha-svg-icon .path=${mdiCardText}></ha-svg-icon>
-          ${t("editor.card.carousel.label.cards")}
-        </h3>
-        <div class="content">
-          <bc-sortable-list
-            .items=${items}
-            @item-moved=${this._handleCardMoved}
-          >
-            <ha-button
-              outlined
-              .label=${t("editor.card.carousel.label.add_card")}
-              @click=${(ev) => {
-                ev.stopPropagation();
-                this._isPicking = true;
-              }}
+        ${this._renderCarouselLayoutSection()}
+        <ha-expansion-panel outlined expanded>
+          <h3 slot="header">
+            <ha-svg-icon .path=${mdiCardText}></ha-svg-icon>
+            ${t("editor.card.carousel.label.cards")}
+          </h3>
+          <div class="content">
+            <bc-sortable-list
+              .items=${items}
+              @item-moved=${this._handleCardMoved}
             >
-              <ha-svg-icon .path=${mdiPlus} slot="icon"></ha-svg-icon>
-            </ha-button>
-          </bc-sortable-list>
-        </div>
-      </ha-expansion-panel>
-    `;
+              <ha-button
+                outlined
+                .label=${t("editor.card.carousel.label.add_card")}
+                @click=${(ev) => {
+                  ev.stopPropagation();
+                  this.openPickCard();
+                }}
+              >
+                <ha-svg-icon .path=${mdiPlus} slot="icon"></ha-svg-icon>
+              </ha-button>
+            </bc-sortable-list>
+          </div>
+        </ha-expansion-panel>
+      `;
+    });
   }
 
   private async _handleCardPicked(
@@ -174,7 +174,7 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
       cards: [...oldCards, { card }],
     });
 
-    this._editIndex = oldCards.length;
+    this.closeSubEditor();
   }
 
   private _handleCardMoved(
