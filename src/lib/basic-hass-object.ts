@@ -28,11 +28,19 @@ import {
   getCardTypeName,
   getEntitiesForCard,
 } from "./cards/helpers";
+import { Result } from "./result";
 
 // hass object is split into two files to avoid circular dependencies
 //  any class that extends the hass object and is also used in the hass object should only import the basic-hass-object.ts file
 
 export type HassObjectConstructor<T = {}> = new (...args: any[]) => T;
+
+export class HassUndefinedError extends Error {
+  constructor() {
+    super("No Home Assistant instance available");
+    this.name = "HassUndefinedError";
+  }
+}
 
 export function BasicHassObjectMixin<TBase extends HassObjectConstructor>(
   Base: TBase,
@@ -100,9 +108,7 @@ export function BasicHassObjectMixin<TBase extends HassObjectConstructor>(
       mediaContentType?: string,
     ) {
       if (!this.hass) {
-        return Promise.reject(
-          new Error("No Home Assistant instance available"),
-        );
+        throw new HassUndefinedError();
       }
       return browseMediaPlayer(
         this.hass,
@@ -125,24 +131,23 @@ export function BasicHassObjectMixin<TBase extends HassObjectConstructor>(
       entities: string[],
       entitiesFallback?: string[],
     ) {
-      if (!this.hass) {
-        throw new Error("No Home Assistant instance available");
-      }
+      return Result.wrapAsync(() => {
+        if (!this.hass) {
+          throw new HassUndefinedError();
+        }
 
-      return await getCardStubConfig(
-        this.hass,
-        type,
-        entities,
-        entitiesFallback,
-      );
+        return getCardStubConfig(this.hass, type, entities, entitiesFallback);
+      });
     }
 
     protected getCardGridOptions(config: LovelaceCardConfig) {
-      if (!this.hass) {
-        throw new Error("No Home Assistant instance available");
-      }
+      return Result.wrap(() => {
+        if (!this.hass) {
+          throw new HassUndefinedError();
+        }
 
-      return getCardGridOptions(this.hass, config);
+        return getCardGridOptions(this.hass, config);
+      });
     }
 
     protected async getEntitiesForCard(
@@ -151,7 +156,7 @@ export function BasicHassObjectMixin<TBase extends HassObjectConstructor>(
       count: number,
     ) {
       if (!this.hass) {
-        throw new Error("No Home Assistant instance available");
+        throw new HassUndefinedError();
       }
 
       return await getEntitiesForCard(this.hass, type, entities, count);
@@ -159,7 +164,7 @@ export function BasicHassObjectMixin<TBase extends HassObjectConstructor>(
 
     protected getAllEntityIds() {
       if (!this.hass) {
-        throw new Error("No Home Assistant instance available");
+        throw new HassUndefinedError();
       }
 
       return Object.keys(this.hass.states);

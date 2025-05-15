@@ -34,7 +34,7 @@ export abstract class BoldCarouselCardBase<
     }
 
     const grids = this._getCards()
-      .map((card) => this.getCardGridOptions(card))
+      .map((card) => this.getCardGridOptions(card).getOrUndefined())
       .filter(isDefined);
 
     const columns = grids.map((grid) => grid.columns).filter(isDefined);

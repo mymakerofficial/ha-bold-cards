@@ -12,12 +12,13 @@ import {
   isUndefined,
   toPromise,
 } from "../helpers";
-import { Optional } from "../types";
+import { Maybe } from "../types";
 import { LitElement } from "lit";
 import { CustomCardEntry } from "../../types/card";
 import { isLovelaceCardConfigWithEntity } from "./guards";
 import { getEntityName } from "../entities/helpers";
 import { Result } from "../result";
+import { Optional } from "../optional";
 
 const CUSTOM_PREFIX = "custom:";
 
@@ -103,24 +104,28 @@ export function getCardStubConfig(
 export function getCardGridOptions(
   hass: HomeAssistant,
   config: LovelaceCardConfig,
-): Optional<LovelaceGridOptions> {
-  const tag = getLovelaceCardTag(config.type);
-  const el = document.createElement(tag) as LovelaceCard & LitElement;
+): Result<LovelaceGridOptions> {
+  return Result.run(() => {
+    const tag = getLovelaceCardTag(config.type);
+    const el = document.createElement(tag) as LovelaceCard & LitElement;
 
-  if (isUndefined(el.setConfig) || isUndefined(el.getGridOptions)) {
-    return undefined;
-  }
+    if (isUndefined(el.setConfig) || isUndefined(el.getGridOptions)) {
+      throw new Error(`Card ${config.type} does not support getGridOptions`);
+    }
 
-  el.hass = hass;
-  el.setConfig(config);
+    el.hass = hass;
+    el.setConfig(config);
 
-  const gridOptions = el.getGridOptions();
+    const gridOptions = el.getGridOptions();
 
-  if (!isObject(gridOptions)) {
-    return undefined;
-  }
+    if (!isObject(gridOptions)) {
+      throw new Error(
+        `Card ${config.type} getGridOptions did not return an object`,
+      );
+    }
 
-  return gridOptions;
+    return gridOptions;
+  });
 }
 
 export async function getEntitiesForCard(
@@ -160,7 +165,7 @@ async function getNextEntityForCard(
     availableEntities,
     availableEntities,
   );
-  return stub.getOrUndefined()?.entity as Optional<string>;
+  return stub.getOrUndefined()?.entity as Maybe<string>;
 }
 
 export function getCustomCardEntries() {

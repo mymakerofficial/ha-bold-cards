@@ -7,7 +7,7 @@ import {
 } from "../../../lib/at-a-glance/types";
 import { ConfigRenderer } from "../../../lib/templates/templated-config-renderer";
 import { PropertyValues } from "@lit/reactive-element";
-import { Optional } from "../../../lib/types";
+import { Maybe } from "../../../lib/types";
 
 export abstract class BcGlancePageBase<
   TConfig extends GlancePageConfig,
@@ -15,13 +15,11 @@ export abstract class BcGlancePageBase<
 > extends BoldHassElement {
   @property({ attribute: false }) public config?: GlancePageConfig;
 
-  @state() protected _page: Optional<TPage>;
+  @state() protected _page: Maybe<TPage>;
 
   protected _pageRenderer?: ConfigRenderer<TConfig>;
 
-  protected abstract getPage(
-    config: Optional<GlancePageConfig>,
-  ): Optional<TPage>;
+  protected abstract getPage(config: Maybe<GlancePageConfig>): Maybe<TPage>;
 
   public connectedCallback() {
     super.connectedCallback();

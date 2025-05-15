@@ -17,10 +17,10 @@ import { Result, run } from "../../../lib/result";
 import { Mutex, withTimeout } from "async-mutex";
 import { CarouselStepperStyle } from "../../../components/bc-carousel";
 import { enumToOptions } from "../../helpers";
-import { Optional } from "../../../lib/types";
+import { Maybe } from "../../../lib/types";
 
 type CardEntities = {
-  availableEntities: Optional<string[]>;
+  availableEntities: Maybe<string[]>;
   all: boolean;
   error: boolean;
 };
@@ -28,7 +28,7 @@ type CardEntities = {
 type CardEditorEntry = {
   doesValidate: boolean;
   entities: CardEntities;
-  editor: Optional<LovelaceCardEditor>;
+  editor: Maybe<LovelaceCardEditor>;
 };
 
 export abstract class BoldCarouselCardEditorBase<

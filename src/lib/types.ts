@@ -10,13 +10,15 @@ export type DefaultConfigMap<T> = {
   [K in DefaultConfigType]: T;
 };
 
-export type Optional<T> = T | undefined;
+export type Maybe<T> = T | undefined;
 
 export type Nullable<T> = T | null;
 
 export type Pair<T, G> = [T, G];
 
-export type MaybeFunction<T> = T | (() => T);
+export type MaybeFunction<TRes, TArgs extends any[] = any[]> =
+  | TRes
+  | ((...args: TArgs) => TRes);
 
 export type MaybePromise<T> = T | Promise<T>;
 

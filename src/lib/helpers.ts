@@ -1,10 +1,4 @@
-import {
-  GetterOrMap,
-  MaybeFunction,
-  MaybePromise,
-  Optional,
-  Pair,
-} from "./types";
+import { GetterOrMap, MaybeFunction, MaybePromise, Maybe, Pair } from "./types";
 
 export function randomFrom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -85,8 +79,11 @@ export function isPromise<T>(value: unknown): value is Promise<T> {
   );
 }
 
-export function resolve<T>(maybeFn: MaybeFunction<T>): T {
-  return isFunction(maybeFn) ? maybeFn() : maybeFn;
+export function resolve<TRes, TArgs extends any[] = any[]>(
+  maybeFn: MaybeFunction<TRes>,
+  ...args: TArgs
+): TRes {
+  return isFunction(maybeFn) ? maybeFn(...args) : maybeFn;
 }
 
 export function pair<T, G>(a: T, b: G): Pair<T, G> {
@@ -102,7 +99,7 @@ export function match<T>(
 }
 
 export function matchRegex<T>(
-  value: Optional<string>,
+  value: Maybe<string>,
   options: Pair<RegExp, T>[],
   defaultValue: T,
 ): T {
@@ -117,11 +114,7 @@ export function resolveGetterOrMap<
   T extends string | number | symbol,
   R,
   D extends R | undefined,
->(
-  value: Optional<T>,
-  getterOrMap?: GetterOrMap<T, R>,
-  defaultValue?: D,
-): R | D {
+>(value: Maybe<T>, getterOrMap?: GetterOrMap<T, R>, defaultValue?: D): R | D {
   if (isUndefined(value) || isUndefined(getterOrMap)) {
     return defaultValue as D;
   }
@@ -147,7 +140,7 @@ export function parseYamlBoolean(value?: string): boolean {
 
 export function doIfDefined<T, R, E = R>(
   fn: (value: T) => R,
-  value: Optional<T>,
+  value: Maybe<T>,
   elseValue: E,
 ): R | E {
   if (isDefined(value)) {
@@ -161,14 +154,14 @@ export function toPromise<T>(value: MaybePromise<T>): Promise<T> {
   return isPromise(value) ? value : Promise.resolve(value);
 }
 
-export function maxOrUndefined(arr: number[]): Optional<number> {
+export function maxOrUndefined(arr: number[]): Maybe<number> {
   if (isEmpty(arr)) {
     return undefined;
   }
   return Math.max(...arr);
 }
 
-export function minOrUndefined(arr: number[]): Optional<number> {
+export function minOrUndefined(arr: number[]): Maybe<number> {
   if (isEmpty(arr)) {
     return undefined;
   }
@@ -176,7 +169,7 @@ export function minOrUndefined(arr: number[]): Optional<number> {
 }
 
 export function splice<T>(
-  arr: Optional<T[]>,
+  arr: Maybe<T[]>,
   start: number,
   deleteCount: number = 1,
   ...items: T[]
@@ -190,7 +183,7 @@ export function splice<T>(
 }
 
 export function patchElement<T>(
-  arr: Optional<T[]>,
+  arr: Maybe<T[]>,
   index: number,
   patch: Partial<T>,
 ) {
@@ -202,7 +195,7 @@ export function patchElement<T>(
   return newArr;
 }
 
-export function move<T>(arr: Optional<T[]>, from: number, to: number): T[] {
+export function move<T>(arr: Maybe<T[]>, from: number, to: number): T[] {
   if (!arr) {
     return [];
   }
