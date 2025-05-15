@@ -74,9 +74,28 @@ export class Result<TValue, TError = Error> {
     }
   }
 
-  doIfError(callback: (error: TError) => void): Result<TValue, TError> {
+  ifError(callback: (error: TError) => void): Result<TValue, TError> {
     if (this.isError()) {
       callback(this.#error!);
+    }
+    return this;
+  }
+
+  mapError<TNewError extends Error>(
+    translateFn: MaybeFunction<TNewError | string, [error: TError]>,
+  ): Result<TValue, TNewError | TError> {
+    if (this.isError()) {
+      return new Result<TValue, TNewError>(
+        undefined,
+        toError(resolve(translateFn, this.#error!)),
+      );
+    }
+    return this;
+  }
+
+  logError(): Result<TValue, TError> {
+    if (this.isError()) {
+      console.error(this.#error);
     }
     return this;
   }

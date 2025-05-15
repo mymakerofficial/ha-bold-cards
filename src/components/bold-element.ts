@@ -3,6 +3,7 @@ import { fireEvent, ValidHassDomEvent } from "custom-card-helpers";
 import { run } from "../lib/result";
 import { RenderResult } from "../lib/types";
 import { ShowToastParams } from "../lib/hass-dom-events";
+import { isString } from "../lib/helpers";
 
 export class BoldElement extends LitElement {
   public fireEvent<HassEvent extends ValidHassDomEvent>(
@@ -19,6 +20,12 @@ export class BoldElement extends LitElement {
 
   public showToast(params: ShowToastParams) {
     this.fireEvent("hass-notification", params);
+  }
+
+  public errorToast(error: Error | string) {
+    this.showToast({
+      message: isString(error) ? error : error.message,
+    });
   }
 
   protected renderSpinner({ label }: { label: string }) {
