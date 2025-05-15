@@ -90,6 +90,14 @@ export function resolve<TRes, TArgs extends any[] = any[]>(
   return isFunction(maybeFn) ? maybeFn(...args) : maybeFn;
 }
 
+export function toError<
+  TError extends Error,
+  TErrorVal = TError | string,
+  TRes = TError extends string ? TError : TError,
+>(maybeError: TErrorVal) {
+  return (isString(maybeError) ? new Error(maybeError) : maybeError) as TRes;
+}
+
 export function pair<T, G>(a: T, b: G): Pair<T, G> {
   return [a, b];
 }

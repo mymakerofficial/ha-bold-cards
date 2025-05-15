@@ -1,4 +1,4 @@
-import { isDefined, isUndefined, resolve } from "./helpers";
+import { isDefined, isUndefined, resolve, toError } from "./helpers";
 import { MaybeFunction } from "./types";
 
 export class Optional<TValue> {
@@ -47,17 +47,19 @@ export class Optional<TValue> {
     return this.#value!;
   }
 
-  throwIfAbsent(
-    error: MaybeFunction<Error> = new Error(
-      "Tried to get value but value was absent.",
-    ),
+  throwIfAbsent<TError extends Error>(
+    error: MaybeFunction<
+      TError | string
+    > = "Tried to get value but value was absent.",
   ): void {
     if (this.isAbsent()) {
-      throw resolve(error);
+      throw toError(resolve(error));
     }
   }
 
-  getOrThrow(error?: MaybeFunction<Error>): TValue {
+  getOrThrow<TError extends Error>(
+    error?: MaybeFunction<TError | string>,
+  ): TValue {
     this.throwIfAbsent(error);
     return this.#value!;
   }
