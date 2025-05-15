@@ -45,9 +45,7 @@ export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
         host.tagName !== "HUI-CARD-ELEMENT-EDITOR" ||
         isUndefined(host._updateConfigElement)
       ) {
-        throw new Error(
-          "host element was hui-card-element-editor or did not have the correct method",
-        );
+        throw new Error("host element was did not have the correct type");
       }
       host._updateConfigElement();
     }).mapError((error) => `Reloading editor failed: ${error.message}`);
