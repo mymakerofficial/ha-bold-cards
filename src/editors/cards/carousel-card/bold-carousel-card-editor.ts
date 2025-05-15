@@ -30,11 +30,14 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
   public setConfig(config: CarouselCardConfig): void {
     // ensure all editors are loaded, if a new one was loaded, reload the error to validate
     Promise.all(
-      config.cards.map((entry) => this._loadCardEditor(entry.card.type)),
+      config.cards.map((entry) => this.loadCardEditor(entry.card.type)),
     ).then((results) => {
       results.some((didChange) => {
         if (didChange) {
-          this._reload();
+          this.forceReloadEditor()
+            .logError()
+            .mapError("Failed to refresh editor, validation may fail")
+            .ifError((error) => this.errorToast(error));
         }
       });
     });
@@ -46,7 +49,7 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
         entry,
       });
       this._validateCardConfig(cardConfig).throwIfError(
-        (error) => new Error(`Invalid card config: ${error.message}`),
+        (error) => `Invalid card config: ${error.message}`,
       );
     });
 
@@ -168,7 +171,7 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
 
     const card = stripCarouselCardConfig(newCardConfig);
 
-    await this._loadCardEditor(card.type);
+    await this.loadCardEditor(card.type);
 
     this._patchConfig({
       cards: [...oldCards, { card }],

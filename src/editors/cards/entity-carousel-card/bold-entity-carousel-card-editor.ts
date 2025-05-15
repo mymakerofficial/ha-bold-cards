@@ -21,9 +21,12 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
 
   public setConfig(config: EntityCarouselCardConfig): void {
     // ensure the card editor is loaded, if a new one was loaded, reload the error to validate
-    this._loadCardEditor(config.card?.type).then((didChange) => {
+    this.loadCardEditor(config.card?.type).then((didChange) => {
       if (didChange) {
-        this._reload();
+        this.forceReloadEditor()
+          .logError()
+          .mapError("Failed to refresh editor, validation may fail")
+          .ifError((error) => this.errorToast(error));
       }
     });
 
@@ -35,7 +38,7 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
           index,
         });
         return this._validateCardConfig(cardConfig).throwIfError(
-          (error) => new Error(`Invalid card config: ${error.message}`),
+          (error) => `Invalid card config: ${error.message}`,
         );
       });
     }
@@ -237,7 +240,7 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
 
     const card = stripCarouselCardConfig(newCardConfig);
 
-    await this._loadCardEditor(card.type);
+    await this.loadCardEditor(card.type);
 
     const entities = isEmpty(config.entities)
       ? (this._getEntitiesFor(card.type).availableEntities?.slice(0, 6) ??

@@ -1,13 +1,19 @@
 import { LovelaceGenericElementEditor } from "../types/ha/lovelace";
-import { CSSResultGroup, html, nothing } from "lit";
+import { CSSResultGroup, html, LitElement, nothing } from "lit";
 import { property, state } from "lit/decorators";
 import { assert, Struct } from "superstruct";
 import { editorBaseStyles } from "./styles";
 import { LovelaceConfig } from "custom-card-helpers";
 import { BoldHassElement } from "../components/hass-element";
 import { Maybe, MaybeFunction, RenderResult } from "../lib/types";
-import { isEmpty, lastOf, resolve } from "../lib/helpers";
+import { isEmpty, isUndefined, lastOf, resolve } from "../lib/helpers";
 import { t } from "../localization/i18n";
+import { Optional } from "../lib/optional";
+import { run } from "../lib/result";
+
+type HuiCardElementEditor = LitElement & {
+  _updateConfigElement?: () => void;
+};
 
 export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
   extends BoldHassElement
@@ -27,9 +33,24 @@ export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
   }
 
   // forces the parent to update the editor
-  protected _reload() {
-    // @ts-ignore
-    (this.getRootNode() as Maybe<ShadowRoot>)?.host?._updateConfigElement();
+  protected forceReloadEditor() {
+    return run(() => {
+      const shadowRoot = Optional.of(
+        this.getRootNode() as Maybe<ShadowRoot>,
+      ).getOrThrow("No shadow root found");
+      const host = Optional.of(
+        shadowRoot.host as Maybe<HuiCardElementEditor>,
+      ).getOrThrow("host element not found");
+      if (
+        host.tagName !== "HUI-CARD-ELEMENT-EDITOR" ||
+        isUndefined(host._updateConfigElement)
+      ) {
+        throw new Error(
+          "host element was hui-card-element-editor or did not have the correct method",
+        );
+      }
+      host._updateConfigElement();
+    }).mapError((error) => `Reloading editor failed: ${error.message}`);
   }
 
   protected _changeConfig(config: TConfig) {
