@@ -13,7 +13,7 @@ import {
   LovelaceCardEditor,
 } from "../../../types/ha/lovelace";
 import { state } from "lit/decorators.js";
-import { isErrorResult, run, successResult } from "../../../lib/result";
+import { Result, run } from "../../../lib/result";
 import { Mutex, withTimeout } from "async-mutex";
 import { CarouselStepperStyle } from "../../../components/bc-carousel";
 import { enumToOptions } from "../../helpers";
@@ -98,7 +98,7 @@ export abstract class BoldCarouselCardEditorBase<
 
     return await this._loadCardEditorMutex
       .runExclusive(async () => {
-        const cardClass = getLovelaceCardElementClass(type);
+        const cardClass = getLovelaceCardElementClass(type).get();
 
         if (isUndefined(cardClass.getConfigElement)) {
           throw new Error(`Card ${type} does not have a config element`);
@@ -108,15 +108,16 @@ export abstract class BoldCarouselCardEditorBase<
         editor.hass = this.hass;
         editor.lovelace = this.lovelace;
 
-        const invalidConfigResult = run(() =>
+        // set an invalid config to check if the editor validates
+        const doesValidate = run(() =>
           // @ts-expect-error
           editor.setConfig({
-            ["__this_key_should_not_exist__"]: "__some_random_value",
+            ["__this_key_should_not_exist__"]: "__some_random_value__",
           }),
-        );
+        ).isError();
 
         this._cardEditor.set(type, {
-          doesValidate: isErrorResult(invalidConfigResult),
+          doesValidate,
           entities,
           editor,
         });
@@ -175,7 +176,7 @@ export abstract class BoldCarouselCardEditorBase<
     const entry = this._cardEditor.get(config.type);
     const editor = entry?.editor;
     if (isUndefined(entry) || !entry.doesValidate || isUndefined(editor)) {
-      return successResult(undefined);
+      return Result.void();
     }
 
     // remove card_mod to avoid validation errors

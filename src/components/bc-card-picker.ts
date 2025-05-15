@@ -110,7 +110,7 @@ class BcCardPicker extends BoldHassElement {
         card.card.type,
         card.card.isCustom,
       );
-      const stubConfig = await this.getCardStubConfig(type, entityIds);
+      const stubRes = await this.getCardStubConfig(type, entityIds);
       return {
         ...{
           ...card,
@@ -120,7 +120,9 @@ class BcCardPicker extends BoldHassElement {
               card.card.isSuggested || SUGGESTED_CARDS.includes(type),
           },
         },
-        stub: stubConfig,
+        stub: stubRes.getOrElse({
+          type,
+        }),
       };
     });
 

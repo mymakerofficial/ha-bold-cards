@@ -15,7 +15,6 @@ import { EntityCarouselCardConfig } from "../../../cards/entity-carousel-card/ty
 import { mdiDevices, mdiPencil } from "@mdi/js";
 import { BoldCarouselCardEditorBase } from "../carousel-card/base";
 import { stripCarouselCardConfig } from "../../../cards/carousel-card/helpers";
-import { resolveResult } from "../../../lib/result";
 
 @customElement(getCardEditorTag(BoldCardType.ENTITY_CAROUSEL))
 export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<EntityCarouselCardConfig> {
@@ -41,8 +40,9 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
           config,
           index,
         });
-        const res = this._validateCardConfig(cardConfig);
-        resolveResult(res, (message) => `Invalid card config: ${message}`);
+        return this._validateCardConfig(cardConfig).throwIfError(
+          (error) => new Error(`Invalid card config: ${error.message}`),
+        );
       });
     }
 
