@@ -17,6 +17,7 @@ import { LitElement } from "lit";
 import { CustomCardEntry } from "../../types/card";
 import { isLovelaceCardConfigWithEntity } from "./guards";
 import { getEntityName } from "../entities/helpers";
+import { Result } from "../result";
 
 const CUSTOM_PREFIX = "custom:";
 
@@ -58,44 +59,44 @@ function getLovelaceCardTag(type: string) {
 
 export function getLovelaceCardElementClass(
   type: string,
-): LovelaceCardConstructor {
-  const tag = getLovelaceCardTag(type);
+): Result<LovelaceCardConstructor> {
+  return Result.run(() => {
+    const tag = getLovelaceCardTag(type);
 
-  const cls = customElements.get(tag);
+    const cls = customElements.get(tag);
 
-  if (isDefined(cls)) {
-    return cls as LovelaceCardConstructor;
-  }
+    if (isDefined(cls)) {
+      return cls as LovelaceCardConstructor;
+    }
 
-  throw new Error(`Element not found: ${type}`);
+    throw new Error(`Element not found: ${type}`);
+  });
 }
 
-export async function getCardStubConfig(
+export function getCardStubConfig(
   hass: HomeAssistant,
   type: string,
   entities: string[],
   entitiesFallback?: string[],
-): Promise<LovelaceCardConfig> {
-  const card = getLovelaceCardElementClass(type);
+): Promise<Result<LovelaceCardConfig>> {
+  return Result.runAsync(async () => {
+    const card = getLovelaceCardElementClass(type).get();
 
-  if (isUndefined(card.getStubConfig)) {
-    return {
-      type,
-    };
-  }
+    if (isUndefined(card.getStubConfig)) {
+      throw new Error(`Card ${type} does not support getStubConfig`);
+    }
 
-  return toPromise(
-    card.getStubConfig(hass, entities, entitiesFallback ?? entities),
-  ).then((res) => {
+    const stubConfig = await toPromise(
+      card.getStubConfig(hass, entities, entitiesFallback ?? entities),
+    );
+
     // some cards don't behave like they are supposed to,
     //  so we need to make sure it doesn't break
-    if (!isObject(res)) {
-      console.warn(`Card ${type} getStubConfig did not return an object`, res);
-      return {
-        type,
-      };
+    if (!isObject(stubConfig)) {
+      throw new Error(`Card ${type} getStubConfig did not return an object`);
     }
-    return res;
+
+    return stubConfig;
   });
 }
 
@@ -159,7 +160,7 @@ async function getNextEntityForCard(
     availableEntities,
     availableEntities,
   );
-  return stub.entity as Optional<string>;
+  return stub.getOrUndefined()?.entity as Optional<string>;
 }
 
 export function getCustomCardEntries() {

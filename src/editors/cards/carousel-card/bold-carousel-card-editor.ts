@@ -14,7 +14,6 @@ import {
   stripCarouselCardConfig,
 } from "../../../cards/carousel-card/helpers";
 import { BoldCarouselCardEditorBase } from "./base";
-import { resolveResult } from "../../../lib/result";
 
 @customElement(getCardEditorTag(BoldCardType.CAROUSEL))
 export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselCardConfig> {
@@ -43,8 +42,9 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
         config,
         entry,
       });
-      const res = this._validateCardConfig(cardConfig);
-      resolveResult(res, (message) => `Invalid card config: ${message}`);
+      this._validateCardConfig(cardConfig).throwIfError(
+        (error) => new Error(`Invalid card config: ${error.message}`),
+      );
     });
 
     super.setConfig(config);
