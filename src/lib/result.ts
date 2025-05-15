@@ -1,4 +1,4 @@
-import { isDefined, isString, resolve } from "./helpers";
+import { isDefined, resolve, toError } from "./helpers";
 import { MaybeFunction } from "./types";
 
 export class Result<TValue, TError = Error> {
@@ -23,10 +23,7 @@ export class Result<TValue, TError = Error> {
     TError extends Error | string = Error,
     TResError = TError extends string ? Error : TError,
   >(error: TError) {
-    return new Result<TValue, TResError>(
-      undefined,
-      (isString(error) ? new Error(error) : error) as TResError,
-    );
+    return new Result<TValue, TResError>(undefined, toError(error));
   }
 
   static run<TValue>(fn: () => TValue): Result<TValue> {
@@ -68,12 +65,20 @@ export class Result<TValue, TError = Error> {
     return this.#error!;
   }
 
-  throwIfError(
-    transformError: (error: TError) => TError = (error) => error,
+  throwIfError<TOtherError extends TError>(
+    error: MaybeFunction<TOtherError | string, [error: TError]> = (error) =>
+      error as TOtherError,
   ): void {
     if (this.isError()) {
-      throw transformError(this.#error!);
+      throw toError(resolve(error, this.#error!));
     }
+  }
+
+  doIfError(callback: (error: TError) => void): Result<TValue, TError> {
+    if (this.isError()) {
+      callback(this.#error!);
+    }
+    return this;
   }
 
   get value(): TValue {
@@ -109,10 +114,11 @@ export class Result<TValue, TError = Error> {
     return this.#value!;
   }
 
-  getOrThrow(
-    transformError: (error: TError) => TError = (error) => error,
+  getOrThrow<TOtherError extends TError>(
+    error: MaybeFunction<TOtherError | string, [error: TError]> = (error) =>
+      error as TOtherError,
   ): TValue {
-    this.throwIfError(transformError);
+    this.throwIfError(error);
     return this.#value!;
   }
 
