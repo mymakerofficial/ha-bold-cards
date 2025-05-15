@@ -3,7 +3,7 @@ import {
   LovelaceCardEditor,
   LovelaceCardEditorContext,
 } from "../../types/ha/lovelace";
-import { BoldLovelaceEditor } from "../base";
+import { BoldLovelaceEditorWithSubEditor } from "../base";
 import { html, nothing } from "lit";
 import { t } from "../../localization/i18n";
 import { mdiListBox } from "@mdi/js";
@@ -13,11 +13,9 @@ import {
 } from "../../types/card";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
 import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
-import { TemplateResult } from "lit-element";
-import { isDefined } from "../../lib/helpers";
 
 export abstract class BoldLovelaceCardEditor<TConfig extends LovelaceCardConfig>
-  extends BoldLovelaceEditor<TConfig, LovelaceCardEditorContext>
+  extends BoldLovelaceEditorWithSubEditor<TConfig, LovelaceCardEditorContext>
   implements LovelaceCardEditor
 {
   protected get _internals() {
@@ -25,50 +23,6 @@ export abstract class BoldLovelaceCardEditor<TConfig extends LovelaceCardConfig>
       return undefined;
     }
     return "internals" in this.context ? this.context.internals : undefined;
-  }
-
-  protected _renderSubEditorHeader({
-    onBack,
-    title,
-  }: {
-    onBack?: () => void;
-    title: string;
-  }) {
-    return html`
-      <div class="sub-header">
-        ${isDefined(onBack)
-          ? html`<ha-icon-button-prev
-              .label=${t("editor.common.label.back")}
-              @click=${(ev) => {
-                ev.stopPropagation();
-                onBack();
-              }}
-            ></ha-icon-button-prev>`
-          : nothing}
-        <span class="title">${title}</span>
-      </div>
-    `;
-  }
-
-  protected _renderSubEditor({
-    onBack,
-    title,
-    content,
-    showHeader = true,
-  }: {
-    onBack?: () => void;
-    title?: string;
-    showHeader?: boolean;
-    content: TemplateResult;
-  }) {
-    return html`
-      <div class="sub-editor">
-        ${showHeader && isDefined(title)
-          ? this._renderSubEditorHeader({ onBack, title })
-          : nothing}
-        ${content}
-      </div>
-    `;
   }
 }
 

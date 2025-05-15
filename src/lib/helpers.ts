@@ -57,9 +57,13 @@ export function isObject(value: unknown): value is object {
   );
 }
 
-export function isEmpty<T extends string | object | any[]>(
+export function isEmpty<T extends string | object | any[] | undefined>(
   value: T,
 ): value is never {
+  if (isUndefined(value)) {
+    return true;
+  }
+
   if (isString(value) || isArray(value)) {
     return value.length === 0;
   }

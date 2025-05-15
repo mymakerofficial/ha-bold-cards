@@ -1,11 +1,13 @@
 import { LovelaceGenericElementEditor } from "../types/ha/lovelace";
-import { CSSResultGroup, LitElement } from "lit";
+import { CSSResultGroup, html, nothing } from "lit";
 import { property, state } from "lit/decorators";
 import { assert, Struct } from "superstruct";
 import { editorBaseStyles } from "./styles";
 import { LovelaceConfig } from "custom-card-helpers";
 import { BoldHassElement } from "../components/hass-element";
-import { Maybe } from "../lib/types";
+import { Maybe, MaybeFunction, RenderResult } from "../lib/types";
+import { isEmpty, lastOf, resolve } from "../lib/helpers";
+import { t } from "../localization/i18n";
 
 export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
   extends BoldHassElement
@@ -74,4 +76,75 @@ export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
   }
 
   static styles: CSSResultGroup = editorBaseStyles;
+}
+
+type SubEditorDefinition = {
+  title: MaybeFunction<string>;
+  showHeader?: MaybeFunction<boolean>;
+  showBack?: MaybeFunction<boolean>;
+  render: () => RenderResult;
+};
+
+export abstract class BoldLovelaceEditorWithSubEditor<
+  TConfig extends {},
+  TContext = any,
+> extends BoldLovelaceEditor<TConfig, TContext> {
+  @state() private _subEditorStack: SubEditorDefinition[] = [];
+
+  private _renderSubEditorHeader({
+    title,
+    showBack,
+  }: Pick<SubEditorDefinition, "title" | "showBack">) {
+    return html`
+      <div class="sub-header">
+        ${resolve(showBack ?? true)
+          ? html`<ha-icon-button-prev
+              .label=${t("editor.common.label.back")}
+              @click=${(ev) => {
+                ev.stopPropagation();
+                this.closeSubEditor();
+              }}
+            ></ha-icon-button-prev>`
+          : nothing}
+        <span class="title">${title}</span>
+      </div>
+    `;
+  }
+
+  private _renderSubEditor({
+    showHeader,
+    render,
+    ...def
+  }: SubEditorDefinition) {
+    return html`
+      <div class="sub-editor">
+        ${resolve(showHeader ?? true)
+          ? this._renderSubEditorHeader(def)
+          : nothing}
+        ${render()}
+      </div>
+    `;
+  }
+
+  protected openSubEditor(def: SubEditorDefinition): void {
+    this._subEditorStack.push(def);
+    this.requestUpdate();
+  }
+
+  protected closeSubEditor(): void {
+    this._subEditorStack.pop();
+    this.requestUpdate();
+  }
+
+  protected renderWithSubEditor(renderFn: () => RenderResult) {
+    if (!isEmpty(this._subEditorStack)) {
+      const def = lastOf(this._subEditorStack)!;
+      return this._renderSubEditor(def);
+    }
+    return renderFn();
+  }
+
+  protected renderWith(renderFn: () => RenderResult) {
+    return super.renderWith(() => this.renderWithSubEditor(renderFn));
+  }
 }

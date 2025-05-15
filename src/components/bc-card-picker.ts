@@ -165,19 +165,17 @@ class BcCardPicker extends BoldHassElement {
     });
   }
 
-  protected get _spinner() {
-    return html`
-      <bc-spinner .label=${t("components.card_picker.loading")}></bc-spinner>
-    `;
+  protected renderSpinner() {
+    return super.renderSpinner({ label: t("components.card_picker.loading") });
   }
 
   render() {
     if (this._loading) {
-      return this._spinner;
+      return this.renderSpinner();
     }
 
     return html`
-      ${!this._done ? this._spinner : nothing}
+      ${!this._done ? this.renderSpinner() : nothing}
       <hui-card-picker
         class=${classMap({
           "visually-hidden": !this._done,

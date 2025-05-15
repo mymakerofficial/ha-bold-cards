@@ -1,3 +1,6 @@
+import { TemplateResult } from "lit-element";
+import { nothing } from "lit";
+
 export const DefaultConfigType = {
   DEFAULT: "default",
   INLINED: "inlined",
@@ -28,3 +31,5 @@ export type GetterOrMap<T extends string | number | symbol, R> =
   | R;
 
 export type Constructor<T = any> = new (...args: any[]) => T;
+
+export type RenderResult = TemplateResult | typeof nothing;
