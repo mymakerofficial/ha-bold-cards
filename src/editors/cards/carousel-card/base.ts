@@ -45,7 +45,7 @@ export abstract class BoldCarouselCardEditorBase<
   @state() protected _isLoadingCardEditor = false;
 
   // returns true if a new card editor was loaded
-  protected async _loadCardEditor(type?: string) {
+  protected async loadCardEditor(type?: string) {
     if (
       !this.hass ||
       !this.lovelace ||
