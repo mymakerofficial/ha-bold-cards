@@ -4,7 +4,7 @@ import { css, html, nothing } from "lit";
 import { GlanceItemConfig } from "../../../lib/at-a-glance/types";
 import { ConfigRenderer } from "../../../lib/templates/templated-config-renderer";
 import { PropertyValues } from "@lit/reactive-element";
-import { Optional } from "../../../lib/types";
+import { Maybe } from "../../../lib/types";
 import { mdiCircle } from "@mdi/js";
 
 export abstract class BcGlanceItemBase<
@@ -13,13 +13,11 @@ export abstract class BcGlanceItemBase<
 > extends BoldHassElement {
   @property({ attribute: false }) public config?: GlanceItemConfig;
 
-  @state() protected _item: Optional<TItem>;
+  @state() protected _item: Maybe<TItem>;
 
   protected _itemRenderer?: ConfigRenderer<TConfig>;
 
-  protected abstract getItem(
-    config: Optional<GlanceItemConfig>,
-  ): Optional<TItem>;
+  protected abstract getItem(config: Maybe<GlanceItemConfig>): Maybe<TItem>;
 
   public connectedCallback() {
     super.connectedCallback();

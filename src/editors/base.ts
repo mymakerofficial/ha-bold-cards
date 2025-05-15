@@ -5,7 +5,7 @@ import { assert, Struct } from "superstruct";
 import { editorBaseStyles } from "./styles";
 import { LovelaceConfig } from "custom-card-helpers";
 import { BoldHassElement } from "../components/hass-element";
-import { Optional } from "../lib/types";
+import { Maybe } from "../lib/types";
 
 export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
   extends BoldHassElement
@@ -27,7 +27,7 @@ export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
   // forces the parent to update the editor
   protected _reload() {
     // @ts-ignore
-    (this.getRootNode() as Optional<ShadowRoot>)?.host?._updateConfigElement();
+    (this.getRootNode() as Maybe<ShadowRoot>)?.host?._updateConfigElement();
   }
 
   protected _changeConfig(config: TConfig) {

@@ -2,7 +2,7 @@ import { HomeAssistant } from "../../types/ha/lovelace";
 import { isTemplateError } from "./helpers";
 import { isDefined, isUndefined } from "../helpers";
 import { BasicHassObject } from "../basic-hass-object";
-import { Optional } from "../types";
+import { Maybe } from "../types";
 
 export const TemplateRendererState = {
   PENDING: "pending",
@@ -19,11 +19,11 @@ export interface TemplatedConfigRendererKey<TObj extends object> {
 }
 
 export interface ConfigRenderer<TObj extends object> {
-  get value(): Optional<TObj>;
+  get value(): Maybe<TObj>;
   get state(): Map<keyof TObj, TemplateRendererState>;
-  setValue(value: Optional<TObj>): void;
-  subscribe(listener: (value: Optional<TObj>) => void): void;
-  unsubscribe(listener: (value: Optional<TObj>) => void): void;
+  setValue(value: Maybe<TObj>): void;
+  subscribe(listener: (value: Maybe<TObj>) => void): void;
+  unsubscribe(listener: (value: Maybe<TObj>) => void): void;
   destroy(): void;
 }
 
@@ -138,15 +138,15 @@ export class TemplatedConfigDynamicRenderer<TObj extends object>
   extends BasicHassObject
   implements ConfigRenderer<TObj>
 {
-  protected _getRenderer: (value: TObj) => Optional<ConfigRenderer<TObj>>;
+  protected _getRenderer: (value: TObj) => Maybe<ConfigRenderer<TObj>>;
   protected _dependencies: string[] = [];
 
-  private _renderer: Optional<ConfigRenderer<TObj>> = undefined;
-  private _listeners: Array<(value: Optional<TObj>) => void> = [];
+  private _renderer: Maybe<ConfigRenderer<TObj>> = undefined;
+  private _listeners: Array<(value: Maybe<TObj>) => void> = [];
 
   constructor(
     hass: HomeAssistant | undefined,
-    getRenderer: (value: TObj) => Optional<ConfigRenderer<TObj>>,
+    getRenderer: (value: TObj) => Maybe<ConfigRenderer<TObj>>,
     deps?: string[],
   ) {
     super(hass);
@@ -154,7 +154,7 @@ export class TemplatedConfigDynamicRenderer<TObj extends object>
     this._dependencies = deps ?? [];
   }
 
-  public get value(): Optional<TObj> {
+  public get value(): Maybe<TObj> {
     return this._renderer?.value;
   }
 
@@ -173,7 +173,7 @@ export class TemplatedConfigDynamicRenderer<TObj extends object>
     });
   }
 
-  public setValue(value: Optional<TObj>): void {
+  public setValue(value: Maybe<TObj>): void {
     if (isDefined(value) && !this._compareDeps(value)) {
       return;
     }
@@ -194,11 +194,11 @@ export class TemplatedConfigDynamicRenderer<TObj extends object>
     this._renderer.subscribe(() => this._notify());
   }
 
-  public subscribe(listener: (value: Optional<TObj>) => void): void {
+  public subscribe(listener: (value: Maybe<TObj>) => void): void {
     this._listeners.push(listener);
   }
 
-  public unsubscribe(listener: (value: Optional<TObj>) => void): void {
+  public unsubscribe(listener: (value: Maybe<TObj>) => void): void {
     const index = this._listeners.indexOf(listener);
     if (index !== -1) {
       this._listeners.splice(index, 1);
@@ -217,14 +217,14 @@ export class TemplatedConfigDynamicRenderer<TObj extends object>
 export class TemplatedConfigListRenderer<
   TObj extends object,
 > extends BasicHassObject {
-  protected _getRenderer: (value: TObj) => Optional<ConfigRenderer<TObj>>;
+  protected _getRenderer: (value: TObj) => Maybe<ConfigRenderer<TObj>>;
 
   private _renderers: ConfigRenderer<TObj>[] = [];
   private _listeners: Array<(value: TObj[]) => void> = [];
 
   constructor(
     hass: HomeAssistant | undefined,
-    getRenderer: (value: TObj) => Optional<ConfigRenderer<TObj>>,
+    getRenderer: (value: TObj) => Maybe<ConfigRenderer<TObj>>,
   ) {
     super(hass);
     this._getRenderer = getRenderer;

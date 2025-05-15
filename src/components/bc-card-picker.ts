@@ -10,7 +10,7 @@ import { LovelaceConfig } from "custom-card-helpers";
 import { PropertyValues, TemplateResult } from "lit-element";
 import { isDefined, isUndefined, toPromise } from "../lib/helpers";
 import { optionallyPrefixCustomType } from "../lib/cards/helpers";
-import { Nullable, Optional } from "../lib/types";
+import { Nullable, Maybe } from "../lib/types";
 import { classMap } from "lit-html/directives/class-map";
 import { t } from "../localization/i18n";
 import { BoldCardType } from "../lib/cards/types";
@@ -49,7 +49,7 @@ async function loadCardPicker() {
     card.addEventListener("card-updated", () => {
       const conditionalCard = customElements.get(
         "hui-conditional-card",
-      ) as Optional<LovelaceCardConstructor>;
+      ) as Maybe<LovelaceCardConstructor>;
 
       if (isUndefined(conditionalCard)) {
         reject(new Error("hui-conditional-card not found"));

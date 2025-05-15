@@ -1,4 +1,5 @@
-import { isDefined, isFunction, isString } from "./helpers";
+import { isDefined, isString, resolve } from "./helpers";
+import { MaybeFunction } from "./types";
 
 export class Result<TValue, TError = Error> {
   readonly #value?: TValue;
@@ -44,6 +45,22 @@ export class Result<TValue, TError = Error> {
     });
   }
 
+  static wrap<TValue>(fn: () => Result<TValue>): Result<TValue> {
+    try {
+      return fn();
+    } catch (error) {
+      return Result.fromError<TValue>(error as Error);
+    }
+  }
+
+  static wrapAsync<TValue>(fn: () => Promise<Result<TValue>>) {
+    return new Promise<Result<TValue>>((resolve) => {
+      fn()
+        .then((result) => resolve(result))
+        .catch((error) => resolve(Result.fromError(error)));
+    });
+  }
+
   get error(): TError {
     if (!this.isError()) {
       throw new Error("Result is not an error");
@@ -70,14 +87,10 @@ export class Result<TValue, TError = Error> {
   }
 
   getOrElse<TElse>(
-    defaultValue: ((error: TError) => TElse) | TElse,
+    defaultValue: MaybeFunction<TElse, [error: TError]>,
   ): TValue | TElse {
     if (this.isError()) {
-      if (isFunction(defaultValue)) {
-        return defaultValue(this.error);
-      } else {
-        return defaultValue;
-      }
+      return resolve(defaultValue, this.error);
     }
     return this.#value!;
   }

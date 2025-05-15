@@ -4,10 +4,10 @@ import { isStateActive } from "../../helpers/states";
 import { randomFrom } from "../helpers";
 import { BoldIcon } from "../icons/icons";
 import { WeatherState } from "./types";
-import { Optional } from "../types";
+import { Maybe } from "../types";
 
 export function getStubWeatherEntity(
-  hass: Optional<HomeAssistant>,
+  hass: Maybe<HomeAssistant>,
   entities: string[],
   _entitiesFallback: string[],
 ) {
