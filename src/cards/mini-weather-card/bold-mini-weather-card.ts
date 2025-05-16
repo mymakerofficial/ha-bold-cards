@@ -380,7 +380,7 @@ export class BoldMiniWeatherCard extends BoldCardWithEntity<
 }
 
 BoldMiniWeatherCard.registerCustomCard({
-  name: "Bold Weather Card",
+  name: "Bold Mini Weather Card",
   description: "A weather card.",
   preview: true,
 });
