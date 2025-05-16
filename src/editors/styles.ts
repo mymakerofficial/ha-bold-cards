@@ -67,4 +67,9 @@ export const editorBaseStyles = css`
     flex: 1;
     font-size: 18px;
   }
+
+  .sub-header .actions {
+    display: flex;
+    gap: 8px;
+  }
 `;

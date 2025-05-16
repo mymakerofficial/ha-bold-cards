@@ -101,6 +101,7 @@ type SubEditorDefinition = {
   title: MaybeFunction<string>;
   showHeader?: MaybeFunction<boolean>;
   showBack?: MaybeFunction<boolean>;
+  renderHeaderActions?: () => RenderResult;
   render: () => RenderResult;
 };
 
@@ -113,7 +114,8 @@ export abstract class BoldLovelaceEditorWithSubEditor<
   private _renderSubEditorHeader({
     title,
     showBack,
-  }: Pick<SubEditorDefinition, "title" | "showBack">) {
+    renderHeaderActions,
+  }: Pick<SubEditorDefinition, "title" | "showBack" | "renderHeaderActions">) {
     return html`
       <div class="sub-header">
         ${resolve(showBack ?? true)
@@ -126,6 +128,9 @@ export abstract class BoldLovelaceEditorWithSubEditor<
             ></ha-icon-button-prev>`
           : nothing}
         <span class="title">${title}</span>
+        ${renderHeaderActions
+          ? html`<div class="actions">${renderHeaderActions()}</div>`
+          : nothing}
       </div>
     `;
   }

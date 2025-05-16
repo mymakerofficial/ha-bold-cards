@@ -1,4 +1,4 @@
-import { html, nothing } from "lit";
+import { css, html, nothing } from "lit";
 import { customElement } from "lit/decorators";
 import { LovelaceCardConfig } from "../../../types/ha/lovelace";
 import { BoldCardType } from "../../../lib/cards/types";
@@ -80,6 +80,11 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
 
     this.openSubEditor({
       title: this.getCardTypeName(cardConfig.type),
+      renderHeaderActions: () => html`
+        <ha-button outlined @click=${() => this.openPickCard()}>
+          ${t("editor.card.entity_carousel.label.change_card_type")}
+        </ha-button>
+      `,
       render: () => html`
         <bc-form-help-box
           .header=${t("editor.card.entity_carousel.helper_text.card_editor")}
@@ -117,15 +122,14 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
       );
 
       return html`
-        <div class="panel">
-          <ha-button raised @click="${() => this.openEditCard()}">
-            ${t("editor.card.entity_carousel.label.edit_card")}
-            <ha-svg-icon .path=${mdiPencil} slot="icon"></ha-svg-icon>
-          </ha-button>
-          <ha-button @click=${() => this.openPickCard()}>
-            ${t("editor.card.entity_carousel.label.change_card_type")}
-          </ha-button>
-        </div>
+        <ha-button
+          class="primary-button"
+          raised
+          @click="${() => this.openEditCard()}"
+        >
+          ${t("editor.card.entity_carousel.label.edit_card")}
+          <ha-svg-icon .path=${mdiPencil} slot="icon"></ha-svg-icon>
+        </ha-button>
         ${this.renderCarouselLayoutSection()}
         <ha-expansion-panel outlined expanded>
           <h3 slot="header">
@@ -243,5 +247,16 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
     });
 
     this.closeSubEditor();
+  }
+
+  static get styles() {
+    return [
+      super.styles,
+      css`
+        .primary-button {
+          --button-height: 63px;
+        }
+      `,
+    ];
   }
 }
