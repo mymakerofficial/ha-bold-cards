@@ -115,8 +115,11 @@ export class BoldAtAGlanceCard extends BoldLovelaceCard<BoldAtAGlanceCardConfig>
   }
 }
 
-BoldAtAGlanceCard.registerCustomCard({
-  name: "At a glance card",
-  description: "Display any data in a concise way.",
-  preview: false,
-});
+// At a glance is not ready yet so dont register it.
+//  adding to a dashboard using manual is still possible
+
+// BoldAtAGlanceCard.registerCustomCard({
+//   name: "At a glance card",
+//   description: "Display any data in a concise way.",
+//   preview: false,
+// });
