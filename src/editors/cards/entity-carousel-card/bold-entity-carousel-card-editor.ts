@@ -106,7 +106,10 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
         return nothing;
       }
 
-      const selector = this.getEntitySelectorFilterFor(this._config.card.type);
+      const selector = this.getEntitySelectorFor(this._config.card.type);
+      const isKnownSelector = this.getIsEntitySelectorKnownFor(
+        this._config.card.type,
+      );
 
       const domains = toArray(selector.filter).flatMap((it) =>
         toArray(it.domain),
@@ -120,6 +123,10 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
           domain: domains.join(", "),
         },
       );
+
+      const showEntitiesHelp =
+        !isKnownSelector &&
+        (isDefined(selector.include_entities) || isDefined(selector.filter));
 
       return html`
         <ha-button
@@ -137,7 +144,7 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
             ${t("editor.card.entity_carousel.label.entities")}
           </h3>
           <div class="content flex-col-small">
-            ${isDefined(selector.include_entities) || isDefined(selector.filter)
+            ${showEntitiesHelp
               ? html`
                   <bc-form-help-box
                     .header=${t(
