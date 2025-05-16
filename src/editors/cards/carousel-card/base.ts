@@ -6,8 +6,8 @@ import { t } from "../../../localization/i18n";
 import { mdiCursorMove } from "@mdi/js";
 import { Position } from "../../../lib/layout/position";
 import { editorBaseStyles } from "../../styles";
-import { getLovelaceCardElementClass } from "../../../lib/cards/helpers";
-import { isUndefined, omit, toPromise } from "../../../lib/helpers";
+import { getLovelaceCardConfigElement } from "../../../lib/cards/helpers";
+import { isUndefined, omit } from "../../../lib/helpers";
 import {
   LovelaceCardConfig,
   LovelaceCardEditor,
@@ -18,93 +18,54 @@ import { Mutex, withTimeout } from "async-mutex";
 import { CarouselStepperStyle } from "../../../components/bc-carousel";
 import { enumToOptions } from "../../helpers";
 import { Maybe, RenderResult } from "../../../lib/types";
+import { HassUndefinedError } from "../../../lib/basic-hass-object";
+import { Optional } from "../../../lib/optional";
 
-type CardEntities = {
+type CardEntitiesEntry = {
   availableEntities: Maybe<string[]>;
-  all: boolean;
-  error: boolean;
 };
 
 type CardEditorEntry = {
   doesValidate: boolean;
-  entities: CardEntities;
   editor: Maybe<LovelaceCardEditor>;
+};
+
+const EMPTY_CARD_EDITOR_ENTRY: CardEditorEntry = {
+  doesValidate: false,
+  editor: undefined,
+};
+
+const EMPTY_CARD_ENTITIES_ENTRY: CardEntitiesEntry = {
+  availableEntities: undefined,
 };
 
 export abstract class BoldCarouselCardEditorBase<
   TConfig extends CarouselCardBaseConfig,
 > extends BoldLovelaceCardEditor<TConfig> {
-  private _cardEditor: Map<string, CardEditorEntry> = new Map();
-  private _loadCardEditorMutex = new Mutex();
+  @state() private _cardEditor: Map<string, CardEditorEntry> = new Map();
+  @state() private _cardEntities: Map<string, CardEntitiesEntry> = new Map();
+  private _loadCardEditorMutex = withTimeout(
+    new Mutex(),
+    100,
+    new Error("Timeout loading card editor"),
+  );
   private _loadEntitiesMutex = withTimeout(
     new Mutex(),
     100,
     new Error("Timeout loading available entities"),
   );
 
-  @state() protected _isLoadingCardEditor = false;
+  protected get isLoading() {
+    return (
+      this._loadCardEditorMutex.isLocked() || this._loadEntitiesMutex.isLocked()
+    );
+  }
 
-  // returns true if a new card editor was loaded
-  protected async loadCardEditor(type?: string) {
-    if (
-      !this.hass ||
-      !this.lovelace ||
-      isUndefined(type) ||
-      this._cardEditor.has(type)
-    ) {
-      return false;
-    }
-
-    this._isLoadingCardEditor = true;
-
-    const entities: CardEntities = await this._loadEntitiesMutex
-      .runExclusive(async () => {
-        const entities = await this.getEntitiesForCard(
-          type,
-          this.getAllEntityIds(),
-          Infinity,
-        );
-
-        if (type === "tile") {
-          return {
-            availableEntities: entities,
-            all: true,
-            error: false,
-          };
-        }
-
-        if (entities.length === 0) {
-          return {
-            availableEntities: undefined,
-            all: false,
-            error: false,
-          };
-        }
-
-        return {
-          availableEntities: entities,
-          all: false,
-          error: false,
-        };
-      })
-      .catch((error) => {
-        console.log(error);
-        return {
-          availableEntities: undefined,
-          all: false,
-          error: true,
-        }; // took too long or something else went wrong
-      });
-
-    return await this._loadCardEditorMutex
-      .runExclusive(async () => {
-        const cardClass = getLovelaceCardElementClass(type).get();
-
-        if (isUndefined(cardClass.getConfigElement)) {
-          throw new Error(`Card ${type} does not have a config element`);
-        }
-
-        const editor = await toPromise(cardClass.getConfigElement());
+  private async _loadCardEditor(type: string) {
+    return await this._loadCardEditorMutex.runExclusive(() =>
+      Result.runAsync<CardEditorEntry>(async () => {
+        const editorResult = await getLovelaceCardConfigElement(type);
+        const editor = editorResult.get();
         editor.hass = this.hass;
         editor.lovelace = this.lovelace;
 
@@ -116,52 +77,81 @@ export abstract class BoldCarouselCardEditorBase<
           }),
         ).isError();
 
-        this._cardEditor.set(type, {
+        return {
           doesValidate,
-          entities,
           editor,
-        });
-      })
-      .catch((error) => {
-        console.warn(`Failed to load card editor for ${type}`, error);
-        this._isLoadingCardEditor = false;
-        this._cardEditor.set(type, {
-          doesValidate: false,
-          entities,
-          editor: undefined,
-        });
-        return false;
-      })
-      .then(() => {
-        this._isLoadingCardEditor = false;
-        return true;
-      });
-  }
-
-  protected _canValidateCardType(type: string) {
-    return this._cardEditor.get(type)?.doesValidate ?? false;
-  }
-
-  protected _getEntitiesFor(type: string) {
-    return (
-      this._cardEditor.get(type)?.entities ?? {
-        availableEntities: undefined,
-        all: false,
-        error: true,
-      }
+        };
+      }),
     );
   }
 
-  protected _getEntitiesSelectorFilter(type: string) {
-    const { availableEntities, all, error } = this._getEntitiesFor(type);
+  private async _loadCardEntities(type: string) {
+    return await this._loadEntitiesMutex.runExclusive(async () =>
+      Result.runAsync<CardEntitiesEntry>(async () => {
+        const entities = await this.getAllEntitiesForCard(type);
 
-    if (error) {
-      return {};
-    }
+        return {
+          availableEntities: entities,
+        };
+      }),
+    );
+  }
 
-    if (all) {
-      return {};
-    }
+  // returns true if a new card editor was loaded and a refresh is needed
+  protected async loadCard(type?: string) {
+    return Result.runAsync(async () => {
+      if (!this.hass || !this.lovelace) {
+        throw new HassUndefinedError();
+      }
+
+      if (
+        isUndefined(type) ||
+        (this._cardEditor.has(type) && this._cardEntities.has(type))
+      ) {
+        return false;
+      }
+
+      const [editorEntryRes, entitiesEntryRes] = await Promise.all([
+        this._loadCardEditor(type),
+        this._loadCardEntities(type),
+      ]);
+
+      const editorEntry = editorEntryRes
+        .logError()
+        .ifError(() =>
+          this.errorToast(
+            `Could not load validation for card ${this.getCardTypeName(type)}`,
+          ),
+        )
+        .getOrElse(EMPTY_CARD_EDITOR_ENTRY);
+      const entitiesEntry = entitiesEntryRes
+        .logError()
+        .ifError(() =>
+          this.errorToast(
+            `Could not get available entities for card ${this.getCardTypeName(type)}`,
+          ),
+        )
+        .getOrElse(EMPTY_CARD_ENTITIES_ENTRY);
+
+      this._cardEditor.set(type, editorEntry);
+      this._cardEntities.set(type, entitiesEntry);
+
+      return editorEntry.doesValidate; // if the editor does not validate, we don't need to refresh
+    });
+  }
+
+  protected getCanValidateCardType(type: string) {
+    return this._cardEditor.get(type)?.doesValidate ?? false;
+  }
+
+  protected getEntitiesFor(type: string) {
+    return Optional.of(this._cardEntities.get(type));
+  }
+
+  protected getEntitiesSelectorFilter(type: string) {
+    const { availableEntities } = this.getEntitiesFor(type).getOrElse(
+      EMPTY_CARD_ENTITIES_ENTRY,
+    );
 
     if (availableEntities) {
       return {
@@ -172,7 +162,7 @@ export abstract class BoldCarouselCardEditorBase<
     return {};
   }
 
-  protected _validateCardConfig(config: LovelaceCardConfig) {
+  protected validateCardConfig(config: LovelaceCardConfig) {
     const entry = this._cardEditor.get(config.type);
     const editor = entry?.editor;
     if (isUndefined(entry) || !entry.doesValidate || isUndefined(editor)) {
@@ -185,7 +175,7 @@ export abstract class BoldCarouselCardEditorBase<
     return run(() => editor.setConfig(newConfig));
   }
 
-  protected _renderCarouselLayoutSection() {
+  protected renderCarouselLayoutSection() {
     if (!this.hass || !this._config) {
       return nothing;
     }
@@ -236,7 +226,7 @@ export abstract class BoldCarouselCardEditorBase<
 
   protected renderWith(renderFn: () => RenderResult) {
     return super.renderWith(() => {
-      if (this._isLoadingCardEditor) {
+      if (this.isLoading) {
         return this.renderSpinner({
           label: t("editor.card.carousel.helper_text.loading_editor"),
         });

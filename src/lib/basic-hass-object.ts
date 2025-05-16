@@ -22,6 +22,7 @@ import { HomeAssistant, LovelaceCardConfig } from "../types/ha/lovelace";
 import { HassEntity } from "home-assistant-js-websocket";
 import { computeIsDarkMode } from "./theme";
 import {
+  getAllEntitiesForCard,
   getCardConfigHumanReadableName,
   getCardGridOptions,
   getCardStubConfig,
@@ -160,6 +161,14 @@ export function BasicHassObjectMixin<TBase extends HassObjectConstructor>(
       }
 
       return await getEntitiesForCard(this.hass, type, entities, count);
+    }
+
+    protected async getAllEntitiesForCard(type: string) {
+      if (!this.hass) {
+        throw new HassUndefinedError();
+      }
+
+      return await getAllEntitiesForCard(this.hass, type);
     }
 
     protected getAllEntityIds() {
