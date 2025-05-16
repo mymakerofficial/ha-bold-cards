@@ -6,7 +6,10 @@ import { t } from "../../../localization/i18n";
 import { mdiCursorMove } from "@mdi/js";
 import { Position } from "../../../lib/layout/position";
 import { editorBaseStyles } from "../../styles";
-import { getLovelaceCardConfigElement } from "../../../lib/cards/helpers";
+import {
+  getLovelaceCardConfigElement,
+  getLovelaceCardConfigForm,
+} from "../../../lib/cards/helpers";
 import { isUndefined, omit } from "../../../lib/helpers";
 import {
   LovelaceCardConfig,
@@ -39,11 +42,13 @@ type CardEntitiesEntry = {
 type CardEditorEntry = {
   doesValidate: boolean;
   editor: Maybe<LovelaceCardEditor>;
+  assertValid: Maybe<(config: LovelaceCardConfig) => void>;
 };
 
 const EMPTY_CARD_EDITOR_ENTRY: CardEditorEntry = {
   doesValidate: false,
   editor: undefined,
+  assertValid: undefined,
 };
 
 const EMPTY_CARD_ENTITIES_ENTRY: CardEntitiesEntry = {
@@ -114,22 +119,45 @@ export abstract class BoldCarouselCardEditorBase<
     return await this._loadCardEditorMutex.runExclusive(() =>
       Result.runAsync<CardEditorEntry>(async () => {
         const editorResult = await getLovelaceCardConfigElement(type);
-        const editor = editorResult.get();
-        editor.hass = this.hass;
-        editor.lovelace = this.lovelace;
 
-        // set an invalid config to check if the editor validates
-        const doesValidate = run(() =>
-          // @ts-expect-error
-          editor.setConfig({
-            ["__this_key_should_not_exist__"]: "__some_random_value__",
-          }),
-        ).isError();
+        if (editorResult.isOk()) {
+          const editor = editorResult.get();
+          editor.hass = this.hass;
+          editor.lovelace = this.lovelace;
 
-        return {
-          doesValidate,
-          editor,
-        };
+          // set an invalid config to check if the editor validates
+          const doesValidate = run(() =>
+            // @ts-expect-error
+            editor.setConfig({
+              ["__this_key_should_not_exist__"]: "__some_random_value__",
+            }),
+          ).isError();
+
+          return {
+            doesValidate,
+            editor,
+            assertValid: editor.setConfig.bind(editor),
+          };
+        }
+
+        // if the editor is not found, the card might provide a form
+        const formResult = await getLovelaceCardConfigForm(type);
+
+        if (formResult.isOk()) {
+          const assertValid = Optional.of(
+            formResult.get().assertConfig,
+          ).getOrThrow("Card provided a form but no assertConfig");
+
+          return {
+            doesValidate: true,
+            editor: undefined,
+            assertValid,
+          };
+        }
+
+        throw new Error(
+          `Failed to get config element or form for card ${type}: ${editorResult.error}; ${formResult.error}`,
+        );
       }),
     );
   }
