@@ -28,7 +28,7 @@ export class BoldMediaPlayerControlRowFeatureEditor extends BoldLovelaceCardFeat
             .value=${this._config?.when_unavailable}
             .default=${ElementWhenUnavailable.DISABLE}
             @value-changed=${(ev) =>
-              this._handleValueChanged("when_unavailable", ev)}
+              this.handleValueChanged("when_unavailable", ev)}
             .selector=${{
               select: {
                 mode: "dropdown",

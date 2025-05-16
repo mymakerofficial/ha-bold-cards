@@ -170,7 +170,7 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
               ]}
               .computeLabel=${this._computeLabelCallback}
               .computeHelper=${this._computeHelperCallback}
-              @value-changed=${this._formValueChanged}
+              @value-changed=${this.handleFormValueChanged}
             ></ha-form>
             <bc-form-element
               .label=${t(
@@ -183,7 +183,7 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
                 }}
                 .value=${this._config?.remove_inactive_entities ?? false}
                 @value-changed=${(ev) =>
-                  this._handleValueChanged("remove_inactive_entities", ev)}
+                  this.handleValueChanged("remove_inactive_entities", ev)}
               ></ha-selector>
             </bc-form-element>
           </div>
@@ -216,7 +216,7 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
     }
 
     const card = stripCarouselCardConfig(config);
-    this._patchConfig({
+    this.patchConfig({
       card,
     });
   }
@@ -241,7 +241,7 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
         config.entities)
       : config.entities; // keep old entities
 
-    this._patchConfig({
+    this.patchConfig({
       card,
       entities,
     });

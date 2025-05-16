@@ -175,7 +175,7 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
 
     await this.loadCard(card.type);
 
-    this._patchConfig({
+    this.patchConfig({
       cards: [...oldCards, { card }],
     });
 
@@ -187,7 +187,7 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
   ) {
     ev.stopPropagation();
 
-    this._patchConfig({
+    this.patchConfig({
       cards: move(this._config?.cards, ev.detail.oldIndex, ev.detail.newIndex),
     });
   }
@@ -199,20 +199,20 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
       return;
     }
 
-    this._patchConfig({
+    this.patchConfig({
       cards: [...oldCards, newCardEntry],
     });
   }
 
   private _removeCard(index: number) {
-    this._patchConfig({
+    this.patchConfig({
       cards: splice(this._config?.cards, index),
     });
   }
 
   private _updateCardConfig(index: number, newConfig: LovelaceCardConfig) {
     const card = stripCarouselCardConfig(newConfig);
-    this._patchConfig({
+    this.patchConfig({
       cards: patchElement(this._config?.cards, index, { card }),
     });
   }
