@@ -98,6 +98,13 @@ export function toError<
   return (isString(maybeError) ? new Error(maybeError) : maybeError) as TRes;
 }
 
+export function toArray<T>(value: Maybe<T | T[]>): T[] {
+  if (isUndefined(value)) {
+    return [];
+  }
+  return isArray(value) ? value : [value];
+}
+
 export function pair<T, G>(a: T, b: G): Pair<T, G> {
   return [a, b];
 }
