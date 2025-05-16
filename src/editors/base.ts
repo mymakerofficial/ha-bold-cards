@@ -162,6 +162,11 @@ export abstract class BoldLovelaceEditorWithSubEditor<
     this.requestUpdate();
   }
 
+  protected closeAllSubEditors(): void {
+    this._subEditorStack = [];
+    this.requestUpdate();
+  }
+
   protected renderWithSubEditor(renderFn: () => RenderResult) {
     if (!isEmpty(this._subEditorStack)) {
       const def = lastOf(this._subEditorStack)!;
