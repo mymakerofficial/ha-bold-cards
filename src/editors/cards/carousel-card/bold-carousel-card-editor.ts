@@ -87,29 +87,31 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
       throw new Error("No cards defined");
     }
 
-    const card = enrichCarouselCardConfig({
-      config: this._config,
-      entry: this._config.cards[index],
-    });
-
     return this.openSubEditor({
-      title: this.getCardTypeName(card.type),
-      render: () => html`
-        <hui-card-element-editor
-          .hass=${this.hass}
-          .lovelace=${this.lovelace}
-          .value=${card}
-          @config-changed=${(
-            ev: CustomEvent<{ config: LovelaceCardConfig }>,
-          ) => {
-            ev.stopPropagation();
-            this._updateCardConfig(index, ev.detail.config);
-          }}
-          @GUImode-changed=${(ev: CustomEvent) => {
-            ev.stopPropagation();
-          }}
-        ></hui-card-element-editor>
-      `,
+      title: this.getCardTypeName(this._config?.cards[index]?.card.type),
+      render: () => {
+        const card = enrichCarouselCardConfig({
+          config: this._config!,
+          entry: this._config!.cards[index],
+        });
+
+        return html`
+          <hui-card-element-editor
+            .hass=${this.hass}
+            .lovelace=${this.lovelace}
+            .value=${card}
+            @config-changed=${(
+              ev: CustomEvent<{ config: LovelaceCardConfig }>,
+            ) => {
+              ev.stopPropagation();
+              this._updateCardConfig(index, ev.detail.config);
+            }}
+            @GUImode-changed=${(ev: CustomEvent) => {
+              ev.stopPropagation();
+            }}
+          ></hui-card-element-editor>
+        `;
+      },
     });
   }
 
