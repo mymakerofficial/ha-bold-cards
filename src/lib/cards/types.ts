@@ -1,7 +1,6 @@
 const _BoldCardType = {
   MEDIA_PLAYER: "custom:bold-media-player-card",
   RECORD_PLAYER: "custom:bold-record-player-card",
-  AIR_QUALITY: "custom:bold-air-quality-card",
   BATTERY: "custom:bold-battery-card",
   CAROUSEL: "custom:bold-carousel-card",
   ENTITY_CAROUSEL: "custom:bold-entity-carousel-card",

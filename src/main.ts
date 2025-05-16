@@ -20,7 +20,6 @@ import "./features/media-player-source-select-feature/bold-media-player-source-s
 import "./features/media-player-media-browser-feature/bold-media-player-media-browser-feature";
 import "./features/feature-stack-feature/bold-feature-stack-feature";
 import "./cards/media-player-card/bold-media-player-card";
-import "./cards/air-quality-card/bold-air-quality-card";
 import "./cards/battery-card/bold-battery-card";
 import "./cards/record-player-card/bold-record-player-card";
 import "./cards/at-a-glance-card/bold-at-a-glance-card";
