@@ -1,6 +1,9 @@
 import { css, html, nothing } from "lit";
 import { customElement } from "lit/decorators";
-import { LovelaceGridOptions } from "../../types/ha/lovelace";
+import {
+  LovelaceCardEditor,
+  LovelaceGridOptions,
+} from "../../types/ha/lovelace";
 import { BoldLovelaceCard } from "../base";
 import { repeat } from "lit-html/directives/repeat";
 import { styleMap } from "lit-html/directives/style-map";
@@ -8,11 +11,19 @@ import { EntityState } from "../../types/ha/entity";
 import { BoldCardType } from "../../lib/cards/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { BatteryCardConfig } from "./types";
+import { getCardEditorTag } from "../../lib/cards/helpers";
 
 const cardType = BoldCardType.BATTERY;
 
 @customElement(stripCustomPrefix(cardType))
 export class BoldBatteryCard extends BoldLovelaceCard<BatteryCardConfig> {
+  public static async getConfigElement(): Promise<LovelaceCardEditor> {
+    await import("../../editors/cards/battery-card/bold-battery-card-editor");
+    return document.createElement(
+      getCardEditorTag(cardType),
+    ) as LovelaceCardEditor;
+  }
+
   static get cardType() {
     return cardType;
   }

@@ -238,6 +238,13 @@ const i18n = new I18n(
           },
         },
         card: {
+          battery: {
+            no_editor: {
+              header: "No settings needed",
+              content:
+                "The battery card always shows all your battery entities, from least to most charged. Configure how many batteries are shown by changing the card height in the Layout tab. \n\nFiltering batterie entities is set to arrive in a future update.",
+            },
+          },
           carousel: {
             label: {
               layout: "Layout",
