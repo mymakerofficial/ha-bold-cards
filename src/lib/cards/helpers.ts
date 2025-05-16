@@ -86,6 +86,18 @@ export async function getLovelaceCardConfigElement(type: string) {
   });
 }
 
+export async function getLovelaceCardConfigForm(type: string) {
+  return Result.runAsync(async () => {
+    const cardClass = getLovelaceCardElementClass(type).get();
+
+    if (isUndefined(cardClass.getConfigForm)) {
+      throw new Error(`Card ${type} does not have a config form`);
+    }
+
+    return await toPromise(cardClass.getConfigForm());
+  });
+}
+
 export function getCardStubConfig(
   hass: HomeAssistant,
   type: string,

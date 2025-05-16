@@ -1,5 +1,6 @@
 import {
   HomeAssistant as HomeAssistantBase,
+  LocalizeFunc,
   LovelaceConfig,
   Theme,
 } from "custom-card-helpers";
@@ -125,6 +126,21 @@ export interface LovelaceCard<TConfig = LovelaceCardConfig>
   setConfig(config: TConfig): void;
 }
 
+type HaFormSchema = any;
+
+export interface LovelaceConfigForm {
+  schema: HaFormSchema[];
+  assertConfig?: (config: LovelaceCardConfig) => void;
+  computeLabel?: (
+    schema: HaFormSchema,
+    localize: LocalizeFunc,
+  ) => string | undefined;
+  computeHelper?: (
+    schema: HaFormSchema,
+    localize: LocalizeFunc,
+  ) => string | undefined;
+}
+
 export interface LovelaceCardConstructor extends Constructor<LovelaceCard> {
   getStubConfig?: (
     hass: HomeAssistant,
@@ -132,7 +148,7 @@ export interface LovelaceCardConstructor extends Constructor<LovelaceCard> {
     entitiesFallback: string[],
   ) => MaybePromise<LovelaceCardConfig>;
   getConfigElement?: () => MaybePromise<LovelaceCardEditor>;
-  getConfigForm?: any;
+  getConfigForm?: () => MaybePromise<LovelaceConfigForm>;
 }
 
 export interface LovelaceGenericElementEditor<TConfig = any, TContext = any>

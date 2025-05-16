@@ -141,6 +141,10 @@ export class Result<TValue, TError = Error> {
     return this.#value!;
   }
 
+  isOk(): boolean {
+    return !this.isError();
+  }
+
   isError(): boolean {
     return isDefined(this.#error);
   }
