@@ -191,6 +191,7 @@ const i18n = new I18n(
             remove: "Remove",
             back: "Back",
             duplicate: "Duplicate",
+            dismiss: "Dismiss",
           },
           wip_section_text:
             "This section isn't ready yet. In the meantime, you can use the YAML editor to customize your card.",

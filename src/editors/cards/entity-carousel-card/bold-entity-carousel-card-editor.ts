@@ -147,21 +147,27 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
           </h3>
           <div class="content flex-col-small">
             ${showEntitiesHelp
-              ? html`
-                  <bc-form-help-box
-                    .header=${t(
-                      "editor.card.entity_carousel.helper_text.entities_pre_filtered.header",
-                    )}
-                    .content=${alertContent}
-                    .icon=${"mdi:information-outline"}
-                    .actions=${html`<ha-button slot="action" @click=${() => {}}>
-                        Allow all entities
-                      </ha-button>
-                      <ha-button slot="action" @click=${() => {}}>
-                        Dismiss
-                      </ha-button>`}
-                  ></bc-form-help-box>
-                `
+              ? this.renderDismissable(
+                  "entities_pre_filtered",
+                  (onDismiss) => html`
+                    <bc-form-help-box
+                      .header=${t(
+                        "editor.card.entity_carousel.helper_text.entities_pre_filtered.header",
+                      )}
+                      .content=${alertContent}
+                      .icon=${"mdi:information-outline"}
+                      .actions=${html`<ha-button
+                          slot="action"
+                          @click=${() => {}}
+                        >
+                          Allow all entities
+                        </ha-button>
+                        <ha-button slot="action" @click=${onDismiss}>
+                          ${t("editor.common.label.dismiss")}
+                        </ha-button>`}
+                    ></bc-form-help-box>
+                  `,
+                )
               : nothing}
             <ha-form
               .hass=${this.hass}

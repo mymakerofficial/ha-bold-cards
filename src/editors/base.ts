@@ -20,8 +20,9 @@ export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
   implements LovelaceGenericElementEditor<TConfig, TContext>
 {
   @property({ attribute: false }) public lovelace?: LovelaceConfig;
-
   @property({ attribute: false }) public context?: TContext;
+
+  @state() private _dismissedSet = new Set<string>();
 
   @state() protected _config?: TConfig;
 
@@ -94,6 +95,22 @@ export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
     ev: CustomEvent<{ value: Partial<TConfig> }>,
   ) {
     this.patchConfig(ev.detail.value);
+  }
+
+  protected renderDismissable(
+    key: string,
+    renderFn: (onDismiss: () => void) => RenderResult,
+  ) {
+    if (this._dismissedSet.has(key)) {
+      return nothing;
+    }
+
+    const onDismiss = () => {
+      this._dismissedSet.add(key);
+      this.requestUpdate();
+    };
+
+    return renderFn(onDismiss);
   }
 
   static styles: CSSResultGroup = editorBaseStyles;
