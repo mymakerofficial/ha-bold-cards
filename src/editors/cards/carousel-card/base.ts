@@ -32,6 +32,8 @@ type CardEntitiesEntrySelector = Omit<
 type CardEntitiesEntry = {
   availableEntities: string[];
   selector: CardEntitiesEntrySelector;
+  // we are sure that the selector is valid, so don't show a warning
+  isKnown: boolean;
 };
 
 type CardEditorEntry = {
@@ -47,6 +49,7 @@ const EMPTY_CARD_EDITOR_ENTRY: CardEditorEntry = {
 const EMPTY_CARD_ENTITIES_ENTRY: CardEntitiesEntry = {
   availableEntities: [],
   selector: {},
+  isKnown: false,
 };
 
 const knownEntitySelectors: Record<string, CardEntitiesEntrySelector> = {
@@ -55,7 +58,33 @@ const knownEntitySelectors: Record<string, CardEntitiesEntrySelector> = {
       domain: ["media_player"],
     },
   },
+  [BoldCardType.MINI_WEATHER]: {
+    filter: {
+      domain: ["weather"],
+    },
+  },
   ["tile"]: {},
+  ["media-control"]: {
+    filter: {
+      domain: ["media_player"],
+    },
+  },
+  ["weather-forecast"]: {
+    filter: {
+      domain: ["weather"],
+    },
+  },
+  ["light"]: {
+    filter: {
+      domain: ["light"],
+    },
+  },
+  ["humidifier"]: {
+    filter: {
+      domain: ["humidifier"],
+    },
+  },
+  ["entity"]: {},
 };
 
 export abstract class BoldCarouselCardEditorBase<
@@ -145,6 +174,7 @@ export abstract class BoldCarouselCardEditorBase<
           selector: knownSelector.getOrElse(() =>
             this.guessSelectorFromEntities(entities),
           ),
+          isKnown: knownSelector.isPresent(),
         };
       }),
     );
@@ -198,15 +228,15 @@ export abstract class BoldCarouselCardEditorBase<
   }
 
   protected getAvailableEntitiesForCard(type: string) {
-    return Optional.of(this._cardEntities.get(type)).getOrElse(
-      EMPTY_CARD_ENTITIES_ENTRY,
-    ).availableEntities;
+    return this._cardEntities.get(type)?.availableEntities ?? [];
   }
 
-  protected getEntitySelectorFilterFor(type: string) {
-    return Optional.of(this._cardEntities.get(type)).getOrElse(
-      EMPTY_CARD_ENTITIES_ENTRY,
-    ).selector;
+  protected getEntitySelectorFor(type: string) {
+    return this._cardEntities.get(type)?.selector ?? {};
+  }
+
+  protected getIsEntitySelectorKnownFor(type: string) {
+    return this._cardEntities.get(type)?.isKnown ?? false;
   }
 
   protected validateCardConfig(config: LovelaceCardConfig) {
