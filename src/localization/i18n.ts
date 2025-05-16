@@ -237,6 +237,15 @@ const i18n = new I18n(
             },
           },
         },
+        feature: {
+          media_player_media_browser: {
+            no_editor: {
+              header: "WIP",
+              content:
+                "The media browser feature currently only supports media players provided by the Spotify integration and only shows the last played albums. \n\nThe media browser feature is a work in progress and will be improved in the future.",
+            },
+          },
+        },
         card: {
           battery: {
             no_editor: {

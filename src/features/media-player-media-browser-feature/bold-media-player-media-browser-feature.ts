@@ -10,6 +10,7 @@ import { repeat } from "lit-html/directives/repeat";
 import { styleMap } from "lit-html/directives/style-map";
 import { BoldFeatureType } from "../../lib/features/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
+import { LovelaceCardFeatureEditor } from "../../types/ha/lovelace";
 
 const featureType = BoldFeatureType.MEDIA_PLAYER_MEDIA_BROWSER;
 
@@ -19,6 +20,15 @@ export class BoldMediaPlayerMediaBrowserFeature extends CustomLovelaceCardFeatur
   BoldMediaPlayerMediaBrowserFeatureConfig
 > {
   @state() private _currentItem?: MediaPlayerItem;
+
+  public static async getConfigElement(): Promise<LovelaceCardFeatureEditor> {
+    await import(
+      "../../editors/features/media-player-media-browser-feature/bold-media-player-media-browser-feature-editor"
+    );
+    return document.createElement(
+      "bold-media-player-media-browser-feature-editor",
+    ) as LovelaceCardFeatureEditor;
+  }
 
   static get featureType() {
     return featureType;
@@ -239,5 +249,5 @@ BoldMediaPlayerMediaBrowserFeature.registerCustomFeature<
   name: "Media Player Media Browser",
   supported: (stateObj) => computeDomain(stateObj.entity_id) === "media_player",
   getSize: (_config, _stateObj) => 2,
-  configurable: false,
+  configurable: true,
 });
