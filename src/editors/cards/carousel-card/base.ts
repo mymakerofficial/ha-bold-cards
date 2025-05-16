@@ -243,7 +243,7 @@ export abstract class BoldCarouselCardEditorBase<
               .value=${this._config.stepper_position ?? Position.BOTTOM_CENTER}
               .positions=${carouselCardAllowedStepperPositions}
               @value-changed=${(ev) =>
-                this._handleValueChanged("stepper_position", ev)}
+                this.handleValueChanged("stepper_position", ev)}
               .hass=${this.hass}
             ></bc-layout-select>
           </bc-form-element>
@@ -255,7 +255,7 @@ export abstract class BoldCarouselCardEditorBase<
               .value=${this._config.stepper_style}
               .default=${CarouselStepperStyle.DOTS}
               @value-changed=${(ev) =>
-                this._handleValueChanged("stepper_style", ev)}
+                this.handleValueChanged("stepper_style", ev)}
               .selector=${{
                 select: {
                   mode: "dropdown",

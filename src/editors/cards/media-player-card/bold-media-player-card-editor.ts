@@ -112,7 +112,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
         }}
         .label=${t("editor.card.media_player.label.entity")}
         .value=${this._config?.entity}
-        @value-changed=${(ev) => this._handleValueChanged("entity", ev)}
+        @value-changed=${(ev) => this.handleValueChanged("entity", ev)}
         .hass=${this.hass}
       ></ha-selector>
       <ha-expansion-panel outlined>
@@ -130,7 +130,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
               .value=${this._config.picture_position}
               .positions=${mediaPlayerAllowedPicturePositions}
               @value-changed=${(ev) =>
-                this._handleValueChanged("picture_position", ev)}
+                this.handleValueChanged("picture_position", ev)}
             ></bc-layout-select>
           </bc-form-element>
           <bc-form-element
@@ -142,7 +142,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
               }}
               .value=${this._config?.show_picture ?? true}
               @value-changed=${(ev) =>
-                this._handleValueChanged("show_picture", ev)}
+                this.handleValueChanged("show_picture", ev)}
             ></ha-selector>
           </bc-form-element>
           <bc-form-element
@@ -154,7 +154,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
               .value=${this._config.text_position}
               .positions=${mediaPlayerAllowedTextPositions}
               @value-changed=${(ev) =>
-                this._handleValueChanged("text_position", ev)}
+                this.handleValueChanged("text_position", ev)}
               .hass=${this.hass}
             ></bc-layout-select>
           </bc-form-element>
@@ -166,8 +166,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
                 boolean: {},
               }}
               .value=${this._config?.show_text ?? true}
-              @value-changed=${(ev) =>
-                this._handleValueChanged("show_text", ev)}
+              @value-changed=${(ev) => this.handleValueChanged("show_text", ev)}
             ></ha-selector>
           </bc-form-element>
           <bc-layout-select
@@ -175,7 +174,7 @@ export class BoldMediaPlayerCardEditor extends BoldLovelaceCardEditorWithFeature
             .positions=${mediaPlayerAllowedFeaturePositions}
             .value=${this._config?.feature_position ?? VerticalPosition.BOTTOM}
             @value-changed=${(ev) =>
-              this._handleValueChanged("feature_position", ev)}
+              this.handleValueChanged("feature_position", ev)}
             .hass=${this.hass}
           ></bc-layout-select>
         </div>

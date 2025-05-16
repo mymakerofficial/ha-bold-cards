@@ -51,22 +51,22 @@ export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
     }).mapError((error) => `Reloading editor failed: ${error.message}`);
   }
 
-  protected _changeConfig(config: TConfig) {
+  protected changeConfig(config: TConfig) {
     this.fireEvent("config-changed", { config });
   }
 
-  protected _patchConfig(config: Partial<TConfig>) {
+  protected patchConfig(config: Partial<TConfig>) {
     if (!this._config) {
       return;
     }
 
-    this._changeConfig({
+    this.changeConfig({
       ...this._config,
       ...config,
     });
   }
 
-  protected _setField<TField extends keyof TConfig>(
+  protected setField<TField extends keyof TConfig>(
     field: TField,
     value: TConfig[TField],
   ) {
@@ -83,15 +83,17 @@ export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
     this.fireEvent("config-changed", { config: newConfig });
   }
 
-  protected _handleValueChanged<TField extends keyof TConfig>(
+  protected handleValueChanged<TField extends keyof TConfig>(
     field: TField,
     ev: CustomEvent<{ value: TConfig[TField] }>,
   ) {
-    this._setField(field, ev.detail.value);
+    this.setField(field, ev.detail.value);
   }
 
-  protected _formValueChanged(ev: CustomEvent<{ value: Partial<TConfig> }>) {
-    this._patchConfig(ev.detail.value);
+  protected handleFormValueChanged(
+    ev: CustomEvent<{ value: Partial<TConfig> }>,
+  ) {
+    this.patchConfig(ev.detail.value);
   }
 
   static styles: CSSResultGroup = editorBaseStyles;
