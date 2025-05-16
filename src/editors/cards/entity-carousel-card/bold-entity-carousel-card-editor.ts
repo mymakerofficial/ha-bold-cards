@@ -1,5 +1,5 @@
 import { css, html, nothing } from "lit";
-import { customElement } from "lit/decorators";
+import { customElement, state } from "lit/decorators";
 import { LovelaceCardConfig } from "../../../types/ha/lovelace";
 import { BoldCardType } from "../../../lib/cards/types";
 import { t } from "../../../localization/i18n";
@@ -15,6 +15,8 @@ import { stripCarouselCardConfig } from "../../../cards/carousel-card/helpers";
 
 @customElement(getCardEditorTag(BoldCardType.ENTITY_CAROUSEL))
 export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<EntityCarouselCardConfig> {
+  @state() protected _allowAllEntities = false;
+
   protected get _struct() {
     return entityCarouselCardConfigStruct;
   }
@@ -158,7 +160,10 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
                       .icon=${"mdi:information-outline"}
                       .actions=${html`<ha-button
                           slot="action"
-                          @click=${() => {}}
+                          @click=${() => {
+                            this._allowAllEntities = true;
+                            onDismiss();
+                          }}
                         >
                           Allow all entities
                         </ha-button>
@@ -178,7 +183,7 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
                   selector: {
                     entity: {
                       multiple: true,
-                      ...selector,
+                      ...(this._allowAllEntities ? {} : selector),
                     },
                   },
                 },
