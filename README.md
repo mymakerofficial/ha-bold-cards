@@ -1,17 +1,5 @@
 # **Bold Cards** for Home Assistant
-Beautiful and customizable cards for Home Assistant Lovelace UI.
-
-## Roadmap
-
-- [ ] (wip) Media Player Card
-- [ ] Themperature Sensor Card
-- [ ] Airquality Sensor Card
-- [ ] Humidity Sensor Card
-- [ ] Light Card
-- [ ] Weather Card
-- [ ] Glance Card
-- [ ] Multi Media Player Card
-- [ ] Occupancy Card
+Beautiful and customizable cards for Home Assistant.
 
 ## Installation
 
