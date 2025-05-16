@@ -156,18 +156,18 @@ export async function getEntitiesForCard(
   hass: HomeAssistant,
   type: string,
   entities: string[],
-  count: number,
+  maxCount: number,
 ) {
   const pickedEntities = new Set<string>();
 
-  while (count > pickedEntities.size) {
+  while (pickedEntities.size < maxCount) {
     const availableEntities = entities.filter(
       (entity) => !pickedEntities.has(entity),
     );
 
     const entity = await getNextEntityForCard(hass, type, availableEntities);
 
-    if (isUndefined(entity) || isEmpty(entity)) {
+    if (isUndefined(entity) || isEmpty(entity) || pickedEntities.has(entity)) {
       // no entity was provided so we can stop
       break;
     }
@@ -179,7 +179,12 @@ export async function getEntitiesForCard(
 }
 
 export async function getAllEntitiesForCard(hass: HomeAssistant, type: string) {
-  return getEntitiesForCard(hass, type, Object.keys(hass.states), Infinity);
+  return getEntitiesForCard(
+    hass,
+    type,
+    Object.keys(hass.states),
+    Object.keys(hass.states).length,
+  );
 }
 
 async function getNextEntityForCard(
