@@ -246,7 +246,7 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
       entities,
     });
 
-    this.closeSubEditor();
+    this.closeAllSubEditors();
   }
 
   static get styles() {
