@@ -74,29 +74,31 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
   }
 
   protected openEditCard() {
-    const cardConfig = getEntityCarouselCardConfig({
-      config: this._config!,
-    });
-
     this.openSubEditor({
-      title: this.getCardTypeName(cardConfig.type),
+      title: this.getCardTypeName(this._config?.card?.type ?? ""),
       renderHeaderActions: () => html`
         <ha-button outlined @click=${() => this.openPickCard()}>
           ${t("editor.card.entity_carousel.label.change_card_type")}
         </ha-button>
       `,
-      render: () => html`
-        <bc-form-help-box
-          .header=${t("editor.card.entity_carousel.helper_text.card_editor")}
-          .icon=${"mdi:alert-outline"}
-        ></bc-form-help-box>
-        <hui-card-element-editor
-          .hass=${this.hass}
-          .value=${cardConfig}
-          .lovelace=${this.lovelace}
-          @config-changed=${this._handleCardConfigChanged}
-        ></hui-card-element-editor>
-      `,
+      render: () => {
+        const cardConfig = getEntityCarouselCardConfig({
+          config: this._config!,
+        });
+
+        return html`
+          <bc-form-help-box
+            .header=${t("editor.card.entity_carousel.helper_text.card_editor")}
+            .icon=${"mdi:alert-outline"}
+          ></bc-form-help-box>
+          <hui-card-element-editor
+            .hass=${this.hass}
+            .lovelace=${this.lovelace}
+            .value=${cardConfig}
+            @config-changed=${this._handleCardConfigChanged}
+          ></hui-card-element-editor>
+        `;
+      },
     });
   }
 
