@@ -74,6 +74,18 @@ export function getLovelaceCardElementClass(
   });
 }
 
+export async function getLovelaceCardConfigElement(type: string) {
+  return Result.runAsync(async () => {
+    const cardClass = getLovelaceCardElementClass(type).get();
+
+    if (isUndefined(cardClass.getConfigElement)) {
+      throw new Error(`Card ${type} does not have a config element`);
+    }
+
+    return await toPromise(cardClass.getConfigElement());
+  });
+}
+
 export function getCardStubConfig(
   hass: HomeAssistant,
   type: string,
@@ -152,6 +164,10 @@ export async function getEntitiesForCard(
   }
 
   return [...pickedEntities.values()];
+}
+
+export async function getAllEntitiesForCard(hass: HomeAssistant, type: string) {
+  return getEntitiesForCard(hass, type, Object.keys(hass.states), Infinity);
 }
 
 async function getNextEntityForCard(

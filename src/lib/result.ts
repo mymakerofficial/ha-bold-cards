@@ -155,3 +155,7 @@ export function runAsync<TValue>(
 ): Promise<Result<TValue>> {
   return Result.runAsync(fn);
 }
+
+export function getResult<TValue>(result: Result<TValue>): TValue {
+  return result.get();
+}

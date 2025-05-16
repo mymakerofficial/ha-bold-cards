@@ -20,6 +20,7 @@ import {
   stripCarouselCardConfig,
 } from "../../../cards/carousel-card/helpers";
 import { BoldCarouselCardEditorBase } from "./base";
+import { getResult } from "../../../lib/result";
 
 @customElement(getCardEditorTag(BoldCardType.CAROUSEL))
 export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselCardConfig> {
@@ -30,14 +31,15 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
   public setConfig(config: CarouselCardConfig): void {
     // ensure all editors are loaded, if a new one was loaded, reload the error to validate
     Promise.all(
-      config.cards.map((entry) => this.loadCardEditor(entry.card.type)),
+      config.cards.map((entry) => this.loadCard(entry.card.type)),
     ).then((results) => {
-      results.some((didChange) => {
+      results.map(getResult).some((didChange) => {
         if (didChange) {
           this.forceReloadEditor()
-            .logError()
-            .mapError("Failed to refresh editor, validation may fail")
-            .ifError((error) => this.errorToast(error));
+            .ifError(() =>
+              this.errorToast("Failed to refresh editor, validation may fail"),
+            )
+            .logError();
         }
       });
     });
@@ -48,7 +50,7 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
         config,
         entry,
       });
-      this._validateCardConfig(cardConfig).throwIfError(
+      this.validateCardConfig(cardConfig).throwIfError(
         (error) => `Invalid card config: ${error.message}`,
       );
     });
@@ -130,7 +132,7 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
       );
 
       return html`
-        ${this._renderCarouselLayoutSection()}
+        ${this.renderCarouselLayoutSection()}
         <ha-expansion-panel outlined expanded>
           <h3 slot="header">
             <ha-svg-icon .path=${mdiCardText}></ha-svg-icon>
@@ -171,7 +173,7 @@ export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselC
 
     const card = stripCarouselCardConfig(newCardConfig);
 
-    await this.loadCardEditor(card.type);
+    await this.loadCard(card.type);
 
     this._patchConfig({
       cards: [...oldCards, { card }],

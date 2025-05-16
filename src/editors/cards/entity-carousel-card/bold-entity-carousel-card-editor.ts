@@ -21,23 +21,24 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
 
   public setConfig(config: EntityCarouselCardConfig): void {
     // ensure the card editor is loaded, if a new one was loaded, reload the error to validate
-    this.loadCardEditor(config.card?.type).then((didChange) => {
-      if (didChange) {
+    this.loadCard(config.card?.type).then((didChange) => {
+      if (didChange.get()) {
         this.forceReloadEditor()
-          .logError()
-          .mapError("Failed to refresh editor, validation may fail")
-          .ifError((error) => this.errorToast(error));
+          .ifError(() =>
+            this.errorToast("Failed to refresh editor, validation may fail"),
+          )
+          .logError();
       }
     });
 
     // validate card config with all entities
-    if (this._canValidateCardType(config.card?.type)) {
+    if (this.getCanValidateCardType(config.card?.type)) {
       config.entities.forEach((_, index) => {
         const cardConfig = getEntityCarouselCardConfig({
           config,
           index,
         });
-        return this._validateCardConfig(cardConfig).throwIfError(
+        this.validateCardConfig(cardConfig).throwIfError(
           (error) => `Invalid card config: ${error.message}`,
         );
       });
@@ -100,19 +101,6 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
         return nothing;
       }
 
-      const entities = this._getEntitiesFor(this._config.card.type);
-      const entitiesSelectorFilter = this._getEntitiesSelectorFilter(
-        this._config.card.type,
-      );
-
-      const noneAvailableEntitiesSelected =
-        (!entities.all &&
-          !!entities.availableEntities &&
-          this._config.entities.filter(
-            (entity) => !entities.availableEntities?.includes(entity),
-          )) ||
-        undefined;
-
       return html`
         <div class="panel">
           <ha-button raised @click="${() => this.openEditCard()}">
@@ -123,36 +111,21 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
             ${t("editor.card.entity_carousel.label.change_card_type")}
           </ha-button>
         </div>
-        ${this._renderCarouselLayoutSection()}
+        ${this.renderCarouselLayoutSection()}
         <ha-expansion-panel outlined expanded>
           <h3 slot="header">
             <ha-svg-icon .path=${mdiDevices}></ha-svg-icon>
             ${t("editor.card.entity_carousel.label.entities")}
           </h3>
           <div class="content flex-col-small">
-            ${!entities.all && !!entities.availableEntities?.length
+            ${true
               ? html`
                   <bc-form-help-box
-                    .header=${`This card supports ${entities.availableEntities.length} of your entities.`}
-                    .content=${`For your convenience, your selection has been pre-filled.`}
+                    .header=${`Entities have been pre-filtered`}
+                    .content=${``}
                     .icon=${"mdi:information-outline"}
                     .actions=${html`<ha-button slot="action" @click=${() => {}}>
                         Allow all entities
-                      </ha-button>
-                      <ha-button slot="action" @click=${() => {}}>
-                        Dismiss
-                      </ha-button>`}
-                  ></bc-form-help-box>
-                `
-              : nothing}
-            ${!!noneAvailableEntitiesSelected?.length
-              ? html`
-                  <bc-form-help-box
-                    .header=${`Unsupported entities selected.`}
-                    .content=${`You have selected entities that might not supported by this card. They will still be filled in, but might cause errors.`}
-                    .icon=${"mdi:alert-outline"}
-                    .actions=${html`<ha-button slot="action" @click=${() => {}}>
-                        Remove unsupported
                       </ha-button>
                       <ha-button slot="action" @click=${() => {}}>
                         Dismiss
@@ -169,7 +142,7 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
                   selector: {
                     entity: {
                       multiple: true,
-                      ...entitiesSelectorFilter,
+                      // ...entitiesSelectorFilter,
                     },
                   },
                 },
@@ -240,11 +213,12 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
 
     const card = stripCarouselCardConfig(newCardConfig);
 
-    await this.loadCardEditor(card.type);
+    await this.loadCard(card.type);
 
     const entities = isEmpty(config.entities)
-      ? (this._getEntitiesFor(card.type).availableEntities?.slice(0, 6) ??
-        config.entities)
+      ? (this.getEntitiesFor(card.type)
+          .getOrUndefined()
+          ?.availableEntities?.slice(0, 6) ?? config.entities)
       : config.entities; // keep old entities
 
     this._patchConfig({
