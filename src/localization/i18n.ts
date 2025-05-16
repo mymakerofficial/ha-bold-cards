@@ -264,6 +264,15 @@ const i18n = new I18n(
             helper_text: {
               card_editor:
                 "The entity field in this editor will be overridden by the entities selected in the carousel editor.",
+              entities_pre_filtered: {
+                header: "Entities have been pre-filtered",
+                content: {
+                  none_specific:
+                    "If we got the filtering wrong, you can still select any entity.",
+                  by_domain:
+                    "The selected card only supports entities of the type %{domain}. If we got this wrong, you can still select any entity.",
+                },
+              },
             },
           },
           weather: {

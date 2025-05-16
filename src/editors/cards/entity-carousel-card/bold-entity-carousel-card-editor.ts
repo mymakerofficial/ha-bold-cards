@@ -3,7 +3,7 @@ import { customElement } from "lit/decorators";
 import { LovelaceCardConfig } from "../../../types/ha/lovelace";
 import { BoldCardType } from "../../../lib/cards/types";
 import { t } from "../../../localization/i18n";
-import { isDefined, isEmpty, isUndefined } from "../../../lib/helpers";
+import { isDefined, isEmpty, isUndefined, toArray } from "../../../lib/helpers";
 import { LovelaceCardConfigWithEntity } from "../../../types/card";
 import { getCardEditorTag } from "../../../lib/cards/helpers";
 import { getEntityCarouselCardConfig } from "../../../cards/entity-carousel-card/helpers";
@@ -101,6 +101,21 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
         return nothing;
       }
 
+      const selector = this.getEntitySelectorFilterFor(this._config.card.type);
+
+      const domains = toArray(selector.filter).flatMap((it) =>
+        toArray(it.domain),
+      );
+
+      const alertContent = t(
+        !isEmpty(domains) ? "by_domain" : "none_specific",
+        {
+          scope:
+            "editor.card.entity_carousel.helper_text.entities_pre_filtered.content",
+          domain: domains.join(", "),
+        },
+      );
+
       return html`
         <div class="panel">
           <ha-button raised @click="${() => this.openEditCard()}">
@@ -118,11 +133,13 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
             ${t("editor.card.entity_carousel.label.entities")}
           </h3>
           <div class="content flex-col-small">
-            ${true
+            ${isDefined(selector.include_entities) || isDefined(selector.filter)
               ? html`
                   <bc-form-help-box
-                    .header=${`Entities have been pre-filtered`}
-                    .content=${``}
+                    .header=${t(
+                      "editor.card.entity_carousel.helper_text.entities_pre_filtered.header",
+                    )}
+                    .content=${alertContent}
                     .icon=${"mdi:information-outline"}
                     .actions=${html`<ha-button slot="action" @click=${() => {}}>
                         Allow all entities
@@ -142,7 +159,7 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
                   selector: {
                     entity: {
                       multiple: true,
-                      // ...entitiesSelectorFilter,
+                      ...selector,
                     },
                   },
                 },
@@ -216,9 +233,8 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
     await this.loadCard(card.type);
 
     const entities = isEmpty(config.entities)
-      ? (this.getEntitiesFor(card.type)
-          .getOrUndefined()
-          ?.availableEntities?.slice(0, 6) ?? config.entities)
+      ? (this.getAvailableEntitiesForCard(card.type).slice(0, 6) ??
+        config.entities)
       : config.entities; // keep old entities
 
     this._patchConfig({

@@ -27,3 +27,21 @@ export interface SelectSelector {
     reorder?: boolean;
   } | null;
 }
+
+interface EntitySelectorFilter {
+  integration?: string;
+  domain?: string | string[];
+  device_class?: string | string[];
+  supported_features?: number | [number];
+}
+
+export interface EntitySelectorInner {
+  multiple?: boolean;
+  include_entities?: string[];
+  exclude_entities?: string[];
+  filter?: EntitySelectorFilter | EntitySelectorFilter[];
+}
+
+export interface EntitySelector {
+  entity: EntitySelectorInner | null;
+}

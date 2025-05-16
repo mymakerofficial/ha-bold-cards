@@ -20,9 +20,18 @@ import { enumToOptions } from "../../helpers";
 import { Maybe, RenderResult } from "../../../lib/types";
 import { HassUndefinedError } from "../../../lib/basic-hass-object";
 import { Optional } from "../../../lib/optional";
+import { EntitySelectorInner } from "../../../types/ha/selector";
+import { BoldCardType } from "../../../lib/cards/types";
+import { computeDomain } from "../../../helpers/entity";
+
+type CardEntitiesEntrySelector = Omit<
+  EntitySelectorInner,
+  "multiple" | "exclude_entities"
+>;
 
 type CardEntitiesEntry = {
-  availableEntities: Maybe<string[]>;
+  availableEntities: string[];
+  selector: CardEntitiesEntrySelector;
 };
 
 type CardEditorEntry = {
@@ -36,7 +45,17 @@ const EMPTY_CARD_EDITOR_ENTRY: CardEditorEntry = {
 };
 
 const EMPTY_CARD_ENTITIES_ENTRY: CardEntitiesEntry = {
-  availableEntities: undefined,
+  availableEntities: [],
+  selector: {},
+};
+
+const knownEntitySelectors: Record<string, CardEntitiesEntrySelector> = {
+  [BoldCardType.MEDIA_PLAYER]: {
+    filter: {
+      domain: ["media_player"],
+    },
+  },
+  ["tile"]: {},
 };
 
 export abstract class BoldCarouselCardEditorBase<
@@ -49,7 +68,7 @@ export abstract class BoldCarouselCardEditorBase<
     100,
     new Error("Timeout loading card editor"),
   );
-  private _loadEntitiesMutex = withTimeout(
+  private _loadEntitySelectorMutex = withTimeout(
     new Mutex(),
     100,
     new Error("Timeout loading available entities"),
@@ -57,7 +76,8 @@ export abstract class BoldCarouselCardEditorBase<
 
   protected get isLoading() {
     return (
-      this._loadCardEditorMutex.isLocked() || this._loadEntitiesMutex.isLocked()
+      this._loadCardEditorMutex.isLocked() ||
+      this._loadEntitySelectorMutex.isLocked()
     );
   }
 
@@ -85,13 +105,46 @@ export abstract class BoldCarouselCardEditorBase<
     );
   }
 
-  private async _loadCardEntities(type: string) {
-    return await this._loadEntitiesMutex.runExclusive(async () =>
+  private guessSelectorFromEntities(
+    entities: string[],
+  ): CardEntitiesEntrySelector {
+    if (entities.length === 0) {
+      return {};
+    }
+
+    const allEntities = this.getAllEntityIds();
+
+    if (entities.length === allEntities.length) {
+      return {};
+    }
+
+    const domains = [...new Set(entities.map(computeDomain))];
+
+    if (domains.length <= 3) {
+      return {
+        filter: {
+          domain: domains,
+        },
+      };
+    }
+
+    return {
+      include_entities: entities,
+    };
+  }
+
+  private async _loadCardEntitySelector(type: string) {
+    return await this._loadEntitySelectorMutex.runExclusive(async () =>
       Result.runAsync<CardEntitiesEntry>(async () => {
         const entities = await this.getAllEntitiesForCard(type);
 
+        const knownSelector = Optional.of(knownEntitySelectors[type]);
+
         return {
           availableEntities: entities,
+          selector: knownSelector.getOrElse(() =>
+            this.guessSelectorFromEntities(entities),
+          ),
         };
       }),
     );
@@ -113,7 +166,7 @@ export abstract class BoldCarouselCardEditorBase<
 
       const [editorEntryRes, entitiesEntryRes] = await Promise.all([
         this._loadCardEditor(type),
-        this._loadCardEntities(type),
+        this._loadCardEntitySelector(type),
       ]);
 
       const editorEntry = editorEntryRes
@@ -144,22 +197,16 @@ export abstract class BoldCarouselCardEditorBase<
     return this._cardEditor.get(type)?.doesValidate ?? false;
   }
 
-  protected getEntitiesFor(type: string) {
-    return Optional.of(this._cardEntities.get(type));
+  protected getAvailableEntitiesForCard(type: string) {
+    return Optional.of(this._cardEntities.get(type)).getOrElse(
+      EMPTY_CARD_ENTITIES_ENTRY,
+    ).availableEntities;
   }
 
-  protected getEntitiesSelectorFilter(type: string) {
-    const { availableEntities } = this.getEntitiesFor(type).getOrElse(
+  protected getEntitySelectorFilterFor(type: string) {
+    return Optional.of(this._cardEntities.get(type)).getOrElse(
       EMPTY_CARD_ENTITIES_ENTRY,
-    );
-
-    if (availableEntities) {
-      return {
-        include_entities: availableEntities,
-      };
-    }
-
-    return {};
+    ).selector;
   }
 
   protected validateCardConfig(config: LovelaceCardConfig) {
