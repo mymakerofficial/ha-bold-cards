@@ -18,7 +18,6 @@ import { CustomCardEntry } from "../../types/card";
 import { isLovelaceCardConfigWithEntity } from "./guards";
 import { getEntityName } from "../entities/helpers";
 import { Result } from "../result";
-import { Optional } from "../optional";
 
 const CUSTOM_PREFIX = "custom:";
 

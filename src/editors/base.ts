@@ -15,7 +15,7 @@ type HuiCardElementEditor = LitElement & {
   _updateConfigElement?: () => void;
 };
 
-export abstract class BoldLovelaceEditor<TConfig extends {}, TContext = any>
+export abstract class BoldLovelaceEditor<TConfig extends object, TContext = any>
   extends BoldHassElement
   implements LovelaceGenericElementEditor<TConfig, TContext>
 {
@@ -125,7 +125,7 @@ type SubEditorDefinition = {
 };
 
 export abstract class BoldLovelaceEditorWithSubEditor<
-  TConfig extends {},
+  TConfig extends object,
   TContext = any,
 > extends BoldLovelaceEditor<TConfig, TContext> {
   @state() private _subEditorStack: SubEditorDefinition[] = [];

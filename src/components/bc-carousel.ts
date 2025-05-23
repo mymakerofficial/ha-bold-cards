@@ -68,7 +68,9 @@ export class BcCarousel extends LitElement {
     const gap = 16;
 
     this._isScrolling = true;
-    this._scrollTimeout && clearTimeout(this._scrollTimeout);
+    if (this._scrollTimeout) {
+      clearTimeout(this._scrollTimeout);
+    }
     this._scrollTimeout = setTimeout(() => {
       const percentDiff = Math.abs(
         Math.round(this._scrollProgress) - this._scrollProgress,

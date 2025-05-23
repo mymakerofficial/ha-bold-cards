@@ -1,9 +1,7 @@
 import { customElement } from "lit/decorators";
 import { BoldLovelaceCardFeatureEditor } from "../base";
-import { css, html } from "lit";
-import { fireEvent } from "custom-card-helpers";
+import { html } from "lit";
 import { editorBaseStyles } from "../../styles";
-import { FeatureConfigWithMaybeInternals } from "../../../lib/internals/types";
 import { t } from "../../../localization/i18n";
 import { mediaPlayerMediaBrowserFeatureStruct } from "../../../features/media-player-media-browser-feature/struct";
 import { BoldMediaPlayerMediaBrowserFeatureConfig } from "../../../features/media-player-media-browser-feature/types";

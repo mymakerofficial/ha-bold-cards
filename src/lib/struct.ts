@@ -41,7 +41,7 @@ export function typedUnion<
 
     value = value as TMap[keyof TMap];
 
-    // @ts-ignore
+    // @ts-expect-error *shrug*
     const key = value[options.key];
     const struct = options.structs[key as keyof TMap];
 

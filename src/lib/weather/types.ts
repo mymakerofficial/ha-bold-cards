@@ -2,7 +2,7 @@ import {
   HassEntityAttributeBase,
   HassEntityBase,
 } from "home-assistant-js-websocket";
-import { EntityState, MediaPlayerState } from "../../types/ha/entity";
+import { EntityState } from "../../types/ha/entity";
 
 interface ForecastAttribute {
   temperature: number;

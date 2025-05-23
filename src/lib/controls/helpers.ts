@@ -213,7 +213,7 @@ export function translateControls({
             stateObj,
             defaultType,
           });
-        case ControlType.MEDIA_POSITION:
+        case ControlType.MEDIA_POSITION: {
           const supportsSeek = stateObj
             ? supportsFeature(
                 stateObj as MediaPlayerEntity,
@@ -241,6 +241,7 @@ export function translateControls({
             timestamp_position: control.timestamp_position,
             disabled: unsupported,
           };
+        }
         case ControlType.SPACER:
           return {
             type: ControlType.SPACER,

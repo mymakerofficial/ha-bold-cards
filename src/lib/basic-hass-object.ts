@@ -34,7 +34,7 @@ import { Result } from "./result";
 // hass object is split into two files to avoid circular dependencies
 //  any class that extends the hass object and is also used in the hass object should only import the basic-hass-object.ts file
 
-export type HassObjectConstructor<T = {}> = new (...args: any[]) => T;
+export type HassObjectConstructor<T = object> = new (...args: any[]) => T;
 
 export class HassUndefinedError extends Error {
   constructor() {

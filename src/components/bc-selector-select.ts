@@ -38,7 +38,7 @@ export class BcSelectSelector extends BoldHassElement {
   }
 
   protected get _selector() {
-    if (!!this.default) {
+    if (this.default) {
       const defaultOption =
         this.selector.select?.options?.find((option) =>
           typeof option === "string"

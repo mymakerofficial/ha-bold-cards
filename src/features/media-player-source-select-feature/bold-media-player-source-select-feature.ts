@@ -4,7 +4,6 @@ import { BoldMediaPlayerSourceSelectFeatureConfig } from "./types";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
-import { getEntityByEntityId } from "../../lib/entities/helpers";
 import { getMediaPlayerSourceIcon } from "../../lib/media-player/source";
 import { stopPropagation } from "../../editors/helpers";
 import { BoldFeatureType } from "../../lib/features/types";

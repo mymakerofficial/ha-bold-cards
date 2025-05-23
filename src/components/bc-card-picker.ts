@@ -75,7 +75,7 @@ async function loadCardPicker() {
 }
 
 @customElement("bc-card-picker")
-class BcCardPicker extends BoldHassElement {
+export class BcCardPicker extends BoldHassElement {
   public lovelace?: LovelaceConfig;
 
   @property({ attribute: false }) public filter?: (

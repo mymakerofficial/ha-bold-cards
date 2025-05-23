@@ -127,7 +127,7 @@ export abstract class BoldCarouselCardEditorBase<
 
           // set an invalid config to check if the editor validates
           const doesValidate = run(() =>
-            // @ts-expect-error
+            // @ts-expect-error we are testing if an invalid config throws
             editor.setConfig({
               ["__this_key_should_not_exist__"]: "__some_random_value__",
             }),

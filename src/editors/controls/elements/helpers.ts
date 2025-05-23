@@ -51,7 +51,7 @@ export function getControlEditorElement({
   element.stateObj = stateObj;
   element.internals = internals;
   element.hass = hass;
-  // @ts-ignore
+  // @ts-expect-error value-changed is not a standard event
   element.addEventListener("value-changed", onValueChanged);
 
   return element;

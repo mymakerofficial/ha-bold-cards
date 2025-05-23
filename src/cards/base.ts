@@ -9,7 +9,6 @@ import {
 } from "../types/card";
 import { getFeatureDoesRender, getFeatureSize } from "../features/size";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
-
 import {
   FeatureConfigWithMaybeInternals,
   FeatureInternals,

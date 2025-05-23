@@ -4,7 +4,6 @@ import {
   RenderTemplateResult,
   TemplatePreview,
 } from "./types";
-import { HomeAssistant } from "../../types/ha/lovelace";
 
 export interface RenderTemplateParams {
   onChange: (result: RenderTemplateResult | RenderTemplateError) => void;

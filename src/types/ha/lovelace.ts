@@ -160,15 +160,15 @@ export interface LovelaceGenericElementEditor<TConfig = any, TContext = any>
   focusYamlEditor?: () => void;
 }
 
-export interface LovelaceCardEditor<
+export type LovelaceCardEditor<
   TConfig = LovelaceCardConfig,
   TContext = LovelaceCardEditorContext,
-> extends LovelaceGenericElementEditor<TConfig, TContext> {}
+> = LovelaceGenericElementEditor<TConfig, TContext>;
 
-export interface LovelaceCardFeatureEditor<
+export type LovelaceCardFeatureEditor<
   TConfig = LovelaceCardFeatureConfig,
   TContext = LovelaceCardFeatureEditorContext,
-> extends LovelaceGenericElementEditor<TConfig, TContext> {}
+> = LovelaceGenericElementEditor<TConfig, TContext>;
 
 export interface LovelaceCardFeatureEditorContext {
   // TODO what if we want to pass more than just the entity?

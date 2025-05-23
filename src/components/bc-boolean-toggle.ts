@@ -1,18 +1,10 @@
 import { css, html, nothing } from "lit";
-import { stopPropagation, valueToOption } from "../editors/helpers";
+import { valueToOption } from "../editors/helpers";
 import { BoldHassElement } from "./hass-element";
-import { SelectOption } from "../types/ha/selector";
-import { fireEvent, handleClick } from "custom-card-helpers";
+import { fireEvent } from "custom-card-helpers";
 import { customElement, property } from "lit/decorators";
 import { classMap } from "lit-html/directives/class-map";
-import { styleMap } from "lit-html/directives/style-map";
 import { isDefined } from "../lib/helpers";
-import {
-  BottomRowPositions,
-  MiddleRowPositions,
-  Position,
-  TopRowPositions,
-} from "../lib/layout/position";
 import { GetterOrMap } from "../lib/types";
 
 @customElement("bc-boolean-toggle")

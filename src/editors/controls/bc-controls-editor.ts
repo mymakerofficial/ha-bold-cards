@@ -148,7 +148,7 @@ export class ControlsEditor extends LitElement {
           handle-selector=".handle"
           @item-moved=${this._handleItemMoved}
         >
-          ${!!this.controls?.length
+          ${this.controls?.length
             ? html`<div class="items">
                 ${repeat(
                   this.controls ?? [],

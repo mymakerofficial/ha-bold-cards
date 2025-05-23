@@ -1,7 +1,6 @@
 import { array, enums, object, optional } from "superstruct";
 import { controlConfigStruct } from "../../lib/controls/structs";
 import { exactMatch } from "../../lib/struct";
-import { BoldMediaPlayerControlRowFeature } from "./bold-media-player-control-row-feature";
 import { ElementWhenUnavailable } from "../../lib/controls/types";
 import { BoldFeatureType } from "../../lib/features/types";
 
