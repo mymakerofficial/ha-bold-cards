@@ -24,6 +24,13 @@ export default defineConfig([
         },
       ],
       "@typescript-eslint/no-unsafe-declaration-merging": "off",
+      "no-restricted-imports": [
+        "warn",
+        {
+          name: "superstruct",
+          message: "Use 'zod' instead of 'superstruct'.",
+        },
+      ],
     },
   },
 ]);
