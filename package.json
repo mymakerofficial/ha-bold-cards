@@ -18,7 +18,8 @@
     "lit-element": "^4.1.1",
     "lit-html": "^3.2.1",
     "node-vibrant": "^4.0.3",
-    "superstruct": "^2.0.2"
+    "superstruct": "^2.0.2",
+    "zod": "^3.25.23"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
