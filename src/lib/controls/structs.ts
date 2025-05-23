@@ -13,6 +13,7 @@ import {
 import { exactMatch, typedUnion } from "../struct";
 import { MediaPositionTimestampPosition } from "../../components/bc-media-position-control";
 import { mediaToggleKindActionMap } from "./constants";
+import { kebabToSnake } from "../helpers";
 
 const buttonBaseConfigStruct = object({
   icon: optional(string()),
@@ -58,7 +59,10 @@ function getMediaToggleControlKindConfigStruct<
   return object({
     kind: exactMatch(kind),
     ...Object.fromEntries(
-      actions.map((action) => [action, optional(buttonBaseConfigStruct)]),
+      actions.map((action) => [
+        kebabToSnake(action),
+        optional(buttonBaseConfigStruct),
+      ]),
     ),
   });
 }

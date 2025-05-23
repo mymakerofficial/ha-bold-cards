@@ -33,3 +33,15 @@ export type GetterOrMap<T extends string | number | symbol, R> =
 export type Constructor<T = any> = new (...args: any[]) => T;
 
 export type RenderResult = TemplateResult | typeof nothing;
+
+export type Replace<
+  T extends string,
+  S extends string,
+  D extends string,
+  A extends string = "",
+> = T extends `${infer L}${S}${infer R}`
+  ? Replace<R, S, D, `${A}${L}${D}`>
+  : `${A}${T}`;
+
+export type KebabToSnake<T extends string> = Replace<T, "-", "_">;
+export type SnakeToKebab<T extends string> = Replace<T, "_", "-">;

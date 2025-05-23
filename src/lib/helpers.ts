@@ -1,4 +1,12 @@
-import { GetterOrMap, MaybeFunction, MaybePromise, Maybe, Pair } from "./types";
+import {
+  GetterOrMap,
+  KebabToSnake,
+  Maybe,
+  MaybeFunction,
+  MaybePromise,
+  Pair,
+  SnakeToKebab,
+} from "./types";
 
 export function randomFrom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -233,4 +241,12 @@ export function omit<T extends object, K extends keyof T>(
     delete newObj[key];
   });
   return newObj;
+}
+
+export function kebabToSnake<T extends string>(value: T): KebabToSnake<T> {
+  return value.replace(/-/g, "_") as KebabToSnake<T>;
+}
+
+export function snakeToKebab<T extends string>(value: T): SnakeToKebab<T> {
+  return value.replace(/_/g, "-") as SnakeToKebab<T>;
 }

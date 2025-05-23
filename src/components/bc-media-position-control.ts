@@ -3,12 +3,13 @@ import { css, html, LitElement, nothing, unsafeCSS } from "lit";
 import { MediaPlayerEntity, MediaPlayerState } from "../types/ha/entity";
 import { PropertyValues } from "lit-element";
 
+// TODO: replace with shared Position enum
 export const MediaPositionTimestampPosition = {
   HIDDEN: "hidden",
   INLINE: "inline",
   BOTTOM: "bottom",
-  BOTTOM_LEFT: "bottom_left",
-  BOTTOM_RIGHT: "bottom_right",
+  BOTTOM_LEFT: "bottom-left",
+  BOTTOM_RIGHT: "bottom-right",
 } as const;
 export type MediaPositionTimestampPosition =
   (typeof MediaPositionTimestampPosition)[keyof typeof MediaPositionTimestampPosition];

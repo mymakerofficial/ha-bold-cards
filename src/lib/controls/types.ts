@@ -5,11 +5,12 @@ import {
 } from "../../components/bc-button";
 import { MediaPositionTimestampPosition } from "../../components/bc-media-position-control";
 import { mediaToggleKindActionMap } from "./constants";
+import { KebabToSnake } from "../types";
 
 const _ControlType = {
-  MEDIA_BUTTON: "media_button",
-  MEDIA_POSITION: "media_position",
-  MEDIA_TOGGLE: "media_toggle",
+  MEDIA_BUTTON: "media-button",
+  MEDIA_POSITION: "media-position",
+  MEDIA_TOGGLE: "media-toggle",
   SPACER: "spacer",
   CUSTOM: "custom",
 } as const;
@@ -18,21 +19,21 @@ export type ControlType = (typeof _ControlType)[keyof typeof _ControlType];
 export type ControlTypes = typeof _ControlType;
 
 export const MediaButtonAction = {
-  MEDIA_PREVIOUS_TRACK: "media_previous_track",
-  MEDIA_NEXT_TRACK: "media_next_track",
-  SHUFFLE_SET: "shuffle_set",
-  REPEAT_SET: "repeat_set",
-  MEDIA_PLAY: "media_play",
-  MEDIA_PAUSE: "media_pause",
-  TURN_ON: "turn_on",
-  TURN_OFF: "turn_off",
+  MEDIA_PREVIOUS_TRACK: "media-previous-track",
+  MEDIA_NEXT_TRACK: "media-next-track",
+  SHUFFLE_SET: "shuffle-set",
+  REPEAT_SET: "repeat-set",
+  MEDIA_PLAY: "media-play",
+  MEDIA_PAUSE: "media-pause",
+  TURN_ON: "turn-on",
+  TURN_OFF: "turn-off",
 } as const;
 export type MediaButtonAction =
   (typeof MediaButtonAction)[keyof typeof MediaButtonAction];
 
 export const MediaToggleKind = {
-  PLAY_PAUSE: "play_pause",
-  ON_OFF: "on_off",
+  PLAY_PAUSE: "play-pause",
+  ON_OFF: "on-off",
 } as const;
 export type MediaToggleKind =
   (typeof MediaToggleKind)[keyof typeof MediaToggleKind];
@@ -84,7 +85,9 @@ export type MediaToggleControlKindConfig<
 > = {
   kind: TKind;
 } & {
-  [key in (typeof mediaToggleKindActionMap)[TKind][number]]?: Partial<ButtonBaseConfig>;
+  [key in KebabToSnake<
+    (typeof mediaToggleKindActionMap)[TKind][number]
+  >]?: Partial<ButtonBaseConfig>;
 };
 
 export type MediaToggleControlConfig<

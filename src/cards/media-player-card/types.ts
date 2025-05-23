@@ -9,8 +9,8 @@ import {
 
 export const MediaPlayerCardColorMode = {
   AMBIENT: "ambient",
-  AMBIENT_VIBRANT: "ambient_vibrant",
-  AMBIENT_SOLID: "ambient_solid",
+  AMBIENT_VIBRANT: "ambient-vibrant",
+  AMBIENT_SOLID: "ambient-solid",
   MANUAL: "manual",
 } as const;
 export type MediaPlayerCardColorMode =

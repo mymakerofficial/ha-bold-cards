@@ -3,9 +3,7 @@ import { customElement } from "lit/decorators";
 import {
   ControlType,
   ElementWhenUnavailable,
-  MediaButtonAction,
   MediaToggleControlConfig,
-  MediaToggleKind,
 } from "../../../lib/controls/types";
 import { editorBaseStyles } from "../../styles";
 import {
@@ -22,6 +20,7 @@ import { t } from "../../../localization/i18n";
 import { getDefaultConfigTypeFromFeatureInternals } from "../../../lib/features/helpers";
 import { ControlEditorBase } from "./base";
 import { MediaPlayerEntity } from "../../../types/ha/entity";
+import { kebabToSnake } from "../../../lib/helpers";
 
 @customElement("bc-media-toggle-control-editor")
 export class MediaToggleControlEditor extends ControlEditorBase<
@@ -91,11 +90,12 @@ export class MediaToggleControlEditor extends ControlEditorBase<
                 <span>${getControlLabel(buttonConfig)}</span>
               </h4>
               <bc-button-config-editor
-                .config=${this.control![action] ?? {}}
+                .config=${this.control![kebabToSnake(action)] ?? {}}
                 .hass=${this.hass}
                 .defaultConfig=${defaultButtonConfig}
                 .iconPlaceholder=${getControlIcon(buttonConfig)}
-                @value-changed=${(ev) => this._handleValueChanged(action, ev)}
+                @value-changed=${(ev) =>
+                  this._handleValueChanged(kebabToSnake(action), ev)}
               ></bc-button-config-editor>
             </div>
           `;

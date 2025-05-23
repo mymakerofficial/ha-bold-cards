@@ -11,11 +11,11 @@ export type ButtonVariant = (typeof ButtonVariant)[keyof typeof ButtonVariant];
 
 export const ButtonShape = {
   ROUND: "round",
-  ROUND_WIDE: "round_wide",
-  ROUND_FILL: "round_fill",
+  ROUND_WIDE: "round-wide",
+  ROUND_FILL: "round-fill",
   SQUARE: "square",
-  SQUARE_WIDE: "square_wide",
-  SQUARE_FILL: "square_fill",
+  SQUARE_WIDE: "square-wide",
+  SQUARE_FILL: "square-fill",
 } as const;
 export type ButtonShape = (typeof ButtonShape)[keyof typeof ButtonShape];
 

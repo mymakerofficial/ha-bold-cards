@@ -11,9 +11,7 @@ import { BoldCardType } from "../../lib/cards/types";
 import {
   InlinePosition,
   InlinePositions,
-  LeftAndRightPositions,
   Position,
-  TopAndBottomPositions,
   TopRowPositions,
   VerticalPosition,
 } from "../../lib/layout/position";

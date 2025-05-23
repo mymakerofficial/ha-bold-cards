@@ -16,6 +16,7 @@ import {
   MediaButtonControlConfig,
   MediaToggleControlBaseConfig,
   MediaToggleControlConfig,
+  MediaToggleKind,
 } from "./types";
 import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
 import { MediaPlayerEntity } from "../../types/ha/entity";
@@ -27,6 +28,7 @@ import {
 import { supportsFeature } from "../../helpers/supports-feature";
 import { DefaultConfigType } from "../types";
 import { isMediaPlayerStateActive } from "../../helpers/states";
+import { kebabToSnake } from "../helpers";
 
 export function getControlIcon(
   control: ControlConfig,
@@ -97,7 +99,7 @@ export function getMediaButtonControlDefaultConfig(
 }
 
 export function getMediaToggleControlDefaultConfig(
-  kind: string,
+  kind: MediaToggleKind,
 ): MediaToggleControlBaseConfig {
   return mediaToggleDefaultMap[kind];
 }
@@ -162,6 +164,8 @@ function translateMediaToggleControl({
       action,
     );
 
+    console.log("translateMediaToggleControl", buttonConfig);
+
     return translateMediaButtonControl({
       control: {
         ...buttonConfig,
@@ -181,7 +185,7 @@ export function mediaToggleActionToMediaButtonControlConfig(
   return {
     type: ControlType.MEDIA_BUTTON,
     action,
-    ...(config[action] ?? {}),
+    ...(config[kebabToSnake(action)] ?? {}),
   };
 }
 
