@@ -1,4 +1,3 @@
-import { assign, boolean, enums, object, optional, string } from "superstruct";
 import {
   ControlType,
   ElementWhenUnavailable,
@@ -10,89 +9,78 @@ import {
   ButtonSize,
   ButtonVariant,
 } from "../../components/bc-button";
-import { exactMatch, typedUnion } from "../struct";
 import { MediaPositionTimestampPosition } from "../../components/bc-media-position-control";
-import { mediaToggleKindActionMap } from "./constants";
+import { z } from "zod/v4";
 import { kebabToSnake } from "../helpers";
+import { KebabToSnake } from "../types";
 
-const buttonBaseConfigStruct = object({
-  icon: optional(string()),
-  size: optional(enums(Object.values(ButtonSize))),
-  shape: optional(enums(Object.values(ButtonShape))),
-  variant: optional(enums(Object.values(ButtonVariant))),
+const baseButtonConfigStruct = z.object({
+  icon: z.string().optional(),
+  size: z.enum(ButtonSize).optional(),
+  shape: z.enum(ButtonShape).optional(),
+  variant: z.enum(ButtonVariant).optional(),
 });
 
-export const mediaButtonControlConfigStruct = assign(
-  buttonBaseConfigStruct,
-  object({
-    type: exactMatch(ControlType.MEDIA_BUTTON),
-    action: enums(Object.values(MediaButtonAction)),
-    when_unavailable: optional(enums(Object.values(ElementWhenUnavailable))),
-    always_show: optional(boolean()),
-    unavailable_when_off: optional(boolean()),
-  }),
-);
-
-export const mediaProgressControlConfigStruct = object({
-  type: exactMatch(ControlType.MEDIA_POSITION),
-  timestamp_position: optional(
-    enums(Object.values(MediaPositionTimestampPosition)),
-  ),
-  when_unavailable: optional(enums(Object.values(ElementWhenUnavailable))),
-  unavailable_when_off: optional(boolean()),
+export const mediaButtonControlConfigStruct = baseButtonConfigStruct.extend({
+  type: z.literal(ControlType.MEDIA_BUTTON),
+  action: z.enum(MediaButtonAction),
+  always_show: z.boolean().optional(),
+  when_unavailable: z.enum(ElementWhenUnavailable).optional(),
+  unavailable_when_off: z.boolean().optional(),
 });
 
-const mediaToggleControlBaseConfigStruct = object({
-  type: exactMatch(ControlType.MEDIA_TOGGLE),
-  when_unavailable: optional(enums(Object.values(ElementWhenUnavailable))),
-  unavailable_when_off: optional(boolean()),
+export const mediaProgressControlConfigStruct = z.object({
+  type: z.literal(ControlType.MEDIA_POSITION),
+  timestamp_position: z.enum(MediaPositionTimestampPosition).optional(),
+  when_unavailable: z.enum(ElementWhenUnavailable).optional(),
+  unavailable_when_off: z.boolean().optional(),
 });
 
-const spacerControlConfigStruct = object({
-  type: exactMatch(ControlType.SPACER),
+const spacerControlConfigStruct = z.object({
+  type: z.literal(ControlType.SPACER),
 });
+
+function getMediaToggleControlKindConfigStructActionEntries<
+  TActions extends MediaButtonAction[],
+>(actions: TActions) {
+  return Object.fromEntries(
+    actions.map((action) => [
+      kebabToSnake(action),
+      baseButtonConfigStruct.optional(),
+    ]),
+  ) as Record<
+    KebabToSnake<TActions[number]>,
+    z.ZodOptional<typeof baseButtonConfigStruct>
+  >;
+}
 
 function getMediaToggleControlKindConfigStruct<
-  T extends MediaToggleKind,
-  K extends MediaButtonAction,
->(kind: T, actions: K[]) {
-  return object({
-    kind: exactMatch(kind),
-    ...Object.fromEntries(
-      actions.map((action) => [
-        kebabToSnake(action),
-        optional(buttonBaseConfigStruct),
-      ]),
-    ),
+  TKind extends MediaToggleKind,
+  TActions extends MediaButtonAction,
+>(kind: TKind, actions: TActions[]) {
+  return z.object({
+    type: z.literal(ControlType.MEDIA_TOGGLE),
+    kind: z.literal(kind),
+    ...getMediaToggleControlKindConfigStructActionEntries(actions),
+    when_unavailable: z.enum(ElementWhenUnavailable).optional(),
+    unavailable_when_off: z.boolean().optional(),
   });
 }
 
-export const mediaToggleControlConfigStruct = typedUnion({
-  name: "mediaToggleKind",
-  key: "kind",
-  structs: Object.fromEntries(
-    Object.entries(mediaToggleKindActionMap).map(([kind, actions]) => [
-      kind,
-      assign(
-        mediaToggleControlBaseConfigStruct,
-        getMediaToggleControlKindConfigStruct(kind as MediaToggleKind, actions),
-      ),
-    ]),
-  ),
-});
+export const mediaToggleControlConfigStruct = z.discriminatedUnion("kind", [
+  getMediaToggleControlKindConfigStruct(MediaToggleKind.PLAY_PAUSE, [
+    MediaButtonAction.MEDIA_PLAY,
+    MediaButtonAction.MEDIA_PAUSE,
+  ]),
+  getMediaToggleControlKindConfigStruct(MediaToggleKind.ON_OFF, [
+    MediaButtonAction.TURN_ON,
+    MediaButtonAction.TURN_OFF,
+  ]),
+]);
 
-export const customControlConfigStruct = object({
-  type: exactMatch(ControlType.CUSTOM),
-});
-
-export const controlConfigStruct = typedUnion({
-  name: "controlConfig",
-  key: "type",
-  structs: {
-    [ControlType.MEDIA_BUTTON]: mediaButtonControlConfigStruct,
-    [ControlType.MEDIA_POSITION]: mediaProgressControlConfigStruct,
-    [ControlType.MEDIA_TOGGLE]: mediaToggleControlConfigStruct,
-    [ControlType.SPACER]: spacerControlConfigStruct,
-    [ControlType.CUSTOM]: customControlConfigStruct,
-  },
-});
+export const controlConfigStruct = z.discriminatedUnion("type", [
+  mediaButtonControlConfigStruct,
+  mediaProgressControlConfigStruct,
+  mediaToggleControlConfigStruct,
+  spacerControlConfigStruct,
+]);

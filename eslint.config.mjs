@@ -30,6 +30,10 @@ export default defineConfig([
           name: "superstruct",
           message: "Use 'zod' instead of 'superstruct'.",
         },
+        {
+          name: "zod",
+          message: "Use 'zod/v4' instead of 'zod'.",
+        },
       ],
     },
   },

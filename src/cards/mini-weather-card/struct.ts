@@ -1,17 +1,16 @@
-import { assign, object, optional, string, enums } from "superstruct";
-import { baseLovelaceCardConfig } from "../../helpers/ha/base-card-struct";
+import { baseCardConfigStruct } from "../../helpers/ha/base-card-struct";
 import { MiniWeatherCardArrangement, MiniWeatherCardShape } from "./types";
+import { z } from "zod/v4";
+import { BoldCardType } from "../../lib/cards/types";
 
-export const miniWeatherCardConfigStruct = assign(
-  baseLovelaceCardConfig,
-  object({
-    entity: optional(string()),
-    temperature_entity: optional(string()),
-    shape: optional(enums(Object.values(MiniWeatherCardShape))),
-    arrangement: optional(enums(Object.values(MiniWeatherCardArrangement))),
-    temperature: optional(string()),
-    temperature_template: optional(string()),
-    icon: optional(string()),
-    icon_template: optional(string()),
-  }),
-);
+export const miniWeatherCardConfigStruct = baseCardConfigStruct.extend({
+  type: z.literal(BoldCardType.MINI_WEATHER),
+  entity: z.string().optional(),
+  temperature_entity: z.string().optional(),
+  shape: z.enum(MiniWeatherCardShape).optional(),
+  arrangement: z.enum(MiniWeatherCardArrangement).optional(),
+  temperature: z.string().optional(),
+  temperature_template: z.string().optional(),
+  icon: z.string().optional(),
+  icon_template: z.string().optional(),
+});

@@ -12,7 +12,6 @@ const _ControlType = {
   MEDIA_POSITION: "media-position",
   MEDIA_TOGGLE: "media-toggle",
   SPACER: "spacer",
-  CUSTOM: "custom",
 } as const;
 export const ControlType = _ControlType;
 export type ControlType = (typeof _ControlType)[keyof typeof _ControlType];
@@ -102,16 +101,11 @@ export interface SpacerControlConfig {
   type: ControlTypes["SPACER"];
 }
 
-export interface CustomControlConfig {
-  type: ControlTypes["CUSTOM"];
-}
-
 export type ControlConfig =
   | MediaButtonControlConfig
   | MediaPositionControlConfig
   | MediaToggleControlConfig
-  | SpacerControlConfig
-  | CustomControlConfig;
+  | SpacerControlConfig;
 
 export interface ConcreteMediaButtonControl {
   type: ControlTypes["MEDIA_BUTTON"];

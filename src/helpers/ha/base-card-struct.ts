@@ -1,9 +1,9 @@
-import { any, object, string } from "superstruct";
+import { z } from "zod/v4";
 
-export const baseLovelaceCardConfig = object({
-  type: string(),
-  view_layout: any(),
-  layout_options: any(),
-  grid_options: any(),
-  visibility: any(),
+export const baseCardConfigStruct = z.object({
+  type: z.string(),
+  view_layout: z.any(),
+  layout_options: z.any(),
+  grid_options: z.any(),
+  visibility: z.any(),
 });

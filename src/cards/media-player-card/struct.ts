@@ -1,12 +1,10 @@
-import { assign, boolean, enums, object, optional, string } from "superstruct";
-import { baseLovelaceCardConfig } from "../../helpers/ha/base-card-struct";
+import { baseCardConfigStruct } from "../../helpers/ha/base-card-struct";
 import {
   MediaPlayerCardBackgroundPictureStyle,
   MediaPlayerCardColorMode,
 } from "./types";
 import { featuresStruct } from "../../lib/features/structs";
 import { universalMediaPlayerEnhancementsStruct } from "../../lib/media-player/universal-media-player";
-import { exactMatch } from "../../lib/struct";
 import { BoldCardType } from "../../lib/cards/types";
 import {
   InlinePosition,
@@ -15,44 +13,38 @@ import {
   TopRowPositions,
   VerticalPosition,
 } from "../../lib/layout/position";
+import { z } from "zod/v4";
 
-export const mediaPlayerCardBaseConfigStruct = assign(
-  baseLovelaceCardConfig,
-  object({
-    // not optional but needs to be marked as such to ensure the editor stays available when the entity is missing
-    entity: optional(string()),
-    color_mode: enums(Object.values(MediaPlayerCardColorMode)),
-    color: optional(string()),
-    universal_media_player_enhancements: optional(
-      universalMediaPlayerEnhancementsStruct,
-    ),
-  }),
-);
+export const baseMediaPlayerCardConfigStruct = baseCardConfigStruct.extend({
+  entity: z.string().optional(),
+  color_mode: z.enum(MediaPlayerCardColorMode),
+  color: z.string().optional(),
+  universal_media_player_enhancements:
+    universalMediaPlayerEnhancementsStruct.optional(),
+});
 
 export const mediaPlayerAllowedPicturePositions = [
   ...TopRowPositions,
   ...InlinePositions,
-];
+] as const;
 export const mediaPlayerAllowedTextPositions = Object.values(Position);
 export const mediaPlayerAllowedFeaturePositions = [
   InlinePosition.INLINE_RIGHT,
   VerticalPosition.BOTTOM,
 ];
 
-export const mediaPlayerCardConfigStruct = assign(
-  mediaPlayerCardBaseConfigStruct,
-  object({
-    type: exactMatch(BoldCardType.MEDIA_PLAYER),
-    picture_position: optional(enums(mediaPlayerAllowedPicturePositions)),
-    show_picture: optional(boolean()),
-    background_picture: optional(
-      enums(Object.values(MediaPlayerCardBackgroundPictureStyle)),
-    ),
-    text_position: optional(enums(mediaPlayerAllowedTextPositions)),
-    show_text: optional(boolean()),
-    feature_position: enums(mediaPlayerAllowedFeaturePositions),
-    show_title_bar: optional(boolean()),
-    placeholder_when_off: optional(boolean()),
+export const mediaPlayerCardConfigStruct =
+  baseMediaPlayerCardConfigStruct.extend({
+    type: z.literal(BoldCardType.MEDIA_PLAYER),
+    picture_position: z.enum(mediaPlayerAllowedPicturePositions).optional(),
+    show_picture: z.boolean().optional(),
+    background_picture: z
+      .enum(MediaPlayerCardBackgroundPictureStyle)
+      .optional(),
+    text_position: z.enum(mediaPlayerAllowedTextPositions).optional(),
+    show_text: z.boolean().optional(),
+    feature_position: z.enum(mediaPlayerAllowedFeaturePositions).optional(),
+    show_title_bar: z.boolean().optional(),
+    placeholder_when_off: z.boolean().optional(),
     features: featuresStruct,
-  }),
-);
+  });

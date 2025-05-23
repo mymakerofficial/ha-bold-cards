@@ -38,7 +38,7 @@ export interface BoldMediaPlayerCardConfig
   background_picture?: MediaPlayerCardBackgroundPictureStyle;
   text_position?: (typeof mediaPlayerAllowedTextPositions)[number];
   show_text?: boolean;
-  feature_position: (typeof mediaPlayerAllowedFeaturePositions)[number];
+  feature_position?: (typeof mediaPlayerAllowedFeaturePositions)[number];
   show_title_bar?: boolean;
   // TODO: replace with option to either show placeholder, do nothing or hide card
   //  see hui-conditional-card to see how to hide card

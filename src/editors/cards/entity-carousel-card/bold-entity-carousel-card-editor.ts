@@ -35,7 +35,7 @@ export class BoldEntityCarouselCardEditor extends BoldCarouselCardEditorBase<Ent
 
     // validate card config with all entities
     if (this.getCanValidateCardType(config.card?.type)) {
-      config.entities.forEach((_, index) => {
+      config.entities?.forEach((_, index) => {
         const cardConfig = getEntityCarouselCardConfig({
           config,
           index,

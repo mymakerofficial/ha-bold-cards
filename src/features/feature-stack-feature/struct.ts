@@ -1,9 +1,10 @@
-import { object } from "superstruct";
-import { exactMatch } from "../../lib/struct";
-import { featuresStruct } from "../../lib/features/structs";
+import { featureConfigStruct } from "../../lib/features/structs";
 import { BoldFeatureType } from "../../lib/features/types";
+import z from "zod/v4";
 
-export const featureStackFeatureStruct = object({
-  type: exactMatch(BoldFeatureType.FEATURE_STACK),
-  features: featuresStruct,
+export const featureStackFeatureStruct = z.object({
+  type: z.literal(BoldFeatureType.FEATURE_STACK),
+  get features() {
+    return z.array(featureConfigStruct).optional();
+  },
 });

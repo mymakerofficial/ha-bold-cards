@@ -32,7 +32,7 @@ export interface CustomCardEntryWithInternals<TConfig = LovelaceCardConfig>
 
 export type LovelaceCardConfigWithEntity<TConfig = LovelaceCardConfig> =
   TConfig & {
-    entity: string;
+    entity?: string;
   };
 
 export type LovelaceCardConfigWithFeatures<

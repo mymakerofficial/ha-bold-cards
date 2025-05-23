@@ -1,6 +1,6 @@
+import { z } from "zod/v4";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { HomeAssistant } from "../../types/ha/lovelace";
-import { array, boolean, object, optional, string } from "superstruct";
 
 export function getMediaPlayerChildEntity(
   parent: MediaPlayerEntity,
@@ -46,10 +46,10 @@ export interface UniversalMediaPlayerEnhancements {
   exclude_deep_entities?: string[];
 }
 
-export const universalMediaPlayerEnhancementsStruct = object({
-  enabled: optional(boolean()),
-  exclude_entities: optional(array(string())),
-  exclude_deep_entities: optional(array(string())),
+export const universalMediaPlayerEnhancementsStruct = z.object({
+  enabled: z.boolean().optional(),
+  exclude_entities: z.string().array().optional(),
+  exclude_deep_entities: z.string().array().optional(),
 });
 
 export function getUniversalMediaPlayerChildStateObj(

@@ -1,7 +1,6 @@
 import { LovelaceGenericElementEditor } from "../types/ha/lovelace";
 import { CSSResultGroup, html, LitElement, nothing } from "lit";
 import { property, state } from "lit/decorators";
-import { assert, Struct } from "superstruct";
 import { editorBaseStyles } from "./styles";
 import { LovelaceConfig } from "custom-card-helpers";
 import { BoldHassElement } from "../components/hass-element";
@@ -10,6 +9,7 @@ import { isEmpty, isUndefined, lastOf, resolve } from "../lib/helpers";
 import { t } from "../localization/i18n";
 import { Optional } from "../lib/optional";
 import { run } from "../lib/result";
+import { z } from "zod/v4";
 
 type HuiCardElementEditor = LitElement & {
   _updateConfigElement?: () => void;
@@ -26,10 +26,10 @@ export abstract class BoldLovelaceEditor<TConfig extends object, TContext = any>
 
   @state() protected _config?: TConfig;
 
-  protected abstract get _struct(): Struct<any, any>;
+  protected abstract get _struct(): z.ZodType<TConfig>;
 
   public setConfig(config: TConfig): void {
-    assert(config, this._struct);
+    this._struct.parse(config);
     this._config = config;
   }
 
