@@ -1,5 +1,5 @@
 import { CarouselCardConfig } from "./types";
-import { customElement } from "lit/decorators";
+import { customElement } from "lit/decorators.js";
 import { LovelaceCardEditor } from "../../types/ha/lovelace";
 import { BoldCardType } from "../../lib/cards/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";

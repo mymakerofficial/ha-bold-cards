@@ -1,5 +1,5 @@
 import { css, html, nothing } from "lit";
-import { customElement } from "lit/decorators";
+import { customElement } from "lit/decorators.js";
 import {
   ControlType,
   ElementWhenUnavailable,
@@ -13,7 +13,7 @@ import {
   getMediaToggleControlDefaultConfig,
   mediaToggleActionToMediaButtonControlConfig,
 } from "../../../lib/controls/helpers";
-import { repeat } from "lit-html/directives/repeat";
+import { repeat } from "lit-html/directives/repeat.js";
 import { mediaToggleKindActionMap } from "../../../lib/controls/constants";
 import { enumToOptions } from "../../helpers";
 import { t } from "../../../localization/i18n";

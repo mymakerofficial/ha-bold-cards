@@ -1,4 +1,4 @@
-import { customElement } from "lit/decorators";
+import { customElement } from "lit/decorators.js";
 import { BoldLovelaceCardFeatureEditor } from "../base";
 import { BoldMediaPlayerControlRowFeatureConfig } from "../../../features/media-player-control-row-feature/types";
 import { css, html } from "lit";

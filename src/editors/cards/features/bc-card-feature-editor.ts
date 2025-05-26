@@ -1,5 +1,5 @@
 import { html } from "lit";
-import { customElement, property } from "lit/decorators";
+import { customElement, property } from "lit/decorators.js";
 import { LovelaceCardFeatureEditorContext } from "../../../types/ha/lovelace";
 import { HassEntity } from "home-assistant-js-websocket";
 import { LovelaceCardFeatureConfig } from "../../../types/ha/feature";

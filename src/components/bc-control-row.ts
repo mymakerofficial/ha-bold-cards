@@ -1,6 +1,6 @@
-import { customElement, property } from "lit/decorators";
+import { customElement, property } from "lit/decorators.js";
 import { css, html, LitElement, nothing } from "lit";
-import { classMap } from "lit-html/directives/class-map";
+import { classMap } from "lit-html/directives/class-map.js";
 import { ConcreteControl, ControlType } from "../lib/controls/types";
 import { handleMediaPlayerAction } from "../helpers/media-player";
 import { HassEntityBase } from "home-assistant-js-websocket";

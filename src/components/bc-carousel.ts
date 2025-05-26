@@ -1,7 +1,7 @@
 import { html, nothing, TemplateResult } from "lit-element";
-import { createRef, ref } from "lit-html/directives/ref";
-import { repeat } from "lit-html/directives/repeat";
-import { customElement, property, state } from "lit/decorators";
+import { createRef, ref } from "lit-html/directives/ref.js";
+import { repeat } from "lit-html/directives/repeat.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { css, LitElement, unsafeCSS } from "lit";
 import { PropertyValues } from "@lit/reactive-element";
 import {

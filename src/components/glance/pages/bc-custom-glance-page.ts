@@ -4,7 +4,7 @@ import {
   GlancePageConfig,
 } from "../../../lib/at-a-glance/types";
 import { nothing } from "lit";
-import { customElement } from "lit/decorators";
+import { customElement } from "lit/decorators.js";
 import { TemplateRendererState } from "../../../lib/templates/templated-config-renderer";
 
 @customElement("bc-custom-glance-page")

@@ -1,6 +1,6 @@
 import { css, html, LitElement } from "lit";
-import { customElement, property } from "lit/decorators";
-import { repeat } from "lit-html/directives/repeat";
+import { customElement, property } from "lit/decorators.js";
+import { repeat } from "lit-html/directives/repeat.js";
 import { mdiDelete, mdiDrag, mdiPlus } from "@mdi/js";
 import { HomeAssistant } from "../../types/ha/lovelace";
 import { t } from "../../localization/i18n";

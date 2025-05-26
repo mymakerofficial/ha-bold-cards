@@ -1,11 +1,11 @@
-import { customElement } from "lit/decorators";
+import { customElement } from "lit/decorators.js";
 import { css, html, nothing } from "lit";
 import { BoldMediaPlayerControlRowFeatureConfig } from "./types";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { ButtonSize, ButtonVariant } from "../../components/bc-button";
 import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
-import { styleMap } from "lit-html/directives/style-map";
+import { styleMap } from "lit-html/directives/style-map.js";
 
 import {
   ControlType,
@@ -15,7 +15,7 @@ import {
 } from "../../lib/controls/types";
 import { translateControls } from "../../lib/controls/helpers";
 import { LovelaceCardFeatureEditor } from "../../types/ha/lovelace";
-import { classMap } from "lit-html/directives/class-map";
+import { classMap } from "lit-html/directives/class-map.js";
 import { firstOf, lastOf } from "../../lib/helpers";
 import { getDefaultConfigTypeFromFeatureInternals } from "../../lib/features/helpers";
 import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";

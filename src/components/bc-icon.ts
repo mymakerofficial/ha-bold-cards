@@ -1,5 +1,5 @@
 import { css, html, LitElement, nothing } from "lit";
-import { customElement, property } from "lit/decorators";
+import { customElement, property } from "lit/decorators.js";
 import { getBoldIconSvg, isBoldIcon } from "../lib/icons/icons";
 import { isUndefined } from "../lib/helpers";
 

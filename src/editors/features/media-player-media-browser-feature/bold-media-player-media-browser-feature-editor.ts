@@ -1,4 +1,4 @@
-import { customElement } from "lit/decorators";
+import { customElement } from "lit/decorators.js";
 import { BoldLovelaceCardFeatureEditor } from "../base";
 import { html } from "lit";
 import { editorBaseStyles } from "../../styles";

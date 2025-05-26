@@ -4,7 +4,7 @@ import {
   WeatherGlanceItemConfig,
 } from "../../../lib/at-a-glance/types";
 import { nothing } from "lit";
-import { customElement } from "lit/decorators";
+import { customElement } from "lit/decorators.js";
 import { getWeatherIcon } from "../../../lib/weather/helpers";
 import { WeatherEntity } from "../../../lib/weather/types";
 

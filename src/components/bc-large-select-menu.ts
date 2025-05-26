@@ -1,10 +1,10 @@
-import { customElement } from "lit/decorators";
+import { customElement } from "lit/decorators.js";
 import type { SelectBase } from "@material/mwc-select/mwc-select-base";
 import { html } from "lit-html";
-import { classMap } from "lit-html/directives/class-map";
-import { ifDefined } from "lit-html/directives/if-defined";
+import { classMap } from "lit-html/directives/class-map.js";
+import { ifDefined } from "lit-html/directives/if-defined.js";
 import { css, nothing } from "lit";
-import { styleMap } from "lit-html/directives/style-map";
+import { styleMap } from "lit-html/directives/style-map.js";
 
 // home assistant doesn't import mwc-select-menu
 //  but ha-control-select-menu extends its base

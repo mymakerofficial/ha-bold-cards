@@ -1,4 +1,4 @@
-import { customElement } from "lit/decorators";
+import { customElement } from "lit/decorators.js";
 import { html, nothing } from "lit";
 import { BoldMediaPlayerSourceSelectFeatureConfig } from "./types";
 import { MediaPlayerEntity } from "../../types/ha/entity";

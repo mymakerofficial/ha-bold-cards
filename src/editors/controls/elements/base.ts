@@ -1,5 +1,5 @@
 import { LitElement } from "lit";
-import { property } from "lit/decorators";
+import { property } from "lit/decorators.js";
 import { ControlConfig } from "../../../lib/controls/types";
 import { HomeAssistant } from "../../../types/ha/lovelace";
 import { HassEntityBase } from "home-assistant-js-websocket";

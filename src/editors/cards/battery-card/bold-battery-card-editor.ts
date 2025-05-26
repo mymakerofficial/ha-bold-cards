@@ -1,5 +1,5 @@
 import { html } from "lit";
-import { customElement } from "lit/decorators";
+import { customElement } from "lit/decorators.js";
 import { BoldCardType } from "../../../lib/cards/types";
 import { getCardEditorTag } from "../../../lib/cards/helpers";
 import { BoldLovelaceCardEditor } from "../base";

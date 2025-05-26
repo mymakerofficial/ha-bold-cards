@@ -1,12 +1,12 @@
 import { css, html, nothing } from "lit";
-import { customElement } from "lit/decorators";
+import { customElement } from "lit/decorators.js";
 import {
   LovelaceCardEditor,
   LovelaceGridOptions,
 } from "../../types/ha/lovelace";
 import { BoldLovelaceCard } from "../base";
-import { repeat } from "lit-html/directives/repeat";
-import { styleMap } from "lit-html/directives/style-map";
+import { repeat } from "lit-html/directives/repeat.js";
+import { styleMap } from "lit-html/directives/style-map.js";
 import { EntityState } from "../../types/ha/entity";
 import { BoldCardType } from "../../lib/cards/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";

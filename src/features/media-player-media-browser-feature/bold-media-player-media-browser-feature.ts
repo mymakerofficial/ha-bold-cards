@@ -1,4 +1,4 @@
-import { customElement, state } from "lit/decorators";
+import { customElement, state } from "lit/decorators.js";
 import { css, html, nothing } from "lit";
 import { BoldMediaPlayerMediaBrowserFeatureConfig } from "./types";
 import { MediaPlayerEntity } from "../../types/ha/entity";
@@ -6,8 +6,8 @@ import { computeDomain } from "../../helpers/entity";
 import { CustomLovelaceCardFeature } from "../base";
 import { PropertyValues } from "lit-element";
 import { MediaPlayerItem } from "../../lib/media-player/media-browser";
-import { repeat } from "lit-html/directives/repeat";
-import { styleMap } from "lit-html/directives/style-map";
+import { repeat } from "lit-html/directives/repeat.js";
+import { styleMap } from "lit-html/directives/style-map.js";
 import { BoldFeatureType } from "../../lib/features/types";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { LovelaceCardFeatureEditor } from "../../types/ha/lovelace";

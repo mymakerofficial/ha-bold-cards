@@ -1,8 +1,8 @@
 import { BoldHassElement } from "../hass-element";
 import { css, html, nothing } from "lit";
-import { repeat } from "lit-html/directives/repeat";
+import { repeat } from "lit-html/directives/repeat.js";
 import { GlanceItemConfig } from "../../lib/at-a-glance/types";
-import { customElement, property, state } from "lit/decorators";
+import { customElement, property, state } from "lit/decorators.js";
 import { isEmpty, isUndefined } from "../../lib/helpers";
 import { TemplatedConfigListRenderer } from "../../lib/templates/templated-config-renderer";
 import { PropertyValues } from "lit-element";

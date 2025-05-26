@@ -1,5 +1,5 @@
 import { css, html, nothing } from "lit";
-import { customElement, state } from "lit/decorators";
+import { customElement, state } from "lit/decorators.js";
 import { LovelaceCardConfig } from "../../../types/ha/lovelace";
 import { BoldCardType } from "../../../lib/cards/types";
 import { t } from "../../../localization/i18n";

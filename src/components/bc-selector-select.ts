@@ -1,4 +1,4 @@
-import { customElement, property } from "lit/decorators";
+import { customElement, property } from "lit/decorators.js";
 import { html } from "lit";
 import { SelectSelector } from "../types/ha/selector";
 import { t } from "../localization/i18n";
