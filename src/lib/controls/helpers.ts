@@ -18,7 +18,7 @@ import {
   MediaToggleControlConfig,
   MediaToggleKind,
 } from "./types";
-import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
+import { HassEntityBase } from "home-assistant-js-websocket";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { t } from "../../localization/i18n";
 import {

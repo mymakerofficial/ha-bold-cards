@@ -4,7 +4,7 @@ import {
   directive,
   Directive,
   DirectiveParameters,
-} from "lit/directive";
+} from "lit/directive.js";
 
 import {
   ActionHandlerDetail,

@@ -2,14 +2,14 @@ import { mediaPlayerControlRowFeatureStruct } from "../../features/media-player-
 import { mediaPlayerSourceSelectFeatureStruct } from "../../features/media-player-source-select-feature/struct";
 import { mediaPlayerMediaBrowserFeatureStruct } from "../../features/media-player-media-browser-feature/struct";
 import z from "zod/v4";
-import { featureStackFeatureStruct } from "../../features/feature-stack-feature/struct";
+// import { featureStackFeatureStruct } from "../../features/feature-stack-feature/struct";
 
 export const featureConfigStruct = z
   .discriminatedUnion("type", [
     mediaPlayerControlRowFeatureStruct,
     mediaPlayerSourceSelectFeatureStruct,
     mediaPlayerMediaBrowserFeatureStruct,
-    featureStackFeatureStruct,
+    // featureStackFeatureStruct,
   ])
   .or(z.any());
 

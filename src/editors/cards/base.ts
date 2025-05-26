@@ -11,7 +11,7 @@ import {
   LovelaceCardConfigWithEntity,
   LovelaceCardConfigWithFeatures,
 } from "../../types/card";
-import { HassEntityBase } from "home-assistant-js-websocket/dist/types";
+import { HassEntityBase } from "home-assistant-js-websocket";
 import { FeatureConfigWithMaybeInternals } from "../../lib/internals/types";
 
 export abstract class BoldLovelaceCardEditor<TConfig extends LovelaceCardConfig>
