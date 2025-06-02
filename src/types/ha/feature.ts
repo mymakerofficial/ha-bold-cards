@@ -16,7 +16,10 @@ export type LovelaceCardFeatureConfig =
   | BoldMediaPlayerControlRowFeatureConfig
   | BoldMediaPlayerSourceSelectFeatureConfig
   | BoldMediaPlayerMediaBrowserFeatureConfig
-  | BoldFeatureStackFeatureConfig;
+  | BoldFeatureStackFeatureConfig
+  | ({
+      type: string;
+    } & Record<string, any>);
 
 export interface LovelaceCardFeature<
   TStateObj extends HassEntity = HassEntity,
