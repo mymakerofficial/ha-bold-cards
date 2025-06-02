@@ -6,6 +6,12 @@ const recursiveFeatureStructs = [featureStackFeatureStruct] as const;
 
 export const featureConfigStruct = z
   .discriminatedUnion("type", [...featureStructs, ...recursiveFeatureStructs])
-  .or(z.any());
+  .or(
+    z
+      .object({
+        type: z.string(),
+      })
+      .passthrough(),
+  );
 
 export const featuresStruct = featureConfigStruct.array().optional();

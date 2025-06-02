@@ -10,6 +10,7 @@ import { t } from "../localization/i18n";
 import { Optional } from "../lib/optional";
 import { run } from "../lib/result";
 import z from "zod";
+import { fromError } from "zod-validation-error";
 
 type HuiCardElementEditor = LitElement & {
   _updateConfigElement?: () => void;
@@ -29,7 +30,15 @@ export abstract class BoldLovelaceEditor<TConfig extends object, TContext = any>
   protected abstract get _struct(): z.ZodType<TConfig>;
 
   public setConfig(config: TConfig): void {
-    this._config = this._struct.parse(config);
+    const res = this._struct.safeParse(config);
+
+    if (res.error) {
+      throw fromError(res.error, {
+        maxIssuesInMessage: 1,
+      });
+    }
+
+    this._config = res.data;
   }
 
   // forces the parent to update the editor

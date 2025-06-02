@@ -13,4 +13,10 @@ export const featureStructs = [
 
 export const noneRecursiveFeatureConfigStruct = z
   .discriminatedUnion("type", featureStructs)
-  .or(z.any());
+  .or(
+    z
+      .object({
+        type: z.string(),
+      })
+      .passthrough(),
+  );
