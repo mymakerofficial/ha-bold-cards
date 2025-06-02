@@ -50,7 +50,7 @@ export default defineConfig([
             "CallExpression[callee.type='MemberExpression'][callee.object.name='z'][callee.property.name='nativeEnum']",
         },
       ],
+      "no-console": ["warn", { allow: ["warn", "error"] }],
     },
-    "no-console": "warn",
   },
 ]);
