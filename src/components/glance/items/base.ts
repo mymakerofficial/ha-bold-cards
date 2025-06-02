@@ -1,5 +1,5 @@
 import { BoldHassElement } from "../../hass-element";
-import { property, state } from "lit/decorators.js";
+import { property, state } from "lit/decorators";
 import { css, html, nothing } from "lit";
 import { GlanceItemConfig } from "../../../lib/at-a-glance/types";
 import { ConfigRenderer } from "../../../lib/templates/templated-config-renderer";

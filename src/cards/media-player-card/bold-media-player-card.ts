@@ -1,5 +1,5 @@
 import { html, nothing } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement } from "lit/decorators";
 import {
   BoldMediaPlayerCardConfig,
   MediaPlayerCardBackgroundPictureStyle,
@@ -10,8 +10,8 @@ import {
   LovelaceCardEditor,
   LovelaceGridOptions,
 } from "../../types/ha/lovelace";
-import { styleMap } from "lit-html/directives/style-map.js";
-import { classMap } from "lit-html/directives/class-map.js";
+import { styleMap } from "lit-html/directives/style-map";
+import { classMap } from "lit-html/directives/class-map";
 import { mediaPlayerCardStyles } from "./style";
 import { presets } from "../../editors/cards/media-player-card/constants";
 import { GetFeatureInternalsContext } from "../../types/card";

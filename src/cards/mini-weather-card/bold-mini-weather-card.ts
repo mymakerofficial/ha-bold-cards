@@ -4,7 +4,7 @@ import {
   LovelaceGridOptions,
 } from "../../types/ha/lovelace";
 import { BoldCardType } from "../../lib/cards/types";
-import { customElement } from "lit/decorators.js";
+import { customElement } from "lit/decorators";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { BoldCardWithEntity } from "../base";
 import {

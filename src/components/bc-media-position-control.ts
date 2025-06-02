@@ -1,4 +1,4 @@
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators";
 import { css, html, LitElement, nothing, unsafeCSS } from "lit";
 import { MediaPlayerEntity, MediaPlayerState } from "../types/ha/entity";
 import { PropertyValues } from "lit-element";

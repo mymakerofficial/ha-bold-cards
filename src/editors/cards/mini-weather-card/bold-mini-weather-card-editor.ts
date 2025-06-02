@@ -1,6 +1,6 @@
 import { css, CSSResultGroup, html, nothing } from "lit";
 import { fireEvent } from "custom-card-helpers";
-import { customElement } from "lit/decorators.js";
+import { customElement } from "lit/decorators";
 import { t } from "../../../localization/i18n";
 import { editorBaseStyles } from "../../styles";
 import { BoldLovelaceCardEditorWithEntity } from "../base";

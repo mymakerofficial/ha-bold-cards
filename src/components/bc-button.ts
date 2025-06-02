@@ -1,4 +1,4 @@
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators";
 import { css, html, nothing, unsafeCSS } from "lit";
 import { ControlSurface } from "./bc-contol-surface";
 

@@ -1,4 +1,4 @@
-import { state } from "lit/decorators.js";
+import { state } from "lit/decorators";
 import { BoldCardWithInlineFeatures } from "../base";
 import {
   BoldMediaPlayerCardBaseConfig,

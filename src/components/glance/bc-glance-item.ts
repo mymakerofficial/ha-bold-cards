@@ -1,4 +1,4 @@
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators";
 import { BoldHassElement } from "../hass-element";
 import { GlanceItemConfig, GlanceItemType } from "../../lib/at-a-glance/types";
 import { html, nothing } from "lit";

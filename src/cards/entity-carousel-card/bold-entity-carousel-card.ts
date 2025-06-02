@@ -1,5 +1,5 @@
 import { EntityCarouselCardConfig } from "./types";
-import { customElement } from "lit/decorators.js";
+import { customElement } from "lit/decorators";
 import { LovelaceCardEditor } from "../../types/ha/lovelace";
 import { firstOf } from "../../lib/helpers";
 import { BoldCardType } from "../../lib/cards/types";

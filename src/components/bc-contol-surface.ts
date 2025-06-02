@@ -1,6 +1,6 @@
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators";
 import { css, html, LitElement } from "lit";
-import { ifDefined } from "lit-html/directives/if-defined.js";
+import { ifDefined } from "lit-html/directives/if-defined";
 
 @customElement("bc-control-surface")
 export class ControlSurface extends LitElement {

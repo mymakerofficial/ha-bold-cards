@@ -1,5 +1,5 @@
 import { html, nothing } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement } from "lit/decorators";
 import { BoldCardType } from "../../../lib/cards/types";
 import { getCardEditorTag } from "../../../lib/cards/helpers";
 import { CarouselCardConfig } from "../../../cards/carousel-card/types";

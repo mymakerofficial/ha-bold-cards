@@ -1,4 +1,4 @@
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators";
 import { css, html, LitElement, nothing } from "lit";
 import { isDefined } from "../lib/helpers";
 

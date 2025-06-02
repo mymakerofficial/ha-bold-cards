@@ -1,5 +1,5 @@
 import { css, html, nothing } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement } from "lit/decorators";
 import { t } from "../../../localization/i18n";
 import {
   ControlType,

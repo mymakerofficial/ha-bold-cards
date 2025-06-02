@@ -1,6 +1,6 @@
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators";
 import { css, html, nothing } from "lit";
-import { repeat } from "lit-html/directives/repeat.js";
+import { repeat } from "lit-html/directives/repeat";
 import {
   mdiDelete,
   mdiDrag,

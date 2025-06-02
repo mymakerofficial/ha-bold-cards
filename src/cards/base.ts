@@ -1,5 +1,5 @@
 import { LovelaceCard, LovelaceCardConfig } from "../types/ha/lovelace";
-import { state } from "lit/decorators.js";
+import { state } from "lit/decorators";
 import {
   CustomCardEntry,
   CustomCardEntryWithInternals,

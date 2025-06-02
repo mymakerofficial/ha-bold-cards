@@ -1,6 +1,6 @@
 import { css, html, LitElement, nothing } from "lit";
 import { t } from "../../../localization/i18n";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators";
 import { ButtonBaseConfig } from "../../../lib/controls/types";
 import { HomeAssistant } from "../../../types/ha/lovelace";
 import { enumToOptions } from "../../helpers";

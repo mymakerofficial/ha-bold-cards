@@ -5,7 +5,7 @@ import {
   MediaPlayerCardBackgroundPictureStyle,
   MediaPlayerCardColorMode,
 } from "../../../cards/media-player-card/types";
-import { customElement } from "lit/decorators.js";
+import { customElement } from "lit/decorators";
 import { mdiCursorMove, mdiPalette, mdiStar, mdiTextShort } from "@mdi/js";
 import { t } from "../../../localization/i18n";
 import { editorBaseStyles } from "../../styles";

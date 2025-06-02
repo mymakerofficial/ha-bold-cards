@@ -1,5 +1,3 @@
-console.log("hi");
-
 import "./lib/basic-hass-object";
 import "./components/bc-spinner";
 import "./components/bc-icon";

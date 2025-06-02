@@ -1,9 +1,9 @@
-import { customElement } from "lit/decorators.js";
+import { customElement } from "lit/decorators";
 import { css, html, nothing } from "lit";
 import { BoldFeatureStackFeatureConfig } from "./types";
 import { CustomLovelaceCardFeature } from "../base";
 import { HassEntity } from "home-assistant-js-websocket";
-import { styleMap } from "lit-html/directives/style-map.js";
+import { styleMap } from "lit-html/directives/style-map";
 import { getFeatureDoesRender, getFeatureSize } from "../size";
 import {
   FeatureConfigWithMaybeInternals,

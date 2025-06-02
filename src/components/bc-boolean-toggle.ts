@@ -2,8 +2,8 @@ import { css, html, nothing } from "lit";
 import { valueToOption } from "../editors/helpers";
 import { BoldHassElement } from "./hass-element";
 import { fireEvent } from "custom-card-helpers";
-import { customElement, property } from "lit/decorators.js";
-import { classMap } from "lit-html/directives/class-map.js";
+import { customElement, property } from "lit/decorators";
+import { classMap } from "lit-html/directives/class-map";
 import { isDefined } from "../lib/helpers";
 import { GetterOrMap } from "../lib/types";
 

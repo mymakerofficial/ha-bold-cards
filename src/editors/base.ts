@@ -1,6 +1,6 @@
 import { LovelaceGenericElementEditor } from "../types/ha/lovelace";
 import { CSSResultGroup, html, LitElement, nothing } from "lit";
-import { property, state } from "lit/decorators.js";
+import { property, state } from "lit/decorators";
 import { editorBaseStyles } from "./styles";
 import { LovelaceConfig } from "custom-card-helpers";
 import { BoldHassElement } from "../components/hass-element";

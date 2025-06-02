@@ -3,7 +3,7 @@ import {
   LovelaceCardFeature,
   LovelaceCardFeatureConfig,
 } from "../types/ha/feature";
-import { property, state } from "lit/decorators.js";
+import { property, state } from "lit/decorators";
 import { HassEntity } from "home-assistant-js-websocket";
 import { FeatureConfigWithMaybeInternals } from "../lib/internals/types";
 import { BoldHassElement } from "../components/hass-element";

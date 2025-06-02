@@ -1,4 +1,4 @@
-import { customElement, property, query, state } from "lit/decorators.js";
+import { customElement, property, query, state } from "lit/decorators";
 import { css, html, LitElement, nothing } from "lit";
 import {
   LovelaceCardConfig,
@@ -11,7 +11,7 @@ import { PropertyValues, TemplateResult } from "lit-element";
 import { isDefined, isUndefined, toPromise } from "../lib/helpers";
 import { optionallyPrefixCustomType } from "../lib/cards/helpers";
 import { Nullable, Maybe } from "../lib/types";
-import { classMap } from "lit-html/directives/class-map.js";
+import { classMap } from "lit-html/directives/class-map";
 import { t } from "../localization/i18n";
 import { BoldCardType } from "../lib/cards/types";
 

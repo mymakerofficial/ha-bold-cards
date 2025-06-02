@@ -1,5 +1,5 @@
 import { BoldCardType } from "../../lib/cards/types";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, state } from "lit/decorators";
 import { stripCustomPrefix } from "../../editors/cards/features/helpers";
 import { BoldLovelaceCard } from "../base";
 import { BoldAtAGlanceCardConfig } from "./types";
@@ -7,7 +7,7 @@ import { css, html, nothing } from "lit";
 import { TemplatedConfigListRenderer } from "../../lib/templates/templated-config-renderer";
 import { GlancePageConfig, GlancePageType } from "../../lib/at-a-glance/types";
 import { PropertyValues } from "@lit/reactive-element";
-import { styleMap } from "lit-html/directives/style-map.js";
+import { styleMap } from "lit-html/directives/style-map";
 import { Position } from "../../lib/layout/position";
 
 const cardType = BoldCardType.AT_A_GLANCE;
