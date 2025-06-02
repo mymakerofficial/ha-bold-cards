@@ -24,6 +24,7 @@ import { getResult } from "../../../lib/result";
 
 @customElement(getCardEditorTag(BoldCardType.CAROUSEL))
 export class BoldCarouselCardEditor extends BoldCarouselCardEditorBase<CarouselCardConfig> {
+  // @ts-expect-error eh it doesnt need to be the same here
   protected get _struct() {
     return carouselCardConfigStruct;
   }

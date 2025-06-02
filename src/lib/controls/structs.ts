@@ -82,6 +82,6 @@ export const mediaToggleControlConfigStruct = z.discriminatedUnion("kind", [
 export const controlConfigStruct = z.discriminatedUnion("type", [
   mediaButtonControlConfigStruct,
   mediaProgressControlConfigStruct,
-  mediaToggleControlConfigStruct,
+  ...mediaToggleControlConfigStruct.options,
   spacerControlConfigStruct,
 ]);
