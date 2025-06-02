@@ -29,8 +29,7 @@ export abstract class BoldLovelaceEditor<TConfig extends object, TContext = any>
   protected abstract get _struct(): z.ZodType<TConfig>;
 
   public setConfig(config: TConfig): void {
-    this._struct.parse(config);
-    this._config = config;
+    this._config = this._struct.parse(config);
   }
 
   // forces the parent to update the editor

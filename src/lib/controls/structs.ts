@@ -55,16 +55,20 @@ function getMediaToggleControlKindConfigStructActionEntries<
   >;
 }
 
+const baseMediaToggleControlConfigStruct = z.object({
+  type: z.literal(ControlType.MEDIA_TOGGLE),
+  kind: enums(MediaToggleKind),
+  when_unavailable: enums(ElementWhenUnavailable).optional(),
+  unavailable_when_off: z.boolean().optional(),
+});
+
 function getMediaToggleControlKindConfigStruct<
   TKind extends MediaToggleKind,
   TActions extends MediaButtonAction,
 >(kind: TKind, actions: TActions[]) {
-  return z.object({
-    type: z.literal(ControlType.MEDIA_TOGGLE),
+  return baseMediaToggleControlConfigStruct.extend({
     kind: z.literal(kind),
     ...getMediaToggleControlKindConfigStructActionEntries(actions),
-    when_unavailable: enums(ElementWhenUnavailable).optional(),
-    unavailable_when_off: z.boolean().optional(),
   });
 }
 
@@ -79,9 +83,11 @@ export const mediaToggleControlConfigStruct = z.discriminatedUnion("kind", [
   ]),
 ]);
 
-export const controlConfigStruct = z.discriminatedUnion("type", [
-  mediaButtonControlConfigStruct,
-  mediaProgressControlConfigStruct,
-  ...mediaToggleControlConfigStruct.options,
-  spacerControlConfigStruct,
-]);
+export const controlConfigStruct = z
+  .discriminatedUnion("type", [
+    mediaButtonControlConfigStruct,
+    mediaProgressControlConfigStruct,
+    baseMediaToggleControlConfigStruct,
+    spacerControlConfigStruct,
+  ])
+  .and(mediaToggleControlConfigStruct);
