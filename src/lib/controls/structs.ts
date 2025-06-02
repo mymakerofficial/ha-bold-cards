@@ -10,29 +10,30 @@ import {
   ButtonVariant,
 } from "../../components/bc-button";
 import { MediaPositionTimestampPosition } from "../../components/bc-media-position-control";
-import { z } from "zod/v4";
+import z from "zod";
 import { kebabToSnake } from "../helpers";
 import { KebabToSnake } from "../types";
+import { enums } from "../struct";
 
 const baseButtonConfigStruct = z.object({
   icon: z.string().optional(),
-  size: z.enum(ButtonSize).optional(),
-  shape: z.enum(ButtonShape).optional(),
-  variant: z.enum(ButtonVariant).optional(),
+  size: enums(ButtonSize).optional(),
+  shape: enums(ButtonShape).optional(),
+  variant: enums(ButtonVariant).optional(),
 });
 
 export const mediaButtonControlConfigStruct = baseButtonConfigStruct.extend({
   type: z.literal(ControlType.MEDIA_BUTTON),
-  action: z.enum(MediaButtonAction),
+  action: enums(MediaButtonAction),
   always_show: z.boolean().optional(),
-  when_unavailable: z.enum(ElementWhenUnavailable).optional(),
+  when_unavailable: enums(ElementWhenUnavailable).optional(),
   unavailable_when_off: z.boolean().optional(),
 });
 
 export const mediaProgressControlConfigStruct = z.object({
   type: z.literal(ControlType.MEDIA_POSITION),
-  timestamp_position: z.enum(MediaPositionTimestampPosition).optional(),
-  when_unavailable: z.enum(ElementWhenUnavailable).optional(),
+  timestamp_position: enums(MediaPositionTimestampPosition).optional(),
+  when_unavailable: enums(ElementWhenUnavailable).optional(),
   unavailable_when_off: z.boolean().optional(),
 });
 
@@ -62,7 +63,7 @@ function getMediaToggleControlKindConfigStruct<
     type: z.literal(ControlType.MEDIA_TOGGLE),
     kind: z.literal(kind),
     ...getMediaToggleControlKindConfigStructActionEntries(actions),
-    when_unavailable: z.enum(ElementWhenUnavailable).optional(),
+    when_unavailable: enums(ElementWhenUnavailable).optional(),
     unavailable_when_off: z.boolean().optional(),
   });
 }

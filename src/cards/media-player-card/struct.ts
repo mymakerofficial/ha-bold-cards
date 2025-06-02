@@ -13,11 +13,12 @@ import {
   TopRowPositions,
   VerticalPosition,
 } from "../../lib/layout/position";
-import { z } from "zod/v4";
+import z from "zod";
+import { enums } from "../../lib/struct";
 
 export const baseMediaPlayerCardConfigStruct = baseCardConfigStruct.extend({
   entity: z.string().optional(),
-  color_mode: z.enum(MediaPlayerCardColorMode),
+  color_mode: enums(MediaPlayerCardColorMode),
   color: z.string().optional(),
   universal_media_player_enhancements:
     universalMediaPlayerEnhancementsStruct.optional(),
@@ -36,14 +37,12 @@ export const mediaPlayerAllowedFeaturePositions = [
 export const mediaPlayerCardConfigStruct =
   baseMediaPlayerCardConfigStruct.extend({
     type: z.literal(BoldCardType.MEDIA_PLAYER),
-    picture_position: z.enum(mediaPlayerAllowedPicturePositions).optional(),
+    picture_position: enums(mediaPlayerAllowedPicturePositions).optional(),
     show_picture: z.boolean().optional(),
-    background_picture: z
-      .enum(MediaPlayerCardBackgroundPictureStyle)
-      .optional(),
-    text_position: z.enum(mediaPlayerAllowedTextPositions).optional(),
+    background_picture: enums(MediaPlayerCardBackgroundPictureStyle).optional(),
+    text_position: enums(mediaPlayerAllowedTextPositions).optional(),
     show_text: z.boolean().optional(),
-    feature_position: z.enum(mediaPlayerAllowedFeaturePositions).optional(),
+    feature_position: enums(mediaPlayerAllowedFeaturePositions).optional(),
     show_title_bar: z.boolean().optional(),
     placeholder_when_off: z.boolean().optional(),
     features: featuresStruct,

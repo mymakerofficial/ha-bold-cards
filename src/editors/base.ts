@@ -9,7 +9,7 @@ import { isEmpty, isUndefined, lastOf, resolve } from "../lib/helpers";
 import { t } from "../localization/i18n";
 import { Optional } from "../lib/optional";
 import { run } from "../lib/result";
-import { z } from "zod/v4";
+import z from "zod";
 
 type HuiCardElementEditor = LitElement & {
   _updateConfigElement?: () => void;

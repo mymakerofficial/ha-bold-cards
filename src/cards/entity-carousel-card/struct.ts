@@ -1,6 +1,6 @@
 import { BoldCardType } from "../../lib/cards/types";
 import { carouselCardConfigBaseStruct } from "../carousel-card/struct";
-import { z } from "zod/v4";
+import z from "zod";
 
 export const entityCarouselCardConfigStruct =
   carouselCardConfigBaseStruct.extend({

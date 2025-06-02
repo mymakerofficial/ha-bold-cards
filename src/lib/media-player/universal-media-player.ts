@@ -1,4 +1,4 @@
-import { z } from "zod/v4";
+import z from "zod";
 import { MediaPlayerEntity } from "../../types/ha/entity";
 import { HomeAssistant } from "../../types/ha/lovelace";
 

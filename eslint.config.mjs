@@ -31,8 +31,23 @@ export default defineConfig([
           message: "Use 'zod' instead of 'superstruct'.",
         },
         {
-          name: "zod",
-          message: "Use 'zod/v4' instead of 'zod'.",
+          name: "zod/v4",
+          message: "zod v4 is not supported. Use 'zod' instead.",
+        },
+      ],
+      "no-restricted-syntax": [
+        "warn",
+        {
+          message:
+            "Don't use 'z.enum' directly. Use our custom 'enums' function instead.",
+          selector:
+            "CallExpression[callee.type='MemberExpression'][callee.object.name='z'][callee.property.name='enum']",
+        },
+        {
+          message:
+            "Don't use 'z.nativeEnum' directly. Use our custom 'enums' function instead.",
+          selector:
+            "CallExpression[callee.type='MemberExpression'][callee.object.name='z'][callee.property.name='nativeEnum']",
         },
       ],
     },

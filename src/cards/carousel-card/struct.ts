@@ -2,7 +2,8 @@ import { baseCardConfigStruct } from "../../helpers/ha/base-card-struct";
 import { BoldCardType } from "../../lib/cards/types";
 import { BottomRowPositions, TopRowPositions } from "../../lib/layout/position";
 import { CarouselStepperStyle } from "../../components/bc-carousel";
-import z from "zod/v4";
+import z from "zod";
+import { enums } from "../../lib/struct";
 
 export const carouselCardAllowedStepperPositions = [
   ...TopRowPositions,
@@ -10,8 +11,8 @@ export const carouselCardAllowedStepperPositions = [
 ];
 
 export const carouselCardConfigBaseStruct = baseCardConfigStruct.extend({
-  stepper_position: z.enum(carouselCardAllowedStepperPositions).optional(),
-  stepper_style: z.enum(CarouselStepperStyle).optional(),
+  stepper_position: enums(carouselCardAllowedStepperPositions).optional(),
+  stepper_style: enums(CarouselStepperStyle).optional(),
 });
 
 export const carouselCardConfigStruct = carouselCardConfigBaseStruct.extend({

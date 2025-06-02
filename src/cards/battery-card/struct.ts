@@ -1,4 +1,4 @@
-import { z } from "zod/v4";
+import z from "zod";
 import { BoldCardType } from "../../lib/cards/types";
 import { baseCardConfigStruct } from "../../helpers/ha/base-card-struct";
 
