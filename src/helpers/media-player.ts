@@ -13,6 +13,7 @@ import {
 } from "../components/bc-button";
 import { HomeAssistant } from "../types/ha/lovelace";
 import { MediaButtonAction } from "../lib/controls/types";
+import { kebabToSnake } from "../lib/helpers";
 
 export const MediaPlayerEntityFeature = {
   PAUSE: 1,
@@ -145,7 +146,7 @@ export async function handleMediaPlayerAction({
 }) {
   await hass.callService(
     "media_player",
-    action,
+    kebabToSnake(action),
     getMediaPlayerActionServiceData(stateObj, action),
   );
 }

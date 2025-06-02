@@ -23,6 +23,7 @@ export class ControlRow extends LitElement {
         return;
       }
 
+      // TODO: refactor this
       handleMediaPlayerAction({
         hass: this.hass,
         stateObj: this.stateObj as MediaPlayerEntity, // TODO check type
