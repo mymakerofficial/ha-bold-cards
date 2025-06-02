@@ -164,8 +164,6 @@ function translateMediaToggleControl({
       action,
     );
 
-    console.log("translateMediaToggleControl", buttonConfig);
-
     return translateMediaButtonControl({
       control: {
         ...buttonConfig,

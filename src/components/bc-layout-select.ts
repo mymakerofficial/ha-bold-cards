@@ -181,7 +181,6 @@ export class BcLayoutSelect extends BoldHassElement {
   }
 
   private _radioChanged(value: string) {
-    console.log(value);
     if (value === this.value) {
       return;
     }
