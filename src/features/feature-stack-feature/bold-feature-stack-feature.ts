@@ -114,6 +114,9 @@ export class BoldFeatureStackFeature extends CustomLovelaceCardFeature<
     return html`
       <hui-card-features
         .hass=${this.hass}
+        .context=${{
+          entity_id: stateObj.entity_id,
+        }}
         .stateObj=${stateObj}
         .features=${features}
         style=${styleMap({

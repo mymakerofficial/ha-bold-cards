@@ -286,6 +286,9 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
                     ${inlineFeatures.length > 0
                       ? html`<hui-card-features
                           .hass=${this.hass}
+                          .context=${{
+                            entity_id: stateObj.entity_id,
+                          }}
                           .stateObj=${stateObj}
                           .features=${inlineFeatures}
                           style=${styleMap({
@@ -319,6 +322,12 @@ export class BoldMediaPlayerCard extends BoldMediaPlayerCardBase<BoldMediaPlayer
           ${bottomFeatures.length > 0
             ? html`<hui-card-features
                 .hass=${this.hass}
+                .context=${{
+                  // Since 2025.6.1 home assistant requires the entity_id
+                  //  to be passed in using contxt.
+                  //  Hey seems like we can use context now!
+                  entity_id: stateObj.entity_id,
+                }}
                 .stateObj=${stateObj}
                 .features=${bottomFeatures}
                 style=${styleMap({
