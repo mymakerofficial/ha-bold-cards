@@ -5,10 +5,6 @@ import {
 } from "./media-player/universal-media-player";
 import { isStateActive } from "../helpers/states";
 import {
-  RenderTemplateParams,
-  subscribeToRenderTemplate,
-} from "./templates/helpers";
-import {
   getDeviceByDeviceId,
   getDeviceByEntityId,
   getEntityByEntityId,
@@ -117,10 +113,6 @@ export function BasicHassObjectMixin<TBase extends HassObjectConstructor>(
         mediaContentId,
         mediaContentType,
       );
-    }
-
-    protected async subscribeToRenderTemplate(params: RenderTemplateParams) {
-      return subscribeToRenderTemplate(this.hass!.connection, params);
     }
 
     protected isDarkMode() {

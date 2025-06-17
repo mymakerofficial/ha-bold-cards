@@ -21,7 +21,6 @@ import "./features/media-player-media-browser-feature/bold-media-player-media-br
 import "./features/feature-stack-feature/bold-feature-stack-feature";
 import "./cards/media-player-card/bold-media-player-card";
 import "./cards/battery-card/bold-battery-card";
-import "./cards/at-a-glance-card/bold-at-a-glance-card";
 import "./cards/carousel-card/bold-carousel-card";
 import "./cards/entity-carousel-card/bold-entity-carousel-card";
 import "./cards/mini-weather-card/bold-mini-weather-card";
